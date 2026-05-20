@@ -1,0 +1,1547 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>审核方案管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 滚动条样式 */
+        .table-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+        .table-scroll::-webkit-scrollbar-track {
+            background: #f1f3f4;
+            border-radius: 4px;
+        }
+        .table-scroll::-webkit-scrollbar-thumb {
+            background: #c4c7c5;
+            border-radius: 4px;
+        }
+        
+        /* 锁定列基础样式 - 确保不串行 */
+        .sticky-col {
+            position: sticky;
+            background-color: #ffffff;
+            z-index: 20;
+            vertical-align: middle !important;
+        }
+        
+        /* 表头锁定 - 提高z-index */
+        thead .sticky-col {
+            background-color: #f3f6fc;
+            z-index: 30;
+            top: 0;
+        }
+        
+        /* 锁定列位置定义 - 左侧 */
+        .col-checkbox { left: 0; min-width: 40px; width: 40px; text-align: center; }
+        .col-no { left: 40px; min-width: 140px; width: 140px; }
+        .col-customer { left: 180px; min-width: 200px; width: 200px; }
+        
+        /* 锁定列位置定义 - 右侧 */
+        .col-status { right: 260px; min-width: 100px; width: 100px; }
+        .col-exec-status { right: 160px; min-width: 100px; width: 100px; }
+        .col-action { right: 0; min-width: 160px; width: 160px; }
+        
+        /* 移除阴影/竖纹，确保视觉连贯 */
+        .sticky-col::after,
+        .sticky-col::before {
+            display: none !important;
+            content: none !important;
+            box-shadow: none !important;
+            border-right: none !important;
+            border-left: none !important;
+        }
+        
+        /* 搜索下拉 */
+        .searchable-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 4px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 50;
+        }
+        .searchable-dropdown.active {
+            display: block;
+        }
+        .searchable-option:hover {
+            background-color: #f3f6fc;
+        }
+        
+        /* 行选中与高亮 */
+        .row-selected td {
+            background-color: #e8f0fe !important;
+        }
+        .row-urgent td {
+            background-color: #fff8e1;
+        }
+        .row-urgent:hover td {
+            background-color: #ffecb3 !important;
+        }
+        
+        /* 确保表格行高一致，防止串行 */
+        .data-table tr {
+            height: 56px;
+        }
+        .data-table td, .data-table th {
+            height: 56px;
+            box-sizing: border-box;
+        }
+        
+        /* 弹窗动画 */
+        .modal-enter {
+            animation: modalSlideIn 0.3s cubic-bezier(0.2, 0, 0, 1);
+        }
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        /* Toast动画 */
+        .toast-enter {
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from { transform: translate(-50%, -20px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+
+        /* 表单规范样式 - 统一标签与输入框布局 */
+        .form-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .form-row .form-label {
+            min-width: 120px;
+            max-width: 120px;
+            text-align: right;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            line-height: 40px;
+            flex-shrink: 0;
+        }
+        .form-row .form-input-wrap {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .form-row .form-input-wrap.full-width {
+            width: 100%;
+        }
+        .form-row .form-input-wrap textarea {
+            width: 100%;
+            min-height: 80px;
+            resize: vertical;
+        }
+        .form-row .form-input-wrap .hint-text {
+            font-size: 12px;
+            color: #9CA3AF;
+            white-space: nowrap;
+        }
+        .form-row .form-input-wrap .hint-text.wrap {
+            white-space: normal;
+        }
+        /* 收款通知单样式 */
+        .receipt-section {
+            border: 1px dashed #CBD5E1;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 8px;
+            background: #F8FAFC;
+        }
+        .receipt-section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1E293B;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .receipt-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+        .receipt-row .receipt-label {
+            min-width: 100px;
+            text-align: right;
+            font-size: 13px;
+            color: #475569;
+            line-height: 36px;
+        }
+        .receipt-row .receipt-value {
+            flex: 1;
+        }
+
+        /* ===== B端设计规范覆盖层：仅调整视觉，不改变功能 ===== */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+        :root {
+            --ui-primary: #2563EB;
+            --ui-primary-hover: #1D4ED8;
+            --ui-border: #E2E8F0;
+            --ui-surface: #FFFFFF;
+            --ui-page: #F8FAFC;
+            --ui-text: #1E293B;
+            --ui-muted: #64748B;
+            --ui-soft: #F1F5F9;
+            --ui-radius: 6px;
+            --ui-card-radius: 8px;
+            --ui-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+            --ui-floating-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--ui-page) !important;
+            color: var(--ui-text) !important;
+            font-family: 'Inter', 'Noto Sans SC', 'Microsoft YaHei', sans-serif !important;
+            font-size: 14px;
+            line-height: 1.6;
+            padding: 24px !important;
+        }
+
+        body > .bg-white {
+            border: 1px solid var(--ui-border) !important;
+            border-radius: var(--ui-card-radius) !important;
+            box-shadow: var(--ui-shadow) !important;
+        }
+
+        #tabContainer {
+            gap: 4px;
+        }
+
+        .tab-item {
+            height: 34px;
+            border-radius: var(--ui-radius) !important;
+            color: #475569 !important;
+            font-weight: 500 !important;
+            padding: 0 12px !important;
+        }
+
+        .tab-item:hover {
+            background: var(--ui-soft) !important;
+            color: var(--ui-text) !important;
+        }
+
+        .tab-item.bg-blue-50,
+        .tab-item.text-blue-600 {
+            background: #EFF6FF !important;
+            color: var(--ui-primary) !important;
+            font-weight: 600 !important;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="number"],
+        select,
+        textarea {
+            border-color: var(--ui-border) !important;
+            border-radius: var(--ui-radius) !important;
+            color: var(--ui-text) !important;
+            background-color: var(--ui-surface);
+            box-shadow: none !important;
+            transition: border-color .15s, box-shadow .15s, background-color .15s;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #94A3B8;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--ui-primary) !important;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, .12) !important;
+            outline: none !important;
+        }
+
+        label {
+            color: #475569 !important;
+            font-weight: 500;
+        }
+
+        button {
+            border-radius: var(--ui-radius) !important;
+            font-weight: 500 !important;
+            transition: background-color .15s, border-color .15s, color .15s, box-shadow .15s;
+        }
+
+        button.bg-blue-600,
+        button.border-blue-600 {
+            background: var(--ui-primary) !important;
+            border-color: var(--ui-primary) !important;
+            color: #fff !important;
+        }
+
+        button.bg-blue-600:hover,
+        button.border-blue-600:hover {
+            background: var(--ui-primary-hover) !important;
+            border-color: var(--ui-primary-hover) !important;
+        }
+
+        button.border,
+        button.border-gray-300 {
+            border-color: #D1D5DB !important;
+            background: #fff;
+            color: #374151 !important;
+        }
+
+        button.border:hover,
+        button.border-gray-300:hover {
+            background: #F8FAFC !important;
+            border-color: #CBD5E1 !important;
+        }
+
+        button:disabled {
+            opacity: .45 !important;
+            cursor: not-allowed !important;
+            box-shadow: none !important;
+        }
+
+        .searchable-dropdown {
+            border-color: var(--ui-border);
+            border-radius: var(--ui-radius);
+            box-shadow: var(--ui-floating-shadow);
+        }
+
+        .data-table {
+            color: #334155;
+            font-size: 13px;
+        }
+
+        .data-table thead tr,
+        thead .sticky-col {
+            background: #F8FAFC !important;
+        }
+
+        .data-table th {
+            height: 44px !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            border-bottom: 1px solid var(--ui-border) !important;
+            color: #475569 !important;
+            font-size: 12px;
+            font-weight: 600 !important;
+            white-space: nowrap;
+        }
+
+        .data-table tr {
+            height: 52px;
+        }
+
+        .data-table td {
+            height: 52px;
+            border-bottom-color: #F1F5F9 !important;
+            color: #334155;
+            vertical-align: middle !important;
+        }
+
+        .data-table tbody tr:hover td {
+            background: #F8FAFC !important;
+        }
+
+        .sticky-col {
+            background: #fff;
+        }
+
+        .row-selected td {
+            background: #EFF6FF !important;
+        }
+
+        .row-urgent td {
+            background: #FFFBEB !important;
+        }
+
+        .table-scroll::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .table-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .table-scroll::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
+        }
+
+        .rounded-xl,
+        .rounded-lg {
+            border-radius: var(--ui-card-radius) !important;
+        }
+
+        .rounded-md,
+        .rounded {
+            border-radius: var(--ui-radius) !important;
+        }
+
+        .shadow-lg {
+            box-shadow: var(--ui-floating-shadow) !important;
+        }
+
+        .shadow-sm {
+            box-shadow: var(--ui-shadow) !important;
+        }
+
+        #auditModal > div,
+        #successModal > div {
+            border-radius: 10px !important;
+            border: 1px solid var(--ui-border);
+            box-shadow: var(--ui-floating-shadow) !important;
+        }
+
+        .form-row .form-label {
+            color: #334155 !important;
+        }
+
+        .receipt-section {
+            border-color: #CBD5E1;
+            background: #F8FAFC;
+            border-radius: var(--ui-card-radius);
+        }
+
+        .receipt-section-title {
+            color: var(--ui-text);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px !important;
+            }
+
+            .form-row .form-label,
+            .receipt-row .receipt-label {
+                width: 100%;
+                max-width: none;
+                min-width: 0;
+                text-align: left;
+                line-height: 1.5;
+            }
+
+            .receipt-row {
+                flex-direction: column;
+                gap: 6px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-gray-800 font-sans min-h-screen p-6">
+
+    <!-- 提示 Toast -->
+    <div id="alertToast" class="fixed top-5 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg z-[2000] hidden font-medium"></div>
+
+    <!-- 顶部栏 -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6 flex flex-wrap justify-between items-center gap-4">
+        <div class="flex gap-1 overflow-x-auto pb-1" id="tabContainer">
+            <button onclick="switchTab(this, 'all')" class="tab-item px-4 py-2 rounded-lg font-medium text-sm bg-blue-50 text-blue-600 transition-all whitespace-nowrap">全部</button>
+            <button onclick="switchTab(this, 'pending-notify')" class="tab-item px-4 py-2 rounded-lg font-medium text-sm text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap">
+                待通知审核 <span class="ml-1 bg-red-600 text-white text-xs min-w-[18px] h-[18px] rounded-full inline-flex items-center justify-center px-1.5">3</span>
+            </button>
+            <button onclick="switchTab(this, 'pending')" class="tab-item px-4 py-2 rounded-lg font-medium text-sm text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap">
+                待策划 <span class="ml-1 bg-red-600 text-white text-xs min-w-[18px] h-[18px] rounded-full inline-flex items-center justify-center px-1.5">5</span>
+            </button>
+            <button onclick="switchTab(this, 'notified')" class="tab-item px-4 py-2 rounded-lg font-medium text-sm text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap">已通知审核</button>
+            <button onclick="switchTab(this, 'planned')" class="tab-item px-4 py-2 rounded-lg font-medium text-sm text-gray-600 hover:bg-gray-50 transition-all whitespace-nowrap">已策划</button>
+        </div>
+        
+        <div class="flex gap-3">
+            <button id="btnSupervise" onclick="openModal('supervise')" disabled class="px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                发送监督通知
+            </button>
+            <button id="btnReaudit" onclick="openModal('reaudit')" disabled class="px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                发送再认证通知
+            </button>
+        </div>
+    </div>
+
+    <!-- 筛选区域 -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-6">
+        <div class="flex flex-wrap items-end gap-4">
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm text-gray-600 font-medium">策划方案编号</label>
+                <input type="text" id="filterNo" placeholder="请输入项目编号" class="w-48 h-9 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all">
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm text-gray-600 font-medium">客户名称</label>
+                <div class="relative w-48">
+                    <input type="text" id="filterCustomer" placeholder="请输入或选择客户" autocomplete="off" class="w-full h-9 px-3 pr-8 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all cursor-pointer">
+                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none">▼</span>
+                    <div id="customerDropdown" class="searchable-dropdown"></div>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm text-gray-600 font-medium">策划状态</label>
+                <select id="filterStatus" class="w-40 h-9 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all bg-white">
+                    <option value="">全部</option>
+                    <option value="pending">待策划</option>
+                    <option value="notified">已通知审核</option>
+                    <option value="notify">待通知审核</option>
+                    <option value="planned">已策划</option>
+                </select>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm text-gray-600 font-medium">待审核类型</label>
+                <select id="filterType" class="w-40 h-9 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all bg-white">
+                    <option value="">全部</option>
+                    <option value="initial">初次认证</option>
+                    <option value="supervise">监督</option>
+                    <option value="rc">再认证</option>
+                    <option value="temp">临时审核</option>
+                </select>
+            </div>
+
+            <div class="flex gap-2 ml-auto items-end">
+                <button onclick="resetFilter()" class="px-5 h-9 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all">重置</button>
+                <button onclick="applyFilter()" class="px-5 h-9 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all shadow-sm">查询</button>
+                <button onclick="toggleExpandFilter()" class="px-3 h-9 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-all flex items-center gap-1">
+                    <span id="expandText">展开</span>
+                    <svg id="expandIcon" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+            </div>
+        </div>
+
+        <div id="expandFilterRow" class="hidden mt-4 pt-4 border-t border-gray-100 flex-wrap items-end gap-4">
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm text-gray-600 font-medium">所属区域</label>
+                <select id="filterRegion" class="w-40 h-9 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all bg-white">
+                    <option value="">全部</option>
+                    <option value="南京市">南京市</option>
+                    <option value="无锡市">无锡市</option>
+                    <option value="徐州市">徐州市</option>
+                    <option value="常州市">常州市</option>
+                    <option value="苏州市">苏州市</option>
+                    <option value="南通市">南通市</option>
+                    <option value="连云港市">连云港市</option>
+                    <option value="淮安市">淮安市</option>
+                    <option value="盐城市">盐城市</option>
+                    <option value="扬州市">扬州市</option>
+                    <option value="镇江市">镇江市</option>
+                    <option value="泰州市">泰州市</option>
+                    <option value="宿迁市">宿迁市</option>
+                </select>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm text-gray-600 font-medium">客服人员</label>
+                <div class="relative w-40">
+                    <input type="text" id="filterService" placeholder="请输入或选择客服" autocomplete="off" class="w-full h-9 px-3 pr-8 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all cursor-pointer">
+                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none">▼</span>
+                    <div id="serviceDropdown" class="searchable-dropdown"></div>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm text-gray-600 font-medium">联系人</label>
+                <div class="relative w-40">
+                    <input type="text" id="filterContact" placeholder="请输入或选择联系人" autocomplete="off" class="w-full h-9 px-3 pr-8 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all cursor-pointer">
+                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none">▼</span>
+                    <div id="contactDropdown" class="searchable-dropdown"></div>
+                </div>
+            </div>
+        </div>
+    </div><!-- 数据表格区域 - 关键修复：移除所有阴影竖纹 -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="table-scroll overflow-x-auto">
+            <table class="data-table w-full text-sm border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 text-slate-900 font-medium">
+                        <th class="sticky-col col-checkbox px-3 border-b border-gray-200 text-left font-semibold">
+                            <input type="checkbox" id="selectAll" onchange="toggleSelectAll()" class="w-4 h-4 cursor-pointer accent-blue-600">
+                        </th>
+                        <th class="sticky-col col-no px-4 border-b border-gray-200 text-left font-semibold">策划方案编号</th>
+                        <th class="sticky-col col-customer px-4 border-b border-gray-200 text-left font-semibold">客户名称</th>
+                        <th class="px-4 border-b border-gray-200 text-left font-semibold whitespace-nowrap">客服人员</th>
+                        <th class="px-4 border-b border-gray-200 text-left font-semibold whitespace-nowrap">联系人</th>
+                        <th class="px-4 border-b border-gray-200 text-left font-semibold whitespace-nowrap">认证领域</th>
+                        <th class="px-4 border-b border-gray-200 text-left font-semibold whitespace-nowrap">当前轮次</th>
+                        <th class="px-4 border-b border-gray-200 text-left font-semibold whitespace-nowrap">待审核类型</th>
+                        <th class="px-4 border-b border-gray-200 text-left font-semibold whitespace-nowrap">审核截止日期</th>
+                        <th class="px-4 border-b border-gray-200 text-left font-semibold whitespace-nowrap">是否多场所</th>
+                        <th class="px-4 border-b border-gray-200 text-left font-semibold whitespace-nowrap">申请日期</th>
+                        <th class="px-4 border-b border-gray-200 text-left font-semibold whitespace-nowrap">受理日期</th>
+                        <th class="px-4 border-b border-gray-200 text-left font-semibold whitespace-nowrap">策划日期</th>
+                        <th class="sticky-col col-status px-4 border-b border-gray-200 text-left font-semibold bg-slate-50">策划状态</th>
+                        <th class="sticky-col col-exec-status px-4 border-b border-gray-200 text-left font-semibold bg-slate-50">方案执行状态</th>
+                        <th class="sticky-col col-action px-4 border-b border-gray-200 text-left font-semibold bg-slate-50">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody" class="divide-y divide-gray-100 bg-white">
+                    <!-- 动态渲染 -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- 分页 -->
+        <div class="flex justify-end items-center gap-2 px-6 py-4 border-t border-gray-100 bg-white">
+            <span class="text-sm text-gray-600">10条/页</span>
+            <button class="px-3 h-8 border border-gray-300 rounded-md text-sm text-gray-600 hover:border-blue-600 hover:text-blue-600 transition-all disabled:opacity-50" disabled>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            </button>
+            <button class="px-3 h-8 bg-blue-600 text-white border border-blue-600 rounded-md text-sm font-medium">1</button>
+            <button class="px-3 h-8 border border-gray-300 rounded-md text-sm text-gray-600 hover:border-blue-600 hover:text-blue-600 transition-all">2</button>
+            <button class="px-3 h-8 border border-gray-300 rounded-md text-sm text-gray-600 hover:border-blue-600 hover:text-blue-600 transition-all">3</button>
+            <span class="text-sm text-gray-600">...</span>
+            <button class="px-3 h-8 border border-gray-300 rounded-md text-sm text-gray-600 hover:border-blue-600 hover:text-blue-600 transition-all">10</button>
+            <button class="px-3 h-8 border border-gray-300 rounded-md text-sm text-gray-600 hover:border-blue-600 hover:text-blue-600 transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+            <span class="text-sm text-gray-600 ml-2">跳至</span>
+            <input type="text" value="1" class="w-10 h-8 border border-gray-300 rounded-md text-center text-sm focus:outline-none focus:ring-2 focus:ring-blue-600">
+            <span class="text-sm text-gray-600">/ 20页</span>
+        </div>
+    </div>
+
+    <!-- 审核发起弹窗 -->
+    <div id="auditModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[1000] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col modal-enter" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-gray-100">
+                <h3 id="modalTitle" class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <span class="text-xl">➕</span> 发起审核
+                </h3>
+                <button onclick="closeModal()" class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-all text-xl">&times;</button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                <!-- 选中方案列表 -->
+                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-slate-50 sticky top-0">
+                                <tr>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-700 whitespace-nowrap border-b border-gray-200">方案编号</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-700 border-b border-gray-200">客户名称</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-700 whitespace-nowrap border-b border-gray-200">客服</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-700 whitespace-nowrap border-b border-gray-200">联系人</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-700 whitespace-nowrap border-b border-gray-200">认证领域</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-700 whitespace-nowrap border-b border-gray-200">当前轮次</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-700 whitespace-nowrap border-b border-gray-200">审核类型</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-700 whitespace-nowrap border-b border-gray-200">通知截止日期</th>
+                                    <th class="px-4 py-3 text-left font-medium text-gray-700 whitespace-nowrap border-b border-gray-200">是否多场所</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modalTableBody" class="divide-y divide-gray-100 bg-white">
+                                <!-- 动态插入 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- 联系人选择区域 -->
+                <div class="bg-blue-50/50 border border-blue-100 rounded-lg p-5">
+                    <h4 class="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        客户通知联系人信息
+                    </h4>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="text-sm font-medium text-gray-700 flex items-center gap-1">
+                                通知联系人 <span class="text-red-500">*</span>
+                            </label>
+                            <select id="contactSelect" onchange="updateContactInfo()" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent bg-white">
+                                <option value="">请选择联系人</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-sm font-medium text-gray-700 flex items-center gap-1">
+                                联系电话 <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="contactPhone" placeholder="请输入联系电话" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-sm font-medium text-gray-700 flex items-center gap-1">
+                                电子邮箱 <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="contactEmail" placeholder="请输入电子邮箱" class="w-full h-10 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 通知书区域 -->
+                <div class="bg-blue-50/30 border border-blue-200 rounded-lg p-5">
+                    <h4 id="noticeTitle" class="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2 pb-3 border-b border-blue-200">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        监督审核通知书（MSF11-22）
+                    </h4>
+                    <div id="noticeContent" class="space-y-4">
+                        <!-- 动态生成表单字段 -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-xl">
+                <button onclick="closeModal()" class="px-5 h-10 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-100 transition-all">取消</button>
+                <button id="btnConfirmSubmit" class="px-5 h-10 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all shadow-sm flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    确认发起
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 发送成功弹窗 -->
+    <div id="successModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[1001] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md modal-enter" onclick="event.stopPropagation()">
+            <div class="bg-green-50 px-6 py-4 border-b border-green-100 rounded-t-xl flex justify-between items-center">
+                <h3 class="text-lg font-semibold text-green-900 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    发送成功
+                </h3>
+                <button onclick="closeSuccessModal()" class="w-8 h-8 flex items-center justify-center rounded-lg text-green-700 hover:bg-green-100 transition-all text-xl">&times;</button>
+            </div>
+            
+            <div class="p-8 text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <h4 id="successTitle" class="text-xl font-semibold text-gray-900 mb-2">审核通知发送成功</h4>
+                <p id="successDesc" class="text-gray-600 mb-6">相关通知书已生成并准备发送</p>
+                
+                <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                    <div class="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                        附件下载
+                    </div>
+                    <button onclick="downloadPack()" class="w-full flex items-center gap-3 p-4 bg-blue-600 border-2 border-blue-600 rounded-lg hover:bg-blue-700 hover:border-blue-700 transition-all group text-white">
+                        <span class="text-2xl">📦</span>
+                        <div class="text-left flex-1">
+                            <div id="downloadPackName" class="font-semibold text-white group-hover:text-white">审核通知附件包</div>
+                            <div class="text-xs text-blue-100">包含通知书及调查表 · ZIP格式</div>
+                        </div>
+                        <svg class="w-6 h-6 text-white group-hover:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                    </button>
+                </div>
+                
+                <button onclick="closeSuccessModal()" class="w-full h-11 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-all shadow-sm">
+                    完成
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 所有数据
+        const allData = [
+            { no: 'PLN/2024/0001', customer: '新东方教育科技公司', service: '张客服', contact: '李经理', region: '南京市', domain: 'QMS', round: '第一轮', currentType: '初次认证', nextType: '监督一', deadline: '2026-12-15', multi: '是', status: '待策划', execStatus: '-' },
+            { no: 'PLN/2024/0002', customer: '华信环境监测技术中心', service: '张客服', contact: '王主任', region: '南京市', domain: 'EMS', round: '第一轮', currentType: '监督一', nextType: '监督二', deadline: '2026-06-01（剩余85天）', multi: '否', status: '待通知审核', execStatus: '-' },
+            { no: 'PLN/2024/0003', customer: '华信环境监测技术中心', service: '张客服', contact: '李经理', region: '南京市', domain: 'QMS', round: '第一轮', currentType: '监督一', nextType: '监督二', deadline: '2026-06-01（剩余85天）', multi: '是', status: '待通知审核', execStatus: '-' },
+            { no: 'PLN/2024/0004', customer: '华信环境监测技术中心', service: '李客服', contact: '赵主管', region: '苏州市', domain: 'QMS', round: '第二轮', currentType: '监督一+变更', nextType: '监督二', deadline: '2026-11-02', multi: '是', status: '待策划', execStatus: '-' },
+            { no: 'PLN/2024/0005', customer: '华信环境监测技术中心', service: '李客服', contact: '陈经理', region: '苏州市', domain: 'EMS', round: '第二轮', currentType: '再认证', nextType: '-', deadline: '2026-07-07（剩余85天）', multi: '是', status: '待通知审核', execStatus: '-' },
+            { no: 'PLN/2024/0006', customer: '北京地铁有限公司', service: '王客服', contact: '刘主任', region: '无锡市', domain: 'QMS', round: '第二轮', currentType: '再认证', nextType: '-', deadline: '2026-07-07', multi: '是', status: '待策划', execStatus: '-' },
+            { no: 'PLN/2024/0007', customer: '北京地铁有限公司', service: '王客服', contact: '刘主任', region: '无锡市', domain: 'QMS', round: '第二轮', currentType: '监督二', nextType: '-', deadline: '2026-10-09', multi: '是', status: '待策划', execStatus: '-' },
+            { no: 'PLN/2024/0008', customer: '华信环境监测技术中心', service: '王客服', contact: '周经理', region: '无锡市', domain: 'QMS', round: '第二轮', currentType: '监督二', nextType: '-', deadline: '2026-11-01', multi: '是', status: '待通知审核', execStatus: '-' },
+            { no: 'PLN/2024/0009', customer: '华信环境监测技术中心', service: '赵客服', contact: '吴主管', region: '常州市', domain: 'QMS', round: '第二轮', currentType: '再认证', nextType: '-', deadline: '2026-11-01', multi: '是', status: '已策划', execStatus: '审核进行中' },
+            { no: 'PLN/2024/0010', customer: '华信环境监测技术中心', service: '赵客服', contact: '吴主管', region: '常州市', domain: 'QMS', round: '第二轮', currentType: '再认证', nextType: '-', deadline: '2026-11-01', multi: '是', status: '已策划', execStatus: '审核进行中' },
+        ];
+
+        const contactDetails = {
+            '王主任': { phone: '13800138001', email: 'wang@huaxin.com' },
+            '李经理': { phone: '13900139002', email: 'li@huaxin.com' },
+            '赵主管': { phone: '13700137003', email: 'zhao@huaxin.com' },
+            '陈经理': { phone: '13600136004', email: 'chen@huaxin.com' },
+            '刘主任': { phone: '13500135005', email: 'liu@beijing Subway.com' },
+            '周经理': { phone: '13400134006', email: 'zhou@huaxin.com' },
+            '吴主管': { phone: '13300133007', email: 'wu@huaxin.com' }
+        };
+
+        const filterOptions = {
+            customers: [...new Set(allData.map(item => item.customer))],
+            services: [...new Set(allData.map(item => item.service))],
+            contacts: [...new Set(allData.map(item => item.contact))]
+        };
+
+        let filteredData = [...allData];
+        let selectedItems = new Set();
+        let currentCustomer = null;
+        let currentModalType = '';
+
+        function initSearchableSelect() {
+            setupSearchableSelect('filterCustomer', 'customerDropdown', filterOptions.customers);
+            setupSearchableSelect('filterService', 'serviceDropdown', filterOptions.services);
+            setupSearchableSelect('filterContact', 'contactDropdown', filterOptions.contacts);
+        }
+
+        function setupSearchableSelect(inputId, dropdownId, options) {
+            const input = document.getElementById(inputId);
+            const dropdown = document.getElementById(dropdownId);
+            const wrapper = input.parentElement;
+
+            input.addEventListener('focus', function() {
+                renderDropdownOptions(dropdown, options, input.value, input);
+                dropdown.classList.add('active');
+            });
+
+            input.addEventListener('input', function() {
+                renderDropdownOptions(dropdown, options, input.value, input);
+                dropdown.classList.add('active');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!wrapper.contains(e.target)) {
+                    dropdown.classList.remove('active');
+                }
+            });
+        }
+
+        function renderDropdownOptions(dropdown, options, filterText, input) {
+            const filtered = options.filter(opt => opt.toLowerCase().includes(filterText.toLowerCase()));
+            
+            if (filtered.length === 0) {
+                dropdown.innerHTML = '<div class="px-3 py-2 text-gray-400 text-sm text-center">无匹配结果</div>';
+            } else {
+                dropdown.innerHTML = filtered.map(opt => {
+                    const isSelected = input.value === opt ? 'bg-blue-50 text-blue-600 font-medium' : 'hover:bg-gray-50';
+                    return `<div class="searchable-option ${isSelected} px-3 py-2 cursor-pointer text-sm transition-colors" onclick="selectOption(this, '${input.id}')">${opt}</div>`;
+                }).join('');
+            }
+        }
+
+        function selectOption(element, inputId) {
+            const input = document.getElementById(inputId);
+            const dropdown = element.parentElement;
+            input.value = element.textContent;
+            dropdown.classList.remove('active');
+        }
+
+        function generateYearOptions() {
+            let options = '';
+            for (let year = 2026; year <= 2030; year++) {
+                options += `<option value="${year}">${year}年</option>`;
+            }
+            return options;
+        }
+
+        function generateMonthOptions() {
+            let options = '';
+            for (let month = 1; month <= 12; month++) {
+                options += `<option value="${month}">${month}月</option>`;
+            }
+            return options;
+        }
+
+        function generateDayOptions() {
+            let options = '';
+            for (let day = 1; day <= 31; day++) {
+                options += `<option value="${day}">${day}日</option>`;
+            }
+            return options;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initSearchableSelect();
+            renderTable();
+            updateSelectionState();
+
+            // 绑定确认按钮点击事件
+            const confirmBtn = document.getElementById('btnConfirmSubmit');
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', function(e) {
+                    submitAudit();
+                });
+            }
+        });
+
+        function switchTab(element, tab) {
+            document.querySelectorAll('.tab-item').forEach(item => {
+                item.classList.remove('bg-blue-50', 'text-blue-600');
+                item.classList.add('text-gray-600');
+            });
+            
+            element.classList.remove('text-gray-600');
+            element.classList.add('bg-blue-50', 'text-blue-600');
+            
+            if (tab === 'all') {
+                filteredData = [...allData];
+            } else if (tab === 'pending-notify') {
+                filteredData = allData.filter(item => item.status === '待通知审核');
+            } else if (tab === 'pending') {
+                filteredData = allData.filter(item => item.status === '待策划');
+            } else if (tab === 'notified') {
+                filteredData = allData.filter(item => item.status === '已通知审核');
+            } else if (tab === 'planned') {
+                filteredData = allData.filter(item => item.status === '已策划');
+            }
+            
+            selectedItems.clear();
+            currentCustomer = null;
+            renderTable();
+            updateSelectionState();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            // 黄色高亮行置顶：先排序，紧急行放前面
+            const sortedData = [...filteredData].sort((a, b) => {
+                const aUrgent = a.deadline.includes('剩余85天') || a.deadline.includes('需尽快') || (a.currentType === '再认证' && a.status === '待通知审核');
+                const bUrgent = b.deadline.includes('剩余85天') || b.deadline.includes('需尽快') || (b.currentType === '再认证' && b.status === '待通知审核');
+                if (aUrgent && !bUrgent) return -1;
+                if (!aUrgent && bUrgent) return 1;
+                return 0;
+            });
+
+            sortedData.forEach((item) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition-colors border-b border-gray-100 last:border-b-0';
+                
+                if (item.deadline.includes('剩余85天') || item.deadline.includes('需尽快') || (item.currentType === '再认证' && item.status === '待通知审核')) {
+                    tr.classList.add('row-urgent');
+                }
+                
+                if (selectedItems.has(item.no)) {
+                    tr.classList.add('row-selected');
+                }
+
+                const isChecked = selectedItems.has(item.no) ? 'checked' : '';
+                const planDate = item.status === '已策划' ? '2026-04-01' : '-';
+                const planDateClass = item.status === '已策划' ? 'text-blue-600 font-medium' : 'text-gray-400';
+
+                let actionLinks = '';
+                if (item.status === '待策划') {
+                    actionLinks = `
+                        <button onclick="openPlanModal('${item.no}')" class="text-blue-600 hover:text-blue-800 font-medium text-sm mr-3 hover:underline">策划</button>
+                        <button onclick="viewDetail('${item.no}')" class="text-blue-600 hover:text-blue-800 font-medium text-sm hover:underline">详情</button>
+                    `;
+                } else {
+                    actionLinks = `<button onclick="viewDetail('${item.no}')" class="text-blue-600 hover:text-blue-800 font-medium text-sm hover:underline">详情</button>`;
+                }
+
+                let execStatusHtml = '<span class="text-gray-400">-</span>';
+                if (item.status === '已策划') {
+                    if (item.execStatus === '审核进行中') {
+                        execStatusHtml = `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700"><span class="w-1.5 h-1.5 bg-amber-500 rounded-full mr-1.5"></span>审核进行中</span>`;
+                    } else if (item.execStatus === '审核已完成') {
+                        execStatusHtml = `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700"><span class="w-1.5 h-1.5 bg-amber-500 rounded-full mr-1.5"></span>审核进行中</span>`;
+                    }
+                }
+
+                let statusDotClass = '';
+                if (item.status === '待策划') statusDotClass = 'bg-amber-500';
+                else if (item.status === '待通知审核') statusDotClass = 'bg-red-600';
+                else if (item.status === '已通知审核') statusDotClass = 'bg-purple-600';
+                else if (item.status === '已策划') statusDotClass = 'bg-green-600';
+                
+                const statusHtml = `<span class="inline-flex items-center gap-1.5"><span class="w-2 h-2 rounded-full ${statusDotClass}"></span>${item.status}</span>`;
+
+                let typeBgClass = '', typeTextClass = '';
+                if (item.currentType === '初次认证') { typeBgClass = 'bg-red-50'; typeTextClass = 'text-red-700'; }
+                else if (item.currentType === '监督一') { typeBgClass = 'bg-blue-50'; typeTextClass = 'text-blue-700'; }
+                else if (item.currentType === '监督二') { typeBgClass = 'bg-green-50'; typeTextClass = 'text-green-700'; }
+                else if (item.currentType === '监督一+变更') { typeBgClass = 'bg-amber-50'; typeTextClass = 'text-amber-700'; }
+                else if (item.currentType === '再认证') { typeBgClass = 'bg-purple-50'; typeTextClass = 'text-purple-700'; }
+                else if (item.currentType === '临时审核') { typeBgClass = 'bg-cyan-50'; typeTextClass = 'text-cyan-700'; }
+
+                tr.innerHTML = `
+                    <td class="sticky-col col-checkbox px-3 bg-white">
+                        <input type="checkbox" class="w-4 h-4 cursor-pointer accent-blue-600" ${isChecked} onchange="toggleSelectRow('${item.no}', '${item.customer}')">
+                    </td>
+                    <td class="sticky-col col-no px-4 bg-white font-mono text-sm text-gray-700">${item.no}</td>
+                    <td class="sticky-col col-customer px-4 bg-white font-medium text-gray-900">${item.customer}</td>
+                    <td class="px-4 whitespace-nowrap text-gray-700">${item.service}</td>
+                    <td class="px-4 whitespace-nowrap text-gray-700">${item.contact}</td>
+                    <td class="px-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold ${item.domain === 'EMS' ? 'bg-indigo-50 text-indigo-700' : 'bg-blue-50 text-blue-700'}">${item.domain}</span>
+                    </td>
+                    <td class="px-4 whitespace-nowrap text-gray-700">${item.round}</td>
+                    <td class="px-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold ${typeBgClass} ${typeTextClass}">${item.currentType}</span>
+                    </td>
+                    <td class="px-4 whitespace-nowrap ${item.deadline.includes('需尽快') || item.deadline.includes('剩余85天') || (item.currentType === '再认证' && item.status === '待通知审核') ? 'text-red-600 font-semibold' : 'text-gray-600'}">${item.deadline}</td>
+                    <td class="px-4 whitespace-nowrap">
+                        <span class="${item.multi === '是' ? 'text-red-600 font-semibold' : 'text-green-600 font-semibold'}">${item.multi}</span>
+                    </td>
+                    <td class="px-4 whitespace-nowrap text-gray-600">2026-03-23</td>
+                    <td class="px-4 whitespace-nowrap text-gray-600">2026-03-30</td>
+                    <td class="px-4 whitespace-nowrap ${planDateClass}">${planDate}</td>
+                    <td class="sticky-col col-status px-4 bg-white whitespace-nowrap text-gray-700">${statusHtml}</td>
+                    <td class="sticky-col col-exec-status px-4 bg-white whitespace-nowrap">${execStatusHtml}</td>
+                    <td class="sticky-col col-action px-4 bg-white whitespace-nowrap">${actionLinks}</td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        function isSuperviseType(type) {
+            return type && (type.includes('监督') || type === '初次认证');
+        }
+
+        function isReauditType(type) {
+            return type === '再认证';
+        }
+
+        function toggleSelectRow(no, customer) {
+            if (selectedItems.has(no)) {
+                selectedItems.delete(no);
+                if (selectedItems.size === 0) {
+                    currentCustomer = null;
+                }
+            } else {
+                if (selectedItems.size > 0 && currentCustomer !== customer) {
+                    showAlert('只能选择同一客户的方案进行批量操作');
+                    renderTable();
+                    return;
+                }
+                selectedItems.add(no);
+                currentCustomer = customer;
+            }
+            renderTable();
+            updateSelectionState();
+        }
+
+        function toggleSelectAll() {
+            const checked = document.getElementById('selectAll').checked;
+            if (checked) {
+                if (filteredData.length > 0) {
+                    const firstCustomer = filteredData[0].customer;
+                    const sameCustomerData = filteredData.filter(item => item.customer === firstCustomer);
+                    if (sameCustomerData.length > 0) {
+                        selectedItems = new Set(sameCustomerData.map(item => item.no));
+                        currentCustomer = firstCustomer;
+                        showAlert(`已全选同一客户（${firstCustomer}）的 ${sameCustomerData.length} 个方案`);
+                    }
+                }
+            } else {
+                selectedItems.clear();
+                currentCustomer = null;
+            }
+            renderTable();
+            updateSelectionState();
+        }
+
+        function updateSelectionState() {
+            const hasSelection = selectedItems.size > 0;
+            const btnSupervise = document.getElementById('btnSupervise');
+            const btnReaudit = document.getElementById('btnReaudit');
+
+            if (hasSelection && currentCustomer) {
+                const selectedData = allData.filter(item => selectedItems.has(item.no));
+                const allPendingNotify = selectedData.every(item => item.status === '待通知审核');
+                const allSupervise = selectedData.every(item => isSuperviseType(item.currentType));
+                const allReaudit = selectedData.every(item => isReauditType(item.currentType));
+                
+                const canSupervise = allPendingNotify && allSupervise;
+                const canReaudit = allPendingNotify && allReaudit;
+
+                btnSupervise.disabled = !canSupervise;
+                btnReaudit.disabled = !canReaudit;
+            } else {
+                btnSupervise.disabled = true;
+                btnReaudit.disabled = true;
+            }
+
+            const allCheckboxes = document.querySelectorAll('#tableBody input[type="checkbox"]');
+            const allChecked = allCheckboxes.length > 0 && Array.from(allCheckboxes).every(cb => cb.checked);
+            document.getElementById('selectAll').checked = allChecked;
+        }
+
+        function showAlert(message) {
+            const toast = document.getElementById('alertToast');
+            toast.textContent = message;
+            toast.classList.remove('hidden');
+            toast.classList.add('toast-enter');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('toast-enter');
+            }, 3000);
+        }
+
+        
+        function applyFilter() {
+            const no = document.getElementById('filterNo').value.toLowerCase();
+            const customer = document.getElementById('filterCustomer').value;
+            const status = document.getElementById('filterStatus').value;
+            const type = document.getElementById('filterType').value;
+            const region = document.getElementById('filterRegion').value;
+            const service = document.getElementById('filterService').value;
+            const contact = document.getElementById('filterContact').value;
+
+            filteredData = allData.filter(item => {
+                let statusMatch = true;
+                if (status === 'pending') statusMatch = item.status === '待策划';
+                else if (status === 'notified') statusMatch = item.status === '已通知审核';
+                else if (status === 'notify') statusMatch = item.status === '待通知审核';
+                else if (status === 'planned') statusMatch = item.status === '已策划';
+                else statusMatch = true;
+
+                const customerMatch = !customer || item.customer.toLowerCase().includes(customer.toLowerCase());
+                const serviceMatch = !service || item.service.toLowerCase().includes(service.toLowerCase());
+                const contactMatch = !contact || item.contact.toLowerCase().includes(contact.toLowerCase());
+
+                return (no === '' || item.no.toLowerCase().includes(no)) &&
+                       customerMatch &&
+                       statusMatch &&
+                       (type === '' || (type === 'supervise' && (item.currentType.includes('监督'))) || item.currentType === getTypeText(type)) &&
+                       (region === '' || item.region === region) &&
+                       serviceMatch &&
+                       contactMatch;
+            });
+
+            selectedItems.clear();
+            currentCustomer = null;
+            renderTable();
+            updateSelectionState();
+        }
+
+        function getTypeText(typeValue) {
+            const typeMap = {
+                'initial': '初次认证',
+                'supervise': '监督',
+                'rc': '再认证',
+                'temp': '临时审核'
+            };
+            return typeMap[typeValue] || typeValue;
+        }
+
+        function resetFilter() {
+            document.getElementById('filterNo').value = '';
+            document.getElementById('filterCustomer').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterType').value = '';
+            document.getElementById('filterRegion').value = '';
+            document.getElementById('filterService').value = '';
+            document.getElementById('filterContact').value = '';
+
+            filteredData = [...allData];
+            selectedItems.clear();
+            currentCustomer = null;
+            renderTable();
+            updateSelectionState();
+        }
+
+        function updateContactInfo() {
+            const contactName = document.getElementById('contactSelect').value;
+            const phoneInput = document.getElementById('contactPhone');
+            const emailInput = document.getElementById('contactEmail');
+            
+            if (contactName && contactDetails[contactName]) {
+                phoneInput.value = contactDetails[contactName].phone;
+                emailInput.value = contactDetails[contactName].email;
+            } else {
+                phoneInput.value = '';
+                emailInput.value = '';
+            }
+        }
+
+        function directConfirm(no) {
+            const item = allData.find(i => i.no === no);
+            if (item && item.status === '待策划') {
+                item.status = '已策划';
+                renderTable();
+            }
+        }
+
+        function toggleExpandFilter() {
+            const expandRow = document.getElementById('expandFilterRow');
+            const expandText = document.getElementById('expandText');
+            const expandIcon = document.getElementById('expandIcon');
+
+            if (expandRow.classList.contains('hidden')) {
+                expandRow.classList.remove('hidden');
+                expandRow.classList.add('flex');
+                expandText.textContent = '收起';
+                expandIcon.style.transform = 'rotate(180deg)';
+            } else {
+                expandRow.classList.add('hidden');
+                expandRow.classList.remove('flex');
+                expandText.textContent = '展开';
+                expandIcon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function openPlanModal(no) {
+            // 策划页面打开逻辑
+        }
+
+        function viewDetail(no) {
+            // 详情页面打开逻辑
+        }
+
+        function openModal(type) {
+            if (selectedItems.size === 0) {
+                showAlert('请先选择方案');
+                return;
+            }
+
+            currentModalType = type;
+            const modal = document.getElementById('auditModal');
+            const title = document.getElementById('modalTitle');
+            const noticeTitle = document.getElementById('noticeTitle');
+            const noticeContent = document.getElementById('noticeContent');
+
+            const selectedData = allData.filter(item => selectedItems.has(item.no));
+            const modalTbody = document.getElementById('modalTableBody');
+            modalTbody.innerHTML = '';
+
+            const contacts = new Set();
+
+            selectedData.forEach(item => {
+                contacts.add(item.contact);
+
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 border-b border-gray-100 last:border-b-0';
+                let auditType = item.nextType;
+                if (type === 'supervise') {
+                    if (item.currentType && item.currentType.includes('监督一')) auditType = '监督二';
+                    else if (item.currentType && item.currentType.includes('监督二')) auditType = '监督一';
+                    else auditType = '监督一';
+                } else if (type === 'reaudit') {
+                    auditType = '再认证';
+                }
+
+                let typeBgClass = '', typeTextClass = '';
+                if (auditType === '初次认证') { typeBgClass = 'bg-red-50'; typeTextClass = 'text-red-700'; }
+                else if (auditType === '监督一') { typeBgClass = 'bg-blue-50'; typeTextClass = 'text-blue-700'; }
+                else if (auditType === '监督二') { typeBgClass = 'bg-green-50'; typeTextClass = 'text-green-700'; }
+                else if (auditType === '监督一+变更') { typeBgClass = 'bg-amber-50'; typeTextClass = 'text-amber-700'; }
+                else if (auditType === '再认证') { typeBgClass = 'bg-purple-50'; typeTextClass = 'text-purple-700'; }
+                else if (auditType === '临时审核') { typeBgClass = 'bg-cyan-50'; typeTextClass = 'text-cyan-700'; }
+
+                tr.innerHTML = `
+                    <td class="px-4 py-3 font-mono text-sm text-gray-700">${item.no}</td>
+                    <td class="px-4 py-3 font-medium text-gray-900">${item.customer}</td>
+                    <td class="px-4 py-3 text-gray-700">${item.service}</td>
+                    <td class="px-4 py-3 text-gray-700">${item.contact}</td>
+                    <td class="px-4 py-3">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold ${item.domain === 'EMS' ? 'bg-indigo-50 text-indigo-700' : 'bg-blue-50 text-blue-700'}">${item.domain}</span>
+                    </td>
+                    <td class="px-4 py-3 text-gray-700">${item.round}</td>
+                    <td class="px-4 py-3">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold ${typeBgClass} ${typeTextClass}">${auditType}</span>
+                    </td>
+                    <td class="px-4 py-3 ${item.deadline.includes('需尽快') ? 'text-red-600 font-semibold' : 'text-gray-600'}">${item.deadline}</td>
+                    <td class="px-4 py-3">
+                        <span class="${item.multi === '是' ? 'text-red-600 font-semibold' : 'text-green-600 font-semibold'}">${item.multi}</span>
+                    </td>
+                `;
+                modalTbody.appendChild(tr);
+            });
+
+            const contactSelect = document.getElementById('contactSelect');
+            contactSelect.innerHTML = '<option value="">请选择联系人</option>';
+            const contactsArray = Array.from(contacts);
+            
+            if (contactsArray.length > 0) {
+                contactsArray.forEach((contact) => {
+                    const option = document.createElement('option');
+                    option.value = contact;
+                    option.textContent = contact;
+                    contactSelect.appendChild(option);
+                });
+                contactSelect.value = contactsArray[0];
+                updateContactInfo();
+            }
+
+            if (type === 'supervise') {
+                title.innerHTML = '<span class="text-xl mr-2">📋</span> 创建监督审核通知';
+                noticeTitle.innerHTML = '<svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>监督审核通知书（MSF11-22）';
+                noticeContent.innerHTML = `
+                    <div class="form-row">
+                        <label class="form-label">监督审核时间：</label>
+                        <div class="form-input-wrap">
+                            <select class="h-10 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white">${generateYearOptions()}</select>
+                            <select class="h-10 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white">${generateMonthOptions()}</select>
+                            <span class="hint-text wrap">请选择计划进行监督审核的年月</span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">截止日期：</label>
+                        <div class="form-input-wrap">
+                            <select class="h-10 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white">${generateYearOptions()}</select>
+                            <select class="h-10 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white">${generateMonthOptions()}</select>
+                            <span class="hint-text wrap">若此前不能接受监督审核，将暂停或撤销证书</span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">监督审核费用：</label>
+                        <div class="form-input-wrap">
+                            <input type="text" placeholder="请输入金额" class="h-10 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 w-32">
+                            <span class="text-sm text-gray-700">元/人民币</span>
+                            <span class="hint-text wrap">请收到通知后两周内汇入指定账户</span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">客服人员姓名：</label>
+                        <div class="form-input-wrap">
+                            <select id="superviseServiceName" class="h-10 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white w-48">
+                                <option value="">请选择客服人员</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">联系方式：</label>
+                        <div class="form-input-wrap">
+                            <input type="text" id="superviseServiceContact" readonly class="h-10 px-3 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700 w-48" value="">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">特殊要求：</label>
+                        <div class="form-input-wrap full-width">
+                            <textarea placeholder="请输入特殊要求，如无请填&ldquo;无&rdquo;" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"></textarea>
+                        </div>
+                    </div>
+                `;
+            } else {
+                title.innerHTML = '<span class="text-xl mr-2">🔄</span> 创建再认证审核通知';
+                noticeTitle.innerHTML = '<svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>再认证通知书（MSF11-24）';
+                noticeContent.innerHTML = `
+                    <div class="form-row">
+                        <label class="form-label">证书到期日：</label>
+                        <div class="form-input-wrap">
+                            <select class="h-10 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white">${generateYearOptions()}</select>
+                            <select class="h-10 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white">${generateMonthOptions()}</select>
+                            <select class="h-10 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white">${generateDayOptions()}</select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">再认证截止：</label>
+                        <div class="form-input-wrap">
+                            <select class="h-10 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white">${generateYearOptions()}</select>
+                            <select class="h-10 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white">${generateMonthOptions()}</select>
+                            <span class="hint-text wrap">再认证审核必须在此前完成，否则按新认证项目实施</span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">客服人员姓名：</label>
+                        <div class="form-input-wrap">
+                            <select id="reauditServiceName" class="h-10 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white w-48">
+                                <option value="">请选择客服人员</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">联系方式：</label>
+                        <div class="form-input-wrap">
+                            <input type="text" id="reauditServiceContact" readonly class="h-10 px-3 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700 w-48" value="">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">特殊要求：</label>
+                        <div class="form-input-wrap full-width">
+                            <textarea placeholder="请输入特殊要求，如无请填&ldquo;无&rdquo;" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"></textarea>
+                        </div>
+                    </div>
+                    <div class="receipt-section">
+                        <div class="receipt-section-title">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            收款通知单
+                        </div>
+                        <div class="receipt-row">
+                            <div class="receipt-label">再认证费用：</div>
+                            <div class="receipt-value">
+                                <input type="text" id="reauditFee" placeholder="请输入再认证费用金额" class="h-9 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 w-40">
+                                <span class="text-sm text-gray-700 ml-2">元/人民币</span>
+                            </div>
+                        </div>
+                        <div class="receipt-row">
+                            <div class="receipt-label">收款账户：</div>
+                            <div class="receipt-value">
+                                <input type="text" id="reauditAccount" readonly class="h-9 px-3 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700 w-64" value="中国质量认证中心">
+                            </div>
+                        </div>
+                        <div class="receipt-row">
+                            <div class="receipt-label">开户银行：</div>
+                            <div class="receipt-value">
+                                <input type="text" id="reauditBank" readonly class="h-9 px-3 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700 w-64" value="中国工商银行北京分行">
+                            </div>
+                        </div>
+                        <div class="receipt-row">
+                            <div class="receipt-label">银行账号：</div>
+                            <div class="receipt-value">
+                                <input type="text" id="reauditBankNo" readonly class="h-9 px-3 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700 w-64" value="0200003219001234567">
+                            </div>
+                        </div>
+                        <div class="receipt-row">
+                            <div class="receipt-label">备注说明：</div>
+                            <div class="receipt-value">
+                                <textarea id="reauditRemark" readonly class="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700 w-full" style="min-height:60px;resize:vertical;">请收到通知后两周内汇入指定账户，汇款时请注明企业名称及项目编号。</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                `;
+            }
+
+            // 从已选方案中提取客服人员（去重）并填充选择框
+            const selectedServices = [...new Set(selectedData.map(item => item.service))];
+
+            function fillServiceSelect(selectElId, services) {
+                const selectEl = document.getElementById(selectElId);
+                if (!selectEl) return;
+                selectEl.innerHTML = '<option value="">请选择客服人员</option>';
+                services.forEach((service) => {
+                    const option = document.createElement('option');
+                    option.value = service;
+                    option.textContent = service;
+                    selectEl.appendChild(option);
+                });
+                // 绑定联动事件
+                selectEl.onchange = function() {
+                    updateServiceContact(this.value, selectElId === 'superviseServiceName' ? 'supervise' : 'reaudit');
+                };
+            }
+
+            fillServiceSelect('superviseServiceName', selectedServices);
+            fillServiceSelect('reauditServiceName', selectedServices);
+
+            // 联系方式联动更新函数（只读input显示）
+            function updateServiceContact(serviceName, type) {
+                const contactInputId = type === 'supervise' ? 'superviseServiceContact' : 'reauditServiceContact';
+                const contactInput = document.getElementById(contactInputId);
+                if (!contactInput || !serviceName) return;
+
+                // 从已选方案中找该客服对应的所有联系人电话
+                const relatedItems = selectedData.filter(item => item.service === serviceName);
+                const relatedContacts = [...new Set(relatedItems.map(item => item.contact))];
+                const phones = [];
+                relatedContacts.forEach(contactName => {
+                    if (contactDetails[contactName]) {
+                        phones.push(contactDetails[contactName].phone);
+                    }
+                });
+
+                // 只读input显示联系方式（多个用分号分隔）
+                contactInput.value = phones.length > 0 ? phones.join('; ') : '';
+            }
+
+            // 初始化联系方式只读input（清空）
+            const superviseServiceContact = document.getElementById('superviseServiceContact');
+            const reauditServiceContact = document.getElementById('reauditServiceContact');
+            if (superviseServiceContact) superviseServiceContact.value = '';
+            if (reauditServiceContact) reauditServiceContact.value = '';
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('auditModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+
+        function submitAudit() {
+            const contactSelect = document.getElementById('contactSelect');
+            const phoneInput = document.getElementById('contactPhone');
+            const emailInput = document.getElementById('contactEmail');
+            
+            if (!contactSelect.value) {
+                showAlert('请选择客户通知联系人');
+                return;
+            }
+            if (!phoneInput.value.trim()) {
+                showAlert('请输入客户联系电话');
+                return;
+            }
+            if (!emailInput.value.trim()) {
+                showAlert('请输入客户电子邮箱');
+                return;
+            }
+
+            selectedItems.forEach(itemNo => {
+                const item = allData.find(i => i.no === itemNo);
+                if (item && item.status === '待通知审核') {
+                    item.status = '已通知审核';
+                }
+            });
+
+            closeModal();
+            showSuccessModal();
+        }
+
+        function showSuccessModal() {
+            const successModal = document.getElementById('successModal');
+            const successTitle = document.getElementById('successTitle');
+            const successDesc = document.getElementById('successDesc');
+            const downloadPackName = document.getElementById('downloadPackName');
+
+            if (currentModalType === 'supervise') {
+                successTitle.textContent = '监督审核通知发送成功';
+                successDesc.textContent = `已向客户发送监督审核通知，共选择 ${selectedItems.size} 个方案`;
+                downloadPackName.textContent = '监督审核通知附件包';
+            } else {
+                successTitle.textContent = '再认证审核通知发送成功';
+                successDesc.textContent = `已向客户发送再认证审核通知，共选择 ${selectedItems.size} 个方案`;
+                downloadPackName.textContent = '再认证审核通知附件包';
+            }
+
+            successModal.classList.remove('hidden');
+            successModal.classList.add('flex');
+        }
+
+        function closeSuccessModal() {
+            const modal = document.getElementById('successModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+            selectedItems.clear();
+            currentCustomer = null;
+            renderTable();
+            updateSelectionState();
+        }
+
+        function downloadPack() {
+            const packName = currentModalType === 'supervise' ? '监督审核通知附件包.zip' : '再认证审核通知附件包.zip';
+            showAlert(`开始下载：${packName}（包含通知书及获证方情况调查表）`);
+        }
+
+        document.getElementById('auditModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+        
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) closeSuccessModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                if (!document.getElementById('successModal').classList.contains('hidden')) {
+                    closeSuccessModal();
+                } else if (!document.getElementById('auditModal').classList.contains('hidden')) {
+                    closeModal();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
