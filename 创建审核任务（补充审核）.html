@@ -1,0 +1,1866 @@
+﻿
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CQC审核任务管理 - 新增/编辑</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        
+        body { 
+            font-family: 'Inter', 'Noto Sans SC', sans-serif; 
+            background-color: #f1f5f9; 
+            min-width: 1400px;
+        }
+        
+        .readonly-field { 
+            background: #f8fafc; 
+            border: 1px solid #e2e8f0; 
+            padding: 8px 12px; 
+            border-radius: 6px; 
+            font-size: 13px; 
+            color: #1e293b; 
+            min-height: 36px;
+            width: 100%;
+        }
+        .editable-field { 
+            border: 1px solid #d1d5db; 
+            padding: 8px 12px; 
+            border-radius: 6px; 
+            font-size: 13px; 
+            transition: all 0.2s; 
+            width: 100%; 
+        }
+        .editable-field:focus { 
+            outline: none; 
+            border-color: #3b82f6; 
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); 
+        }
+        .editable-field:hover { border-color: #93c5fd; }
+        
+        .field-group { 
+            background: #ffffff; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 12px; 
+            padding: 20px; 
+            margin-bottom: 16px; 
+            transition: all 0.2s; 
+        }
+        .field-group:hover { 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); 
+            border-color: #cbd5e1; 
+        }
+        
+        .process-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 13px; 
+        }
+        .process-table th { 
+            background: #f8fafc; 
+            padding: 10px; 
+            text-align: left; 
+            font-weight: 600; 
+            color: #475569; 
+            border-bottom: 1px solid #e2e8f0; 
+            white-space: nowrap;
+        }
+        .process-table td { 
+            padding: 10px; 
+            border-bottom: 1px solid #f1f5f9; 
+            color: #334155;
+        }
+        .process-table tr:hover td { background: #f8fafc; }
+        
+        .toggle-wrapper { display: flex; align-items: center; gap: 12px; }
+        .toggle-switch { position: relative; width: 48px; height: 24px; background: #d1d5db; border-radius: 12px; cursor: pointer; transition: all 0.3s; }
+        .toggle-switch.active { background: #2563eb; }
+        .toggle-slider { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .toggle-switch.active .toggle-slider { left: 26px; }
+        
+        .status-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; border: 1px solid; }
+        .badge-draft { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+        .badge-submitted { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+        
+        .personnel-tag { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center;
+            padding: 2px 8px; 
+            border-radius: 4px; 
+            font-size: 11px; 
+            margin-right: 4px; 
+            font-weight: 500; 
+            height: 24px;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        .tag-qms { background: #dbeafe; color: #1e40af; }
+        .tag-ems { background: #dcfce7; color: #166534; }
+        .tag-fulltime { background: #f3e8ff; color: #7c3aed; }
+        .tag-parttime { background: #fce7f3; color: #be185d; }
+        
+        .slide-modal { position: fixed; top: 0; right: 0; width: 900px; height: 100vh; background: white; box-shadow: -4px 0 24px rgba(0,0,0,0.08); z-index: 1000; transform: translateX(100%); transition: transform 0.3s ease-in-out; display: flex; flex-direction: column; }
+        .slide-modal.open { transform: translateX(0); }
+        .slide-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.45); z-index: 999; display: none; }
+        .slide-modal-overlay.show { display: block; }
+        
+        .plan-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); z-index: 2000; display: none; justify-content: center; align-items: flex-start; padding: 40px; overflow-y: auto; }
+        .plan-modal.show { display: flex; }
+        
+        .site-card { border: 1px solid #e2e8f0; border-radius: 12px; background: white; margin-bottom: 16px; transition: all 0.3s; }
+        .site-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-color: #cbd5e1; }
+        
+        .selected-personnel-bar { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; }
+        .selected-personnel-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: white; border: 1px solid #22c55e; border-radius: 6px; font-size: 13px; color: #15803d; margin-right: 8px; margin-bottom: 8px; }
+        .selected-personnel-tag .remove-btn { cursor: pointer; color: #22c55e; font-size: 12px; }
+        .selected-personnel-tag .remove-btn:hover { color: #ef4444; }
+        
+        .remaining-days-badge { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center;
+            padding: 2px 8px; 
+            background: #fff7ed; 
+            border: 1px solid #fed7aa; 
+            color: #ea580c; 
+            border-radius: 12px; 
+            font-size: 12px; 
+            font-weight: 600; 
+            margin-left: 8px; 
+            height: 24px;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        .remaining-days-badge.warning { background: #fef3c7; border-color: #fcd34d; color: #a16207; }
+        .remaining-days-badge.danger { background: #fef2f2; border-color: #fecaca; color: #dc2626; }
+        
+        .info-tooltip { 
+            position: relative; 
+            display: inline-flex; 
+            cursor: help; 
+            color: #2563eb; 
+            margin-left: 8px; 
+        }
+        .tooltip-content { 
+            display: none; 
+            position: absolute; 
+            left: 0; 
+            top: 100%; 
+            margin-top: 8px; 
+            width: 520px; 
+            background: white; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 8px; 
+            padding: 12px; 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); 
+            z-index: 9999; 
+            font-size: 13px; 
+            color: #475569; 
+            font-weight: normal;
+            text-align: left;
+        }
+        .info-tooltip:hover .tooltip-content { display: block; }
+        
+        th .info-tooltip .tooltip-content {
+            left: auto;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-top: 0;
+            margin-right: 8px;
+            width: 520px;
+        }
+        
+        .coefficient-formula { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; font-family: 'Courier New', monospace; font-size: 14px; color: #15803d; }
+        
+        .non-venue-stat { display: flex; align-items: center; gap: 8px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 8px 12px; }
+        
+        .site-stats-row { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            background: #f8fafc; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 8px; 
+            padding: 8px 16px;
+        }
+        .site-stat-item-inline { 
+            display: flex; 
+            align-items: center; 
+            gap: 4px; 
+            font-size: 13px; 
+        }
+        .site-stat-label { color: #64748b; font-weight: 500; }
+        .site-stat-value { font-weight: 700; font-family: monospace; }
+        
+        .cert-system-tag { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center;
+            padding: 2px 8px; 
+            background: #f0fdf4; 
+            border: 1px solid #bbf7d0; 
+            color: #15803d; 
+            border-radius: 6px; 
+            font-size: 12px; 
+            font-weight: 500; 
+            margin-left: 8px; 
+            height: 24px;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        
+        .date-time-group { display: flex; align-items: center; gap: 6px; }
+        .time-period-select { width: 90px; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; background: white; height: 36px; }
+        .time-period-select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        
+        .hidden-section { display: none !important; }
+        
+
+        .system-coverage-bar { display: flex; gap: 16px; margin-bottom: 0; flex-wrap: wrap; }
+        .system-coverage-item { flex: 1; min-width: 280px; background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }
+        .system-coverage-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .system-coverage-title { font-size: 14px; font-weight: 600; color: #334155; }
+        .system-coverage-status { font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 12px; }
+        .status-full { background: #dcfce7; color: #166534; }
+        .status-partial { background: #fef3c7; color: #92400e; }
+        .status-none { background: #f1f5f9; color: #64748b; }
+        .coverage-progress { height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; margin-bottom: 12px; }
+        .coverage-progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+        
+        .code-chip { display: inline-flex; align-items: center; padding: 3px 10px; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12px; color: #94a3b8; margin-right: 6px; margin-bottom: 6px; font-family: 'Courier New', monospace; transition: all 0.2s; }
+        .code-chip.matched { background: #dcfce7; border-color: #86efac; color: #166534; font-weight: 600; }
+        .code-chip.missing { background: #f1f5f9; border-color: #e2e8f0; color: #94a3b8; }
+        
+        .person-card { 
+            cursor: pointer; 
+            margin-bottom: 12px; 
+            padding: 16px; 
+            border: 2px solid #e2e8f0; 
+            border-radius: 12px; 
+            background: white;
+            transition: all 0.2s ease;
+        }
+        .person-card:hover { 
+            border-color: #93c5fd; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .person-card.selected { 
+            background: #eff6ff; 
+            border-color: #3b82f6; 
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        
+        .person-system-coverage { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+        .person-system-tag { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center;
+            gap: 4px; 
+            padding: 2px 8px; 
+            border-radius: 4px; 
+            font-size: 11px; 
+            font-weight: 500; 
+            border: 1px solid; 
+            height: 22px;
+            line-height: 1;
+        }
+        .system-tag-full { background: #f0fdf4; border-color: #86efac; color: #15803d; }
+        .system-tag-partial { background: #fffbeb; border-color: #fcd34d; color: #a16207; }
+        .system-tag-none { background: #f8fafc; border-color: #e2e8f0; color: #94a3b8; }
+        
+        .required-codes-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+        
+        .conflict-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 8px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+            height: 24px;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        
+        .site-assigned-info {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 8px;
+            background: #dbeafe;
+            border: 1px solid #93c5fd;
+            color: #1d4ed8;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-left: 8px;
+            height: 24px;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        
+        /* 子证标识样式 */
+        .sub-cert-tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 8px;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            color: #c2410c;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-left: 8px;
+            height: 24px;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        
+        /* 全覆盖标签样式统一 */
+        .full-coverage-tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 8px;
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+            color: #15803d;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            height: 24px;
+            line-height: 1;
+            vertical-align: middle;
+            gap: 4px;
+        }
+
+        /* 外部单位审批调用标识 */
+        .external-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 8px;
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            color: #92400e;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+            height: 24px;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        
+        /* 标签容器对齐 */
+        .tag-container {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            height: 24px;
+            vertical-align: middle;
+        }
+    </style>
+<base target="_blank">
+<base target="_blank">
+</head>
+<body class="text-slate-800">
+
+    <!-- 顶部导航（固定） -->
+    <div class="fixed top-0 left-0 right-0 z-40 bg-white border-b border-slate-200 shadow-sm">
+        <div class="max-w-[1920px] mx-auto px-6">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-4">
+                    <button onclick="goBack()" class="text-slate-600 hover:text-slate-900 flex items-center gap-2 text-sm transition-colors">
+                        <i class="fas fa-arrow-left"></i><span>返回列表</span>
+                    </button>
+                    <div class="h-6 w-px bg-slate-300"></div>
+                    <h1 class="text-lg font-bold text-slate-900">新增审核任务（主任务编号：RW202604170001）</h1>
+                    <span class="px-2 py-1 rounded text-xs font-medium bg-amber-100 text-amber-700 border border-amber-200 status-badge badge-draft">待提交</span>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="saveDraft(this)" class="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-all shadow-sm">
+                        <i class="fas fa-save mr-2"></i>保存
+                    </button>
+                    <button onclick="submitTask()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md shadow-blue-200 transition-all">
+                        <i class="fas fa-check mr-2"></i>提交
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主体布局（无左侧导航） -->
+    <div class="max-w-[1600px] mx-auto px-6 pt-24 pb-8">
+
+        <!-- 关联审核项目 -->
+        <div id="manage-audit-projects" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-link text-blue-600"></i>
+                    <h3 class="font-semibold text-slate-900">关联审核项目</h3>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="overflow-x-auto">
+                    <table class="process-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px">序号</th>
+                                <th>项目编号</th>
+                                <th>客户名称</th>
+                                <th>项目类型</th>
+                                <th>认证领域</th>
+                                <th>范围</th>
+                                <th>认可机构</th>
+                                <th>认证标准</th>
+                                <th>风险等级</th>
+                                <th>有效人数</th>
+                                <th>审核类型</th>
+                                <th>审核阶段</th>
+                                <th>是否现场</th>
+                                <th style="width: 140px">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="projectTable">
+                            <tr>
+                                <td>1</td>
+                                <td>PRJ-2024-00189-01</td>
+                                <td>北京市地铁运营有限公司</td>
+                                <td>初次认证</td>
+                                <td>QMS</td>
+                                <td>轨道交通运营服务</td>
+                                <td>CNAS</td>
+                                <td>GB/T 19001-2016</td>
+                                <td>中</td>
+                                <td>200</td>
+                                <td>初审</td>
+                                <td>二阶段</td>
+                                <td>是</td>
+                                <td>
+                                    <button onclick="viewPlan()" class="text-blue-600 hover:text-blue-800 text-xs font-medium">查看策划方案</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>PRJ-2024-00189-02</td>
+                                <td>北京市地铁运营有限公司</td>
+                                <td>初次认证</td>
+                                <td>EMS</td>
+                                <td>城市轨道交通运营环境管理</td>
+                                <td>UKAS</td>
+                                <td>GB/T 24001-2016</td>
+                                <td>高</td>
+                                <td>180</td>
+                                <td>初审</td>
+                                <td>二阶段</td>
+                                <td>是</td>
+                                <td>
+                                    <button onclick="viewPlan()" class="text-blue-600 hover:text-blue-800 text-xs font-medium">查看策划方案</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 审核组分配设置 -->
+        <div id="audit-team-assignment" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-users-cog text-blue-600"></i>
+                    <h3 class="font-semibold text-slate-900">审核组分配设置</h3>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <!-- 指派审核人员区域 -->
+                <div id="assignPersonnelSection" class="mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-sm font-semibold text-slate-800 flex items-center gap-2">
+                            指派审核人员
+                            <span class="info-tooltip">
+                                <i class="fas fa-exclamation-circle text-blue-500"></i>
+                                <div class="tooltip-content">
+                                    当前为"按场所分配"模式，各场所可独立分配审核组。审核组需至少包含1名<strong>专职审核员</strong>。
+                                </div>
+                            </span>
+                        </h3>
+                        <button onclick="openPersonnelModal()" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs font-medium shadow-sm shadow-blue-200 transition-all">
+                            <i class="fas fa-user-plus mr-1"></i>选择审核人员
+                        </button>
+                    </div>
+                    
+                    <!-- 已选择人员显示区（始终显示） -->
+                    <div id="selectedPersonnelDisplay" class="selected-personnel-bar">
+                        <div class="text-sm font-medium text-slate-700 mb-2" id="selectedPersonnelTitle">已选择人员（可分配给各场所）：</div>
+                        <div id="selectedPersonnelTags"></div>
+                    </div>
+                </div>
+
+                <!-- 全局设置 -->
+                <div id="venueGlobalSettings" class="mb-6">
+                    <div class="grid grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">审核组长 <span class="text-red-500">*</span></label>
+                            <select class="editable-field" id="leadAuditorSelect">
+                                <option value="">请选择审核组长</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">计划审核开始时间（总）</label>
+                            <div class="date-time-group">
+                                <input type="date" class="editable-field" id="auditStartDate" onchange="updateAllSiteDates()">
+                                <select class="time-period-select" id="auditStartPeriod" onchange="updateAllSiteDates()">
+                                    ${generateTimeOptions('', true)}
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">计划审核结束时间（总）</label>
+                            <div class="date-time-group">
+                                <input type="date" class="editable-field" id="auditEndDate" onchange="updateAllSiteDates()">
+                                <select class="time-period-select" id="auditEndPeriod" onchange="updateAllSiteDates()">
+                                    ${generateTimeOptions('', false)}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 非场所模式：人员列表（默认隐藏） -->
+                <div id="nonVenuePersonnelList" class="mb-6 hidden-section">
+                    <div class="grid grid-cols-5 gap-4 mb-4" id="nonVenueGlobalTime">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">计划审核开始时间（总）</label>
+                            <div class="date-time-group">
+                                <input type="date" class="editable-field" id="nonVenueAuditStartDate" onchange="updateNonVenueAllDates()">
+                                <select class="time-period-select" id="nonVenueStartPeriod" onchange="updateNonVenueAllDates()">
+                                    ${generateTimeOptions('', true)}
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">计划审核结束时间（总）</label>
+                            <div class="date-time-group">
+                                <input type="date" class="editable-field" id="nonVenueAuditEndDate" onchange="updateNonVenueAllDates()">
+                                <select class="time-period-select" id="nonVenueEndPeriod" onchange="updateNonVenueAllDates()">
+                                    ${generateTimeOptions('', false)}
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">审核人天数</label>
+                            <div class="non-venue-stat">
+                                <span class="text-xs text-slate-600">总计：</span>
+                                <span class="text-sm font-bold text-blue-600 font-mono" id="nonVenueTotalDays">0.0</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">已分配人天</label>
+                            <div class="non-venue-stat">
+                                <span class="text-xs text-slate-600">已分配：</span>
+                                <span class="text-sm font-bold text-blue-600 font-mono" id="nonVenueAssignedDays">0.0</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">未分配人天</label>
+                            <div class="non-venue-stat" style="background: #fffbeb; border-color: #fcd34d;">
+                                <span class="text-xs text-slate-600">未分配：</span>
+                                <span class="text-sm font-bold text-amber-600 font-mono" id="nonVenueUnassignedDays">0.0</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="nonVenueEmptyState" class="text-center py-8 text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-300 mb-4">
+                        <i class="fas fa-users text-3xl mb-2"></i>
+                        <p class="text-sm">暂无分配人员，请点击上方"添加人员"按钮添加</p>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="process-table hidden" id="nonVenueTable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px">序号</th>
+                                    <th>姓名</th>
+                                    <th style="width: 120px">组内身份</th>
+                                    <th>资格及注册编号</th>
+                                    <th style="width: 100px">CQC编号</th>
+                                    <th>工作单位</th>
+                                    <th style="width: 80px">专兼职</th>
+                                    <th>联系电话</th>
+                                    <th style="width: 260px">审核日期区间</th>
+                                    <th style="width: 80px">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="nonVenuePersonnelBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 场所卡片容器（默认显示） -->
+                <div id="siteCardsContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 人员选择弹窗（Slide-over） -->
+    <div class="slide-modal-overlay" id="personnelOverlay" onclick="closePersonnelModal()"></div>
+    <div class="slide-modal" id="personnelModal">
+        <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+            <div>
+                <h3 class="text-lg font-semibold text-slate-900">选择审核人员</h3>
+                <p class="text-sm text-slate-500 mt-1">从人员资质系统选择，支持多选（已选人员将高亮显示）</p>
+            </div>
+            <button onclick="closePersonnelModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto p-6">
+            <!-- 搜索框 -->
+            <div class="relative mb-4">
+                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                <input type="text" class="editable-field pl-10" placeholder="搜索姓名、CQC编号、专业代码..." id="personnelSearch" oninput="filterPersonnel()">
+            </div>
+            
+            <!-- 筛选条件（普通模式显示） -->
+            <div class="grid grid-cols-5 gap-3 mb-4" id="filterConditionsSection">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">公司名称</label>
+                    <select class="editable-field py-1.5" id="filterCity" onchange="filterPersonnel()">
+                        <option value="">全部公司</option>
+                        <option value="辽宁公司">辽宁公司</option>
+                        <option value="黑龙江公司">黑龙江公司</option>
+                        <option value="吉林公司">吉林公司</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">资格</label>
+                    <select class="editable-field py-1.5" id="filterQualification" onchange="filterPersonnel()">
+                        <option value="">全部资格</option>
+                        <option value="QMS">QMS</option>
+                        <option value="EMS">EMS</option>
+                        <option value="OHSMS">OHSMS</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">专兼职</label>
+                    <select class="editable-field py-1.5" id="filterType" onchange="filterPersonnel()">
+                        <option value="">全部</option>
+                        <option value="专职">专职</option>
+                        <option value="兼职">兼职</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">计划开始时间</label>
+                    <input type="date" class="editable-field py-1.5" id="filterStartDate" onchange="filterPersonnel()">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">计划结束时间</label>
+                    <input type="date" class="editable-field py-1.5" id="filterEndDate" onchange="filterPersonnel()">
+                </div>
+            </div>
+            
+            <!-- 人员列表 -->
+            <div id="personnelList" class="space-y-3"></div>
+        </div>
+        
+        <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex items-center justify-end gap-3">
+            <span class="text-sm text-slate-600 mr-auto">已选择 <span id="selectedCount" class="font-semibold text-blue-600">0</span> 人</span>
+            <button onclick="closePersonnelModal()" class="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-all shadow-sm">取消</button>
+            <button onclick="confirmPersonnelSelection()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md shadow-blue-200 transition-all">确认添加</button>
+        </div>
+    </div>
+
+    <!-- 查看策划方案弹窗 -->
+    <div class="plan-modal" id="planModal">
+        <div class="bg-white rounded-xl shadow-lg w-[1200px] max-w-[95vw] overflow-hidden">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-slate-900">初次认证策划方案（只读）</h3>
+                <button onclick="closePlanModal()" class="text-slate-400 hover:text-slate-600 transition-colors"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div class="flex border-b border-slate-200 bg-white">
+                <button type="button" data-plan-tab="sampling" onclick="switchPlanTab('sampling')" class="plan-tab-btn px-6 py-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600">场所抽样方案及实施情况</button>
+                <button type="button" data-plan-tab="process" onclick="switchPlanTab('process')" class="plan-tab-btn px-6 py-3 text-sm font-medium text-slate-600 border-b-2 border-transparent hover:text-slate-800">管理体系过程清单</button>
+                <button type="button" data-plan-tab="cert" onclick="switchPlanTab('cert')" class="plan-tab-btn px-6 py-3 text-sm font-medium text-slate-600 border-b-2 border-transparent hover:text-slate-800">证书内容确认件</button>
+            </div>
+            <div class="p-6 max-h-[70vh] overflow-y-auto">
+                <div id="planTab_sampling" class="plan-tab-content">
+                    <div class="flex justify-between items-center mb-4"><div class="text-sm font-semibold text-slate-900">场所抽样方案及实施情况</div><div class="bg-amber-50 border border-amber-200 text-amber-700 px-3 py-2 rounded-lg text-xs inline-flex items-center gap-2"><i class="fas fa-info-circle"></i>根据抽样规则，本次策划需要选择全部场所</div></div>
+                    <div class="mb-6 border border-slate-200 rounded-xl overflow-hidden"><div class="bg-blue-50 px-4 py-3 border-b border-slate-200 flex items-center gap-2"><span class="inline-flex items-center px-2 py-1 bg-blue-600 text-white text-xs rounded-md font-medium">总部</span><span class="font-medium text-slate-800 text-sm">运营地址（中心职能）</span></div><div class="p-4 space-y-4"><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">计划审核时间</label><div class="readonly-field">2024年04月</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">实际审核时间</label><div class="readonly-field">----年--月</div></div></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">班次信息</label><div class="readonly-field">班次：1，08:00-17:30</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">联系人/电话</label><div class="readonly-field">张先生/13800138000</div></div></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">地址</label><div class="readonly-field">北京市海淀区中关村大街1号</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">涉及产品/过程/活动</label><div class="readonly-field">软件开发、系统集成</div></div></div><div class="grid grid-cols-4 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">专业代码</label><div class="readonly-field">Q01</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">认可机构</label><div class="readonly-field">CNAS</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">人数(含承包方)</label><div class="readonly-field">200</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">有效人数</label><div class="readonly-field">180</div></div></div><div class="border-t border-slate-200 pt-4 mt-4"><label class="block text-xs font-semibold text-slate-700 mb-2">人天计算（AI底座）</label><div class="grid grid-cols-4 gap-4 mb-2"><div><label class="block text-xs text-slate-500 mb-1">审核准备</label><div class="readonly-field">1.5</div></div><div><label class="block text-xs text-slate-500 mb-1">第一阶段</label><div class="readonly-field">1.0</div></div><div><label class="block text-xs text-slate-500 mb-1">二阶段现场</label><div class="readonly-field">4.0</div></div><div><label class="block text-xs text-slate-500 mb-1">调整比例</label><div class="readonly-field">1.0</div></div></div><div class="bg-blue-50 p-3 rounded-lg flex justify-between items-center"><span class="text-sm text-slate-600">调整后</span><span class="text-xl font-bold text-blue-600">6.5</span></div></div><div class="mt-5 border-t border-slate-200 pt-4"><div class="text-sm font-semibold text-slate-900 mb-3">过程审核策划</div><div class="overflow-x-auto"><table class="process-table border border-slate-200 rounded-lg"><thead><tr><th style="width:50px">序号</th><th style="min-width:220px">过程名称</th><th style="min-width:110px">主责部门</th><th style="min-width:130px">相关部门</th><th style="min-width:160px">涉及标准条款</th><th style="min-width:320px">绩效参数或相关文件</th></tr></thead><tbody><tr><td>1</td><td>组织环境识别与相关方需求评审</td><td>最高管理者</td><td>综合管理部、各部门</td><td>QES: 4.1, 4.2</td><td>组织环境分析表、相关方需求清单</td></tr>
+<tr><td>2</td><td>管理体系范围确定</td><td>最高管理者</td><td>质量部、市场部</td><td>QES: 4.3</td><td>管理体系范围说明、认证范围确认记录</td></tr>
+<tr><td>3</td><td>体系过程识别与相互作用策划</td><td>质量部</td><td>各部门</td><td>QES: 4.4</td><td>过程关系图、过程绩效指标表</td></tr>
+<tr><td>4</td><td>领导作用与职责权限分配</td><td>总经理</td><td>人力资源部、各部门</td><td>QES: 5.1, 5.3</td><td>岗位职责说明书、授权书</td></tr>
+<tr><td>5</td><td>质量方针与目标管理</td><td>总经理</td><td>质量部、各部门</td><td>QES: 5.2, 6.2</td><td>质量方针、年度质量目标及分解表</td></tr>
+<tr><td>6</td><td>风险和机遇识别与应对</td><td>质量部</td><td>各部门</td><td>QES: 6.1</td><td>风险和机遇清单、应对措施跟踪表</td></tr>
+<tr><td>7</td><td>资源配置与基础设施管理</td><td>行政部</td><td>信息技术部、财务部</td><td>QES: 7.1</td><td>资源配置计划、设备设施台账</td></tr>
+<tr><td>8</td><td>人员能力与培训管理</td><td>人力资源部</td><td>各部门</td><td>QES: 7.2</td><td>培训计划、能力评价记录</td></tr>
+<tr><td>9</td><td>内部沟通与外部沟通管理</td><td>综合管理部</td><td>市场部、客服部</td><td>QES: 7.4</td><td>沟通记录、客户沟通台账</td></tr>
+<tr><td>10</td><td>文件和记录控制</td><td>质量部</td><td>各部门</td><td>QES: 7.5</td><td>文件清单、记录控制清单</td></tr>
+<tr><td>11</td><td>客户需求评审</td><td>市场部</td><td>技术部、交付部</td><td>QES: 8.2</td><td>合同评审记录、客户需求确认单</td></tr>
+<tr><td>12</td><td>服务方案策划</td><td>项目管理部</td><td>技术部、质量部</td><td>QES: 8.1</td><td>项目策划书、服务实施方案</td></tr>
+<tr><td>13</td><td>采购与外包方管理</td><td>采购部</td><td>质量部、财务部</td><td>QES: 8.4</td><td>合格供方名录、采购评价记录</td></tr>
+<tr><td>14</td><td>软件研发过程管理</td><td>研发部</td><td>测试部、产品部</td><td>QES: 8.3, 8.5</td><td>研发计划、设计评审记录、版本发布记录</td></tr>
+<tr><td>15</td><td>系统集成项目实施</td><td>交付部</td><td>研发部、客服部</td><td>QES: 8.5</td><td>实施计划、现场实施记录、验收单</td></tr>
+<tr><td>16</td><td>监视和测量资源管理</td><td>质量部</td><td>技术部</td><td>QES: 7.1.5</td><td>计量器具台账、校准证书</td></tr>
+<tr><td>17</td><td>客户满意度监测</td><td>客服部</td><td>市场部、质量部</td><td>QES: 9.1.2</td><td>客户满意度调查、投诉处理记录</td></tr>
+<tr><td>18</td><td>内部审核管理</td><td>质量部</td><td>各部门</td><td>QES: 9.2</td><td>内审计划、内审检查表、内审报告</td></tr>
+<tr><td>19</td><td>管理评审管理</td><td>总经理</td><td>质量部、各部门</td><td>QES: 9.3</td><td>管理评审计划、输入资料、评审报告</td></tr>
+<tr><td>20</td><td>不符合与纠正措施管理</td><td>质量部</td><td>责任部门</td><td>QES: 10.2, 10.3</td><td>不符合报告、纠正措施跟踪记录</td></tr></tbody></table></div></div></div></div>
+                    <div class="mb-6 border border-slate-200 rounded-xl overflow-hidden"><div class="bg-slate-50 px-4 py-3 border-b border-slate-200"><span class="font-medium text-slate-800 text-sm">生产现场一</span></div><div class="p-4 space-y-4"><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">计划审核时间</label><div class="readonly-field">2024年04月</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">实际审核时间</label><div class="readonly-field">----年--月</div></div></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">班次信息</label><div class="readonly-field">班次：1，08:00-17:30；班次：2，18:00-02:00；班次：3，02:00-08:00</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">联系人/电话</label><div class="readonly-field">李主管/13900139000</div></div></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">地址</label><div class="readonly-field">北京市昌平区生产基地</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">涉及产品/过程/活动</label><div class="readonly-field">硬件制造、组装测试</div></div></div><div class="grid grid-cols-4 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">专业代码</label><div class="readonly-field">19.07.00、19.10.00</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">认可机构</label><div class="readonly-field">CNAS、UKAS</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">人数(含承包方)</label><div class="readonly-field">80</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">有效人数</label><div class="readonly-field">75（发子证）</div></div></div><div class="border-t border-slate-200 pt-4 mt-4"><label class="block text-xs font-semibold text-slate-700 mb-2">人天计算（AI底座）</label><div class="grid grid-cols-4 gap-4 mb-2"><div><label class="block text-xs text-slate-500 mb-1">审核准备</label><div class="readonly-field">1.5</div></div><div><label class="block text-xs text-slate-500 mb-1">第一阶段</label><div class="readonly-field">1.0</div></div><div><label class="block text-xs text-slate-500 mb-1">二阶段现场</label><div class="readonly-field">4.0</div></div><div><label class="block text-xs text-slate-500 mb-1">调整比例</label><div class="readonly-field">1.0</div></div></div><div class="bg-blue-50 p-3 rounded-lg flex justify-between items-center"><span class="text-sm text-slate-600">调整后</span><span class="text-xl font-bold text-blue-600">6.5</span></div></div><div class="mt-5 border-t border-slate-200 pt-4"><div class="text-sm font-semibold text-slate-900 mb-3">过程审核策划</div><div class="overflow-x-auto"><table class="process-table border border-slate-200 rounded-lg"><thead><tr><th style="width:50px">序号</th><th style="min-width:220px">过程名称</th><th style="min-width:110px">主责部门</th><th style="min-width:130px">相关部门</th><th style="min-width:160px">涉及标准条款</th><th style="min-width:320px">绩效参数或相关文件</th></tr></thead><tbody><tr><td>1</td><td>生产现场环境与安全条件确认</td><td>生产部</td><td>行政部、质量部</td><td>QES: 7.1, 8.1</td><td>现场环境检查记录、安全巡检表</td></tr>
+<tr><td>2</td><td>生产计划接收与排产</td><td>生产计划部</td><td>仓储部、采购部</td><td>QES: 8.1</td><td>生产计划单、排产记录</td></tr>
+<tr><td>3</td><td>原材料和零部件接收检验</td><td>质量部</td><td>仓储部、采购部</td><td>QES: 8.4, 8.6</td><td>来料检验记录、供应商质量反馈单</td></tr>
+<tr><td>4</td><td>仓储和物料标识管理</td><td>仓储部</td><td>生产部、质量部</td><td>QES: 8.5.2, 8.5.4</td><td>物料台账、标识卡、先进先出记录</td></tr>
+<tr><td>5</td><td>硬件制造作业准备</td><td>生产部</td><td>工艺部、设备部</td><td>QES: 8.5.1</td><td>作业指导书、首件确认记录</td></tr>
+<tr><td>6</td><td>组装过程控制</td><td>生产部</td><td>质量部、工艺部</td><td>QES: 8.5.1</td><td>组装记录、工序检验记录</td></tr>
+<tr><td>7</td><td>焊接和装配特殊过程控制</td><td>生产部</td><td>工艺部、质量部</td><td>QES: 8.5.1</td><td>特殊过程确认记录、参数监控记录</td></tr>
+<tr><td>8</td><td>测试工装和设备点检</td><td>设备部</td><td>生产部、质量部</td><td>QES: 7.1.3, 7.1.5</td><td>设备点检表、维护保养记录</td></tr>
+<tr><td>9</td><td>在线检验和过程放行</td><td>质量部</td><td>生产部</td><td>QES: 8.6</td><td>过程检验记录、放行记录</td></tr>
+<tr><td>10</td><td>成品测试与验证</td><td>测试部</td><td>质量部、生产部</td><td>QES: 8.6</td><td>测试报告、验证记录</td></tr>
+<tr><td>11</td><td>不合格品隔离与处置</td><td>质量部</td><td>生产部、仓储部</td><td>QES: 8.7</td><td>不合格品评审单、返工返修记录</td></tr>
+<tr><td>12</td><td>变更控制与临时偏离管理</td><td>工艺部</td><td>生产部、质量部</td><td>QES: 8.5.6</td><td>变更申请单、偏离批准记录</td></tr>
+<tr><td>13</td><td>产品防护和包装管理</td><td>生产部</td><td>仓储部、质量部</td><td>QES: 8.5.4</td><td>包装规范、产品防护检查记录</td></tr>
+<tr><td>14</td><td>成品入库和出货检验</td><td>仓储部</td><td>质量部、物流部</td><td>QES: 8.6, 8.5.4</td><td>成品入库单、出货检验记录</td></tr>
+<tr><td>15</td><td>追溯性和批次管理</td><td>质量部</td><td>生产部、仓储部</td><td>QES: 8.5.2</td><td>批次追溯记录、序列号台账</td></tr>
+<tr><td>16</td><td>班次交接与异常反馈</td><td>生产部</td><td>质量部、设备部</td><td>QES: 7.4, 8.5.1</td><td>交接班记录、异常处理单</td></tr>
+<tr><td>17</td><td>现场人员能力和上岗资格</td><td>人力资源部</td><td>生产部、质量部</td><td>QES: 7.2</td><td>岗位培训记录、上岗资格清单</td></tr>
+<tr><td>18</td><td>生产现场6S与持续改进</td><td>生产部</td><td>质量部、行政部</td><td>QES: 7.1, 10.3</td><td>6S检查表、改善提案记录</td></tr>
+<tr><td>19</td><td>客户财产和外来物品管理</td><td>仓储部</td><td>生产部、质量部</td><td>QES: 8.5.3</td><td>客户财产清单、外来物品交接记录</td></tr>
+<tr><td>20</td><td>生产绩效监测与数据分析</td><td>生产部</td><td>质量部、计划部</td><td>QES: 9.1, 10.3</td><td>一次合格率统计、生产效率分析表</td></tr></tbody></table></div></div></div></div>
+                </div>
+                <div id="planTab_process" class="plan-tab-content hidden-section"><div class="text-sm font-semibold text-slate-900 mb-3">管理体系过程清单</div><div class="overflow-x-auto"><table class="process-table border border-slate-200 rounded-lg"><thead><tr><th style="width:50px">序号</th><th style="min-width:260px">过程名称</th><th style="min-width:120px">主责部门</th><th style="min-width:120px">相关部门</th><th style="min-width:180px">涉及标准条款</th><th style="min-width:420px">绩效参数或相关文件</th><th style="width:110px">是否为专业过程</th></tr></thead><tbody><tr><td>1</td><td>公司环境分析、相关方要求、风险和机遇、体系策划过程</td><td>最高管理者</td><td>各部门</td><td>QES: 4.1, 4.2, 4.3, 4.4, 6.1, 6.2, 6.3</td><td>《管理过程程序》《质量、环境管理体系的有效性监视和测量控制程序》《内部审核控制程序》《风险和机遇控制程序》《环境因素危险源辨识与评价控制程序》《合规性控制程序》《目标指标管理方案控制程序》《不符合、纠正措施控制程序》《应对风险和机遇控制程序》</td><td class='text-center'>否</td></tr>
+<tr><td>2</td><td>风险和机遇的识别和应对措施过程</td><td>质量管理部门</td><td>各部门</td><td>QES: 6.1</td><td>《风险和机遇控制程序》《环境安全体系监测与测量控制程序》</td><td class='text-center'>否</td></tr>
+<tr><td>3</td><td>质量目标和测量分析和评价管理过程</td><td>质量管理部</td><td>各部门</td><td>QES: 9.1</td><td>《质量目标控制程序》《合规性评价控制程序》《污染物排放浓度/速率》《年度目标方案控制程序》</td><td class='text-center'>否</td></tr>
+<tr><td>4</td><td>方针、目标的策划与实施</td><td>质量管理部</td><td>各部门</td><td>QES: 6.2</td><td>《目标指标管理方案控制程序》</td><td class='text-center'>否</td></tr>
+<tr><td>5</td><td>合规性评价</td><td>质量管理部</td><td>各部门</td><td>QES: 9.1</td><td>《合规性评价控制程序》</td><td class='text-center'>否</td></tr>
+<tr><td>6</td><td>管理评审过程</td><td>最高管理者办公室、财务部</td><td>各部门</td><td>QES: 9.3</td><td>《管理评审控制程序》</td><td class='text-center'>否</td></tr></tbody></table></div></div>
+                <div id="planTab_cert" class="plan-tab-content hidden-section"><div class="flex justify-between items-center mb-4"><div class="text-sm font-semibold text-slate-900">证书内容确认件</div><div class="bg-slate-50 border border-slate-200 text-slate-600 px-3 py-2 rounded-lg text-xs inline-flex items-center gap-2"><i class="fas fa-lock"></i>只读展示，内容来源于策划方案</div></div><div class="border border-slate-200 rounded-xl overflow-hidden mb-6"><div class="bg-slate-50 px-4 py-3 border-b border-slate-200 font-medium text-slate-800 text-sm">证书基础信息</div><div class="p-4 grid grid-cols-2 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">客户名称（中文）</label><div class="readonly-field">华信环境监测技术中心</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">客户名称（英文）</label><div class="readonly-field">Huaxin Environmental Monitoring Technology Center</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">注册地址（中文）</label><div class="readonly-field">北京市海淀区中关村大街1号</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">注册地址（英文）</label><div class="readonly-field">No.1 Zhongguancun Street, Haidian District, Beijing</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">认证地址（中文）</label><div class="readonly-field">北京市海淀区中关村大街1号</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">认证地址（英文）</label><div class="readonly-field">No.1 Zhongguancun Street, Haidian District, Beijing, P.R.China</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">法定代表人</label><div class="readonly-field">张先生</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">统一社会信用代码</label><div class="readonly-field">91110108XXXXXXXXXX</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">认证标准</label><div class="readonly-field">ISO 9001:2015</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">认可标识</label><div class="readonly-field">CNAS</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">是否含附件</label><div class="readonly-field">是</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">是否颁发子证书</label><div class="readonly-field">是</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">是否多场所</label><div class="readonly-field">是</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">证书版本</label><div class="readonly-field">初次认证证书内容确认件</div></div><div class="col-span-2"><label class="block text-xs font-medium text-slate-700 mb-1">认证范围（中文）</label><div class="readonly-field" style="min-height:44px;white-space:normal;">软件开发、系统集成及相关管理活动</div></div><div class="col-span-2"><label class="block text-xs font-medium text-slate-700 mb-1">认证范围（英文）</label><div class="readonly-field" style="min-height:44px;white-space:normal;">Software development, system integration and related management activities</div></div></div></div><div class="border border-slate-200 rounded-xl overflow-hidden"><div class="bg-slate-50 px-4 py-3 border-b border-slate-200 font-medium text-slate-800 text-sm">多场所及子证书信息</div><div class="overflow-x-auto"><table class="process-table"><thead><tr><th style="width:50px">序号</th><th style="min-width:180px">场所名称</th><th style="min-width:160px">统一社会信用代码</th><th style="min-width:260px">场所地址</th><th style="min-width:180px">涉及产品/过程/活动</th><th style="width:100px">是否子证书</th><th style="min-width:120px">备注</th></tr></thead><tbody><tr><td>1</td><td>运营地址（中心职能）</td><td>91110108XXXXXXXXXX</td><td>北京市海淀区中关村大街1号</td><td>软件开发、系统集成</td><td class="text-center">否</td><td>-</td></tr><tr><td>2</td><td>生产现场一</td><td>91110108XXXXXXXX01</td><td>北京市昌平区生产基地</td><td>硬件制造</td><td class="text-center">是</td><td>颁发子证书</td></tr><tr><td>3</td><td>研发中心</td><td>91110108XXXXXXXX02</td><td>北京市朝阳区研发大厦</td><td>软件研发</td><td class="text-center">是</td><td>颁发子证书</td></tr><tr><td>4</td><td>分公司</td><td>91110108XXXXXXXX03</td><td>上海市浦东新区</td><td>销售服务</td><td class="text-center">否</td><td>-</td></tr><tr><td>5</td><td>办事处</td><td>91110108XXXXXXXX04</td><td>广州市天河区</td><td>客户服务</td><td class="text-center">否</td><td>-</td></tr></tbody></table></div></div></div>
+            </div>
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-end"><button onclick="closePlanModal()" class="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-all shadow-sm">关闭</button></div>
+        </div>
+    </div>    <script>
+        // 全局状态 - 默认开启场所模式
+        let isVenueMode = true;
+        let currentSiteId = null;
+        let selectedPersonnel = new Set();
+        let globalSelectedPersonnel = [];
+        let assignedPersonnel = [];
+        let sitePersonnelMap = new Map();
+
+        // 当前登录人所属公司（东北区域/辽宁公司）
+        const currentUserCompany = '辽宁公司';
+        const currentUserRegion = '东北区域';
+        
+        // 预设场所数据 - 添加子证字段
+        const venues = [
+            { id: 'site_0', name: "北京市地铁运营有限公司（总部）", isMain: true, certSystem: "QMS+EMS", subCert: "子证001", qmsPeople: 200, emsPeople: 200, address: "北京市西城区北礼士路甲38号", auditDays: 0 },
+            { id: 'site_1', name: "北京市地铁运营有限公司运营一分公司", isMain: false, certSystem: "QMS", subCert: "子证002", qmsPeople: 180, emsPeople: null, address: "北京市昌平区东三旗太平庄车辆段", auditDays: 0 },
+            { id: 'site_2', name: "北京市地铁运营有限公司运营二分公司", isMain: false, certSystem: "EMS", subCert: null, qmsPeople: null, emsPeople: 160, address: "北京市石景山区杨庄大街18号", auditDays: 0 },
+            { id: 'site_3', name: "北京市地铁运营有限公司运营三分公司", isMain: false, certSystem: "QMS+EMS", subCert: "子证003", qmsPeople: 150, emsPeople: 150, address: "北京市海淀区德胜门西大街甲5号", auditDays: 0 }
+        ];
+        
+        // 按认证领域分组的专业代码
+        const requiredProfessionalCodes = {
+            QMS: [
+                { code: "19.01.01", desc: "办公设备的制造" },
+                { code: "19.07.00", desc: "计算机及外部设备的制造" },
+                { code: "19.08.00", desc: "通信设备的制造" }
+            ],
+            EMS: [
+                { code: "19.03.00", desc: "电动机、发电机及变压器的制造" },
+                { code: "19.12.00", desc: "电池和蓄电池的制造" }
+            ]
+        };
+        
+        // 人员资质数据库 - 东北区域下各公司人员
+        const personnelDB = [
+            { 
+                name: "武荣刚", phone: "13661227694", cqc: "CQC21458", 
+                qualification: "Q审核员(2022-N1QMS-6028373)", defaultRole: "组长", 
+                workUnit: "辽宁公司", region: "东北区域", type: "专职", 
+                codes: { QMS: ["19.01.01", "19.07.00", "19.08.00"], EMS: ["19.03.00"] }, 
+                isBusy: false, busyPeriod: null, remainingDays: 88 
+            },
+            { 
+                name: "杨永峰", phone: "13661227694", cqc: "CQC21459", 
+                qualification: "Q审核员(2022-N1QMS-6028374)", defaultRole: "组长", 
+                workUnit: "辽宁公司", region: "东北区域", type: "专职", 
+                codes: { QMS: ["19.01.01", "19.07.00"], EMS: [] }, 
+                isBusy: true, busyPeriod: "2026-04-01 至 2026-04-30", remainingDays: 45 
+            },
+            { 
+                name: "王洪伟", phone: "13800138001", cqc: "CQC10852", 
+                qualification: "Q高级审核员(2021-N1QMS-5012345)", defaultRole: "组员", 
+                workUnit: "黑龙江公司", region: "东北区域", type: "兼职", 
+                codes: { QMS: ["19.07.00", "19.08.00"], EMS: ["19.03.00", "19.12.00"] }, 
+                isBusy: true, busyPeriod: "2026-04-10 至 2026-04-20", remainingDays: 120 
+            },
+            { 
+                name: "周志兴", phone: "13800138002", cqc: "CQC10923", 
+                qualification: "Q审核员(2023-N1QMS-7015678)", defaultRole: "组员", 
+                workUnit: "辽宁公司", region: "东北区域", type: "专职", 
+                codes: { QMS: ["19.01.01", "19.08.00"], EMS: ["19.03.00"] }, 
+                isBusy: false, busyPeriod: null, remainingDays: 92 
+            },
+            { 
+                name: "张爱兵", phone: "13800138003", cqc: "CQC11045", 
+                qualification: "Q/EMS审核员", defaultRole: "组员", 
+                workUnit: "黑龙江公司", region: "东北区域", type: "兼职", 
+                codes: { QMS: ["19.01.01", "19.07.00", "19.08.00"], EMS: ["19.03.00", "19.12.00"] }, 
+                isBusy: false, busyPeriod: null, remainingDays: 156 
+            },
+            { 
+                name: "沈书华", phone: "13683124756", cqc: "CQC08017", 
+                qualification: "Q审核员(2024-N1QMS-7012900)", defaultRole: "组员", 
+                workUnit: "吉林公司", region: "东北区域", type: "专职", 
+                codes: { QMS: ["19.08.00"], EMS: ["19.12.00"] }, 
+                isBusy: true, busyPeriod: "2026-04-05 至 2026-04-12", remainingDays: 78 
+            },
+            { 
+                name: "黄起超", phone: "13501320752", cqc: "CQC10634", 
+                qualification: "Q审核员(2024-N1QMS-6015922)", defaultRole: "组员", 
+                workUnit: "辽宁公司", region: "东北区域", type: "专职", 
+                codes: { QMS: ["19.01.01", "19.07.00"], EMS: ["19.03.00", "19.12.00"] }, 
+                isBusy: false, busyPeriod: null, remainingDays: 134 
+            },
+            { 
+                name: "娄杰", phone: "13910311490", cqc: "CQC10601", 
+                qualification: "Q审核员(2024-N1QMS-4014327)", defaultRole: "组员", 
+                workUnit: "吉林公司", region: "东北区域", type: "专职", 
+                codes: { QMS: ["19.01.01", "19.07.00", "19.08.00"], EMS: ["19.12.00"] }, 
+                isBusy: false, busyPeriod: null, remainingDays: 167 
+            }
+        ];
+        
+        // 初始化 - 默认显示场所模式
+        document.addEventListener('DOMContentLoaded', function() {
+            initTimeSelects();
+            initSiteCards();
+            updateLeadAuditorOptions();
+            updateSelectedPersonnelDisplay();
+        });
+
+        // 初始化静态时间选择器
+        function initTimeSelects() {
+            const startIds = ['auditStartPeriod', 'nonVenueStartPeriod'];
+            const endIds = ['auditEndPeriod', 'nonVenueEndPeriod'];
+
+            startIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = generateTimeOptions(el.value, true);
+            });
+
+            endIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = generateTimeOptions(el.value, false);
+            });
+        }
+        
+        // 计算人员在各体系下的覆盖情况
+        function getSystemCoverage(personCodes) {
+            const result = {};
+            let totalMatched = 0;
+            let totalRequired = 0;
+            
+            for (const [system, codes] of Object.entries(requiredProfessionalCodes)) {
+                const requiredSet = new Set(codes.map(c => c.code));
+                const personSet = new Set(personCodes[system] || []);
+                const matched = [];
+                const missing = [];
+                
+                requiredSet.forEach(code => {
+                    if (personSet.has(code)) matched.push(code);
+                    else missing.push(code);
+                });
+                
+                totalMatched += matched.length;
+                totalRequired += requiredSet.size;
+                
+                if (matched.length === 0) {
+                    result[system] = { status: 'none', matched: 0, total: requiredSet.size, matchedCodes: matched, missingCodes: missing };
+                } else if (missing.length === 0) {
+                    result[system] = { status: 'full', matched: matched.length, total: requiredSet.size, matchedCodes: matched, missingCodes: missing };
+                } else {
+                    result[system] = { status: 'partial', matched: matched.length, total: requiredSet.size, matchedCodes: matched, missingCodes: missing };
+                }
+            }
+            
+            result.totalMatched = totalMatched;
+            result.totalRequired = totalRequired;
+            result.isFullCoverage = totalMatched === totalRequired && totalRequired > 0;
+            
+            return result;
+        }
+        
+        // 计算已选人员的汇总覆盖情况
+ function renderPersonSystemCoverage(personCodes) {
+            const coverage = getSystemCoverage(personCodes);
+            let html = '<div class="person-system-coverage">';
+            
+            const systemKeys = Object.keys(requiredProfessionalCodes);
+                
+            for (const system of systemKeys) {
+                const data = coverage[system];
+                if (!data || data.total === 0) continue;
+                
+                const tagClass = data.status === 'full' ? 'system-tag-full' : data.status === 'partial' ? 'system-tag-partial' : 'system-tag-none';
+                const icon = data.status === 'full' ? 'fa-check-circle' : data.status === 'partial' ? 'fa-adjust' : 'fa-times-circle';
+                html += `
+                    <span class="person-system-tag ${tagClass}" title="${system}体系：覆盖${data.matched}/${data.total}">
+                        <i class="fas ${icon}"></i> ${system} ${data.matched}/${data.total}
+                    </span>
+                `;
+            }
+            
+            html += '</div>';
+            return html;
+        }
+        
+        // 人天修约函数
+        function roundManDays(value) {
+            const decimal = value % 1;
+            if (decimal < 0.25) return Math.floor(value);
+            else if (decimal < 0.75) return Math.floor(value) + 0.5;
+            else return Math.ceil(value);
+        }
+        
+        // 将时间字符串解析为分钟数
+        function parseTimeToMinutes(timeStr) {
+            if (!timeStr || timeStr === '0.5') return 8 * 60; // 兼容旧值，默认08:00
+            const [h, m] = timeStr.split(':').map(Number);
+            return h * 60 + m;
+        }
+
+        // 生成15分钟间隔时间选项
+        function generateTimeOptions(selectedValue, isStart) {
+            const defaultVal = isStart ? '08:00' : '17:00';
+            const val = selectedValue || defaultVal;
+            let options = '';
+            for (let h = 8; h <= 17; h++) {
+                for (let m = 0; m < 60; m += 15) {
+                    const time = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+                    const selected = time === val ? 'selected' : '';
+                    options += `<option value="${time}" ${selected}>${time}</option>`;
+                }
+            }
+            return options;
+        }
+
+        // 计算人天 - 15分钟颗粒度版本（基于8小时工作制 08:00-17:00）
+        function calculateManDaysWithPeriod(startDate, endDate, startTime, endTime) {
+            if (!startDate || !endDate) return 0;
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            if (start > end) return 0;
+
+            const startMinutes = parseTimeToMinutes(startTime);
+            const endMinutes = parseTimeToMinutes(endTime);
+
+            const diffTime = end - start;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+            const WORK_START = 8 * 60; // 08:00
+            const WORK_END = 17 * 60; // 17:00
+            const WORK_MINUTES_PER_DAY = 8 * 60; // 8小时为1天
+
+            if (diffDays === 0) {
+                // 同一天：计算实际工作时长
+                const workedMinutes = Math.max(0, Math.min(WORK_END, endMinutes) - Math.max(WORK_START, startMinutes));
+                return Math.max(0.5, workedMinutes / WORK_MINUTES_PER_DAY);
+            }
+
+            // 跨天
+            const middleDays = diffDays - 1;
+            const firstDayMinutes = Math.max(0, WORK_END - Math.max(WORK_START, startMinutes));
+            const lastDayMinutes = Math.max(0, Math.min(WORK_END, endMinutes) - WORK_START);
+
+            return middleDays + (firstDayMinutes / WORK_MINUTES_PER_DAY) + (lastDayMinutes / WORK_MINUTES_PER_DAY);
+        }
+        
+        // 检查时间冲突
+        function checkTimeConflict(person, startDate, endDate) {
+            if (!person.isBusy || !person.busyPeriod || !startDate || !endDate) return null;
+            
+            const busyMatch = person.busyPeriod.match(/(\d{4}-\d{2}-\d{2})\s*至\s*(\d{4}-\d{2}-\d{2})/);
+            if (!busyMatch) return null;
+            
+            const busyStart = new Date(busyMatch[1]);
+            const busyEnd = new Date(busyMatch[2]);
+            const planStart = new Date(startDate);
+            const planEnd = new Date(endDate);
+            
+            if (planStart <= busyEnd && planEnd >= busyStart) {
+                return person.busyPeriod;
+            }
+            return null;
+        }
+        
+        // 检查人员是否已分配在其他场所
+        function getPersonAssignedInfo(cqc) {
+            if (!isVenueMode || !currentSiteId) return null;
+            
+            for (const [siteId, list] of sitePersonnelMap) {
+                if (siteId === currentSiteId) continue;
+                const person = list.find(p => p.cqc === cqc);
+                if (person) {
+                    const site = venues.find(v => v.id === siteId);
+                    return {
+                        siteName: site ? site.name : '其他场所',
+                        dateRange: person.dateStart && person.dateEnd ? 
+                            `${person.dateStart} 至 ${person.dateEnd}` : '未设置时间'
+                    };
+                }
+            }
+            return null;
+        }
+        
+        function updateLeadAuditorOptions() {
+            const select = document.getElementById('leadAuditorSelect');
+            const currentVal = select.value;
+            let allPersonnel = [];
+            if (isVenueMode) allPersonnel = globalSelectedPersonnel;
+            else allPersonnel = assignedPersonnel;
+            
+            const uniquePersonnel = allPersonnel.filter((p, idx, self) => idx === self.findIndex(t => t.cqc === p.cqc));
+            const leadAuditors = uniquePersonnel.filter(p => p.role === '组长' || p.defaultRole === '组长');
+            
+            let html = '<option value="">请选择审核组长</option>';
+            leadAuditors.forEach(p => {
+                html += `<option value="${p.cqc}" ${currentVal === p.cqc ? 'selected' : ''}>${p.name} (${p.cqc})</option>`;
+            });
+            select.innerHTML = html;
+        }
+        
+        function updateSiteStats(siteId) {
+            const card = document.getElementById(siteId);
+            if (!card) return;
+            const startInput = card.querySelector('.site-date-start');
+            const endInput = card.querySelector('.site-date-end');
+            const startPeriod = card.querySelector('.site-start-period');
+            const endPeriod = card.querySelector('.site-end-period');
+            const statsContainer = card.querySelector('.site-stats-row');
+            const venue = venues.find(v => v.id === siteId);
+            const totalDays = venue ? venue.auditDays : 0;
+            const personnelList = sitePersonnelMap.get(siteId) || [];
+            
+            let assignedDays = 0;
+            if (personnelList.length > 0 && startInput && endInput && startInput.value && endInput.value) {
+                assignedDays = calculateManDaysWithPeriod(startInput.value, endInput.value, startPeriod ? startPeriod.value : '08:00', endPeriod ? endPeriod.value : '17:00');
+            }
+            const roundedAssigned = roundManDays(assignedDays);
+            const unassignedDays = roundManDays(totalDays - roundedAssigned);
+            
+            const totalEl = statsContainer.querySelector('.stat-total');
+            const assignedEl = statsContainer.querySelector('.stat-assigned');
+            const unassignedEl = statsContainer.querySelector('.stat-unassigned');
+            
+            if (totalEl) totalEl.textContent = totalDays.toFixed(1);
+            if (assignedEl) assignedEl.textContent = roundedAssigned.toFixed(1);
+            if (unassignedEl) {
+                unassignedEl.textContent = unassignedDays.toFixed(1);
+                if (unassignedDays <= 0) unassignedEl.className = 'site-stat-value stat-unassigned text-green-600';
+                else if (unassignedDays <= 0.5) unassignedEl.className = 'site-stat-value stat-unassigned text-amber-600';
+                else unassignedEl.className = 'site-stat-value stat-unassigned text-red-600';
+            }
+        }
+        
+        function initSiteCards() {
+            const container = document.getElementById('siteCardsContainer');
+            container.innerHTML = '';
+            venues.forEach((venue, index) => {
+                const card = createSiteCard(venue, index);
+                container.appendChild(card);
+                if (!sitePersonnelMap.has(venue.id)) sitePersonnelMap.set(venue.id, []);
+                updateSiteStats(venue.id);
+            });
+        }
+        
+        // 修改：场所卡片增加子证标识显示，删除认证体系字段
+        function createSiteCard(venue, index) {
+            const card = document.createElement('div');
+            card.className = 'site-card';
+            card.id = venue.id;
+            card.dataset.siteId = venue.id;
+            
+            const personnelList = sitePersonnelMap.get(venue.id) || [];
+            const hasPersonnel = personnelList.length > 0;
+            const totalDays = venue.auditDays || 0;
+            const assignedDays = 0;
+            const unassignedDays = totalDays;
+            
+            // 子证标识HTML
+            const subCertHtml = venue.subCert ? `<span class="sub-cert-tag"><i class="fas fa-certificate mr-1"></i>${venue.subCert}</span>` : '';
+            
+            card.innerHTML = `
+                <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between rounded-t-xl">
+                    <div class="flex items-center gap-2 flex-wrap flex-1">
+                        ${venue.isMain ? '<span class="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 text-xs rounded-md font-medium border border-green-200">总部</span>' : '<span class="inline-flex items-center px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded-md font-medium border border-blue-200">场所</span>'}
+                        <span class="font-semibold text-slate-800 text-sm">${venue.name}</span>
+                        <span class="cert-system-tag">${venue.certSystem}</span>
+                        ${subCertHtml}
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="site-stats-row">
+                            <div class="site-stat-item-inline">
+                                <span class="site-stat-label">审核人员：</span>
+                                <span class="site-stat-value text-blue-600 stat-total">${totalDays.toFixed(1)}</span>
+                            </div>
+                            <div class="h-4 w-px bg-slate-300 mx-2"></div>
+                            <div class="site-stat-item-inline">
+                                <span class="site-stat-label">已分配：</span>
+                                <span class="site-stat-value text-blue-600 stat-assigned">${assignedDays.toFixed(1)}</span>
+                            </div>
+                            <div class="h-4 w-px bg-slate-300 mx-2"></div>
+                            <div class="site-stat-item-inline">
+                                <span class="site-stat-label">未分配：</span>
+                                <span class="site-stat-value stat-unassigned ${unassignedDays > 0 ? 'text-amber-600' : 'text-green-600'}">${unassignedDays.toFixed(1)}</span>
+                            </div>
+                        </div>
+                        <button onclick="deleteSitePersonnel('${venue.id}')" class="text-red-500 hover:text-red-700 text-sm ${!hasPersonnel ? 'hidden-section' : ''}" id="clearBtn_${venue.id}">
+                            <i class="fas fa-trash-alt mr-1"></i>清空
+                        </button>
+                        <button onclick="openSitePersonnelModal('${venue.id}')" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs font-medium shadow-sm shadow-blue-200 transition-all">
+                            <i class="fas fa-user-plus mr-1"></i>分配人员
+                        </button>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <div class="grid grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">场所地址</label>
+                            <div class="readonly-field text-xs">${venue.address}</div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">有效人数</label>
+                            <div class="readonly-field text-xs">${venue.qmsPeople || venue.emsPeople || 0}</div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">审核日期区间</label>
+                            <div class="flex items-center gap-2">
+                                <div class="date-time-group">
+                                    <input type="date" class="editable-field site-date-start" style="width: 130px;" onchange="updateSiteDate('${venue.id}')">
+                                    <select class="time-period-select site-start-period" style="width: 80px;" onchange="updateSiteDate('${venue.id}')">
+                                        ${generateTimeOptions('', true)}
+                                    </select>
+                                </div>
+                                <span class="text-slate-400">至</span>
+                                <div class="date-time-group">
+                                    <input type="date" class="editable-field site-date-end" style="width: 130px;" onchange="updateSiteDate('${venue.id}')">
+                                    <select class="time-period-select site-end-period" style="width: 80px;" onchange="updateSiteDate('${venue.id}')">
+                                        ${generateTimeOptions('', false)}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="personnelSection_${venue.id}" class="${!hasPersonnel ? 'hidden-section' : ''}">
+                        <div class="overflow-x-auto">
+                            <table class="process-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px">序号</th>
+                                        <th>姓名</th>
+                                        <th style="width: 100px">组内身份</th>
+                                        <th>资格及注册编号</th>
+                                        <th style="width: 100px">CQC编号</th>
+                                        <th>联系电话</th>
+                                        <th style="width: 280px">审核日期区间</th>
+                                        <th style="width: 80px">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="personnelBody_${venue.id}">
+                                    ${renderPersonnelRows(personnelList, venue.id)}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    ${!hasPersonnel ? `
+                    <div class="text-center py-8 text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-300" id="emptyState_${venue.id}">
+                        <i class="fas fa-users text-3xl mb-2"></i>
+                        <p class="text-sm">暂无分配人员，请点击右上角"分配人员"按钮添加</p>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+            return card;
+        }
+        
+        function renderPersonnelRows(personnelList, siteId) {
+            if (!personnelList || personnelList.length === 0) return '';
+            return personnelList.map((person, idx) => `
+                <tr data-person-id="${person.cqc}">
+                    <td>${idx + 1}</td>
+                    <td class="font-medium text-slate-900">${person.name}</td>
+                    <td>
+                        <select class="editable-field py-1" style="min-width: 80px;" onchange="updatePersonRole('${siteId}', '${person.cqc}', this.value)">
+                            <option value="组长" ${person.role === '组长' ? 'selected' : ''}>组长</option>
+                            <option value="分组长" ${person.role === '分组长' ? 'selected' : ''}>分组长</option>
+                            <option value="组员" ${person.role === '组员' || !person.role ? 'selected' : ''}>组员</option>
+                            <option value="技术专家" ${person.role === '技术专家' ? 'selected' : ''}>技术专家</option>
+                        </select>
+                    </td>
+                    <td class="text-xs">${person.qualification}</td>
+                    <td class="font-mono text-xs">${person.cqc}</td>
+                    <td>${person.phone}</td>
+                    <td>
+                        <div class="date-time-group">
+                            <input type="date" class="editable-field py-1 text-xs" style="width: 110px;" value="${person.dateStart || ''}" onchange="updateSitePersonDate('${siteId}', '${person.cqc}', 'start', this.value)">
+                            <select class="time-period-select py-1 text-xs" style="width: 80px; height: 32px;" onchange="updateSitePersonPeriod('${siteId}', '${person.cqc}', 'start', this.value)">
+                                ${generateTimeOptions(person.startPeriod, true)}
+                            </select>
+                            <span class="text-slate-400">至</span>
+                            <input type="date" class="editable-field py-1 text-xs" style="width: 110px;" value="${person.dateEnd || ''}" onchange="updateSitePersonDate('${siteId}', '${person.cqc}', 'end', this.value)">
+                            <select class="time-period-select py-1 text-xs" style="width: 80px; height: 32px;" onchange="updateSitePersonPeriod('${siteId}', '${person.cqc}', 'end', this.value)">
+                                ${generateTimeOptions(person.endPeriod, false)}
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <button onclick="removePersonFromSite('${siteId}', '${person.cqc}')" class="text-red-500 hover:text-red-700">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function openPersonnelModal() {
+            currentSiteId = null;
+            selectedPersonnel.clear();
+            globalSelectedPersonnel.forEach(p => selectedPersonnel.add(p.cqc));
+            
+            document.getElementById('filterConditionsSection').classList.remove('hidden-section');
+            
+            document.getElementById('personnelOverlay').classList.add('show');
+            document.getElementById('personnelModal').classList.add('open');
+            renderPersonnelList();
+        }
+        
+        function openSitePersonnelModal(siteId) {
+            currentSiteId = siteId;
+            selectedPersonnel.clear();
+            const siteList = sitePersonnelMap.get(siteId) || [];
+            siteList.forEach(p => selectedPersonnel.add(p.cqc));
+            
+            document.getElementById('filterConditionsSection').classList.add('hidden-section');
+            
+            const site = venues.find(v => v.id === siteId);
+            document.querySelector('#personnelModal h3').textContent = site ? `选择审核人员 - ${site.name}` : '选择审核人员';
+            
+            document.getElementById('personnelOverlay').classList.add('show');
+            document.getElementById('personnelModal').classList.add('open');
+            renderSitePersonnelList();
+        }
+        
+        function closePersonnelModal() {
+            document.getElementById('personnelOverlay').classList.remove('show');
+            document.getElementById('personnelModal').classList.remove('open');
+            
+            document.querySelector('#personnelModal h3').textContent = '选择审核人员';
+            
+            currentSiteId = null;
+            selectedPersonnel.clear();
+            document.getElementById('personnelSearch').value = '';
+            document.getElementById('filterCity').value = '';
+            document.getElementById('filterQualification').value = '';
+            document.getElementById('filterType').value = '';
+            document.getElementById('filterStartDate').value = '';
+            document.getElementById('filterEndDate').value = '';
+        }
+        
+        function getSortedPersonnelList(personnelList, planStartDate, planEndDate) {
+            return personnelList.map(p => ({
+                ...p,
+                coverage: getSystemCoverage(p.codes),
+                timeConflict: planStartDate && planEndDate ? checkTimeConflict(p, planStartDate, planEndDate) : null,
+                assignedInfo: getPersonAssignedInfo(p.cqc)
+            })).sort((a, b) => {
+                if (b.coverage.isFullCoverage && !a.coverage.isFullCoverage) return 1;
+                if (!b.coverage.isFullCoverage && a.coverage.isFullCoverage) return -1;
+                return a.name.localeCompare(b.name);
+            });
+        }
+        
+        // 修改：统一标签样式和对齐，确保所有标签水平居中对齐；外部单位人员显示审批调用标识
+        function renderPersonnelList() {
+            const container = document.getElementById('personnelList');
+            const search = document.getElementById('personnelSearch').value.toLowerCase();
+            const cityFilter = document.getElementById('filterCity').value;
+            const qualFilter = document.getElementById('filterQualification').value;
+            const typeFilter = document.getElementById('filterType').value;
+            const startDate = document.getElementById('filterStartDate').value;
+            const endDate = document.getElementById('filterEndDate').value;
+
+            let filtered = personnelDB.filter(p => {
+                const matchSearch = p.name.toLowerCase().includes(search) || 
+                                   p.cqc.toLowerCase().includes(search) ||
+                                   p.qualification.toLowerCase().includes(search) ||
+                                   (p.codes.QMS && p.codes.QMS.some(c => c.includes(search))) ||
+                                   (p.codes.EMS && p.codes.EMS.some(c => c.includes(search)));
+                const matchCompany = !cityFilter || p.workUnit === cityFilter;
+                const matchQual = !qualFilter || p.qualification.includes(qualFilter);
+                const matchType = !typeFilter || p.type === typeFilter;
+                return matchSearch && matchCompany && matchQual && matchType;
+            });
+
+            // 传入筛选的时间进行冲突检测
+            filtered = getSortedPersonnelList(filtered, startDate, endDate);
+
+            container.innerHTML = filtered.map(person => {
+                const isSelected = selectedPersonnel.has(person.cqc);
+                const isExternal = person.workUnit !== currentUserCompany;
+                let daysClass = '';
+                if (person.remainingDays <= 30) daysClass = 'danger';
+                else if (person.remainingDays <= 60) daysClass = 'warning';
+
+                // 时间冲突检测
+                let conflictBadge = '';
+                if (person.timeConflict) {
+                    conflictBadge = `<span class="conflict-badge"><i class="fas fa-exclamation-triangle mr-1"></i>时间冲突：${person.timeConflict}</span>`;
+                }
+
+                let assignedBadge = '';
+                if (!isVenueMode && person.assignedInfo) {
+                    assignedBadge = `<span class="site-assigned-info"><i class="fas fa-map-marker-alt mr-1"></i>已分配：${person.assignedInfo.siteName}</span>`;
+                }
+
+                // 使用full-coverage-tag类统一全覆盖标签样式
+                const fullCoverageBadge = person.coverage.isFullCoverage ? 
+                    '<span class="full-coverage-tag"><i class="fas fa-check mr-1"></i>全覆盖</span>' : '';
+
+                // 外部单位标识
+                const externalBadge = isExternal ? 
+                    '<span class="external-badge"><i class="fas fa-lock mr-1"></i>经审批调用</span>' : '';
+
+                const clickAction = `togglePersonSelection('${person.cqc}')`;
+
+                return `
+                <div class="person-card ${isSelected ? 'selected' : ''}" 
+                     onclick="${clickAction}"
+                     data-cqc="${person.cqc}">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="tag-container" style="flex-wrap: wrap; height: auto; gap: 4px;">
+                            <span class="font-semibold text-slate-900" style="height: 24px; display: inline-flex; align-items: center; margin-right: 4px;">${person.name}</span>
+                            <span class="remaining-days-badge ${daysClass}">${person.remainingDays}天/180天</span>
+                            <span class="personnel-tag ${person.type === '专职' ? 'tag-fulltime' : 'tag-parttime'}">${person.type}</span>
+                            ${person.qualification.includes('Q') ? '<span class="personnel-tag tag-qms">QMS</span>' : ''}
+                            ${conflictBadge}
+                            ${assignedBadge}
+                            ${fullCoverageBadge}
+                            ${externalBadge}
+                        </div>
+                        ${isSelected ? '<i class="fas fa-check-circle text-blue-600 text-xl"></i>' : '<i class="far fa-circle text-slate-300 text-xl"></i>'}
+                    </div>
+                    <div class="text-xs text-slate-500 space-y-1 mb-2">
+                        <div class="flex justify-between">
+                            <span>CQC编号：${person.cqc}</span>
+                            <span>默认角色：${person.defaultRole}</span>
+                        </div>
+                        <div>资格：${person.qualification}</div>
+                        <div class="flex justify-between">
+                            <span>工作单位：${person.region}/${person.workUnit}</span>
+                        </div>
+                    </div>
+                    ${renderPersonSystemCoverage(person.codes)}
+                </div>
+                `;
+            }).join('');
+
+            document.getElementById('selectedCount').textContent = selectedPersonnel.size;
+        }
+        // 修改：统一标签样式和对齐
+        function renderSitePersonnelList() {
+            const container = document.getElementById('personnelList');
+            if (globalSelectedPersonnel.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-300">
+                        <i class="fas fa-info-circle text-3xl mb-2"></i>
+                        <p class="text-sm">暂无已选择的人员，请先在"指派审核人员"处点击"选择审核人员"按钮添加人员</p>
+                    </div>
+                `;
+                document.getElementById('selectedCount').textContent = '0';
+                return;
+            }
+
+            const startDate = document.getElementById('filterStartDate').value;
+            const endDate = document.getElementById('filterEndDate').value;
+
+            const sortedList = getSortedPersonnelList([...globalSelectedPersonnel], startDate, endDate);
+
+            container.innerHTML = sortedList.map(person => {
+                const isSelected = selectedPersonnel.has(person.cqc);
+                const isExternal = person.workUnit !== currentUserCompany;
+                let daysClass = '';
+                if (person.remainingDays <= 30) daysClass = 'danger';
+                else if (person.remainingDays <= 60) daysClass = 'warning';
+
+                let conflictBadge = '';
+                if (person.timeConflict) {
+                    conflictBadge = `<span class="conflict-badge"><i class="fas fa-exclamation-triangle mr-1"></i>时间冲突：${person.timeConflict}</span>`;
+                }
+
+                let assignedBadge = '';
+                if (person.assignedInfo) {
+                    assignedBadge = `<span class="site-assigned-info"><i class="fas fa-map-marker-alt mr-1"></i>已在：${person.assignedInfo.siteName} (${person.assignedInfo.dateRange})</span>`;
+                }
+
+                const fullCoverageBadge = person.coverage.isFullCoverage ? 
+                    '<span class="full-coverage-tag"><i class="fas fa-check mr-1"></i>全覆盖</span>' : '';
+
+                const externalBadge = isExternal ? 
+                    '<span class="external-badge"><i class="fas fa-lock mr-1"></i>经审批调用</span>' : '';
+
+                const clickAction = `togglePersonSelection('${person.cqc}')`;
+
+                return `
+                <div class="person-card ${isSelected ? 'selected' : ''}" 
+                     onclick="${clickAction}"
+                     data-cqc="${person.cqc}">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="tag-container" style="flex-wrap: wrap; height: auto; gap: 4px;">
+                            <span class="font-semibold text-slate-900" style="height: 24px; display: inline-flex; align-items: center; margin-right: 4px;">${person.name}</span>
+                            <span class="remaining-days-badge ${daysClass}">${person.remainingDays}天/180天</span>
+                            <span class="personnel-tag ${person.type === '专职' ? 'tag-fulltime' : 'tag-parttime'}">${person.type}</span>
+                            ${person.qualification.includes('Q') ? '<span class="personnel-tag tag-qms">QMS</span>' : ''}
+                            ${conflictBadge}
+                            ${assignedBadge}
+                            ${fullCoverageBadge}
+                            ${externalBadge}
+                        </div>
+                        ${isSelected ? '<i class="fas fa-check-circle text-blue-600 text-xl"></i>' : '<i class="far fa-circle text-slate-300 text-xl"></i>'}
+                    </div>
+                    <div class="text-xs text-slate-500 space-y-1 mb-2">
+                        <div class="flex justify-between">
+                            <span>CQC编号：${person.cqc}</span>
+                            <span>默认角色：${person.defaultRole}</span>
+                        </div>
+                        <div>资格：${person.qualification}</div>
+                        <div class="flex justify-between">
+                            <span>工作单位：${person.region}/${person.workUnit}</span>
+                        </div>
+                    </div>
+                    ${renderPersonSystemCoverage(person.codes)}
+                </div>
+                `;
+            }).join('');
+
+            document.getElementById('selectedCount').textContent = selectedPersonnel.size;
+        }
+        function filterPersonnel() {
+            if (isVenueMode && currentSiteId) renderSitePersonnelList();
+            else renderPersonnelList();
+        }
+        
+        function togglePersonSelection(cqc) {
+            if (selectedPersonnel.has(cqc)) selectedPersonnel.delete(cqc);
+            else selectedPersonnel.add(cqc);
+            
+            if (isVenueMode && currentSiteId) renderSitePersonnelList();
+            else renderPersonnelList();
+        }
+        
+        function confirmPersonnelSelection() {
+            const selectedPeople = Array.from(selectedPersonnel).map(cqc => {
+                return personnelDB.find(p => p.cqc === cqc);
+            }).filter(p => p);
+            
+            if (selectedPeople.length === 0) {
+                alert('请至少选择一名人员');
+                return;
+            }
+            
+            if (isVenueMode && currentSiteId) {
+                let siteList = sitePersonnelMap.get(currentSiteId) || [];
+                const existingCqcs = siteList.map(p => p.cqc);
+                const newCqcs = selectedPeople.map(p => p.cqc);
+                siteList = siteList.filter(p => newCqcs.includes(p.cqc));
+                
+                const card = document.getElementById(currentSiteId);
+                const startDate = card.querySelector('.site-date-start').value;
+                const endDate = card.querySelector('.site-date-end').value;
+                const startPeriod = card.querySelector('.site-start-period').value;
+                const endPeriod = card.querySelector('.site-end-period').value;
+                
+                selectedPeople.forEach(person => {
+                    if (!existingCqcs.includes(person.cqc)) {
+                        siteList.push({ ...person, role: person.defaultRole, dateStart: startDate, dateEnd: endDate, startPeriod, endPeriod });
+                    }
+                });
+                sitePersonnelMap.set(currentSiteId, siteList);
+                refreshSiteCard(currentSiteId);
+                updateSiteStats(currentSiteId);
+            } else if (isVenueMode && !currentSiteId) {
+                globalSelectedPersonnel = selectedPeople.map(p => ({ ...p, role: p.defaultRole }));
+                updateSelectedPersonnelDisplay();
+            } else {
+                const startDate = document.getElementById('nonVenueAuditStartDate').value;
+                const endDate = document.getElementById('nonVenueAuditEndDate').value;
+                const startPeriod = document.getElementById('nonVenueStartPeriod').value;
+                const endPeriod = document.getElementById('nonVenueEndPeriod').value;
+                
+                assignedPersonnel = selectedPeople.map(p => ({
+                    ...p, role: p.defaultRole, venue: '', dateStart: startDate, dateEnd: endDate, startPeriod, endPeriod
+                }));
+                renderNonVenuePersonnel();
+                updateNonVenueStats();
+                updateSelectedPersonnelDisplay();
+            }
+            
+            updateLeadAuditorOptions();
+            closePersonnelModal();
+            validateFullTimeAuditor();
+        }
+        
+        function updateSelectedPersonnelDisplay() {
+            const container = document.getElementById('selectedPersonnelTags');
+            const titleEl = document.getElementById('selectedPersonnelTitle');
+            if (titleEl) titleEl.textContent = "已选择人员（可分配给各场所）：";
+
+            if (globalSelectedPersonnel.length === 0 && assignedPersonnel.length === 0) {
+                container.innerHTML = '<span class="text-slate-400 text-sm">暂无已选择人员，请点击右侧"选择审核人员"按钮添加</span>';
+                return;
+            }
+
+            const personnelToShow = isVenueMode ? globalSelectedPersonnel : assignedPersonnel;
+            container.innerHTML = personnelToShow.map(person => {
+                const isExternal = person.workUnit !== currentUserCompany;
+                return `
+                <span class="selected-personnel-tag">
+                    ${person.name}
+                    <span class="personnel-tag ${person.type === '专职' ? 'tag-fulltime' : 'tag-parttime'}" style="margin:0 4px">${person.type}</span>
+                    ${isExternal ? '<span style="color:#92400e;font-size:11px;">(经审批)</span>' : ''}
+                    <i class="fas fa-times remove-btn" onclick="removeFromGlobalSelection('${person.cqc}', event)"></i>
+                </span>
+            `}).join('');
+        }
+
+        function removeFromGlobalSelection(cqc, event) {
+            event.stopPropagation();
+            if (confirm('确定从已选人员中移除？')) {
+                if (isVenueMode) {
+                    globalSelectedPersonnel = globalSelectedPersonnel.filter(p => p.cqc !== cqc);
+                    sitePersonnelMap.forEach((list, siteId) => {
+                        const newList = list.filter(p => p.cqc !== cqc);
+                        sitePersonnelMap.set(siteId, newList);
+                        refreshSiteCard(siteId);
+                        updateSiteStats(siteId);
+                    });
+                } else {
+                    assignedPersonnel = assignedPersonnel.filter(p => p.cqc !== cqc);
+                    renderNonVenuePersonnel();
+                    updateNonVenueStats();
+                }
+                updateSelectedPersonnelDisplay();
+                updateLeadAuditorOptions();
+            }
+        }
+        
+        function refreshSiteCard(siteId) {
+            const card = document.getElementById(siteId);
+            const personnelList = sitePersonnelMap.get(siteId) || [];
+            const hasPersonnel = personnelList.length > 0;
+            
+            const tbody = document.getElementById(`personnelBody_${siteId}`);
+            const section = document.getElementById(`personnelSection_${siteId}`);
+            const emptyState = document.getElementById(`emptyState_${siteId}`);
+            const clearBtn = document.getElementById(`clearBtn_${siteId}`);
+            
+            if (hasPersonnel) {
+                tbody.innerHTML = renderPersonnelRows(personnelList, siteId);
+                section.classList.remove('hidden-section');
+                if (emptyState) emptyState.classList.add('hidden-section');
+                clearBtn.classList.remove('hidden-section');
+            } else {
+                section.classList.add('hidden-section');
+                if (emptyState) emptyState.classList.remove('hidden-section');
+                clearBtn.classList.add('hidden-section');
+            }
+            updateSiteStats(siteId);
+        }
+        
+        function renderNonVenuePersonnel() {
+            const tbody = document.getElementById('nonVenuePersonnelBody');
+            const table = document.getElementById('nonVenueTable');
+            const emptyState = document.getElementById('nonVenueEmptyState');
+            
+            if (assignedPersonnel.length === 0) {
+                emptyState.classList.remove('hidden');
+                table.classList.add('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            table.classList.remove('hidden');
+            
+            tbody.innerHTML = assignedPersonnel.map((person, idx) => `
+                <tr>
+                    <td>${idx + 1}</td>
+                    <td class="font-medium text-slate-900">${person.name}</td>
+                    <td>
+                        <select class="editable-field py-1" style="min-width: 80px;" onchange="updateNonVenueRole(${idx}, this.value)">
+                            <option value="组长" ${person.role === '组长' ? 'selected' : ''}>组长</option>
+                            <option value="组员" ${person.role === '组员' || !person.role ? 'selected' : ''}>组员</option>
+                            <option value="技术专家" ${person.role === '技术专家' ? 'selected' : ''}>技术专家</option>
+                        </select>
+                    </td>
+                    <td class="text-xs">${person.qualification}</td>
+                    <td class="font-mono text-xs">${person.cqc}</td>
+                    <td>${person.workUnit}</td>
+                    <td>
+                        <span class="personnel-tag ${person.type === '专职' ? 'tag-fulltime' : 'tag-parttime'}">${person.type}</span>
+                    </td>
+                    <td>${person.phone}</td>
+                    <td>
+                        <div class="date-time-group">
+                            <input type="date" class="editable-field py-1 text-xs" style="width: 110px;" value="${person.dateStart || ''}" onchange="updateNonVenueDate(${idx}, 'start', this.value)">
+                            <select class="time-period-select py-1 text-xs" style="width: 80px; height: 32px;" onchange="updateNonVenuePeriod(${idx}, 'start', this.value)">
+                                ${generateTimeOptions(person.startPeriod, true)}
+                            </select>
+                            <span class="text-slate-400">至</span>
+                            <input type="date" class="editable-field py-1 text-xs" style="width: 110px;" value="${person.dateEnd || ''}" onchange="updateNonVenueDate(${idx}, 'end', this.value)">
+                            <select class="time-period-select py-1 text-xs" style="width: 80px; height: 32px;" onchange="updateNonVenuePeriod(${idx}, 'end', this.value)">
+                                ${generateTimeOptions(person.endPeriod, false)}
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <button onclick="removeNonVenuePersonnel(${idx})" class="text-red-500 hover:text-red-700">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            updateNonVenueStats();
+        }
+        
+        function updateNonVenueDate(idx, type, value) {
+            if (type === 'start') assignedPersonnel[idx].dateStart = value;
+            else assignedPersonnel[idx].dateEnd = value;
+            updateNonVenueStats();
+        }
+        
+        function updateNonVenuePeriod(idx, type, value) {
+            if (type === 'start') assignedPersonnel[idx].startPeriod = value;
+            else assignedPersonnel[idx].endPeriod = value;
+            updateNonVenueStats();
+        }
+        
+        function updateNonVenueAllDates() {
+            const start = document.getElementById('nonVenueAuditStartDate').value;
+            const end = document.getElementById('nonVenueAuditEndDate').value;
+            const startPeriod = document.getElementById('nonVenueStartPeriod').value;
+            const endPeriod = document.getElementById('nonVenueEndPeriod').value;
+            
+            assignedPersonnel.forEach(p => {
+                p.dateStart = start; p.dateEnd = end; p.startPeriod = startPeriod; p.endPeriod = endPeriod;
+            });
+            renderNonVenuePersonnel();
+        }
+        
+        function updateNonVenueStats() {
+            const totalDays = 0;
+            let assignedDays = 0;
+            assignedPersonnel.forEach(person => {
+                if (person.dateStart && person.dateEnd) {
+                    const days = calculateManDaysWithPeriod(person.dateStart, person.dateEnd, person.startPeriod || '08:00', person.endPeriod || '17:00');
+                    assignedDays += days;
+                }
+            });
+            assignedDays = roundManDays(assignedDays);
+            const unassignedDays = roundManDays(totalDays - assignedDays);
+            
+            document.getElementById('nonVenueTotalDays').textContent = totalDays.toFixed(1);
+            document.getElementById('nonVenueAssignedDays').textContent = assignedDays.toFixed(1);
+            document.getElementById('nonVenueUnassignedDays').textContent = unassignedDays.toFixed(1);
+            
+            const unassignedEl = document.getElementById('nonVenueUnassignedDays');
+            if (unassignedDays <= 0) unassignedEl.className = 'text-sm font-bold text-green-600 font-mono';
+            else if (unassignedDays <= 0.5) unassignedEl.className = 'text-sm font-bold text-amber-600 font-mono';
+            else unassignedEl.className = 'text-sm font-bold text-red-600 font-mono';
+        }
+        
+        function removePersonFromSite(siteId, cqc) {
+            let list = sitePersonnelMap.get(siteId) || [];
+            list = list.filter(p => p.cqc !== cqc);
+            sitePersonnelMap.set(siteId, list);
+            refreshSiteCard(siteId);
+            updateLeadAuditorOptions();
+        }
+        
+        function deleteSitePersonnel(siteId) {
+            if (confirm('确定清空该场所的所有审核人员吗？')) {
+                sitePersonnelMap.set(siteId, []);
+                refreshSiteCard(siteId);
+                updateLeadAuditorOptions();
+            }
+        }
+        
+        function removeNonVenuePersonnel(idx) {
+            assignedPersonnel.splice(idx, 1);
+            renderNonVenuePersonnel();
+            updateSelectedPersonnelDisplay();
+            updateLeadAuditorOptions();
+        }
+        
+        function updatePersonRole(siteId, cqc, role) {
+            const list = sitePersonnelMap.get(siteId) || [];
+            const person = list.find(p => p.cqc === cqc);
+            if (person) { person.role = role; updateLeadAuditorOptions(); }
+        }
+        
+        function updateSitePersonDate(siteId, cqc, type, value) {
+            const list = sitePersonnelMap.get(siteId) || [];
+            const person = list.find(p => p.cqc === cqc);
+            if (person) {
+                if (type === 'start') person.dateStart = value;
+                else person.dateEnd = value;
+                updateSiteStats(siteId);
+            }
+        }
+        
+        function updateSitePersonPeriod(siteId, cqc, type, value) {
+            const list = sitePersonnelMap.get(siteId) || [];
+            const person = list.find(p => p.cqc === cqc);
+            if (person) {
+                if (type === 'start') person.startPeriod = value;
+                else person.endPeriod = value;
+                updateSiteStats(siteId);
+            }
+        }
+        
+        function updateNonVenueRole(idx, role) {
+            assignedPersonnel[idx].role = role;
+            updateLeadAuditorOptions();
+        }
+        
+        function validateFullTimeAuditor() {
+            if (isVenueMode) {
+                sitePersonnelMap.forEach((list) => {
+                    const hasFullTime = list.some(p => p.type === '专职');
+                    if (list.length > 0 && !hasFullTime) console.warn('场所缺少专职审核员');
+                });
+            } else {
+                const hasFullTime = assignedPersonnel.some(p => p.type === '专职');
+                if (assignedPersonnel.length > 0 && !hasFullTime) alert('警告：审核组中至少需要包含一名专职审核员');
+            }
+        }
+        
+        function updateAllSiteDates() {
+            const start = document.getElementById('auditStartDate').value;
+            const end = document.getElementById('auditEndDate').value;
+            const startPeriod = document.getElementById('auditStartPeriod').value;
+            const endPeriod = document.getElementById('auditEndPeriod').value;
+            
+            globalSelectedPersonnel.forEach(p => { p.dateStart = start; p.dateEnd = end; p.startPeriod = startPeriod; p.endPeriod = endPeriod; });
+            sitePersonnelMap.forEach((list, siteId) => {
+                list.forEach(p => { p.dateStart = start; p.dateEnd = end; p.startPeriod = startPeriod; p.endPeriod = endPeriod; });
+                const card = document.getElementById(siteId);
+                if (card) {
+                    card.querySelector('.site-date-start').value = start;
+                    card.querySelector('.site-date-end').value = end;
+                    card.querySelector('.site-start-period').value = startPeriod;
+                    card.querySelector('.site-end-period').value = endPeriod;
+                }
+                updateSiteStats(siteId);
+            });
+            venues.forEach(v => refreshSiteCard(v.id));
+        }
+        
+        function updateSiteDate(siteId) {
+            const card = document.getElementById(siteId);
+            const start = card.querySelector('.site-date-start').value;
+            const end = card.querySelector('.site-date-end').value;
+            const startPeriod = card.querySelector('.site-start-period').value;
+            const endPeriod = card.querySelector('.site-end-period').value;
+            
+            const list = sitePersonnelMap.get(siteId) || [];
+            list.forEach(p => { p.dateStart = start; p.dateEnd = end; p.startPeriod = startPeriod; p.endPeriod = endPeriod; });
+            refreshSiteCard(siteId);
+            updateSiteStats(siteId);
+        }
+        
+        function viewPlan() { 
+            document.getElementById('planModal').classList.add('show'); 
+            switchPlanTab('sampling');
+        }
+        function switchPlanTab(tabName) {
+            document.querySelectorAll('#planModal .plan-tab-content').forEach(section => {
+                section.classList.toggle('hidden-section', section.id !== `planTab_${tabName}`);
+            });
+            document.querySelectorAll('#planModal .plan-tab-btn').forEach(btn => {
+                const isActive = btn.dataset.planTab === tabName;
+                btn.classList.toggle('text-blue-600', isActive);
+                btn.classList.toggle('border-blue-600', isActive);
+                btn.classList.toggle('text-slate-600', !isActive);
+                btn.classList.toggle('border-transparent', !isActive);
+            });
+        }
+        
+        function closePlanModal() { 
+            document.getElementById('planModal').classList.remove('show'); 
+        }
+        
+        function toggleAllProcess(checkbox) {
+            const checkboxes = checkbox.closest('table').querySelectorAll('tbody input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = checkbox.checked);
+        }
+        
+        function saveDraft(btn) {
+            const original = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check mr-2"></i>已保存';
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.innerHTML = original;
+                btn.disabled = false;
+            }, 2000);
+        }
+        
+        function submitTask() {
+            if (!document.getElementById('leadAuditorSelect').value) { 
+                alert('请选择审核组长'); 
+                return; 
+            }
+            if (isVenueMode) {
+                let valid = true;
+                sitePersonnelMap.forEach((list) => { if (list.length === 0) valid = false; });
+                if (!valid) { 
+                    alert('请为所有场所分配审核人员'); 
+                    return; 
+                }
+            } else {
+                if (assignedPersonnel.length === 0) { 
+                    alert('请至少指派一名审核人员'); 
+                    return; 
+                }
+            }
+            if (confirm('确定提交审核任务？提交后组长及组员将收到任务通知。')) {
+                alert('提交成功！任务状态已变更为"已提交"。');
+                const badge = document.querySelector('.status-badge');
+                badge.textContent = '已提交';
+                badge.className = 'status-badge badge-submitted';
+            }
+        }
+        
+        function goBack() {
+            if (confirm('确定返回列表？未保存的数据将丢失。')) {
+                console.log('返回列表页');
+            }
+        }
+    </script>
+</body>
+</html>

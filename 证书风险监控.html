@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>认证风险监控</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: #f1f5f9; min-height: 100vh; color: #1e293b; }
+        
+        .page-header { background: white; border-bottom: 1px solid #e2e8f0; padding: 16px 24px; display: flex; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .page-title { font-size: 18px; font-weight: 600; color: #1e293b; display: flex; align-items: center; gap: 10px; }
+        .page-title-icon { width: 32px; height: 32px; background: #3b82f6; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; }
+        
+        .dashboard-cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; padding: 16px 24px 0 24px; }
+        .alert-card { background: white; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 14px; cursor: pointer; border: 1px solid #e2e8f0; transition: all 0.25s ease; position: relative; overflow: hidden; }
+        .alert-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-color: #cbd5e1; }
+        .alert-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 8px 0 0 8px; }
+        .alert-card.risk-info-card::before { background: #3b82f6; }
+        .alert-card.risk-status-card::before { background: #f97316; }
+        .alert-card.risk-serious-card::before { background: #ef4444; }
+        .alert-card.risk-penalty-card::before { background: #f59e0b; }
+        .alert-card.risk-abnormal-card::before { background: #a855f7; }
+        
+        .alert-icon { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .alert-icon svg { width: 24px; height: 24px; }
+        .alert-card.risk-info-card .alert-icon { background: #eff6ff; color: #3b82f6; }
+        .alert-card.risk-status-card .alert-icon { background: #fff7ed; color: #f97316; }
+        .alert-card.risk-serious-card .alert-icon { background: #fef2f2; color: #ef4444; }
+        .alert-card.risk-penalty-card .alert-icon { background: #fffbeb; color: #f59e0b; }
+        .alert-card.risk-abnormal-card .alert-icon { background: #faf5ff; color: #a855f7; }
+        
+        .alert-content { flex: 1; }
+        .alert-label { font-size: 13px; color: #64748b; margin-bottom: 4px; font-weight: 500; }
+        .alert-value { font-size: 24px; font-weight: 700; color: #1e293b; line-height: 1; letter-spacing: -0.5px; }
+        .alert-desc { font-size: 12px; color: #94a3b8; margin-top: 6px; }
+
+        .filter-bar { position: relative; z-index: 10; background: white; margin: 16px 24px 0 24px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .quick-filters { padding: 16px 20px; display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; background: #fafafa; border-radius: 8px;}
+        .filter-item { display: flex; flex-direction: column; gap: 6px; position: relative;}
+        .filter-item label { font-size: 13px; color: #374151; font-weight: 500; }
+        .filter-item input, .filter-item select { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; outline: none; background: white; color: #374151; transition: all 0.2s; height: 36px; }
+        .filter-item input:focus, .filter-item select:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+        .date-range-wrapper { display: flex; align-items: center; gap: 8px; }
+        .date-range-wrapper span { color: #9ca3af; font-size: 13px; }
+
+        .multi-select-container { position: relative; width: 260px; }
+        .multi-select-header { padding: 0 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center; height: 36px; color: #94a3b8; transition: all 0.2s; user-select: none; }
+        .multi-select-header:hover { border-color: #9ca3af; }
+        .multi-select-header.active { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+        .multi-select-dropdown { position: absolute; top: calc(100% + 4px); left: 0; width: 100%; background: white; border: 1px solid #e2e8f0; border-radius: 6px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); z-index: 100; max-height: 320px; overflow-y: auto; display: none; }
+        .multi-select-dropdown.show { display: block; }
+        .multi-group { border-bottom: 1px solid #f1f5f9; }
+        .multi-group:last-child { border-bottom: none; }
+        .multi-group-title { padding: 8px 12px; background: #f8fafc; font-weight: 600; font-size: 13px; color: #1e293b; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        .multi-group-title:hover { background: #f1f5f9; }
+        .multi-group-item { padding: 6px 12px 6px 32px; display: flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer; color: #475569; transition: background 0.15s; }
+        .multi-group-item:hover { background: #f8fafc; color: #1e293b; }
+        .multi-select-dropdown input[type="checkbox"] { width: 14px; height: 14px; cursor: pointer; margin: 0; accent-color: #3b82f6; }
+
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; height: 36px; white-space: nowrap; }
+        .btn-primary { background: #3b82f6; color: white; border-color: #3b82f6; }
+        .btn-primary:hover { background: #2563eb; border-color: #2563eb; box-shadow: 0 2px 8px rgba(59,130,246,0.25); }
+        .btn-secondary { background: white; border-color: #e2e8f0; color: #475569; }
+        .btn-secondary:hover { background: #f8fafc; border-color: #cbd5e1; }
+        .btn-warning { background: #f59e0b; color: white; border-color: #f59e0b; }
+        .btn-warning:hover { background: #d97706; border-color: #d97706; }
+        .btn-danger { background: #ef4444; color: white; border-color: #ef4444; }
+        .btn-danger:hover { background: #dc2626; border-color: #dc2626; }
+        .btn-gray { background: #6b7280; color: white; border-color: #6b7280; }
+        .btn-gray:hover { background: #4b5563; }
+        .btn-success { background: #10b981; color: white; border-color: #10b981; }
+        .btn-success:hover { background: #059669; border-color: #059669; }
+        .btn-sm { padding: 6px 12px; font-size: 12px; height: 30px; }
+
+        .status-tabs { display: flex; gap: 8px; padding: 0 24px; margin-top: 16px; }
+        .status-tab { display: inline-flex; align-items: center; padding: 6px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; background: white; border: 1px solid #e2e8f0; color: #64748b; }
+        .status-tab:hover { border-color: #3b82f6; color: #3b82f6; }
+        .status-tab.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+
+        .table-container { position: relative; z-index: 1; background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin: 16px 24px; overflow: visible; border: 1px solid #e2e8f0; }
+        .table-wrapper { width: 100%; overflow-x: auto; }
+        .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        .data-table th, .data-table td { padding: 12px 16px; text-align: left; font-size: 13px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; line-height: 1.5; }
+        .data-table th { background: #f8fafc; font-weight: 600; color: #475569; font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; white-space: nowrap; }
+        .data-table tbody tr { transition: background 0.15s; background: white; }
+        .data-table tbody tr:hover { background: #f8fafc; }
+        .data-table tbody tr:last-child td { border-bottom: none; }
+
+        .risk-type-tag { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap; margin: 2px; }
+        .risk-info { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        .risk-status { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+        .risk-serious { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+        .risk-penalty { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+        .risk-abnormal { background: #faf5ff; color: #7c3aed; border: 1px solid #e9d5ff; }
+
+        .record-status-tag { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+        .status-undone { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+        .status-pending { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+        .status-rejected { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+        .status-done { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+        .status-valid { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+        .status-suspend { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+        .status-revoked { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+
+        .action-btn { color: #3b82f6; background: transparent; border: none; cursor: pointer; font-size: 13px; padding: 4px 8px; border-radius: 4px; transition: all 0.2s; white-space: nowrap; }
+        .action-btn:hover { background: #eff6ff; color: #1d4ed8; }
+        .action-btn.warning { color: #f59e0b; }
+        .action-btn.warning:hover { background: #fffbeb; color: #d97706; }
+        .action-btn.danger { color: #ef4444; }
+        .action-btn.danger:hover { background: #fef2f2; color: #dc2626; }
+        .action-btn.gray { color: #6b7280; }
+        .action-btn.gray:hover { background: #f3f4f6; color: #374151; }
+
+        .risk-desc-list { line-height: 1.6; }
+        .risk-desc-item { padding-left: 12px; position: relative; color: #4b5563; }
+        .risk-desc-item::before { content: ''; position: absolute; left: 0; top: 7px; width: 4px; height: 4px; border-radius: 50%; background: #94a3b8; }
+        .risk-desc-item + .risk-desc-item { margin-top: 4px; }
+
+        .pagination-bar { padding: 12px 20px; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: white; }
+        .pagination-info { font-size: 13px; color: #64748b; }
+        .pagination { display: flex; gap: 4px; align-items: center; }
+        .page-btn { padding: 6px 12px; border: 1px solid #e2e8f0; background: white; border-radius: 4px; font-size: 13px; cursor: pointer; transition: all 0.2s; color: #475569; }
+        .page-btn:hover { border-color: #3b82f6; color: #3b82f6; }
+        .page-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+        .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .page-size-select { border: 1px solid #d1d5db; border-radius: 4px; padding: 4px 8px; font-size: 13px; color: #475569; outline: none; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 24px; backdrop-filter: blur(2px); overflow-y: auto; }
+        .modal-overlay.show { display: flex; animation: fadeIn 0.2s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .modal { background: white; border-radius: 8px; width: 100%; max-width: 900px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); overflow: hidden; animation: slideUp 0.3s ease-out; margin: auto; }
+        .modal-lg { max-width: 1200px; } 
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .modal-header { padding: 16px 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #fff; flex-shrink: 0; }
+        .modal-header h3 { font-size: 16px; font-weight: 600; color: #1e293b; display: flex; align-items: center; gap: 8px; }
+        .modal-close { background: transparent; border: none; color: #64748b; font-size: 20px; cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 6px; transition: all 0.2s; }
+        .modal-close:hover { background: #f1f5f9; color: #1e293b; }
+        .modal-body { padding: 20px; overflow-y: auto; flex: 1; background: #fff; }
+        .modal-footer { padding: 16px 20px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 12px; background: #fafafa; flex-shrink: 0; }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 500; color: #374151; font-size: 13px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; outline: none; transition: all 0.2s; background: white; color: #374151; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+        .custom-input { margin-top: 8px; display: none; }
+        .custom-input.show { display: block; }
+
+        .cert-tags-container { background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; }
+        .cert-tags-list { display: flex; flex-wrap: wrap; gap: 8px; }
+        .cert-tag-item { display: inline-flex; align-items: center; padding: 4px 10px; background: white; border: 1px solid #d1d5db; border-radius: 4px; font-family: Consolas, monospace; font-size: 12px; color: #374151; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+
+        .image-styled-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; border: 1px solid #e2e8f0; border-radius: 0px; overflow: hidden; table-layout: fixed;}
+        .image-styled-table th, .image-styled-table td { padding: 10px 16px; text-align: left; border: 1px solid #e2e8f0; font-size: 13px; color: #333; word-wrap: break-word;}
+        .image-styled-table th { background: #f8fafc; font-weight: 600; color: #475569; width: 15%; }
+        .image-styled-table td { width: 35%; background: #ffffff; }
+        .image-styled-table .audit-type-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+
+        .hidden { display: none !important; }
+        .row-hidden { display: none !important; }
+
+        @media screen and (max-width: 1400px) { .dashboard-cards { grid-template-columns: repeat(3, 1fr); } }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <div class="page-title">
+            <div class="page-title-icon">&#128737;</div>
+            <span>认证风险监控</span>
+        </div>
+    </div>
+
+    <div class="dashboard-cards">
+        <div class="alert-card risk-info-card" data-filter="企业主体信息异常">
+            <div class="alert-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+            <div class="alert-content">
+                <div class="alert-label">主体信息异常</div><div class="alert-value">4</div><div class="alert-desc">名称/法人/地址变更</div>
+            </div>
+        </div>
+        <div class="alert-card risk-status-card" data-filter="企业主体状态异常">
+            <div class="alert-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg></div>
+            <div class="alert-content">
+                <div class="alert-label">主体状态异常</div><div class="alert-value">2</div><div class="alert-desc">注销/吊销/停业/清算</div>
+            </div>
+        </div>
+        <div class="alert-card risk-serious-card" data-filter="被列入严重违法失信名单">
+            <div class="alert-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg></div>
+            <div class="alert-content">
+                <div class="alert-label">严重违法失信</div><div class="alert-value">3</div><div class="alert-desc">重大违法/食品安全/质量事故</div>
+            </div>
+        </div>
+        <div class="alert-card risk-penalty-card" data-filter="被列入行政处罚名单">
+            <div class="alert-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></div>
+            <div class="alert-content">
+                <div class="alert-label">行政处罚</div><div class="alert-value">3</div><div class="alert-desc">产品质量/安全/环境违法</div>
+            </div>
+        </div>
+        <div class="alert-card risk-abnormal-card" data-filter="被列入经营异常名录">
+            <div class="alert-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></div>
+            <div class="alert-content">
+                <div class="alert-label">经营异常</div><div class="alert-value">4</div><div class="alert-desc">未年报/地址失联/信息虚假</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-bar">
+        <div class="quick-filters">
+            <div class="filter-item">
+                <label>企业名称</label>
+                <input type="text" id="companyName" placeholder="支持模糊搜索" style="width:180px;">
+            </div>
+            
+            <div class="filter-item" id="riskTypeContainer">
+                <label>风险类型及描述</label>
+                <div class="multi-select-container">
+                    <div class="multi-select-header" id="riskTypeHeader" onclick="toggleMultiSelect()">
+                        <span id="riskTypeLabel">全部风险类别</span>
+                        <span style="font-size:10px;">▼</span>
+                    </div>
+                    <div class="multi-select-dropdown" id="riskTypeDropdown">
+                        <div class="multi-group">
+                            <label class="multi-group-title"><input type="checkbox" class="parent-cb" value="企业主体信息异常" onchange="toggleParentCb('企业主体信息异常', this.checked)"> 企业主体信息异常</label>
+                            <label class="multi-group-item"><input type="checkbox" class="child-cb" data-parent="企业主体信息异常" value="企业名称变更" onchange="toggleChildCb('企业主体信息异常')"> 企业名称变更</label>
+                            <label class="multi-group-item"><input type="checkbox" class="child-cb" data-parent="企业主体信息异常" value="法人变更" onchange="toggleChildCb('企业主体信息异常')"> 法人变更</label>
+                            <label class="multi-group-item"><input type="checkbox" class="child-cb" data-parent="企业主体信息异常" value="注册地址变更" onchange="toggleChildCb('企业主体信息异常')"> 注册地址变更</label>
+                        </div>
+                        <div class="multi-group">
+                            <label class="multi-group-title"><input type="checkbox" class="parent-cb" value="企业主体状态异常" onchange="toggleParentCb('企业主体状态异常', this.checked)"> 企业主体状态异常</label>
+                            <label class="multi-group-item"><input type="checkbox" class="child-cb" data-parent="企业主体状态异常" value="注销" onchange="toggleChildCb('企业主体状态异常')"> 注销</label>
+                            <label class="multi-group-item"><input type="checkbox" class="child-cb" data-parent="企业主体状态异常" value="吊销" onchange="toggleChildCb('企业主体状态异常')"> 吊销</label>
+                            <label class="multi-group-item"><input type="checkbox" class="child-cb" data-parent="企业主体状态异常" value="停业" onchange="toggleChildCb('企业主体状态异常')"> 停业</label>
+                            <label class="multi-group-item"><input type="checkbox" class="child-cb" data-parent="企业主体状态异常" value="清算" onchange="toggleChildCb('企业主体状态异常')"> 清算</label>
+                        </div>
+                        <div class="multi-group">
+                            <label class="multi-group-title"><input type="checkbox" class="parent-cb" value="被列入严重违法失信名单" onchange="toggleParentCb('被列入严重违法失信名单', this.checked)"> 严重违法失信名单</label>
+                            <label class="multi-group-item"><input type="checkbox" class="child-cb" data-parent="被列入严重违法失信名单" value="重大违法" onchange="toggleChildCb('被列入严重违法失信名单')"> 重大违法</label>
+                            <label class="multi-group-item"><input type="checkbox" class="child-cb" data-parent="被列入严重违法失信名单" value="虚假" onchange="toggleChildCb('被列入严重违法失信名单')"> 虚假</label>
+                            <label class="multi-group-item"><input type="checkbox" class="child-cb" data-parent="被列入严重违法失信名单" value="食品安全" onchange="toggleChildCb('被列入严重违法失信名单')"> 食品安全</label>
+                            <label class="multi-group-item"><input type="checkbox" class="child-cb" data-parent="被列入严重违法失信名单" value="质量事故" onchange="toggleChildCb('被列入严重违法失信名单')"> 质量事故</label>
+                            <label class="multi-group-item"><input type="checkbox" class="child-cb" data-parent="被列入严重违法失信名单" value="重大行政处罚" onchange="toggleChildCb('被列入严重违法失信名单')"> 重大行政处罚</label>
+                        </div>
+                        <div class="multi-group">
+                            <label class="multi-group-title"><input type="checkbox" class="parent-cb" value="被列入行政处罚名单" onchange="toggleParentCb('被列入行政处罚名单', this.checked)"> 行政处罚名单</label>
+                            <label class="multi-group-item"><input type="checkbox" class="child-cb" data-parent="被列入行政处罚名单" value="产品质量不合格" onchange="toggleChildCb('被列入行政处罚名单')"> 产品质量不合格</label>
+                            <label class="multi-group-item"><input type="checkbox" class="child-cb" data-parent="被列入行政处罚名单" value="生产安全事故" onchange="toggleChildCb('被列入行政处罚名单')"> 生产安全事故</label>
+                            <label class="multi-group-item"><input type="checkbox" class="child-cb" data-parent="被列入行政处罚名单" value="环境违法" onchange="toggleChildCb('被列入行政处罚名单')"> 环境违法</label>
+                        </div>
+                        <div class="multi-group">
+                            <label class="multi-group-title"><input type="checkbox" class="parent-cb" value="被列入经营异常名录" onchange="toggleParentCb('被列入经营异常名录', this.checked)"> 经营异常名录</label>
+                            <label class="multi-group-item"><input type="checkbox" class="child-cb" data-parent="被列入经营异常名录" value="未年报" onchange="toggleChildCb('被列入经营异常名录')"> 未年报</label>
+                            <label class="multi-group-item"><input type="checkbox" class="child-cb" data-parent="被列入经营异常名录" value="地址失联" onchange="toggleChildCb('被列入经营异常名录')"> 地址失联</label>
+                            <label class="multi-group-item"><input type="checkbox" class="child-cb" data-parent="被列入经营异常名录" value="公示信息虚假" onchange="toggleChildCb('被列入经营异常名录')"> 公示信息虚假</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-item">
+                <label>生成日期</label>
+                <div class="date-range-wrapper">
+                    <input type="date" id="startDate" style="width:130px;">
+                    <span>至</span>
+                    <input type="date" id="endDate" style="width:130px;">
+                </div>
+            </div>
+            <div style="flex:1;"></div>
+            <button class="btn btn-secondary" id="resetBtn">重置</button>
+            <button class="btn btn-primary" id="searchBtn">查询</button>
+        </div>
+    </div>
+
+    <div class="status-tabs">
+        <div class="status-tab active" data-status="">全部</div>
+        <div class="status-tab" data-status="未处理">未处理</div>
+        <div class="status-tab" data-status="待审批">待审批</div>
+        <div class="status-tab" data-status="审核驳回">审核驳回</div>
+        <div class="status-tab" data-status="审核通过">审核通过</div>
+    </div>
+
+    <div class="table-container">
+        <div class="table-wrapper">
+            <table class="data-table" id="riskTable">
+                <thead>
+                    <tr>
+                        <th>企业名称</th>
+                        <th>企业代码</th>
+                        <th>风险类型</th>
+                        <th>风险描述</th>
+                        <th style="text-align:center;">生成日期</th>
+                        <th style="text-align:center;">记录状态</th>
+                        <th style="text-align:center;">处理时间</th>
+                        <th style="text-align:center;">处理人</th>
+                        <th style="text-align:center;">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="riskTableBody">
+                    </tbody>
+            </table>
+        </div>
+        <div class="pagination-bar">
+            <div class="pagination-info">显示第 <strong id="pageStart">0</strong> 到 <strong id="pageEnd">0</strong> 条，共 <strong id="pageTotal">0</strong> 条</div>
+            <div class="pagination">
+                <button class="page-btn" id="pagePrev" disabled>&lt;</button>
+                <button class="page-btn active" data-page="1">1</button>
+                <button class="page-btn" id="pageNext" disabled>&gt;</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:13px;color:#64748b;">每页</span>
+                <select class="page-size-select" id="pageSize">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+                <span style="font-size:13px;color:#64748b;">条</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="processModal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3><svg style="width:18px;height:18px;margin-top:-2px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg> 风险处理详情</h3>
+                <button class="modal-close" onclick="closeModal('processModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                
+                <table class="image-styled-table">
+                    <tr>
+                        <th>企业名称</th><td colspan="3" id="processImgCompanyName" style="color: #3b82f6; font-weight: 600; font-size: 15px;">-</td>
+                    </tr>
+                    <tr>
+                        <th>企业代码</th><td colspan="3" id="processImgCompanyCode" style="font-family: Consolas, monospace; color: #64748b;">-</td>
+                    </tr>
+                    <tr>
+                        <th>风险类型</th><td colspan="3" id="processImgRiskType" style="color: #ef4444; font-weight: 600;">-</td>
+                    </tr>
+                    <tr>
+                        <th>风险描述</th><td colspan="3" id="processImgRiskDesc" style="line-height: 1.6; color: #475569;">-</td>
+                    </tr>
+                </table>
+
+                <div id="rejectInfoBanner" style="display:none; margin-bottom: 16px; padding: 12px 16px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; border-left: 4px solid #ef4444;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px;">
+                        <div><span style="color: #991b1b;">审批人：</span><strong id="rejectInfoPerson" style="color: #1e293b;">-</strong></div>
+                        <div><span style="color: #991b1b;">审批时间：</span><strong id="rejectInfoTime" style="color: #1e293b;">-</strong></div>
+                        <div style="grid-column: 1 / -1;"><span style="color: #991b1b;">驳回原因：</span><span id="rejectInfoReason" style="color: #b91c1c; font-weight: 500;">-</span></div>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <div style="font-size:14px;font-weight:600;color:#1e293b;border-left: 4px solid #3b82f6;padding-left: 8px;">该企业下关联的证书清单</div>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn btn-secondary btn-sm" onclick="batchProcessIgnore()">批量忽略</button>
+                        <button class="btn btn-warning btn-sm" onclick="batchProcessPause()">批量暂停</button>
+                        <button class="btn btn-danger btn-sm" onclick="batchProcessRevoke()">批量撤销</button>
+                    </div>
+                </div>
+                
+                <table class="data-table" id="certListTable">
+                    <thead><tr style="background:#f8fafc;">
+                        <th style="width:40px;text-align:center;"><input type="checkbox" id="processSelectAll" onchange="toggleProcessSelectAll()" style="accent-color:#3b82f6; cursor:pointer;"></th>
+                        <th style="width:130px;">证书编号</th>
+                        <th style="width:60px;">领域</th>
+                        <th style="width:100px;">认证标准</th>
+                        <th style="width:auto;">认证范围</th>
+                        <th style="width:60px;">状态</th>
+                        <th style="width:80px; color:#1e40af;">处理结果</th>
+                        <th style="width:70px;">处理人</th>
+                        <th style="width:160px;">操作</th>
+                    </tr></thead>
+                    <tbody id="certListTableBody"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('processModal')">关闭</button>
+                <button class="btn btn-primary" onclick="submitProcessWorkflow()">提交处理</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="approveModal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>审批申请</h3><button class="modal-close" onclick="closeModal('approveModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 16px; font-size: 14px; color: #333;">
+                    您正在审批企业 <strong id="approveCompanyName" style="color:#3b82f6;">-</strong> 的风险处理申请。
+                </div>
+                <div class="form-group">
+                    <label>审批意见说明</label>
+                    <textarea id="approveRemark" placeholder="请输入审批意见..." rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" onclick="executeApprove('审核驳回')">审核驳回</button>
+                <button class="btn btn-success" onclick="executeApprove('审核通过')">审核通过</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="processedDetailModal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3><svg style="width:18px;height:18px;margin-top:-2px;color:#10b981;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 已处理详情 <span style="font-size:13px;color:#64748b;margin-left:8px;font-weight:normal;" id="processedCompanyName">-</span></h3>
+                <button class="modal-close" onclick="closeModal('processedDetailModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="approveInfoBox" style="margin-bottom: 16px; padding: 12px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; display: none;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px;">
+                        <div><span style="color: #64748b;">审批人：</span><strong id="approveInfoPerson" style="color: #1e293b;">-</strong></div>
+                        <div><span style="color: #64748b;">审批时间：</span><strong id="approveInfoTime" style="color: #1e293b;">-</strong></div>
+                        <div id="rejectReasonBox" style="grid-column: 1 / -1; display: none;"><span style="color: #64748b;">驳回原因：</span><span id="approveInfoReason" style="color: #b91c1c; font-weight: 500;">-</span></div>
+                    </div>
+                </div>
+                <table class="data-table" id="processedCertTable" style="table-layout: fixed;">
+                    <thead><tr style="background:#f8fafc;">
+                        <th style="width:160px;">证书编号</th>
+                        <th style="width:80px;">认证领域</th>
+                        <th style="width:130px;">认证标准</th>
+                        <th style="width:90px;">原证书状态</th>
+                        <th style="width:120px; color:#1e40af;">处理结果</th>
+                        <th style="width:150px;">处理时间</th>
+                        <th style="width:100px;">处理人</th>
+                    </tr></thead>
+                    <tbody id="processedCertTableBody"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('processedDetailModal')">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="ignoreModal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header"><h3>&#128683; 忽略风险</h3><button class="modal-close" onclick="closeModal('ignoreModal')">&times;</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label>涉及证书编号</label><div class="cert-tags-container"><div class="cert-tags-list" id="ignoreCertNos"></div></div></div>
+                <div class="form-group">
+                    <label>忽略原因 <span style="color:#ef4444;">*</span></label>
+                    <select id="ignoreReason">
+                        <option value="">请选择忽略原因</option>
+                        <option value="风险已解除">风险已解除</option>
+                        <option value="信息已更新同步">信息已更新同步</option>
+                        <option value="误报">误报</option>
+                        <option value="已延期处理">已延期处理</option>
+                        <option value="其他">其他（自定义）</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('ignoreModal')">取消</button><button class="btn btn-primary" onclick="submitIgnore()">确认忽略</button></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="pauseModal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header"><h3>&#9208; 暂停证书</h3><button class="modal-close" onclick="closeModal('pauseModal')">&times;</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label>证书编号</label><div class="cert-tags-container"><div class="cert-tags-list" id="pauseCertNos"></div></div></div>
+                <div class="form-group">
+                    <label>暂停原因 <span style="color:#ef4444;">*</span></label>
+                    <select id="pauseReason">
+                        <option value="">请选择暂停原因</option>
+                        <option value="原因不明，暂不做处理">原因不明，暂不做处理</option>
+                        <option value="超期未接受监督审核">超期未接受监督审核</option>
+                        <option value="欠费超过规定期限">欠费超过规定期限</option>
+                        <option value="监督检查不合格">监督检查不合格（抽样检测/工厂检查/一致性存在问题等）</option>
+                        <option value="未按规定使用证书和标志">未按规定使用认证证书和认证标志</option>
+                        <option value="无正当理由不接受监督">无正当理由不接受或未在规定期限内接受监督检查</option>
+                        <option value="证书信息变更未备案">证书信息变更未向认证机构申请变更批准或备案</option>
+                        <option value="季节性生产申请暂停">由于生产的季节性、按订单生产等原因申请暂停</option>
+                        <option value="违反国家法律法规">违反国家法律法规/监督抽查结果证明产品存在不合格</option>
+                        <option value="认证依据换版未变更">认证依据或实施规则换版，未按要求履行变更程序</option>
+                        <option value="其他">其他（自定义）</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('pauseModal')">取消</button><button class="btn btn-warning" onclick="submitPause()">执行暂停</button></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="revokeModal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header"><h3>&#128683; 撤销证书 <span style="color:#ef4444;font-size:12px;margin-left:8px;font-weight:normal;">(不可恢复)</span></h3><button class="modal-close" onclick="closeModal('revokeModal')">&times;</button></div>
+            <div class="modal-body">
+                <div class="form-group"><label>证书编号</label><div class="cert-tags-container"><div class="cert-tags-list" id="revokeCertNos"></div></div></div>
+                <div class="form-group">
+                    <label>撤销原因 <span style="color:#ef4444;">*</span></label>
+                    <select id="revokeReason">
+                        <option value="">请选择撤销原因</option>
+                        <option value="暂停期满未恢复">暂停期限届满未提出恢复申请或整改后仍不合格</option>
+                        <option value="停产倒闭解散">企业破产、倒闭、解散、生产结构调整等不再生产</option>
+                        <option value="工厂质量保证能力严重缺陷">跟踪检查结果证明工厂质量保证能力存在严重缺陷</option>
+                        <option value="提供虚假样品">提供虚假样品，获证产品与型式试验样品不一致</option>
+                        <option value="严重违法违规">违反国家法律法规/监督抽查严重不合格</option>
+                        <option value="质量安全事故">获证产品出现缺陷导致质量安全事故</option>
+                        <option value="拒绝接受监督">被暂停后仍拒绝接受监督检查或监督抽样检测</option>
+                        <option value="违规使用证书情节严重">未按规定使用证书和标志，出租出借转让情节严重</option>
+                        <option value="弄虚作假获取证书">弄虚作假，欺骗贿赂等不正当手段获取证书</option>
+                        <option value="其他">其他（自定义）</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('revokeModal')">取消</button><button class="btn btn-danger" onclick="submitRevoke()">执行撤销</button></div>
+        </div>
+    </div>
+
+    <script>
+        var currentCompany = null;
+
+        // ================= 数据初始化与结构 =================
+        var riskTypeClassMap = {
+            '企业主体信息异常': 'risk-info',
+            '企业主体状态异常': 'risk-status',
+            '被列入严重违法失信名单': 'risk-serious',
+            '被列入行政处罚名单': 'risk-penalty',
+            '被列入经营异常名录': 'risk-abnormal'
+        };
+
+        var statusClassMap = {
+            '未处理': 'status-undone',
+            '待审批': 'status-pending',
+            '审核驳回': 'status-rejected',
+            '审核通过': 'status-done',
+            '有效': 'status-valid',
+            '暂停': 'status-suspend',
+            '撤销': 'status-revoked'
+        };
+
+        var companyData = [
+            { company: '深圳市神州线缆有限公司', code: '91440300MA5G8KXXXX', riskTypes: ['企业主体信息异常', '被列入经营异常名录'], riskDescs: ['企业名称变更、法人变更（与客户库不一致）', '未按时报送2025年度报告'], status: '未处理', date: '2026-05-10', processTime: '', processor: '', approvePerson: '', approveTime: '', rejectReason: '', certs: [
+                { certNo: '00126Q300285R601', field: 'Q', fieldFull: 'Q（质量管理体系）', standard: 'ISO 9001:2015', accBody: 'CNAS', currentAudit: '监督二', nextAudit: '再认证', code: '19.11.02;', scope: '0.02mm-2.05mm电工纯铜线研发生产', issueDate: '2026-01-14', expiryDate: '2029-01-13', status: '有效', processResult: '', processor: '' },
+                { certNo: '00126E300286R601', field: 'E', fieldFull: 'E（环境管理体系）', standard: 'ISO 14001:2015', accBody: 'CNAS', currentAudit: '监督二', nextAudit: '再认证', code: '14.01.01;', scope: '电线电缆的环境管理活动', issueDate: '2026-01-14', expiryDate: '2029-01-13', status: '有效', processResult: '', processor: '' }
+            ]},
+            { company: '广东金禾面粉有限公司', code: '91440000MA5G9LXXXX', riskTypes: ['企业主体状态异常', '被列入严重违法失信名单'], riskDescs: ['停业', '食品安全重大事故'], status: '未处理', date: '2026-05-08', processTime: '', processor: '', approvePerson: '', approveTime: '', rejectReason: '', certs: [
+                { certNo: 'CQC26FS0200R3M/4400', field: 'F', fieldFull: 'F（食品安全）', standard: 'FSSC V6.0', accBody: 'CNAS', currentAudit: '初次认证', nextAudit: '监督一', code: '03.01.01;', scope: '小麦粉、专用粉的生产', issueDate: '2026-02-12', expiryDate: '2029-06-24', status: '有效', processResult: '', processor: '' }
+            ]},
+            { company: '上海精密机械制造有限公司', code: '91310000MA5G6NXXXX', riskTypes: ['企业主体信息异常', '被列入经营异常名录'], riskDescs: ['法人变更', '公示信息虚假'], status: '审核通过', date: '2026-05-06', processTime: '2026-05-07 10:30:00', processor: '张三', approvePerson: '李四', approveTime: '2026-05-08 09:00:00', rejectReason: '', certs: [
+                { certNo: '00126Q310001R1M', field: 'Q', fieldFull: 'Q（质量管理体系）', standard: 'ISO 9001:2015', accBody: 'CNAS', currentAudit: '再认证', nextAudit: '监督一', code: '17.02;', scope: '精密机械零部件的加工制造', issueDate: '2026-02-20', expiryDate: '2029-02-19', status: '有效', processResult: '已忽略风险', processTime: '2026-05-07 10:30:00', processor: '张三' }
+            ]},
+            { company: '杨协成（广东）食品饮料有限公司', code: '91440000MA5G7MXXXX', riskTypes: ['企业主体信息异常', '被列入行政处罚名单'], riskDescs: ['注册地址变更', '生产安全事故'], status: '审核驳回', date: '2026-05-07', processTime: '2026-05-08 14:20:00', processor: '张三', approvePerson: '李四', approveTime: '2026-05-09 16:30:00', rejectReason: '风险描述与实际情况不符，需重新核实企业当前经营状态后再提交处理。', certs: [
+                { certNo: 'CQC25FS1507R1M/4400', field: 'F', fieldFull: 'F（食品安全）', standard: 'FSSC V6.0', accBody: 'DAKKS', currentAudit: '监督一', nextAudit: '监督二', code: '03.02;', scope: '饮料、食品的生产和销售', issueDate: '2025-12-29', expiryDate: '2029-12-17', status: '有效', processResult: '拟暂停', processor: '张三' }
+            ]},
+            { company: '江苏恒通电子科技有限公司', code: '91320000MA5G5PXXXX', riskTypes: ['被列入严重违法失信名单', '被列入行政处罚名单'], riskDescs: ['质量事故', '环境违法'], status: '待审批', date: '2026-05-05', processTime: '2026-05-09 09:15:00', processor: '张三', approvePerson: '', approveTime: '', rejectReason: '', certs: [
+                { certNo: '00126Q320001R1M', field: 'Q', fieldFull: 'Q（质量管理体系）', standard: 'ISO 9001:2015', accBody: 'CNAS', currentAudit: '监督一', nextAudit: '监督二', code: '19.01;', scope: '电子元器件的生产', issueDate: '2026-01-20', expiryDate: '2029-01-19', status: '暂停', processResult: '拟暂停', processor: '张三' }
+            ]},
+            { company: '浙江绿源环保科技有限公司', code: '91330000MA5G4QXXXX', riskTypes: ['被列入经营异常名录', '被列入严重违法失信名单'], riskDescs: ['地址失联', '虚假材料'], status: '未处理', date: '2026-05-04', processTime: '', processor: '', approvePerson: '', approveTime: '', rejectReason: '', certs: [
+                { certNo: '00126Q330001R1M', field: 'Q', fieldFull: 'Q（质量管理体系）', standard: 'ISO 9001:2015', accBody: 'CNAS', currentAudit: '监督二', nextAudit: '再认证', code: '18.01;', scope: '环保设备的研发', issueDate: '2026-03-15', expiryDate: '2029-03-14', status: '有效', processResult: '', processor: '' }
+            ]},
+            { company: '北京中科软件有限公司', code: '91110000MA5G3RXXXX', riskTypes: ['企业主体状态异常', '被列入经营异常名录'], riskDescs: ['清算', '未年报'], status: '未处理', date: '2026-05-03', processTime: '', processor: '', approvePerson: '', approveTime: '', rejectReason: '', certs: [
+                { certNo: '00126IS340001R1M', field: 'IS', fieldFull: 'IS（信息安全）', standard: 'ISO 27001:2022', accBody: 'CNAS', currentAudit: '初次认证', nextAudit: '监督一', code: '33.01;', scope: '软件开发及信息安全服务', issueDate: '2026-02-28', expiryDate: '2029-02-27', status: '有效', processResult: '', processor: '' }
+            ]}
+        ];
+
+        // 获取当前时间字符串
+        function getCurrentTimeStr() {
+            var d = new Date();
+            var pad = function(n) { return n < 10 ? '0' + n : n; };
+            return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+        }
+
+        // ================= 核心：动态渲染主列表 =================
+        function renderMainTable() {
+            var tbody = document.getElementById('riskTableBody');
+            var companyNameInput = document.getElementById('companyName').value.trim();
+            var selectedDescs = Array.from(document.querySelectorAll('.child-cb:checked')).map(function(cb) { return cb.value; });
+            var statusFilter = document.querySelector('.status-tab.active').getAttribute('data-status');
+            
+            var filteredData = [];
+            for (var i = 0; i < companyData.length; i++) {
+                var d = companyData[i];
+                var show = true;
+                if (companyNameInput && d.company.indexOf(companyNameInput) === -1) show = false;
+                if (statusFilter && d.status !== statusFilter) show = false;
+                if (selectedDescs.length > 0) {
+                    var hasMatch = selectedDescs.some(function(desc) { return d.riskDescs.join(',').indexOf(desc) !== -1; });
+                    if (!hasMatch) show = false;
+                }
+                if (show) filteredData.push(d);
+            }
+
+            document.getElementById('pageStart').textContent = filteredData.length > 0 ? 1 : 0;
+            document.getElementById('pageEnd').textContent = filteredData.length;
+            document.getElementById('pageTotal').textContent = filteredData.length;
+
+            var html = '';
+            for (var j = 0; j < filteredData.length; j++) {
+                var d = filteredData[j];
+                var typeHtml = d.riskTypes.map(function(t) { return '<span class="risk-type-tag ' + (riskTypeClassMap[t]||'') + '">' + t + '</span>'; }).join('');
+                var descHtml = '<div class="risk-desc-list">' + d.riskDescs.map(function(desc) { return '<div class="risk-desc-item">' + desc + '</div>'; }).join('') + '</div>';
+                
+                var actionHtml = '';
+                if (d.status === '未处理' || d.status === '审核驳回') {
+                    actionHtml = '<button class="btn btn-primary btn-sm" onclick="openProcessModal(\''+d.company+'\')">处理风险</button>';
+                } else if (d.status === '待审批') {
+                    actionHtml = '<button class="btn btn-secondary btn-sm" onclick="openProcessModal(\''+d.company+'\')">查看详情</button>';
+                } else if (d.status === '审核通过') {
+                    actionHtml = '<button class="btn btn-secondary btn-sm" onclick="showProcessedDetailModal(\''+d.company+'\')">查看详情</button>';
+                }
+
+                var procTime = d.processTime ? d.processTime.split(' ')[0] + '<br><span style="font-size:11px;color:#94a3b8;">' + d.processTime.split(' ')[1] + '</span>' : '-';
+                var procPerson = d.processor ? '<span style="display:inline-block;background:#f1f5f9;padding:2px 8px;border-radius:4px;border:1px solid #e2e8f0;font-size:12px;color:#475569;line-height:1.4;vertical-align:middle;">' + d.processor + '</span>' : '<span style="color:#94a3b8;font-size:12px;vertical-align:middle;">-</span>';
+
+                html += '<tr>' +
+                    '<td><strong style="color:#1e293b;">' + d.company + '</strong></td>' +
+                    '<td style="font-family:Consolas,monospace;color:#64748b;">' + d.code + '</td>' +
+                    '<td>' + typeHtml + '</td>' +
+                    '<td>' + descHtml + '</td>' +
+                    '<td style="text-align:center;">' + d.date + '</td>' +
+                    '<td style="text-align:center;"><span class="record-status-tag ' + (statusClassMap[d.status]||'') + '">' + d.status + '</span></td>' +
+                    '<td style="text-align:center; color:#475569;">' + procTime + '</td>' +
+                    '<td style="text-align:center;">' + procPerson + '</td>' +
+                    '<td style="text-align:center;">' + actionHtml + '</td>' +
+                    '</tr>';
+            }
+            tbody.innerHTML = html;
+        }
+
+        // ================= 二级多选下拉组件逻辑 =================
+        function toggleMultiSelect() {
+            document.getElementById('riskTypeDropdown').classList.toggle('show');
+            document.getElementById('riskTypeHeader').classList.toggle('active');
+        }
+
+        window.toggleParentCb = function(parentVal, isChecked) {
+            var children = document.querySelectorAll('.child-cb[data-parent="'+parentVal+'"]');
+            children.forEach(function(cb) { cb.checked = isChecked; });
+            updateMultiSelect();
+        };
+
+        window.toggleChildCb = function(parentVal) {
+            var parent = document.querySelector('.parent-cb[value="'+parentVal+'"]');
+            var children = document.querySelectorAll('.child-cb[data-parent="'+parentVal+'"]');
+            var allChecked = Array.from(children).every(function(cb) { return cb.checked; });
+            var someChecked = Array.from(children).some(function(cb) { return cb.checked; });
+            parent.checked = allChecked;
+            parent.indeterminate = someChecked && !allChecked;
+            updateMultiSelect();
+        };
+
+        function updateMultiSelect() {
+            var checkedChildren = document.querySelectorAll('.child-cb:checked');
+            var checkedParents = document.querySelectorAll('.parent-cb:checked');
+            var label = document.getElementById('riskTypeLabel');
+            if (checkedChildren.length === 0 && checkedParents.length === 0) {
+                label.textContent = '全部风险类别';
+                label.style.color = '#94a3b8';
+            } else {
+                label.textContent = '已选择 ' + checkedChildren.length + ' 项描述';
+                label.style.color = '#3b82f6';
+            }
+        }
+
+        document.addEventListener('click', function(e) {
+            var container = document.getElementById('riskTypeContainer');
+            if (container && !container.contains(e.target)) {
+                document.getElementById('riskTypeDropdown').classList.remove('show');
+                document.getElementById('riskTypeHeader').classList.remove('active');
+            }
+        });
+
+        // ================= 处理弹窗 & 证书渲染逻辑 =================
+        function getCompanyObj(name) {
+            for(var i=0; i<companyData.length; i++) {
+                if(companyData[i].company === name) return companyData[i];
+            }
+            return null;
+        }
+
+        window.openProcessModal = function(companyName) {
+            currentCompany = companyName;
+            var data = getCompanyObj(companyName);
+            if (!data || data.certs.length === 0) return;
+
+            var isReadonly = data.status === '待审批';
+
+            document.getElementById('processImgCompanyName').textContent = data.company;
+            document.getElementById('processImgCompanyCode').textContent = data.code;
+            document.getElementById('processImgRiskType').innerHTML = data.riskTypes.map(function(t) { 
+                return '<span class="risk-type-tag ' + (riskTypeClassMap[t]||'') + '">' + t + '</span>'; 
+            }).join(' ');
+            document.getElementById('processImgRiskDesc').innerHTML = '<div class="risk-desc-list">' + data.riskDescs.map(function(desc) { 
+                return '<div class="risk-desc-item">' + desc + '</div>'; 
+            }).join('') + '</div>';
+
+            renderProcessCertTable(data, isReadonly);
+
+            // 审核驳回信息展示
+            var rejectBanner = document.getElementById('rejectInfoBanner');
+            if (data.status === '审核驳回') {
+                rejectBanner.style.display = 'block';
+                document.getElementById('rejectInfoPerson').textContent = data.approvePerson || '-';
+                document.getElementById('rejectInfoTime').textContent = data.approveTime || '-';
+                document.getElementById('rejectInfoReason').textContent = data.rejectReason || '无';
+            } else {
+                rejectBanner.style.display = 'none';
+            }
+
+            // 只读模式下隐藏批量操作按钮和提交按钮
+            var batchBtns = document.querySelector('#processModal .modal-body div[style*="justify-content:space-between"]');
+            if (batchBtns) {
+                batchBtns.style.display = isReadonly ? 'none' : 'flex';
+            }
+            var submitBtn = document.querySelector('#processModal .modal-footer .btn-primary');
+            if (submitBtn) {
+                submitBtn.style.display = isReadonly ? 'none' : 'inline-flex';
+            }
+
+            document.getElementById('processModal').classList.add('show');
+        };
+
+        // 内部实时刷新弹窗的证书列表
+        function renderProcessCertTable(data, readonly) {
+            var tbody = document.getElementById('certListTableBody');
+            var html = '';
+            for (var k = 0; k < data.certs.length; k++) {
+                var c = data.certs[k];
+                var statusClass = c.status === '有效' ? 'status-valid' : (c.status === '暂停' ? 'status-suspend' : 'status-revoked');
+                var processRes = c.processResult ? '<span style="font-weight:600;">'+c.processResult+'</span>' : '<span style="color:#94a3b8;">未处理</span>';
+                var procPerson = c.processor ? '<span style="display:inline-block;background:#f1f5f9;padding:2px 8px;border-radius:4px;border:1px solid #e2e8f0;font-size:12px;color:#475569;line-height:1.4;vertical-align:middle;">' + c.processor + '</span>' : '<span style="color:#94a3b8;font-size:12px;vertical-align:middle;">-</span>';
+
+                html += '<tr>' +
+                    '<td style="text-align:center;vertical-align:middle;"><input type="checkbox" class="process-cert-cb" value="' + c.certNo + '" style="accent-color:#3b82f6; cursor:pointer;vertical-align:middle;" ' + (readonly ? 'disabled' : '') + '></td>' +
+                    '<td style="font-family:Consolas,monospace;color:#3b82f6;font-weight:600;vertical-align:middle;">' + c.certNo + '</td>' +
+                    '<td style="vertical-align:middle;"><span style="font-weight:600;color:#475569;vertical-align:middle;">' + c.field + '</span></td>' +
+                    '<td style="vertical-align:middle;">' + c.standard + '</td>' +
+                    '<td style="vertical-align:middle;">' + c.scope + '</td>' +
+                    '<td style="vertical-align:middle;"><span class="record-status-tag ' + statusClass + '" style="vertical-align:middle;">' + c.status + '</span></td>' +
+                    '<td style="color:#1d4ed8;vertical-align:middle;">' + processRes + '</td>' +
+                    '<td style="vertical-align:middle;">' + procPerson + '</td>' +
+                    '<td style="vertical-align:middle;"><div style="display:flex; gap:4px; align-items:center;vertical-align:middle;">';
+                if (readonly) {
+                    html += '<span style="color:#94a3b8;font-size:12px;vertical-align:middle;">-</span>';
+                } else if (!c.processResult) {
+                    html += '<button class="action-btn warning" style="vertical-align:middle;" onclick="openPauseModal([\''+ c.certNo +'\'])">暂停</button>' +
+                        '<button class="action-btn danger" style="vertical-align:middle;" onclick="openRevokeModal([\''+ c.certNo +'\'])">撤销</button>' +
+                        '<button class="action-btn gray" style="vertical-align:middle;" onclick="openIgnoreModal([\''+ c.certNo +'\'])">忽略</button>';
+                } else {
+                    html += '<span style="color:#94a3b8;font-size:12px;vertical-align:middle;">已处理</span>';
+                }
+                html += '</div></td></tr>';
+            }
+            tbody.innerHTML = html;
+            document.getElementById('processSelectAll').checked = false;
+            document.getElementById('processSelectAll').disabled = readonly;
+        }
+
+        // ================= 处理动作落实 =================
+        function applyCertAction(actionText, newStatus) {
+            var data = getCompanyObj(currentCompany);
+            var certNos = Array.from(document.querySelectorAll('.cert-tags-list .cert-tag-item')).map(function(el){ return el.textContent; });
+            for (var i = 0; i < data.certs.length; i++) {
+                if (certNos.indexOf(data.certs[i].certNo) !== -1) {
+                    data.certs[i].processResult = actionText;
+                    data.certs[i].processor = '张三'; // 强制要求处理人为张三
+                    if(newStatus) { data.certs[i].status = newStatus; }
+                }
+            }
+            renderProcessCertTable(data);
+        }
+
+        window.submitIgnore = function() {
+            var reason = document.getElementById('ignoreReason').value;
+            if (!reason) { alert('请选择忽略原因！'); return; }
+            applyCertAction('拟忽略', null); // 忽略不改变有效状态
+            closeModal('ignoreModal');
+        };
+
+        window.submitPause = function() {
+            var reason = document.getElementById('pauseReason').value;
+            if (!reason) { alert('请选择暂停原因！'); return; }
+            applyCertAction('拟暂停', '暂停');
+            closeModal('pauseModal');
+        };
+
+        window.submitRevoke = function() {
+            var reason = document.getElementById('revokeReason').value;
+            if (!reason) { alert('请选择撤销原因！'); return; }
+            applyCertAction('拟撤销', '撤销');
+            closeModal('revokeModal');
+        };
+
+        // ================= 提交处理工作流 =================
+        window.submitProcessWorkflow = function() {
+            var data = getCompanyObj(currentCompany);
+            // 校验是否有未处理的证书
+            var unprocessedNos = [];
+            for(var i=0; i<data.certs.length; i++) {
+                if(!data.certs[i].processResult) unprocessedNos.push(data.certs[i].certNo);
+            }
+            
+            if (unprocessedNos.length > 0) {
+                var msg = '发现以下证书尚未处理：\n' + unprocessedNos.join('\n') + '\n\n确认直接提交吗？';
+                if (!confirm(msg)) return;
+            }
+
+            // 更新整体状态为待审批，赋予处理人与时间
+            data.status = '待审批';
+            data.processor = '张三';
+            data.processTime = getCurrentTimeStr();
+            
+            closeModal('processModal');
+            renderMainTable(); // 实时刷新外层主表
+            alert('已提交处理，等待部门领导审批！');
+        };
+
+        // ================= 审批流弹窗 =================
+        window.openApproveModal = function(companyName) {
+            currentCompany = companyName;
+            document.getElementById('approveCompanyName').textContent = companyName;
+            document.getElementById('approveModal').classList.add('show');
+        };
+
+        window.executeApprove = function(resultStatus) {
+            var data = getCompanyObj(currentCompany);
+            data.status = resultStatus;
+            data.approvePerson = '李四';
+            data.approveTime = getCurrentTimeStr();
+            var remark = document.getElementById('approveRemark').value.trim();
+            if (resultStatus === '审核驳回') {
+                data.rejectReason = remark || '无说明';
+            } else {
+                data.rejectReason = '';
+            }
+
+            if (resultStatus === '审核通过') {
+                // 如果通过，把证书里面的 "拟" 去掉，变成真正结果
+                for(var i=0; i<data.certs.length; i++){
+                    if(data.certs[i].processResult.indexOf('拟') === 0) {
+                        data.certs[i].processResult = '已' + data.certs[i].processResult.substring(1);
+                    }
+                }
+            }
+            closeModal('approveModal');
+            renderMainTable();
+        };
+
+        // ================= 已处理详情页面 =================
+        window.showProcessedDetailModal = function(companyName) {
+            var data = getCompanyObj(companyName);
+            if (!data) return;
+
+            document.getElementById('processedCompanyName').textContent = '（' + data.company + '）';
+
+            // 审批信息展示
+            var approveBox = document.getElementById('approveInfoBox');
+            var rejectBox = document.getElementById('rejectReasonBox');
+            if (data.status === '审核通过' || data.status === '审核驳回') {
+                approveBox.style.display = 'block';
+                document.getElementById('approveInfoPerson').textContent = data.approvePerson || '-';
+                document.getElementById('approveInfoTime').textContent = data.approveTime || '-';
+                if (data.status === '审核驳回' && data.rejectReason) {
+                    rejectBox.style.display = 'block';
+                    document.getElementById('approveInfoReason').textContent = data.rejectReason;
+                } else {
+                    rejectBox.style.display = 'none';
+                }
+            } else {
+                approveBox.style.display = 'none';
+            }
+
+            var tbody = document.getElementById('processedCertTableBody');
+            var html = '';
+            for (var k = 0; k < data.certs.length; k++) {
+                var c = data.certs[k];
+                var statusClass = c.status === '有效' ? 'status-valid' : (c.status === '暂停' ? 'status-suspend' : 'status-revoked');
+                html += '<tr>' +
+                    '<td style="font-family:Consolas,monospace;font-weight:600;color:#475569;">' + c.certNo + '</td>' +
+                    '<td>' + c.field + '</td>' +
+                    '<td>' + c.standard + '</td>' +
+                    '<td><span class="record-status-tag ' + statusClass + '">' + c.status + '</span></td>' +
+                    '<td style="color:#1d4ed8; font-weight:600;">' + (c.processResult || '-') + '</td>' +
+                    '<td style="color:#64748b;">' + (c.processTime || data.processTime) + '</td>' +
+                    '<td><span style="background:#f1f5f9;padding:2px 8px;border-radius:4px;border:1px solid #e2e8f0;font-size:12px;">' + (c.processor || data.processor) + '</span></td>' +
+                    '</tr>';
+            }
+            tbody.innerHTML = html;
+            document.getElementById('processedDetailModal').classList.add('show');
+        };
+
+
+        // ================= 批量操作及通用交互 =================
+        window.toggleProcessSelectAll = function() {
+            var isChecked = document.getElementById('processSelectAll').checked;
+            document.querySelectorAll('.process-cert-cb').forEach(function(cb) { cb.checked = isChecked; });
+        }
+
+        function getProcessSelectedCerts() {
+            return Array.from(document.querySelectorAll('.process-cert-cb:checked')).map(function(cb) { return cb.value; });
+        }
+
+        window.batchProcessIgnore = function() {
+            var certs = getProcessSelectedCerts();
+            if(certs.length === 0) { alert('请至少勾选一张关联证书！'); return; }
+            openIgnoreModal(certs);
+        };
+        window.batchProcessPause = function() {
+            var certs = getProcessSelectedCerts();
+            if(certs.length === 0) { alert('请至少勾选一张关联证书！'); return; }
+            openPauseModal(certs);
+        };
+        window.batchProcessRevoke = function() {
+            var certs = getProcessSelectedCerts();
+            if(certs.length === 0) { alert('请至少勾选一张关联证书！'); return; }
+            openRevokeModal(certs);
+        };
+
+        window.openIgnoreModal = function(certNos) {
+            var nos = Array.isArray(certNos) ? certNos : [certNos];
+            document.getElementById('ignoreCertNos').innerHTML = nos.map(function(n) { return '<span class="cert-tag-item">' + n + '</span>'; }).join('');
+            document.getElementById('ignoreModal').classList.add('show');
+        };
+
+        window.openPauseModal = function(certNos) {
+            var nos = Array.isArray(certNos) ? certNos : [certNos];
+            document.getElementById('pauseCertNos').innerHTML = nos.map(function(n) { return '<span class="cert-tag-item">' + n + '</span>'; }).join('');
+            document.getElementById('pauseModal').classList.add('show');
+        };
+
+        window.openRevokeModal = function(certNos) {
+            var nos = Array.isArray(certNos) ? certNos : [certNos];
+            document.getElementById('revokeCertNos').innerHTML = nos.map(function(n) { return '<span class="cert-tag-item">' + n + '</span>'; }).join('');
+            document.getElementById('revokeModal').classList.add('show');
+        };
+
+        function init() {
+            // 初始化渲染主表格
+            renderMainTable();
+
+            var cards = document.querySelectorAll('.alert-card');
+            for (var i = 0; i < cards.length; i++) {
+                cards[i].addEventListener('click', function() {
+                    document.querySelectorAll('.parent-cb, .child-cb').forEach(function(cb) { cb.checked = false; });
+                    var targetValue = this.getAttribute('data-filter');
+                    var targetCb = document.querySelector('.parent-cb[value="' + targetValue + '"]');
+                    if (targetCb) {
+                        targetCb.checked = true;
+                        window.toggleParentCb(targetValue, true);
+                    }
+                    renderMainTable();
+                });
+            }
+
+            var statusTabs = document.querySelectorAll('.status-tab');
+            for (var s = 0; s < statusTabs.length; s++) {
+                statusTabs[s].addEventListener('click', function() {
+                    statusTabs.forEach(function(t) { t.classList.remove('active'); });
+                    this.classList.add('active');
+                    renderMainTable();
+                });
+            }
+
+            document.getElementById('searchBtn').addEventListener('click', renderMainTable);
+            document.getElementById('resetBtn').addEventListener('click', function() {
+                document.getElementById('companyName').value = '';
+                document.querySelectorAll('.parent-cb, .child-cb').forEach(function(cb){ cb.checked = false; });
+                updateMultiSelect();
+                document.getElementById('startDate').value = '';
+                document.getElementById('endDate').value = '';
+                statusTabs.forEach(function(t) { t.classList.remove('active'); });
+                statusTabs[0].classList.add('active');
+                renderMainTable();
+            });
+        }
+
+        window.closeModal = function(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

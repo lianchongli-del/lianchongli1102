@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目预排弹窗设计</title>
+    <script>
+        window.tailwind = window.tailwind || {};
+        window.tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563EB',
+                        'primary-hover': '#1D4ED8',
+                        border: '#E2E8F0',
+                        surface: '#FFFFFF',
+                        page: '#F8FAFC',
+                        text: '#1E293B',
+                        muted: '#64748B'
+                    },
+                    borderRadius: {
+                        DEFAULT: '6px',
+                        component: '6px',
+                        card: '8px',
+                        modal: '10px'
+                    },
+                    boxShadow: {
+                        component: '0 2px 4px rgba(15, 23, 42, 0.08)',
+                        floating: '0 8px 24px rgba(15, 23, 42, 0.12)'
+                    }
+                }
+            }
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-width: 1280px;
+            min-height: 100vh;
+            margin: 0;
+            background: #f8fafc;
+            color: #1e293b;
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .modal-mask {
+            min-height: 100vh;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: stretch;
+            justify-content: flex-end;
+        }
+
+        .modal {
+            width: 1120px;
+            max-width: 88vw;
+            height: 100vh;
+            max-height: 100vh;
+            background: white;
+            border-radius: 0;
+            border: 0;
+            border-left: 1px solid #e5e7eb;
+            box-shadow: -12px 0 28px rgba(15, 23, 42, 0.18);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            min-height: 62px;
+            padding: 14px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #0f172a;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .modal-title i {
+            color: #2563eb;
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow: auto;
+            flex: 1;
+            background: #fff;
+        }
+
+        .modal-footer {
+            min-height: 58px;
+            padding: 10px 20px;
+            border-top: 1px solid #e5e7eb;
+            background: #f9fafb;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            border-radius: 0;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid #d1d5db;
+            background: #fff;
+            color: #374151;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background: #f9fafb;
+        }
+
+        .btn.primary {
+            border-color: transparent;
+            background: #2563eb;
+            color: #fff;
+        }
+
+        .btn.primary:hover {
+            background: #1d4ed8;
+            color: #fff;
+        }
+
+        .btn.ghost {
+            background: transparent;
+            color: #374151;
+            border-color: transparent;
+        }
+
+        .btn.ghost:hover {
+            background: #f1f5f9;
+        }
+
+        .section {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+            margin-bottom: 16px;
+        }
+
+        .section-header {
+            min-height: 45px;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f3f4f6;
+            background: #fafafa;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1f2937;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .section-title::before {
+            display: none;
+        }
+
+        .section-body {
+            padding: 16px;
+        }
+
+        .notice {
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 14px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+            line-height: 1.6;
+        }
+
+        .summary-bar {
+            margin-bottom: 14px;
+            padding: 12px 14px;
+            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+        }
+
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            color: #475569;
+        }
+
+        .summary-item strong {
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px 18px;
+        }
+
+        .form-item label {
+            display: block;
+            margin-bottom: 6px;
+            color: #374151;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            min-height: 34px;
+            padding: 8px 10px;
+            font-size: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: #fff;
+            color: #374151;
+            transition: all 0.15s;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+        }
+
+        .readonly {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 8px 10px;
+            color: #374151;
+            font-size: 12px;
+            min-height: 34px;
+            line-height: 20px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            justify-content: center;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            border: 1px solid;
+        }
+
+        .badge.blue { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+        .badge.purple { background: #f3e8ff; color: #6b21a8; border-color: #d8b4fe; }
+        .badge.orange { background: #fff7e6; color: #9a3412; border-color: #fed7aa; }
+        .badge.green { background: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+        .badge.gray { background: #f3f4f6; color: #6b7280; border-color: #e5e7eb; }
+
+        .table-wrap {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+
+        .table-wrap::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .table-wrap::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .table-wrap::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: auto;
+            font-size: 12px;
+        }
+
+        th {
+            background: #f9fafb;
+            color: #374151;
+            font-weight: 600;
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f3f4f6;
+            color: #374151;
+            vertical-align: middle;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        tbody tr:hover td {
+            background: #fafafa;
+        }
+
+        .timeline {
+            min-height: 54px;
+            padding: 12px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .timeline-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .timeline-step strong {
+            color: #1e293b;
+        }
+
+        .timeline-line {
+            width: 42px;
+            height: 1px;
+            background: #cbd5e1;
+        }
+
+        .person-tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 22px;
+            padding: 0 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .tag-fulltime { background: #dbeafe; color: #1e40af; }
+        .tag-parttime { background: #fce7f3; color: #be185d; }
+
+        .prearrange-mark {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 24px;
+            padding: 0 8px;
+            border-radius: 4px;
+            background: #fff7e6;
+            border: 1px solid #fed7aa;
+            color: #9a3412;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .coverage-panel {
+            position: sticky;
+            top: -20px;
+            z-index: 2;
+            margin: -20px -20px 16px;
+            padding: 16px 20px;
+            background: #fff;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .coverage-grid {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .coverage-card {
+            flex: 1;
+            min-width: 280px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #fff;
+            padding: 16px 20px;
+        }
+
+        .coverage-card strong {
+            display: inline;
+            color: #0f172a;
+            font-size: 16px;
+            margin-right: 8px;
+        }
+
+        .coverage-card span {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .system-coverage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .system-coverage-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+
+        .status-full {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-partial {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-none {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .coverage-progress {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 14px;
+        }
+
+        .coverage-progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: #22c55e;
+            transition: width 0.3s;
+        }
+
+        .code-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 12px;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #94a3b8;
+            margin-right: 8px;
+            margin-bottom: 6px;
+            font-family: 'Courier New', monospace;
+            transition: all 0.2s;
+        }
+
+        .code-chip.matched {
+            background: #dcfce7;
+            border-color: #86efac;
+            color: #166534;
+            font-weight: 600;
+        }
+
+        .person-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .person-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #fff;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .person-card:hover {
+            border-color: #93c5fd;
+            box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+        }
+
+        .person-card.selected {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .person-card.external {
+            border-style: dashed;
+            background: #ffffbf;
+        }
+
+        .person-card-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .tag-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .remaining-days-badge {
+            display: inline-flex;
+            align-items: center;
+            height: 22px;
+            padding: 0 8px;
+            border-radius: 11px;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            color: #ea580c;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .full-coverage-tag,
+        .external-badge,
+        .conflict-badge {
+            display: inline-flex;
+            align-items: center;
+            height: 22px;
+            padding: 0 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .full-coverage-tag {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .external-badge {
+            background: #fffbeb;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+
+        .conflict-badge {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .system-coverage {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .system-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            height: 22px;
+            padding: 0 8px;
+            border-radius: 4px;
+            background: #f3f4f6;
+            color: #475569;
+            font-size: 12px;
+        }
+
+        .system-chip.ok {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-note {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .center-modal-mask {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+        }
+
+        .center-modal-mask.show {
+            display: flex;
+        }
+
+        .center-modal {
+            width: 900px;
+            max-width: 90vw;
+            height: 86vh;
+            max-height: 86vh;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .center-modal-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .center-modal-body {
+            padding: 24px;
+            overflow: auto;
+            flex: 1;
+        }
+
+        .center-modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e2e8f0;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .editable-field {
+            width: 100%;
+            min-height: 34px;
+            padding: 8px 10px;
+            font-size: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: #fff;
+            color: #374151;
+            transition: all 0.15s;
+            font-family: inherit;
+        }
+
+        .editable-field:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+        }
+
+        .personnel-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        input[type="checkbox"] {
+            accent-color: #1677ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="modal-mask">
+        <div class="modal">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title">
+                        <span class="prearrange-mark">预排</span>
+                        <span>华锐精密机械制造有限公司</span>
+                    </div>
+                </div>
+                <button class="text-slate-400 hover:text-slate-700 text-lg">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">预排项目</div>
+                        <span class="text-xs text-slate-400">已选 3 项</span>
+                    </div>
+                    <div class="section-body">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width:42px"><input type="checkbox" checked></th>
+                                        <th style="width:160px">项目编号</th>
+                                        <th style="width:130px">认证领域</th>
+                                        <th style="width:160px">认证范围</th>
+                                        <th style="width:120px">认可机构</th>
+                                        <th style="width:150px">认证标准</th>
+                                        <th style="width:150px">审核类型</th>
+                                        <th style="width:170px">审核阶段</th>
+                                        <th style="width:150px">当前任务状态</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="checkbox" checked></td>
+                                        <td>1100-Q-2026-0001</td>
+                                        <td>QMS</td>
+                                        <td>机械制造</td>
+                                        <td>CNAS</td>
+                                        <td>GB/T 19001-2016</td>
+                                        <td><span class="badge blue">初次认证</span> → <span class="badge blue">初次认证</span></td>
+                                        <td><span class="badge blue">一阶段</span> → <span class="badge purple">二阶段</span></td>
+                                        <td><span class="badge orange">执行中</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" checked></td>
+                                        <td>1100-E-2026-0002</td>
+                                        <td>EMS</td>
+                                        <td>机械制造</td>
+                                        <td>CNAS</td>
+                                        <td>GB/T 24001-2016</td>
+                                        <td><span class="badge blue">初次认证</span> → <span class="badge blue">初次认证</span></td>
+                                        <td><span class="badge blue">一阶段</span> → <span class="badge purple">二阶段</span></td>
+                                        <td><span class="badge orange">执行中</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" checked></td>
+                                        <td>1100-Q-2026-0003</td>
+                                        <td>QMS</td>
+                                        <td>软件开发</td>
+                                        <td>CNAS</td>
+                                        <td>GB/T 19001-2016</td>
+                                        <td><span class="badge green">监督</span> → <span class="badge green">监督</span></td>
+                                        <td><span class="badge purple">二阶段</span> → <span class="badge purple">二阶段</span></td>
+                                        <td><span class="badge orange">执行中</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">预排信息</div>
+                    </div>
+                    <div class="section-body">
+                        <div class="form-grid">
+                            <div class="form-item">
+                                <label>计划开始日期</label>
+                                <input type="date" class="form-input" value="2026-07-08">
+                            </div>
+                            <div class="form-item">
+                                <label>计划结束日期</label>
+                                <input type="date" class="form-input" value="2026-07-10">
+                            </div>
+                            <div class="form-item">
+                                <label>预排原因</label>
+                                <select class="form-input">
+                                    <option>提前预约审核资源</option>
+                                    <option>客户要求锁定时间</option>
+                                    <option>审核员资源紧张</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">审核人员与日期区间</div>
+                        <div class="flex items-center gap-2">
+                            <button class="btn primary" onclick="openPersonModal()"><i class="fas fa-user-plus"></i>选择人员</button>
+                        </div>
+                    </div>
+                    <div class="section-body">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width:50px">序号</th>
+                                        <th style="width:90px">姓名</th>
+                                        <th style="width:120px">组内身份</th>
+                                        <th style="width:220px">资格及注册编号</th>
+                                        <th style="width:110px">CQC编号</th>
+                                        <th style="width:180px">工作单位</th>
+                                        <th style="width:90px">专兼职</th>
+                                        <th style="width:120px">联系电话</th>
+                                        <th style="width:520px">审核日期区间</th>
+                                        <th style="width:70px">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td class="font-medium text-slate-900">张爱兵</td>
+                                        <td>
+                                            <select class="form-input">
+                                                <option>组长</option>
+                                                <option selected>组员</option>
+                                                <option>技术专家</option>
+                                            </select>
+                                        </td>
+                                        <td>Q/EMS审核员</td>
+                                        <td class="font-mono">CQC11045</td>
+                                        <td>东北区域/黑龙江公司</td>
+                                        <td><span class="person-tag tag-parttime">兼职</span></td>
+                                        <td>13800138003</td>
+                                        <td>
+                                            <div class="date-range">
+                                                <input type="date" class="form-input !w-[130px]" value="2026-07-08">
+                                                <select class="form-input !w-[92px] time-select" data-value="08:00"></select>
+                                                <span class="text-slate-400">至</span>
+                                                <input type="date" class="form-input !w-[130px]" value="2026-07-10">
+                                                <select class="form-input !w-[92px] time-select" data-value="17:00"></select>
+                                            </div>
+                                        </td>
+                                        <td><button class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td class="font-medium text-slate-900">黄起超</td>
+                                        <td>
+                                            <select class="form-input">
+                                                <option>组长</option>
+                                                <option selected>组员</option>
+                                                <option>技术专家</option>
+                                            </select>
+                                        </td>
+                                        <td>Q审核员(2024-N1QMS-6015922)</td>
+                                        <td class="font-mono">CQC10634</td>
+                                        <td>东北区域/辽宁公司</td>
+                                        <td><span class="person-tag tag-fulltime">专职</span></td>
+                                        <td>13501320752</td>
+                                        <td>
+                                            <div class="date-range">
+                                                <input type="date" class="form-input !w-[130px]" value="2026-07-08">
+                                                <select class="form-input !w-[92px] time-select" data-value="08:00"></select>
+                                                <span class="text-slate-400">至</span>
+                                                <input type="date" class="form-input !w-[130px]" value="2026-07-10">
+                                                <select class="form-input !w-[92px] time-select" data-value="17:00"></select>
+                                            </div>
+                                        </td>
+                                        <td><button class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td class="font-medium text-slate-900">娄杰</td>
+                                        <td>
+                                            <select class="form-input">
+                                                <option>组长</option>
+                                                <option selected>组员</option>
+                                                <option>技术专家</option>
+                                            </select>
+                                        </td>
+                                        <td>Q审核员(2024-N1QMS-4014327)</td>
+                                        <td class="font-mono">CQC10601</td>
+                                        <td>东北区域/吉林公司</td>
+                                        <td><span class="person-tag tag-fulltime">专职</span></td>
+                                        <td>13910311490</td>
+                                        <td>
+                                            <div class="date-range">
+                                                <input type="date" class="form-input !w-[130px]" value="2026-07-09">
+                                                <select class="form-input !w-[92px] time-select" data-value="08:00"></select>
+                                                <span class="text-slate-400">至</span>
+                                                <input type="date" class="form-input !w-[130px]" value="2026-07-10">
+                                                <select class="form-input !w-[92px] time-select" data-value="17:00"></select>
+                                            </div>
+                                        </td>
+                                        <td><button class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="flex items-center gap-2">
+                    <button class="btn">取消</button>
+                    <button class="btn primary">保存预排</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="center-modal-mask" id="personModal">
+        <div class="center-modal">
+            <div class="center-modal-header">
+                <div>
+                    <div class="modal-title"><i class="fas fa-user-plus"></i><span>选择审核人员</span></div>
+                    <div class="text-xs text-slate-400 mt-1">支持按资格、公司、专兼职筛选后多选人员</div>
+                </div>
+                <button class="text-slate-400 hover:text-slate-700 text-lg" onclick="closePersonModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="center-modal-body">
+                <div class="coverage-panel" id="coverageSummaryPanel">
+                    <div class="flex items-center gap-2 mb-3 text-sm font-semibold text-slate-900">
+                        <i class="fas fa-shield-alt text-green-600"></i>已选人员体系覆盖情况
+                    </div>
+                    <div class="coverage-grid" id="systemCoverageContent"></div>
+                </div>
+
+                <div class="relative mb-4">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" class="editable-field pl-10" placeholder="搜索姓名、CQC编号、专业代码...">
+                </div>
+
+                <div class="grid grid-cols-5 gap-3 mb-4" id="filterConditionsSection">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">公司名称</label>
+                        <select class="editable-field py-1.5"><option>全部公司</option><option>辽宁公司</option><option>黑龙江公司</option><option>吉林公司</option></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">资格</label>
+                        <select class="editable-field py-1.5"><option>全部资格</option><option>QMS</option><option>EMS</option><option>OHSMS</option></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">专兼职</label>
+                        <select class="editable-field py-1.5"><option>全部</option><option>专职</option><option>兼职</option></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">计划开始时间</label>
+                        <input type="date" class="editable-field py-1.5">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">计划结束时间</label>
+                        <input type="date" class="editable-field py-1.5">
+                    </div>
+                </div>
+
+                <div id="personnelList" class="personnel-list">
+                    <div class="person-card selected" data-qms="3" data-ems="2" data-type="兼职" onclick="togglePersonCard(this)">
+                        <div class="person-card-head">
+                            <div class="tag-container">
+                                <span class="font-semibold text-slate-900">张爱兵</span>
+                                <span class="remaining-days-badge">156天/180天</span>
+                                <span class="person-tag tag-parttime">兼职</span>
+                                <span class="badge blue">QMS</span>
+                                <span class="badge blue">EMS</span>
+                                <span class="full-coverage-tag"><i class="fas fa-check mr-1"></i>全覆盖</span>
+                                <span class="external-badge"><i class="fas fa-lock mr-1"></i>经审批调用</span>
+                            </div>
+                            <i class="fas fa-check-circle text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="text-xs text-slate-500 space-y-1 mb-2">
+                            <div class="flex justify-between"><span>CQC编号：CQC11045</span><span>默认角色：组员</span></div>
+                            <div>资格：Q/EMS审核员</div>
+                            <div>工作单位：东北区域/黑龙江公司</div>
+                        </div>
+                        <div class="system-coverage">
+                            <span class="system-chip ok"><i class="fas fa-check"></i>QMS 3/3</span>
+                            <span class="system-chip ok"><i class="fas fa-check"></i>EMS 2/2</span>
+                        </div>
+                    </div>
+
+                    <div class="person-card selected" data-qms="3" data-ems="1" data-type="专职" onclick="togglePersonCard(this)">
+                        <div class="person-card-head">
+                            <div class="tag-container">
+                                <span class="font-semibold text-slate-900">黄起超</span>
+                                <span class="remaining-days-badge">134天/180天</span>
+                                <span class="person-tag tag-fulltime">专职</span>
+                                <span class="badge blue">QMS</span>
+                                <span class="full-coverage-tag"><i class="fas fa-check mr-1"></i>全覆盖</span>
+                            </div>
+                            <i class="fas fa-check-circle text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="text-xs text-slate-500 space-y-1 mb-2">
+                            <div class="flex justify-between"><span>CQC编号：CQC10634</span><span>默认角色：组员</span></div>
+                            <div>资格：Q审核员(2024-N1QMS-6015922)</div>
+                            <div>工作单位：东北区域/辽宁公司</div>
+                        </div>
+                        <div class="system-coverage">
+                            <span class="system-chip ok"><i class="fas fa-check"></i>QMS 3/3</span>
+                            <span class="system-chip">EMS 1/2</span>
+                        </div>
+                    </div>
+
+                    <div class="person-card" data-qms="2" data-ems="1" data-type="专职" onclick="togglePersonCard(this)">
+                        <div class="person-card-head">
+                            <div class="tag-container">
+                                <span class="font-semibold text-slate-900">沈书华</span>
+                                <span class="remaining-days-badge">78天/180天</span>
+                                <span class="person-tag tag-fulltime">专职</span>
+                                <span class="badge blue">QMS</span>
+                                <span class="conflict-badge"><i class="fas fa-exclamation-triangle mr-1"></i>时间冲突：2026-07-09</span>
+                            </div>
+                            <i class="far fa-circle text-slate-300 text-xl"></i>
+                        </div>
+                        <div class="text-xs text-slate-500 space-y-1 mb-2">
+                            <div class="flex justify-between"><span>CQC编号：CQC08017</span><span>默认角色：组员</span></div>
+                            <div>资格：Q审核员(2024-N1QMS-7012900)</div>
+                            <div>工作单位：东北区域/吉林公司</div>
+                        </div>
+                        <div class="system-coverage">
+                            <span class="system-chip ok"><i class="fas fa-check"></i>QMS 2/3</span>
+                            <span class="system-chip">EMS 1/2</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="center-modal-footer">
+                <span class="text-sm text-slate-600 mr-auto">已选择 <span id="selectedCount" class="font-semibold text-blue-600">2</span> 人</span>
+                <button class="btn" onclick="closePersonModal()">取消</button>
+                <button class="btn primary" onclick="closePersonModal()">确定选择</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function buildTimeOptions(selected) {
+            let html = '';
+            for (let hour = 0; hour < 24; hour++) {
+                for (let minute = 0; minute < 60; minute += 15) {
+                    const value = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+                    html += `<option value="${value}" ${value === selected ? 'selected' : ''}>${value}</option>`;
+                }
+            }
+            return html;
+        }
+
+        function initTimeSelects() {
+            document.querySelectorAll('.time-select').forEach(select => {
+                select.innerHTML = buildTimeOptions(select.dataset.value || '08:00');
+            });
+        }
+
+        function openPersonModal() {
+            document.getElementById('personModal').classList.add('show');
+        }
+
+        function closePersonModal() {
+            document.getElementById('personModal').classList.remove('show');
+        }
+
+        function togglePersonCard(card) {
+            const icon = card.querySelector('.person-card-head > i');
+            card.classList.toggle('selected');
+            if (card.classList.contains('selected')) {
+                icon.className = 'fas fa-check-circle text-blue-600 text-xl';
+            } else {
+                icon.className = 'far fa-circle text-slate-300 text-xl';
+            }
+            updatePersonnelSelectionState();
+        }
+
+        function updatePersonnelSelectionState() {
+            const selectedCards = Array.from(document.querySelectorAll('#personnelList .person-card.selected'));
+            const qmsTotal = selectedCards.reduce((max, card) => Math.max(max, Number(card.dataset.qms || 0)), 0);
+            const emsTotal = selectedCards.reduce((max, card) => Math.max(max, Number(card.dataset.ems || 0)), 0);
+
+            document.getElementById('selectedCount').textContent = selectedCards.length;
+            document.getElementById('systemCoverageContent').innerHTML = [
+                renderCoverageCard('QMS', ['19.01.01', '19.07.00', '19.08.00'], qmsTotal),
+                renderCoverageCard('EMS', ['19.03.00', '19.12.00'], emsTotal)
+            ].join('');
+        }
+
+        function renderCoverageCard(system, codes, matchedCount) {
+            const total = codes.length;
+            const safeMatched = Math.min(matchedCount, total);
+            const percentage = total ? Math.round((safeMatched / total) * 100) : 0;
+            const statusClass = safeMatched === total ? 'status-full' : safeMatched > 0 ? 'status-partial' : 'status-none';
+            const statusText = safeMatched === total ? '全覆盖' : safeMatched > 0 ? `部分覆盖 ${safeMatched}/${total}` : '未覆盖';
+            const chips = codes.map((code, index) => `<span class="code-chip ${index < safeMatched ? 'matched' : ''}">${code}</span>`).join('');
+            return `
+                <div class="coverage-card">
+                    <div class="system-coverage-header">
+                        <div>
+                            <strong>${system} 体系</strong>
+                            <span>需覆盖 ${total} 个代码</span>
+                        </div>
+                        <span class="system-coverage-status ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="coverage-progress">
+                        <div class="coverage-progress-fill" style="width: ${percentage}%"></div>
+                    </div>
+                    <div>${chips}</div>
+                </div>
+            `;
+        }
+
+        initTimeSelects();
+        updatePersonnelSelectionState();
+    </script>
+</body>
+</html>

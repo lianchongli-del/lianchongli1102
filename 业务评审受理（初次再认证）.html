@@ -1,0 +1,2189 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>业务评审受理 - 体系认证平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #f1f5f9; }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 100px;
+        }
+
+        .review-section { 
+            transition: all 0.3s ease; 
+            scroll-margin-top: 100px;
+        }
+
+        .nav-item { position: relative; transition: all 0.2s ease; }
+        .nav-item.active { background: linear-gradient(90deg, #eff6ff 0%, #ffffff 100%); border-left: 3px solid #2563eb; color: #2563eb; font-weight: 600; }
+        .nav-item:hover:not(.active) { background-color: #f8fafc; border-left: 3px solid #cbd5e1; }
+
+        .readonly-field { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 12px; border-radius: 6px; font-size: 13px; color: #1e293b; min-height: 36px; }
+        .editable-field { border: 1px solid #d1d5db; padding: 8px 12px; border-radius: 6px; font-size: 13px; transition: all 0.2s; width: 100%; }
+        .editable-field:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        select.editable-field { appearance: auto; padding-right: 24px; }
+
+        .rich-editor { border: 1px solid #d1d5db; border-radius: 6px; overflow: hidden; background: white; }
+        .rich-editor-toolbar { background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 6px; display: flex; gap: 4px; }
+        .rich-editor-toolbar button { padding: 4px 8px; border: none; background: transparent; color: #64748b; cursor: pointer; border-radius: 4px; }
+        .rich-editor-toolbar button:hover { background: #e2e8f0; color: #1e293b; }
+        .rich-editor-content { padding: 12px; min-height: 100px; font-size: 13px; line-height: 1.5; outline: none; }
+        .rich-editor-content:empty:before { content: attr(data-placeholder); color: #9ca3af; font-style: italic; }
+
+        .process-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .process-table th { background: #f8fafc; padding: 10px; text-align: left; font-weight: 600; color: #475569; border-bottom: 1px solid #e2e8f0; }
+        .process-table td { padding: 10px; border-bottom: 1px solid #f1f5f9; }
+        .process-table tr:hover td { background: #f8fafc; }
+
+        .file-action-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 500; transition: all 0.2s; }
+        .file-action-btn.preview { color: #2563eb; background: #eff6ff; border: 1px solid #bfdbfe; }
+        .file-action-btn.preview:hover { background: #dbeafe; }
+        .file-action-btn.download { color: #047857; background: #ecfdf5; border: 1px solid #a7f3d0; }
+        .file-action-btn.download:hover { background: #d1fae5; }
+        .cert-status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+        .cert-status-valid { background: #dcfce7; color: #166534; }
+        .cert-status-suspended { background: #fef3c7; color: #92400e; }
+        .cert-status-revoked { background: #fee2e2; color: #991b1b; }
+        .cert-status-cancelled { background: #f1f5f9; color: #475569; }
+
+        .search-dropdown { position: relative; }
+        .search-history-list { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 6px 6px; max-height: 200px; overflow-y: auto; z-index: 50; display: none; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .search-history-list.show { display: block; }
+        .history-item { padding: 8px 12px; cursor: pointer; font-size: 13px; color: #374151; }
+        .history-item:hover { background: #f3f4f6; }
+
+        .alert-box { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 12px; }
+        .alert-box.info { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+        .alert-box.warning { background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; }
+        .alert-box.error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+
+        .site-card-readonly { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+        .site-card-readonly.selected { border-color: #3b82f6; background: #eff6ff; }
+
+        .tab-btn { position: relative; transition: all 0.2s; }
+        .tab-btn.active { color: #2563eb; border-bottom: 2px solid #2563eb; background: #eff6ff; }
+        .tab-btn:hover:not(.active) { background: #f8fafc; color: #475569; }
+
+        .review-type-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+        .type-initial { background: #dbeafe; color: #1e40af; }
+        .type-surveillance { background: #fef3c7; color: #92400e; }
+        .type-recertification { background: #d1fae5; color: #065f46; }
+        .type-change { background: #f3e8ff; color: #7c3aed; }
+
+        .risk-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+        .risk-level-1 { background: #fee2e2; color: #991b1b; }
+        .risk-level-2 { background: #fef3c7; color: #92400e; }
+        .risk-level-3 { background: #dbeafe; color: #1e40af; }
+
+        .section-title { font-size: 14px; font-weight: 600; color: #1e293b; display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0; }
+
+        .field-group { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 16px; transition: all 0.2s; }
+        .field-group:hover { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border-color: #cbd5e1; }
+
+        .credit-check-card { transition: all 0.3s ease; border-left: 4px solid #e2e8f0; }
+        .credit-check-card.success { border-left-color: #22c55e; background: #f0fdf4; }
+
+        .toggle-switch { display: flex; background: #f1f5f9; border-radius: 8px; padding: 4px; gap: 4px; }
+        .toggle-btn { flex: 1; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; border: none; background: transparent; color: #64748b; }
+        .toggle-btn.active { background: white; color: #2563eb; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        .site-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .site-checkbox:hover {
+            background-color: #f8fafc;
+        }
+        .site-checkbox.selected {
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+        }
+        .site-checkbox input[type="checkbox"] {
+            display: none;
+        }
+
+        .change-major {
+            border-left: 4px solid #ef4444;
+            background: linear-gradient(to right, #fef2f2, transparent);
+        }
+        .change-minor {
+            border-left: 4px solid #f59e0b;
+            background: linear-gradient(to right, #fffbeb, transparent);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(90deg, #eff6ff 0%, #ffffff 100%);
+            border-left: 3px solid #2563eb;
+            color: #2563eb;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1);
+        }
+        @media (max-width: 1024px) { .sidebar { display: none; } }
+    </style>
+<base target="_blank">
+</head>
+<body class="text-slate-800">
+
+    <!-- 顶部导航 -->
+    <div class="fixed top-0 left-0 right-0 z-40 bg-white border-b border-slate-200 shadow-sm">
+        <div class="max-w-[1920px] mx-auto px-6">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-4">
+                    <button onclick="history.back()" class="text-slate-600 hover:text-slate-900 flex items-center gap-2 text-sm transition-colors">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>返回列表</span>
+                    </button>
+                    <div class="h-6 w-px bg-slate-300"></div>
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-lg font-bold text-slate-900">业务评审受理</h1>
+                        <span class="review-type-badge type-initial" id="reviewTypeBadge">初次认证</span>
+                        <span class="px-2 py-1 rounded text-xs font-medium bg-amber-100 text-amber-700 border border-amber-200" id="reviewStatus">待受理</span>
+                        <span class="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">OHSMS</span>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="saveReview()" class="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-all">
+                        <i class="fas fa-save mr-2"></i>暂存
+                    </button>
+                    <button onclick="submitFinalReview()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md shadow-blue-200 transition-all">
+                        <i class="fas fa-check-circle mr-2"></i>提交评审
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主体布局 -->
+    <div class="max-w-[1920px] mx-auto px-6 pt-24 pb-8 flex gap-6">
+
+        <!-- 左侧导航 -->
+        <div class="w-72 shrink-0 sidebar">
+            <div class="sticky top-24 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-4 bg-slate-50 border-b border-slate-200">
+                    <h3 class="font-semibold text-slate-900 text-sm">评审导航</h3>
+                    <p class="text-xs text-slate-500 mt-1">按步骤完成OHSMS评审</p>
+                </div>
+                <nav class="py-2">
+                    <a href="#section-application" class="nav-item active block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent hover:bg-slate-50" onclick="switchTab('application'); return false;">
+                        <div class="flex items-center justify-between">
+                            <span class="flex items-center gap-2"><i class="fas fa-file-alt w-5 text-center"></i>认证申请信息</span>
+                        </div>
+                    </a>
+                    <a href="#section-process" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent hover:bg-slate-50" onclick="switchTab('process'); return false;">
+                        <div class="flex items-center justify-between">
+                            <span class="flex items-center gap-2"><i class="fas fa-project-diagram w-5 text-center"></i>管理体系过程清单</span>
+                        </div>
+                    </a>
+                    <a href="#section-sites" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent hover:bg-slate-50" onclick="switchTab('sites'); return false;">
+                        <div class="flex items-center justify-between">
+                            <span class="flex items-center gap-2"><i class="fas fa-map-marker-alt w-5 text-center"></i>认证场所清单</span>
+                            <span class="text-xs bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full" id="siteCount">4</span>
+                        </div>
+                    </a>
+                    <a href="#section-survey" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent hover:bg-slate-50 hidden" id="nav-survey" onclick="switchTab('survey'); return false;">
+                        <div class="flex items-center justify-between">
+                            <span class="flex items-center gap-2"><i class="fas fa-clipboard-check w-5 text-center"></i>获证方情况调查</span>
+                        </div>
+                    </a>
+                    <div class="border-t border-slate-200 my-2"></div>
+                    <a href="#section-credit" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent hover:bg-slate-50" onclick="switchTab('credit'); return false;">
+                        <div class="flex items-center justify-between">
+                            <span class="flex items-center gap-2"><i class="fas fa-shield-alt w-5 text-center"></i>客户信用核查</span>
+                        </div>
+                    </a>
+                    <a href="#section-history" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent hover:bg-slate-50" onclick="switchTab('history'); return false;">
+                        <div class="flex items-center justify-between">
+                            <span class="flex items-center gap-2"><i class="fas fa-history w-5 text-center"></i>历史证书核查</span>
+                        </div>
+                    </a>
+                    <a href="#section-baseinfo" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent hover:bg-slate-50" onclick="switchTab('baseinfo'); return false;">
+                        <div class="flex items-center justify-between">
+                            <span class="flex items-center gap-2"><i class="fas fa-info-circle w-5 text-center"></i>基本信息确定</span>
+                        </div>
+                    </a>
+                    <a href="#section-capability" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent hover:bg-slate-50" onclick="switchTab('capability'); return false;">
+                        <div class="flex items-center justify-between">
+                            <span class="flex items-center gap-2"><i class="fas fa-check-double w-5 text-center"></i>能力确认</span>
+                        </div>
+                    </a>
+                    <a href="#section-risk" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent hover:bg-slate-50" onclick="switchTab('risk'); return false;">
+                        <div class="flex items-center justify-between">
+                            <span class="flex items-center gap-2"><i class="fas fa-exclamation-triangle w-5 text-center"></i>认证风险评估</span>
+                        </div>
+                    </a>
+                    <a href="#section-conclusion" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent hover:bg-slate-50" onclick="switchTab('conclusion'); return false;">
+                        <div class="flex items-center justify-between">
+                            <span class="flex items-center gap-2"><i class="fas fa-gavel w-5 text-center"></i>评审结论</span>
+                        </div>
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="flex-1 space-y-6" id="mainContent">
+
+            <!-- 评审对象切换标签（已修改：仅保留初次认证和再认证） -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-1 flex gap-1 overflow-x-auto" id="reviewTypeTabs">
+                <button class="tab-btn active px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap" onclick="switchReviewType('initial')">
+                    <i class="fas fa-star mr-2 text-blue-600"></i>初次认证
+                </button>
+                <button class="tab-btn px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap text-slate-600" onclick="switchReviewType('recertification')">
+                    <i class="fas fa-redo mr-2 text-green-600"></i>再认证
+                </button>
+            </div>
+
+            <!-- 业务评审编号及基本信息 -->
+            <div class="bg-blue-50 rounded-xl border border-blue-200 p-4 flex flex-wrap gap-4 items-center justify-between">
+                <div class="flex gap-6 text-sm">
+                    <div><span class="text-slate-500">业务评审编号：</span><span class="font-mono font-semibold text-slate-900" id="reviewNo">PS202603250001-S</span></div>
+                    <div><span class="text-slate-500">申请单号：</span><span class="font-semibold text-slate-900">SQ202603250001</span></div>
+                    <div><span class="text-slate-500">客户名称：</span><span class="font-semibold text-slate-900">示例制造有限公司</span></div>
+                    <div><span class="text-slate-500">认证领域：</span><span class="font-semibold text-slate-900">OHSMS（职业健康安全管理体系）</span></div>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-slate-500"><i class="fas fa-clock"></i><span>申请日期：2026-03-25</span></div>
+            </div>
+
+            <!-- 1. 认证申请信息 -->
+            <div id="section-application" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center gap-2"><i class="fas fa-file-alt text-blue-600"></i><h3 class="font-semibold text-slate-900">认证申请信息</h3></div>
+                    <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">当前评审体系：OHSMS</span>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1">认证申请编号</label><div class="readonly-field">SQ202603250001</div></div>
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1">CQC受理机构</label><div class="readonly-field">北京评审中心</div></div>
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1">申请日期</label><div class="readonly-field">2026-03-25</div></div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4">
+                        <h4 class="section-title"><i class="fas fa-building text-blue-500"></i>客户基本信息</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">客户名称</label><div class="readonly-field">示例制造有限公司</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">注册地址</label><div class="readonly-field">北京市朝阳区xxx路xxx号</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">运营地址（中心职能）</label><div class="readonly-field">北京市海淀区xxx路xxx号</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">联系人/职务</label><div class="readonly-field">张三 / 质量经理</div></div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4">
+                        <h4 class="section-title"><i class="fas fa-certificate text-blue-500"></i>认证体系需求信息（OHSMS）</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">认证领域</label><div class="readonly-field">OHSMS（职业健康安全管理体系）</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">认证标准</label><div class="readonly-field">GB/T 45001-2020 / ISO 45001:2018</div></div>
+                            <div class="md:col-span-2"><label class="block text-xs font-medium text-slate-700 mb-1">认证范围</label><div class="readonly-field" style="min-height: 60px;">位于北京市海淀区xxx路xxx号的示例制造有限公司的机械加工及相关管理活动涉及的职业健康安全管理（适用时引用资质许可）</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">认可机构</label><div class="readonly-field">CNAS</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">是否需要纸质证书</label><div class="readonly-field">是</div></div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4">
+                        <h4 class="section-title"><i class="fas fa-map-marker-alt text-blue-500"></i>OHSMS认证场所</h4>
+                        <div class="readonly-field" style="min-height: 80px;">
+                            <div class="mb-2"><strong>总部（中心职能）</strong> - 北京市海淀区xxx路xxx号</div>
+                            <div class="text-xs text-slate-600">
+                                涉及的产品、过程、活动：机械零部件加工、焊接、装配<br>
+                                班次：2班制（08:00-16:00, 16:00-24:00）<br>
+                                人数：80人（含承包方20人）<br>
+                                联系人：张三，电话：010-12345678
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4">
+                        <h4 class="section-title"><i class="fas fa-users text-blue-500"></i>组织/人员信息（OHSMS）</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">公司社保总人数</label><div class="readonly-field">100人（全职80人，兼职20人）</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">生产班次</label><div class="readonly-field">2班次</div></div>
+                            <div class="md:col-span-2"><label class="block text-xs font-medium text-slate-700 mb-1">在其他组织的场所提供服务的工作人员（OHSMS适用）</label><div class="readonly-field">5人，从事设备维护活动</div></div>
+                            <div class="md:col-span-2"><label class="block text-xs font-medium text-slate-700 mb-1">承包商/分包方人员（OHSMS适用）</label><div class="readonly-field">共20人，从事保洁、安保工作</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">主要危险源</label><div class="readonly-field">机械伤害、焊接烟尘、噪声、高空作业</div></div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4">
+                        <h4 class="section-title"><i class="fas fa-paperclip text-blue-500"></i>应附文件和材料（OHSMS）</h4>
+                        <div class="space-y-3" id="attachmentList">
+                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0"><i class="fas fa-file-pdf"></i></div>
+                                    <div>
+                                        <div class="text-sm font-medium text-slate-900">主要危险源及OHS风险清单.pdf</div>
+                                        <div class="text-xs text-slate-500 mt-1">1.8 MB · 上传人：张三 · 2026-03-25 09:42 · 材料项：与组织过程有关的主要危险源和OHS风险</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" class="file-action-btn preview" onclick="previewAttachment('主要危险源及OHS风险清单.pdf', 'PDF', '模拟预览：本文件包含机械伤害、焊接烟尘、噪声、高空作业等主要危险源，以及对应风险等级和控制措施。')"><i class="fas fa-eye"></i>预览</button>
+                                    <button type="button" class="file-action-btn download" onclick="downloadAttachment('主要危险源及OHS风险清单.pdf', '主要危险源及OHS风险清单示例内容')"><i class="fas fa-download"></i>下载</button>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0"><i class="fas fa-file-word"></i></div>
+                                    <div>
+                                        <div class="text-sm font-medium text-slate-900">安评职评及三同时证明文件.docx</div>
+                                        <div class="text-xs text-slate-500 mt-1">3.2 MB · 上传人：李四 · 2026-03-25 09:48 · 材料项：安评、职评及三同时证明文件</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" class="file-action-btn preview" onclick="previewAttachment('安评职评及三同时证明文件.docx', 'Word', '模拟预览：已提交安全评价批复、职业病危害预评价备案、建设项目三同时验收记录。')"><i class="fas fa-eye"></i>预览</button>
+                                    <button type="button" class="file-action-btn download" onclick="downloadAttachment('安评职评及三同时证明文件.docx', '安评职评及三同时证明文件示例内容')"><i class="fas fa-download"></i>下载</button>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0"><i class="fas fa-file-excel"></i></div>
+                                    <div>
+                                        <div class="text-sm font-medium text-slate-900">合规义务及风险机遇清单.xlsx</div>
+                                        <div class="text-xs text-slate-500 mt-1">956 KB · 上传人：王五 · 2026-03-25 10:05 · 材料项：合规义务、风险和机遇清单</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" class="file-action-btn preview" onclick="previewAttachment('合规义务及风险机遇清单.xlsx', 'Excel', '模拟预览：包含适用法律法规、合规义务识别结果、风险和机遇应对措施。')"><i class="fas fa-eye"></i>预览</button>
+                                    <button type="button" class="file-action-btn download" onclick="downloadAttachment('合规义务及风险机遇清单.xlsx', '合规义务及风险机遇清单示例内容')"><i class="fas fa-download"></i>下载</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4">
+                        <h4 class="section-title"><i class="fas fa-signature text-blue-500"></i>签章信息</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1">企业电子签章</label>
+                                <div class="readonly-field h-20 flex items-center justify-center border-2 border-dashed border-slate-300 bg-slate-50">
+                                    <div class="text-center">
+                                        <i class="fas fa-stamp text-2xl text-green-600 mb-1"></i>
+                                        <div class="text-xs text-slate-600">已签署（示例制造有限公司）</div>
+                                        <div class="text-xs text-slate-400">2026-03-25 10:30:15</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1">个人签名</label>
+                                <div class="readonly-field h-20 flex items-center justify-center border-2 border-dashed border-slate-300 bg-slate-50">
+                                    <div class="text-center">
+                                        <i class="fas fa-signature text-2xl text-blue-600 mb-1"></i>
+                                        <div class="text-xs text-slate-600">张三（已签署）</div>
+                                        <div class="text-xs text-slate-400">2026-03-25 10:32:08</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4">
+                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 leading-relaxed">
+                            <p>如您需更进一步了解以下信息，请查阅中国质量认证中心网址http://www.cqc.com.cn的公开文件目录或向我中心相关人员索取：CQC简介及联络信息、CQC认证领域和认证业务、认证制度的说明、CQC获取财务支持方式和认证收费标准、认证申请方和获证方的权利义务、申请方和获证组织向CQC申诉、投诉和争议的渠道、获证方的公告方式、获证方向认证机构通报其管理体系变更情况的渠道和要求、获证方未遵守法律法规要求的处理程序、IQNet及认证合作简介。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. 管理体系过程清单 -->
+            <div id="section-process" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <div class="flex items-center gap-2"><i class="fas fa-project-diagram text-blue-600"></i><h3 class="font-semibold text-slate-900">管理体系过程清单（OHSMS）</h3></div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <input type="file" id="processExcelInput" class="hidden" accept=".xlsx,.xls,.csv" onchange="importProcessExcel(event)">
+                        <button type="button" onclick="document.getElementById('processExcelInput').click()" class="px-3 py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100 text-sm font-medium transition-colors flex items-center gap-2"><i class="fas fa-file-excel"></i>Excel导入</button>
+                        <span id="processImportStatus" class="text-xs text-slate-500">支持.xlsx/.xls/.csv，按前6列导入</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="overflow-x-auto">
+                        <table class="process-table">
+                            <thead>
+                                <tr>
+                                    <th class="w-16">序号</th>
+                                    <th>过程名称</th>
+                                    <th>主责部门</th>
+                                    <th>相关部门</th>
+                                    <th>涉及标准条款</th>
+                                    <th>绩效参数或相关文件</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="processTableBody">
+                                <tr>
+                                    <td>1</td>
+                                    <td>
+                                        <div class="search-dropdown">
+                                            <input type="text" class="editable-field process-name-input" value="危险源辨识与风险评价" placeholder="输入过程名称（支持模糊搜索）" oninput="searchProcessHistory(this)" onblur="hideHistory(this)" onfocus="showHistory(this)">
+                                            <div class="search-history-list">
+                                                <div class="history-item" onclick="selectHistory(this, '危险源辨识与风险评价')"><i class="fas fa-history mr-2 text-slate-400"></i>危险源辨识与风险评价</div>
+                                                <div class="history-item" onclick="selectHistory(this, '法律法规与其他要求确定')"><i class="fas fa-history mr-2 text-slate-400"></i>法律法规与其他要求确定</div>
+                                                <div class="history-item" onclick="selectHistory(this, '职业健康安全目标与方案')"><i class="fas fa-history mr-2 text-slate-400"></i>职业健康安全目标与方案</div>
+                                                <div class="history-item" onclick="selectHistory(this, '运行控制-机械安全')"><i class="fas fa-history mr-2 text-slate-400"></i>运行控制-机械安全</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><input type="text" class="editable-field" value="安全管理部"></td>
+                                    <td><input type="text" class="editable-field" value="各部门"></td>
+                                    <td><input type="text" class="editable-field" value="6.1.2"></td>
+                                    <td><input type="text" class="editable-field" value="《危险源辨识与风险评价程序》"></td>
+                                    <td><button onclick="deleteProcessRow(this)" class="text-red-500 hover:text-red-700"><i class="fas fa-trash-alt"></i></button></td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>
+                                        <div class="search-dropdown">
+                                            <input type="text" class="editable-field process-name-input" value="运行控制-焊接作业" placeholder="输入过程名称（支持模糊搜索）" oninput="searchProcessHistory(this)" onblur="hideHistory(this)" onfocus="showHistory(this)">
+                                            <div class="search-history-list">
+                                                <div class="history-item" onclick="selectHistory(this, '运行控制-焊接作业')"><i class="fas fa-history mr-2 text-slate-400"></i>运行控制-焊接作业</div>
+                                                <div class="history-item" onclick="selectHistory(this, '运行控制-高空作业')"><i class="fas fa-history mr-2 text-slate-400"></i>运行控制-高空作业</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><input type="text" class="editable-field" value="生产部"></td>
+                                    <td><input type="text" class="editable-field" value="安全管理部"></td>
+                                    <td><input type="text" class="editable-field" value="8.1.3"></td>
+                                    <td><input type="text" class="editable-field" value="焊接烟尘浓度≤8mg/m³"></td>
+                                    <td><button onclick="deleteProcessRow(this)" class="text-red-500 hover:text-red-700"><i class="fas fa-trash-alt"></i></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <button onclick="addProcessRow()" class="mt-4 w-full py-2 border-2 border-dashed border-blue-300 rounded-lg text-blue-600 hover:bg-blue-50 transition-colors text-sm font-medium"><i class="fas fa-plus mr-2"></i>添加过程</button>
+
+                    <div class="mt-4 p-4 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 leading-relaxed space-y-2">
+                        <p class="font-medium text-slate-700">注：</p>
+                        <p>（1）本表由审核组根据组织的实际情况完成填写：初次认证应在一阶段审核中完成；结合监督、再认证进行的转版审核，可在现场审核中确认完成；</p>
+                        <p>（2）组织所确定的、管理体系标准所要求的过程都应列出，确定的过程应覆盖标准的全部要求，必要时应明确过程包含的子过程或活动；主责部门应与组织机构图的部门相一致，并覆盖体系相关的全部部门；</p>
+                        <p>（5）对于OHSMS：需要将主要危险源和OHS风险相关的具体子过程列出；如：XX产品的制造过程（冲压过程）、XX产品的制造过程（电镀过程）；</p>
+                        <p>（7）涉及标准条款：对于结合管理体系，只有当不同标准的同一条款号有同样的内容时，只注明条款号即可（如：4.1、4.2、9.2、9.3），否则需注明该条款适用的标准（如6.1.2（E）、8.2（E）、8.2.1（Q）、8.2.2（Q））；</p>
+                        <p>（8）绩效参数（performance indicators）：是指能监测（度量）某过程绩效的量度（表述），如:顾客满意度%、合格率%、某种污染物的浓度mg/m3、耗电量度、某种有害物质的使用量吨...等；如果没有相应的绩效参数鼓励列出相关文件名称，如组织对该过程编制的文件（如：程序、作业指导书...等）；</p>
+                        <p>（9）《管理体系过程清单》形成后，过程只要不发生变化，则在一个认证周期内不需重新填写；</p>
+                        <p>（10）《审核计划》的"审核活动安排"应与"过程清单"相对应，不得遗漏过程。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. 认证场所清单 -->
+            <div id="section-sites" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center gap-2"><i class="fas fa-map-marker-alt text-blue-600"></i><h3 class="font-semibold text-slate-900">认证场所清单（OHSMS）</h3></div>
+                    <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">已填报的认证场所</span>
+                </div>
+                <div class="p-6">
+                    <div class="alert-box info mb-4">
+                        <i class="fas fa-info-circle mt-0.5"></i>
+                        <div>
+                            <p class="font-medium">场所信息说明</p>
+                            <p class="mt-1">以下场所信息已在认证申请中填报，项目管理人员可在方案策划阶段进行抽样设置。</p>
+                        </div>
+                    </div>
+
+                    <!-- 场所1：总部/中心职能 -->
+                    <div class="site-card-readonly" data-site-id="1" data-site-name="总部（中心职能）">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center"><i class="fas fa-building"></i></div>
+                                <div>
+                                    <h4 class="font-semibold text-slate-900">总部（中心职能）</h4>
+                                    <p class="text-xs text-slate-500">关键场所，必审</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            <div><span class="text-slate-500 block text-xs mb-1">场所/项目名称</span><span class="font-medium text-slate-900">示例制造有限公司总部</span></div>
+                            <div><span class="text-slate-500 block text-xs mb-1">所在地址</span><span class="font-medium text-slate-900">北京市海淀区xxx路xxx号</span></div>
+                            <div><span class="text-slate-500 block text-xs mb-1">是否发子证书</span><span class="font-medium text-slate-900">否</span></div>
+                            <div class="md:col-span-3"><span class="text-slate-500 block text-xs mb-1">涉及的产品、过程、活动/工程项目进展情况</span><span class="font-medium text-slate-900">机械零部件加工、焊接、装配、喷涂</span></div>
+                            <div><span class="text-slate-500 block text-xs mb-1">班次/时间</span><span class="font-medium text-slate-900">2班制（08:00-16:00, 16:00-24:00）</span></div>
+                            <div><span class="text-slate-500 block text-xs mb-1">人数(含承包方)</span><span class="font-medium text-slate-900">80人（含承包方20人）</span></div>
+                            <div><span class="text-slate-500 block text-xs mb-1">联系人/电话</span><span class="font-medium text-slate-900">张三 / 010-12345678</span></div>
+                        </div>
+                    </div>
+
+                    <!-- 场所2：天津分公司 -->
+                    <div class="site-card-readonly" data-site-id="2" data-site-name="天津分公司">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center"><i class="fas fa-code-branch"></i></div>
+                                <div>
+                                    <h4 class="font-semibold text-slate-900">天津分公司</h4>
+                                    <p class="text-xs text-slate-500">分场所</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            <div><span class="text-slate-500 block text-xs mb-1">场所/项目名称</span><span class="font-medium text-slate-900">示例制造天津分公司</span></div>
+                            <div><span class="text-slate-500 block text-xs mb-1">所在地址</span><span class="font-medium text-slate-900">天津市滨海新区xxx路xxx号</span></div>
+                            <div><span class="text-slate-500 block text-xs mb-1">是否发子证书</span><span class="font-medium text-slate-900">是</span></div>
+                            <div class="md:col-span-3"><span class="text-slate-500 block text-xs mb-1">涉及的产品、过程、活动/工程项目进展情况</span><span class="font-medium text-slate-900">机械加工、表面处理</span></div>
+                            <div><span class="text-slate-500 block text-xs mb-1">班次/时间</span><span class="font-medium text-slate-900">1班制（08:00-17:00）</span></div>
+                            <div><span class="text-slate-500 block text-xs mb-1">人数(含承包方)</span><span class="font-medium text-slate-900">40人（含承包方10人）</span></div>
+                            <div><span class="text-slate-500 block text-xs mb-1">联系人/电话</span><span class="font-medium text-slate-900">李四 / 022-87654321</span></div>
+                        </div>
+                    </div>
+
+                    <!-- 场所3：上海研发中心 -->
+                    <div class="site-card-readonly" data-site-id="3" data-site-name="上海研发中心">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center"><i class="fas fa-flask"></i></div>
+                                <div>
+                                    <h4 class="font-semibold text-slate-900">上海研发中心</h4>
+                                    <p class="text-xs text-slate-500">分场所</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            <div><span class="text-slate-500 block text-xs mb-1">场所/项目名称</span><span class="font-medium text-slate-900">示例制造上海研发中心</span></div>
+                            <div><span class="text-slate-500 block text-xs mb-1">所在地址</span><span class="font-medium text-slate-900">上海市浦东新区张江高科技园区xxx路xxx号</span></div>
+                            <div><span class="text-slate-500 block text-xs mb-1">是否发子证书</span><span class="font-medium text-slate-900">否</span></div>
+                            <div class="md:col-span-3"><span class="text-slate-500 block text-xs mb-1">涉及的产品、过程、活动/工程项目进展情况</span><span class="font-medium text-slate-900">新产品设计开发、材料测试、工艺研究</span></div>
+                            <div><span class="text-slate-500 block text-xs mb-1">班次/时间</span><span class="font-medium text-slate-900">1班制（09:00-18:00）</span></div>
+                            <div><span class="text-slate-500 block text-xs mb-1">人数(含承包方)</span><span class="font-medium text-slate-900">35人（含承包方5人）</span></div>
+                            <div><span class="text-slate-500 block text-xs mb-1">联系人/电话</span><span class="font-medium text-slate-900">王五 / 021-55556666</span></div>
+                        </div>
+                    </div>
+
+                    <!-- 场所4：武汉生产基地 -->
+                    <div class="site-card-readonly" data-site-id="4" data-site-name="武汉生产基地">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center"><i class="fas fa-industry"></i></div>
+                                <div>
+                                    <h4 class="font-semibold text-slate-900">武汉生产基地</h4>
+                                    <p class="text-xs text-slate-500">分场所</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            <div><span class="text-slate-500 block text-xs mb-1">场所/项目名称</span><span class="font-medium text-slate-900">示例制造武汉生产基地</span></div>
+                            <div><span class="text-slate-500 block text-xs mb-1">所在地址</span><span class="font-medium text-slate-900">湖北省武汉市东湖新技术开发区xxx路xxx号</span></div>
+                            <div><span class="text-slate-500 block text-xs mb-1">是否发子证书</span><span class="font-medium text-slate-900">是</span></div>
+                            <div class="md:col-span-3"><span class="text-slate-500 block text-xs mb-1">涉及的产品、过程、活动/工程项目进展情况</span><span class="font-medium text-slate-900">精密铸造、热处理、质量检测</span></div>
+                            <div><span class="text-slate-500 block text-xs mb-1">班次/时间</span><span class="font-medium text-slate-900">3班制（08:00-16:00, 16:00-24:00, 00:00-08:00）</span></div>
+                            <div><span class="text-slate-500 block text-xs mb-1">人数(含承包方)</span><span class="font-medium text-slate-900">120人（含承包方30人）</span></div>
+                            <div><span class="text-slate-500 block text-xs mb-1">联系人/电话</span><span class="font-medium text-slate-900">赵六 / 027-88889999</span></div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 p-4 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 leading-relaxed space-y-1">
+                        <p>注：</p>
+                        <p>1.本表"场所"是指包含中心职能在内的认证范围内的所有场所；如果该场所有倒班生产和服务情况，请详细说明生产和服务活动、班次、时间和人员等信息；</p>
+                        <p>2.临时多场所推荐使用本表，其中工程施工（28大类）、工程监理（34.01.01）、开采业（02）组织的在建项目场所应填写本表，并写明项目名称、开工和完工时间、工程当前进展情况等信息；</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. 获证方情况调查表（仅再认证显示，监督审核已删除） -->
+            <div id="section-survey" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center gap-2"><i class="fas fa-clipboard-check text-blue-600"></i><h3 class="font-semibold text-slate-900">获证方情况调查（OHSMS）</h3></div>
+                    <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">已填报内容</span>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div class="alert-box warning"><i class="fas fa-info-circle mt-0.5"></i><div><p class="font-medium">变更确认</p><p class="mt-1">以下信息自上次审核以来的变更情况（客户已填报）</p></div></div>
+
+                    <div class="space-y-3">
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                            <div class="flex items-center justify-between mb-2"><span class="text-sm font-medium text-slate-700">组织人数或体系覆盖人数</span><span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">无变更</span></div>
+                            <div class="readonly-field">120人（与上次审核一致）</div>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                            <div class="flex items-center justify-between mb-2"><span class="text-sm font-medium text-slate-700">注册地址或运营地址</span><span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded">有变更</span></div>
+                            <div class="grid grid-cols-2 gap-2 text-sm">
+                                <div><span class="text-xs text-slate-500">原地址：</span><div class="text-slate-700">北京市朝阳区xxx路xxx号</div></div>
+                                <div><span class="text-xs text-slate-500">变更后：</span><div class="text-slate-700">北京市海淀区xxx路xxx号（因业务扩展搬迁）</div></div>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                            <div class="flex items-center justify-between mb-2"><span class="text-sm font-medium text-slate-700">主要生产设施设备</span><span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded">有变更</span></div>
+                            <div class="text-sm text-slate-700">新增数控加工中心2台，停用旧车床3台</div>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                            <div class="flex items-center justify-between mb-2"><span class="text-sm font-medium text-slate-700">临时服务现场信息</span><span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">无变更</span></div>
+                            <div class="readonly-field">无临时服务现场</div>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                            <div class="flex items-center justify-between mb-2"><span class="text-sm font-medium text-slate-700">是否发生过不良信息事件（如重大事故/行政检查等）</span><span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">无</span></div>
+                            <div class="readonly-field">自上次审核以来未发生职业健康安全事故，未受到安全生产行政处罚</div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4">
+                        <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-100">
+                            <span class="text-sm font-medium text-blue-900">是否同意《监督/再认证通知书》中的审核日期</span>
+                            <span class="text-sm font-bold text-blue-700">是</span>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4 hidden" id="businessReviewSwitch">
+                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
+                            <span class="text-sm font-medium text-slate-700">是否需要业务评审</span>
+                            <span class="text-sm text-slate-600">否（直接流转至方案策划）</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-100 pt-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">客户代表签名</label>
+                            <div class="readonly-field h-16 flex items-center justify-center bg-slate-50">
+                                <div class="text-center"><i class="fas fa-signature text-green-600 mb-1"></i><div class="text-xs text-slate-600">张三（已签署）</div></div>
+                            </div>
+                        </div>
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1">提交日期</label><div class="readonly-field">2026-03-25</div></div>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 leading-relaxed space-y-1">
+                        <p>注1：若根据变更信息需要变更认证证书的，则还应请客户提交《证书变更申请书》；</p>
+                        <p>注2：若客户属于多场所组织且场所发生了变更，则还应请客户提交最新的《认证场所清单》；</p>
+                        <p>注3：列明除建筑施工（28大类）、建筑监理（34.01.01）、开采业（02）之外的、正在实施以及已经签订合同，拟在半年内实施的服务项目；</p>
+                        <p>注4：再认证项目人天数调整信息应传递给申请评审岗位并记录。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. 证书变更申请表（已隐藏，不再使用） -->
+            <div id="section-certchange" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center gap-2"><i class="fas fa-certificate text-blue-600"></i><h3 class="font-semibold text-slate-900">证书变更申请（OHSMS）</h3></div>
+                    <span class="text-xs text-slate-500 bg-blue-100 text-blue-700 px-2 py-1 rounded font-medium">变更审核专用</span>
+                </div>
+                <div class="p-6 space-y-6">
+                    <!-- 变更申请信息展示 -->
+                    <div class="alert-box info"><i class="fas fa-info-circle mt-0.5"></i><div><p class="font-medium">变更申请内容</p><p class="mt-1">客户已提交的证书变更申请内容，请进行评审确认</p></div></div>
+
+                    <div class="field-group">
+                        <h4 class="section-title"><i class="fas fa-file-alt text-blue-500"></i>基本信息</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">客户名称</label><div class="readonly-field">示例制造有限公司</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">申请变更证书的编号</label><div class="readonly-field">00123S4567R0S</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">原认证范围</label><div class="readonly-field" style="min-height: 60px;">位于北京市朝阳区xxx路xxx号的示例制造有限公司的机械加工及相关管理活动涉及的职业健康安全管理</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">申请变更日期</label><div class="readonly-field">2026-03-25</div></div>
+                        </div>
+                    </div>
+
+                    <!-- 变更内容评审 -->
+                    <div class="field-group border-amber-200 bg-amber-50/30">
+                        <h4 class="section-title border-amber-200 text-amber-900"><i class="fas fa-edit text-amber-600"></i>变更内容确认</h4>
+
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label class="block text-xs font-medium text-slate-700 mb-1 required">变更类型</label><div class="readonly-field">组织搬迁（地址变更）</div></div>
+                                <div><label class="block text-xs font-medium text-slate-700 mb-1 required">变更影响程度</label><select class="editable-field" id="changeImpactLevel" onchange="updateChangeImpact(this.value)"><option value="">请选择</option><option value="major">重大变更</option><option value="minor" selected>一般变更</option><option value="minor">轻微变更</option></select></div>
+                            </div>
+
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">变更详细说明</label><div class="readonly-field" style="min-height: 80px;">因业务发展需要，公司总部由北京市朝阳区xxx路xxx号搬迁至北京市海淀区xxx路xxx号新址。新址厂房面积扩大，生产线布局调整，新增2条自动化焊接生产线。原址已停止生产活动，主要作为仓储使用。</div></div>
+
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1 required">变更涉及的场所</label>
+                                <div class="space-y-2 mt-2">
+                                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-200">
+                                        <input type="checkbox" checked disabled class="text-blue-600"> 
+                                        <span class="text-sm">总部（中心职能）- 地址变更</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-200">
+                                        <input type="checkbox" class="text-blue-600"> 
+                                        <span class="text-sm">天津分公司 - 不涉及</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 资质文件核查 -->
+                    <div class="field-group">
+                        <h4 class="section-title"><i class="fas fa-shield-alt text-blue-500"></i>资质文件核查</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-file-pdf text-red-500 text-lg"></i>
+                                    <div>
+                                        <div class="text-sm font-medium text-slate-900">新址营业执照（副本）</div>
+                                        <div class="text-xs text-slate-500">2026-03-25上传</div>
+                                    </div>
+                                </div>
+                                <select class="editable-field w-32" onchange="checkChangeDoc(this)"><option value="pending">待核查</option><option value="valid" selected>有效</option><option value="invalid">无效</option></select>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-file-pdf text-red-500 text-lg"></i>
+                                    <div>
+                                        <div class="text-sm font-medium text-slate-900">安评及三同时验收新址备案</div>
+                                        <div class="text-xs text-slate-500">2026-03-25上传</div>
+                                    </div>
+                                </div>
+                                <select class="editable-field w-32" onchange="checkChangeDoc(this)"><option value="pending">待核查</option><option value="valid" selected>有效</option><option value="invalid">无效</option></select>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-file-pdf text-red-500 text-lg"></i>
+                                    <div>
+                                        <div class="text-sm font-medium text-slate-900">新址消防验收意见书</div>
+                                        <div class="text-xs text-slate-500">2026-03-25上传</div>
+                                    </div>
+                                </div>
+                                <select class="editable-field w-32" onchange="checkChangeDoc(this)"><option value="pending">待核查</option><option value="valid" selected>有效</option><option value="invalid">无效</option></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 变更评审意见 -->
+                    <div class="field-group border-blue-200 bg-blue-50/30">
+                        <h4 class="section-title border-blue-200 text-blue-900"><i class="fas fa-gavel text-blue-600"></i>变更评审意见</h4>
+
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label class="block text-xs font-medium text-slate-700 mb-1 required">是否需要一阶段审核</label><select class="editable-field" id="changeStage1Required" onchange="toggleChangeStage1(this.value)"><option value="Y">是（Y）</option><option value="N" selected>否（N）</option></select></div>
+                                <div><label class="block text-xs font-medium text-slate-700 mb-1 required">是否影响认证范围</label><select class="editable-field"><option value="Y">是（Y）- 需缩限/扩大范围</option><option value="N" selected>否（N）- 范围不变</option></select></div>
+                            </div>
+
+                            <div id="changeStage1Reason" class="hidden">
+                                <label class="block text-xs font-medium text-slate-700 mb-1 required">一阶段审核理由</label>
+                                <textarea class="editable-field" rows="2" placeholder="说明需要一阶段审核的具体原因..."></textarea>
+                            </div>
+
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">变更影响评估</label>
+                                <div class="rich-editor" id="changeImpactEditor">
+                                    <div class="rich-editor-toolbar">
+                                        <button onclick="formatText('bold')" title="加粗"><i class="fas fa-bold"></i></button>
+                                        <button onclick="formatText('italic')" title="斜体"><i class="fas fa-italic"></i></button>
+                                        <button onclick="formatText('insertUnorderedList')" title="无序列表"><i class="fas fa-list-ul"></i></button>
+                                    </div>
+                                    <div class="rich-editor-content" contenteditable="true" data-placeholder="评估本次变更对职业健康安全管理体系的影响，包括：新址危险源识别情况、原体系文件适用性、过程控制连续性等..." onfocus="clearPlaceholder(this)" onblur="addPlaceholder(this)"></div>
+                                </div>
+                            </div>
+
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1 required">变更评审结论</label>
+                                <div class="space-y-2">
+                                    <label class="flex items-start gap-3 p-3 border-2 border-blue-200 rounded-lg cursor-pointer bg-blue-50/30">
+                                        <input type="radio" name="changeConclusion" value="accept" class="mt-1 text-blue-600" checked>
+                                        <div class="text-sm"><span class="font-medium text-slate-900 block">同意变更</span><span class="text-slate-500">资料齐全，变更合理，可以受理证书变更</span></div>
+                                    </label>
+                                    <label class="flex items-start gap-3 p-3 border-2 border-slate-200 rounded-lg cursor-pointer hover:border-slate-300">
+                                        <input type="radio" name="changeConclusion" value="conditional" class="mt-1 text-blue-600">
+                                        <div class="text-sm flex-1"><span class="font-medium text-slate-900 block">有条件同意</span><input type="text" class="editable-field mt-1" placeholder="说明条件..." disabled></div>
+                                    </label>
+                                    <label class="flex items-start gap-3 p-3 border-2 border-slate-200 rounded-lg cursor-pointer hover:border-slate-300">
+                                        <input type="radio" name="changeConclusion" value="reject" class="mt-1 text-blue-600">
+                                        <div class="text-sm flex-1"><span class="font-medium text-slate-900 block">不同意变更</span><input type="text" class="editable-field mt-1" placeholder="说明理由..." disabled></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4">
+                        <label class="block text-xs font-medium text-slate-700 mb-1">企业电子签章</label>
+                        <div class="readonly-field h-16 flex items-center justify-center bg-slate-50">
+                            <div class="text-center"><i class="fas fa-stamp text-green-600 mb-1"></i><div class="text-xs text-slate-600">已签署（示例制造有限公司）</div><div class="text-xs text-slate-400">2026-03-25 10:30:15</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6.1 客户信用核查 -->
+            <div id="section-credit" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center gap-2"><i class="fas fa-shield-alt text-blue-600"></i><h3 class="font-semibold text-slate-900">客户信用核查</h3></div>
+                    <button onclick="checkCredit()" id="checkCreditBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"><i class="fas fa-search mr-2"></i>查询信用记录</button>
+                </div>
+                <div class="p-6">
+                    <div id="creditLoading" class="hidden py-8 text-center">
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                        <p class="text-sm text-slate-500 mt-2">正在查询国家企业信用信息公示系统、信用中国...</p>
+                    </div>
+
+                    <div id="creditResults" class="space-y-4 hidden">
+                        <div class="credit-check-card bg-white p-4 rounded-lg border" id="credit-card-1">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 status-icon"><i class="fas fa-question"></i></div>
+                                    <div><h4 class="font-medium text-slate-900">严重违法失信名单</h4><p class="text-sm text-slate-500 mt-1 status-text">点击上方按钮查询</p></div>
+                                </div>
+                                <span class="risk-badge risk-level-3 status-badge">待查询</span>
+                            </div>
+                        </div>
+                        <div class="credit-check-card bg-white p-4 rounded-lg border" id="credit-card-2">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 status-icon"><i class="fas fa-question"></i></div>
+                                    <div><h4 class="font-medium text-slate-900">行政处罚记录（责令停产停业）</h4><p class="text-sm text-slate-500 mt-1 status-text">点击上方按钮查询</p></div>
+                                </div>
+                                <span class="risk-badge risk-level-3 status-badge">待查询</span>
+                            </div>
+                        </div>
+                        <div class="credit-check-card bg-white p-4 rounded-lg border" id="credit-card-3">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 status-icon"><i class="fas fa-question"></i></div>
+                                    <div><h4 class="font-medium text-slate-900">重大职业健康安全事故</h4><p class="text-sm text-slate-500 mt-1 status-text">点击上方按钮查询</p></div>
+                                </div>
+                                <span class="risk-badge risk-level-3 status-badge">待查询</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6.2 历史证书核查 -->
+            <div id="section-history" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center gap-2"><i class="fas fa-history text-blue-600"></i><h3 class="font-semibold text-slate-900">历史证书核查</h3></div>
+                    <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded" id="historyTypeLabel">初次认证不显示</span>
+                </div>
+                <div class="p-6">
+                    <div id="historyEmpty" class="text-center py-8 text-slate-400"><i class="fas fa-inbox text-3xl mb-2"></i><p class="text-sm">初次认证无历史证书信息</p></div>
+                    <div id="historyContent" class="hidden space-y-4">
+                        <div class="alert-box info mb-4"><i class="fas fa-info-circle mt-0.5"></i><div><p class="font-medium">证书状态核查规则</p><p class="mt-1 text-sm">当前证书状态仅可为有效、暂停、撤销、注销之一；若原证书被暂停/撤销/注销，需从处置日期起满1年禁止期后方可受理。</p></div></div>
+                        <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                            <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+                                <div class="flex items-start justify-between gap-3 mb-3">
+                                    <div>
+                                        <div class="text-sm font-semibold text-slate-900">样例A：当前证书有效</div>
+                                        <div class="text-xs text-slate-500 mt-1">可正常进入再认证受理</div>
+                                    </div>
+                                    <span class="cert-status-pill cert-status-valid"><i class="fas fa-check-circle"></i>有效</span>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                    <div><span class="text-slate-500 block text-xs mb-1">原认证机构</span><span class="font-medium text-slate-900">XX认证中心有限公司</span></div>
+                                    <div><span class="text-slate-500 block text-xs mb-1">证书编号</span><span class="font-medium text-slate-900">00123S4567R0S</span></div>
+                                    <div><span class="text-slate-500 block text-xs mb-1">认证标准</span><span class="font-medium text-slate-900">ISO 45001:2018</span></div>
+                                    <div><span class="text-slate-500 block text-xs mb-1">有效期至</span><span class="font-medium text-slate-900">2026-01-13</span></div>
+                                    <div class="md:col-span-2"><span class="text-slate-500 block text-xs mb-1">最近一次现场审核时间</span><span class="font-medium text-slate-900">2025-03-10 至 2025-03-12（监督审核）</span></div>
+                                </div>
+                                <div class="mt-3 p-3 rounded-lg bg-white/70 border border-green-200 text-xs text-green-700"><i class="fas fa-unlock mr-1"></i>核查结论：证书处于有效状态，可受理再认证申请。</div>
+                            </div>
+                            <div class="bg-amber-50 rounded-lg p-4 border border-amber-300">
+                                <div class="flex items-start justify-between gap-3 mb-3">
+                                    <div>
+                                        <div class="text-sm font-semibold text-slate-900">样例B：当前证书暂停</div>
+                                        <div class="text-xs text-slate-500 mt-1">暂停日起未满1年，禁止受理</div>
+                                    </div>
+                                    <span class="cert-status-pill cert-status-suspended"><i class="fas fa-pause-circle"></i>暂停</span>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                    <div><span class="text-slate-500 block text-xs mb-1">原认证机构</span><span class="font-medium text-slate-900">XX认证中心有限公司</span></div>
+                                    <div><span class="text-slate-500 block text-xs mb-1">证书编号</span><span class="font-medium text-slate-900">00123S4567R0S-S</span></div>
+                                    <div><span class="text-slate-500 block text-xs mb-1">认证标准</span><span class="font-medium text-slate-900">ISO 45001:2018</span></div>
+                                    <div><span class="text-slate-500 block text-xs mb-1">暂停日期</span><span class="font-medium text-slate-900">2026-02-10</span></div>
+                                    <div><span class="text-slate-500 block text-xs mb-1">禁止期满日期</span><span class="font-medium text-red-700">2027-02-10</span></div>
+                                    <div><span class="text-slate-500 block text-xs mb-1">当前受理判断</span><span class="font-medium text-red-700">禁止受理</span></div>
+                                </div>
+                                <div class="mt-3 p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700"><i class="fas fa-ban mr-1"></i>核查结论：原证书暂停未满1年禁止期，需到2027-02-10后方可受理。</div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-slate-600">
+                            <div class="p-2 rounded-lg bg-green-50 border border-green-200 flex items-center gap-2"><span class="cert-status-pill cert-status-valid">有效</span><span>可受理</span></div>
+                            <div class="p-2 rounded-lg bg-amber-50 border border-amber-200 flex items-center gap-2"><span class="cert-status-pill cert-status-suspended">暂停</span><span>满1年后受理</span></div>
+                            <div class="p-2 rounded-lg bg-red-50 border border-red-200 flex items-center gap-2"><span class="cert-status-pill cert-status-revoked">撤销</span><span>满1年后受理</span></div>
+                            <div class="p-2 rounded-lg bg-slate-50 border border-slate-200 flex items-center gap-2"><span class="cert-status-pill cert-status-cancelled">注销</span><span>满1年后受理</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6.3 基本信息确定 - 所有评审类型共享 -->
+            <div id="section-baseinfo" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center gap-2"><i class="fas fa-info-circle text-blue-600"></i><h3 class="font-semibold text-slate-900">基本信息确定（OHSMS）</h3></div>
+                <div class="p-6 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1">客户名称</label><div class="readonly-field">示例制造有限公司</div></div>
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1">业务评审编号</label><div class="readonly-field">PS202603250001-S</div></div>
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1 required">风险等级</label><select id="riskLevel" class="editable-field" onchange="updateRiskLevel(this.value)"><option value="">请选择</option><option value="1" selected>一级（高风险）</option><option value="2">二级（中风险）</option><option value="3">三级（低风险）</option></select></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1 required">认证范围内有效人数</label><input type="number" class="editable-field" value="120" placeholder="输入有效人数"></div>
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1 required">认证申请资料是否齐全</label><select class="editable-field"><option value="Y" selected>是（Y）</option><option value="N">否（N）</option></select></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="runningTimeField">
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1 required">管理体系正式运行是否已满3或6个月</label><select class="editable-field"><option value="Y" selected>是（Y）</option><option value="N">否（N）</option></select></div>
+                    </div>
+
+                    <!-- 专业代码选择功能 - 所有评审类型都显示 -->
+                    <div class="md:col-span-2 mt-4">
+                        <label class="block text-xs font-medium text-slate-700 mb-2">专业代码 <span class="text-red-500">*</span></label>
+
+                        <!-- 已选专业代码展示区域 -->
+                        <div id="selectedProfCodesDisplay" class="mb-3">
+                            <div class="text-sm text-slate-400 py-3 px-4 bg-slate-50 rounded-lg border border-slate-200 border-dashed">暂未选择专业代码，请点击下方按钮选择</div>
+                        </div>
+
+                        <!-- 打开选择弹窗按钮 -->
+                        <button onclick="openProfCodeModal()" class="w-full py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
+                            <i class="fas fa-list-check"></i>
+                            <span>选择专业代码</span>
+                        </button>
+
+                        <div class="mt-1 text-xs text-slate-500"><i class="fas fa-info-circle mr-1"></i>支持多选，认可机构随专业代码自动带入，点击按钮打开选择器</div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">支持评审结论的必要说明</label>
+                        <div class="rich-editor" id="baseInfoEditor">
+                            <div class="rich-editor-toolbar">
+                                <button onclick="formatText('bold')" title="加粗"><i class="fas fa-bold"></i></button>
+                                <button onclick="formatText('italic')" title="斜体"><i class="fas fa-italic"></i></button>
+                                <button onclick="formatText('underline')" title="下划线"><i class="fas fa-underline"></i></button>
+                                <div class="w-px h-5 bg-slate-300 mx-1"></div>
+                                <button onclick="formatText('insertUnorderedList')" title="无序列表"><i class="fas fa-list-ul"></i></button>
+                                <button onclick="formatText('insertOrderedList')" title="有序列表"><i class="fas fa-list-ol"></i></button>
+                            </div>
+                            <div class="rich-editor-content" contenteditable="true" data-placeholder="针对专业代码确定、风险等级调整、有效人数计算等方面的说明。以及初次认证组织的管理体系建立运行情况；多场所组织需要明确是否部署了单一管理体系，并明确中心职能的职责和权限以及与所有场所的法律关系，中心职能能提供的过程和活动的集中化程度等信息。注：此处应计算认证范围内所有场所的有效人数总和，每个场所的详细情况在《认证场所清单》明确。" onfocus="clearPlaceholder(this)" onblur="addPlaceholder(this)"></div>
+                        </div>
+                        <div class="mt-1 text-xs text-slate-500"><i class="fas fa-info-circle mr-1"></i>提示：点击输入框后提示文字自动转为可编辑内容，支持富文本格式</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6.4 能力确认 -->
+            <div id="section-capability" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center gap-2"><i class="fas fa-check-double text-blue-600"></i><h3 class="font-semibold text-slate-900">能力确认（OHSMS）</h3></div>
+                <div class="p-6 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1 required">是否为关键场所</label><select class="editable-field"><option value="Y" selected>是（Y）</option><option value="N">否（N）</option></select></div>
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1 required">是否认可及认可机构</label><select class="editable-field"><option value="Y" selected>是（Y）- CNAS</option><option value="N">否（N）</option></select></div>
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1 required">是否为跨区域认证项目</label><div class="readonly-field">N（系统自动判断：客户所在地与CQC区域中心在同一区域）</div></div>
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1">是否有关键过程活动外包</label><input type="text" class="editable-field" value="保洁、安保外包" placeholder="如有请说明"></div>
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1 required">机构资质和资源是否满足客户要求</label><select class="editable-field"><option value="Y" selected>是（Y）</option><option value="N">否（N）</option></select></div>
+                    </div>
+
+                    <div class="p-3 bg-blue-50 rounded-lg border border-blue-100 text-xs text-blue-700 leading-relaxed">
+                        <i class="fas fa-info-circle mr-1"></i>针对客户的情况和认证要求评价机构是否具备能力满足要求，以及针对相应风险确定的应对措施或对审核方案策划的要求。
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">支持评审结论的必要说明</label>
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 leading-relaxed mb-2">
+                            <p>1、根据客户选择填写具体认可机构名称；</p>
+                            <p>2、针对客户的情况和认证要求评价机构是否具备能力满足要求，以及针对相应风险确定的应对措施或对审核方案策划的要求。如，对审核组人员能力的要求，外包过程的审核范围和方式，跨区域异地项目的报备工作等。</p>
+                        </div>
+                        <div class="rich-editor" id="capabilityEditor">
+                            <div class="rich-editor-toolbar">
+                                <button onclick="formatText('bold')" title="加粗"><i class="fas fa-bold"></i></button>
+                                <button onclick="formatText('italic')" title="斜体"><i class="fas fa-italic"></i></button>
+                                <button onclick="formatText('underline')" title="下划线"><i class="fas fa-underline"></i></button>
+                                <div class="w-px h-5 bg-slate-300 mx-1"></div>
+                                <button onclick="formatText('insertUnorderedList')" title="无序列表"><i class="fas fa-list-ul"></i></button>
+                                <button onclick="formatText('insertOrderedList')" title="有序列表"><i class="fas fa-list-ol"></i></button>
+                            </div>
+                            <div class="rich-editor-content" contenteditable="true" data-placeholder="上述提示文字保留，可在此处补充评审说明..." onfocus="clearPlaceholder(this)" onblur="addPlaceholder(this)"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6.5 认证风险评估 -->
+            <div id="section-risk" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center gap-2"><i class="fas fa-exclamation-triangle text-blue-600"></i><h3 class="font-semibold text-slate-900">认证风险评估（OHSMS）</h3></div>
+                    <span class="risk-badge risk-level-1" id="currentRiskLevel">一级风险</span>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
+                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg"><span class="text-sm text-slate-700">客户相关资质是否具备（营业执照、安全生产许可证等）</span><select class="editable-field w-32" onchange="checkRiskValidation()"><option value="Y" selected>Y</option><option value="N">N</option></select></div>
+                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg"><span class="text-sm text-slate-700">客户提交的认证信息和资料是否充分</span><select class="editable-field w-32" onchange="checkRiskValidation()"><option value="Y" selected>Y</option><option value="N">N</option></select></div>
+                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg"><span class="text-sm text-slate-700">近3年是否发生被监管部门责令停业整顿</span><select id="riskSuspend" class="editable-field w-32" onchange="checkRiskValidation()"><option value="N" selected>N</option><option value="Y">Y</option></select></div>
+                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg"><span class="text-sm text-slate-700">是否被市场监管部门列入异常经营/严重违法失信名单</span><select id="riskIllegal" class="editable-field w-32" onchange="checkRiskValidation()"><option value="N" selected>N</option><option value="Y">Y</option></select></div>
+                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg"><span class="text-sm text-slate-700">认证要求是否已明确说明</span><select class="editable-field w-32" onchange="checkRiskValidation()"><option value="Y" selected>Y</option><option value="N">N</option></select></div>
+                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg"><span class="text-sm text-slate-700">与客户间是否还有理解差异</span><select class="editable-field w-32" onchange="checkRiskValidation()"><option value="N" selected>N</option><option value="Y">Y</option></select></div>
+                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg"><span class="text-sm text-slate-700">是否存在对公正性的威胁</span><select class="editable-field w-32" onchange="checkRiskValidation()"><option value="N" selected>N</option><option value="Y">Y</option></select></div>
+                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg"><span class="text-sm text-slate-700">客户管理体系运行范围是否清晰</span><select class="editable-field w-32" onchange="checkRiskValidation()"><option value="Y" selected>Y</option><option value="N">N</option></select></div>
+                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg"><span class="text-sm text-slate-700">客户是否存在不允许接触的活动过程</span><select class="editable-field w-32" onchange="checkRiskValidation()"><option value="N" selected>N</option><option value="Y">Y</option></select></div>
+                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg"><span class="text-sm text-slate-700">有无其他风险</span><select id="riskOther" class="editable-field w-32" onchange="checkRiskValidation()"><option value="N" selected>N</option><option value="Y">Y</option></select></div>
+                    </div>
+
+                    <div id="riskAlert" class="hidden alert-box error"><i class="fas fa-ban mt-0.5"></i><div><p class="font-medium">存在不可接受风险</p><p class="mt-1 text-sm">存在N选项或风险标记为Y，无法受理该申请。请与客户沟通或补充材料。</p></div></div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">支持评审结论的必要说明</label>
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 leading-relaxed mb-2">
+                            <p>针对产品和服务（包括外包过程和委托加工，在其他组织的场所提供服务）、轮班作业、不良事件处理、资质许可范围和有效期、保密和健康安全要求，客户的活动区域及其服务、不允许认证机构接触的资产等信息的风险，以及可能存在但未证实的风险等方面的必要说明。包括证书转换可能的风险。</p>
+                        </div>
+                        <div class="rich-editor" id="riskEditor">
+                            <div class="rich-editor-toolbar">
+                                <button onclick="formatText('bold')" title="加粗"><i class="fas fa-bold"></i></button>
+                                <button onclick="formatText('italic')" title="斜体"><i class="fas fa-italic"></i></button>
+                                <button onclick="formatText('underline')" title="下划线"><i class="fas fa-underline"></i></button>
+                                <div class="w-px h-5 bg-slate-300 mx-1"></div>
+                                <button onclick="formatText('insertUnorderedList')" title="无序列表"><i class="fas fa-list-ul"></i></button>
+                                <button onclick="formatText('insertOrderedList')" title="有序列表"><i class="fas fa-list-ol"></i></button>
+                            </div>
+                            <div class="rich-editor-content" contenteditable="true" data-placeholder="上述提示文字保留，可在此处补充风险评估说明..." onfocus="clearPlaceholder(this)" onblur="addPlaceholder(this)"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6.6 其他需求评审 -->
+            <div id="section-other" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center gap-2"><i class="fas fa-clipboard-list text-blue-600"></i><h3 class="font-semibold text-slate-900">其他需求评审</h3></div>
+                <div class="p-6">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1">支持评审结论的必要说明</label>
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 leading-relaxed mb-2">
+                            <p>填写对客户其他方面和客户的其他认证要求的评审信息。如：产品和服务、多场所、服务点（其他组织场所）的抽样原则和方案，ICT辅助审核方案，客户的认证和咨询情况等；以及客户要求的现场审核的时间、证书内容表述、安全和保密等要求的适宜性。</p>
+                        </div>
+                        <div class="rich-editor" id="otherEditor">
+                            <div class="rich-editor-toolbar">
+                                <button onclick="formatText('bold')" title="加粗"><i class="fas fa-bold"></i></button>
+                                <button onclick="formatText('italic')" title="斜体"><i class="fas fa-italic"></i></button>
+                                <button onclick="formatText('underline')" title="下划线"><i class="fas fa-underline"></i></button>
+                                <div class="w-px h-5 bg-slate-300 mx-1"></div>
+                                <button onclick="formatText('insertUnorderedList')" title="无序列表"><i class="fas fa-list-ul"></i></button>
+                                <button onclick="formatText('insertOrderedList')" title="有序列表"><i class="fas fa-list-ol"></i></button>
+                            </div>
+                            <div class="rich-editor-content" contenteditable="true" data-placeholder="上述提示文字保留，可在此处填写其他评审说明..." onfocus="clearPlaceholder(this)" onblur="addPlaceholder(this)"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6.7 评审结论 -->
+            <div id="section-conclusion" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center gap-2"><i class="fas fa-gavel text-blue-600"></i><h3 class="font-semibold text-slate-900">评审结论（OHSMS）</h3></div>
+                <div class="p-6 space-y-6">
+
+                    <!-- 多场所组织评审结论 -->
+                    <div class="field-group">
+                        <h4 class="section-title"><i class="fas fa-map-marked-alt text-blue-500"></i>多场所组织评审结论</h4>
+                        <div class="space-y-3">
+                            <label class="flex items-start gap-3 p-3 border-2 border-blue-200 rounded-lg cursor-pointer bg-blue-50/30" id="multisiteQualified">
+                                <input type="radio" name="multisiteConclusion" value="qualified" class="mt-1 text-blue-600" checked onchange="handleMultisiteChange(this.value)">
+                                <div class="text-sm">
+                                    <span class="font-medium text-slate-900 block">具备多场所组织认证资格</span>
+                                    <span class="text-slate-500">本项目为单一法律实体组织（包含多个认证场所）和/或多个法律实体组织组建的单一管理体系组织，其管理体系服从于中心职能符合多场所组织认证资格，组织包含的场所详细情况和抽样方案见《认证场所清单》。</span>
+                                </div>
+                            </label>
+                            <label class="flex items-start gap-3 p-3 border-2 border-slate-200 rounded-lg cursor-pointer hover:border-slate-300" id="multisiteUnqualified">
+                                <input type="radio" name="multisiteConclusion" value="unqualified" class="mt-1 text-blue-600" onchange="handleMultisiteChange(this.value)">
+                                <div class="text-sm flex-1">
+                                    <span class="font-medium text-slate-900 block">不具备多场所组织认证资格</span>
+                                    <input type="text" class="editable-field mt-2" id="unqualifiedReason" placeholder="说明理由（200字以内）" maxlength="200" disabled>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 最终评审结论 -->
+                    <div class="field-group border-slate-200" id="finalConclusionArea">
+                        <h4 class="section-title"><i class="fas fa-clipboard-check text-blue-500"></i>最终评审结论</h4>
+                        <div class="space-y-3">
+                            <label class="flex items-start gap-3 p-4 border-2 border-blue-200 rounded-lg cursor-pointer bg-blue-50/30" id="acceptLabel">
+                                <input type="radio" name="conclusion" value="accept" class="mt-1 text-blue-600" checked onchange="handleConclusionChange(this.value)">
+                                <div>
+                                    <span class="font-medium text-slate-900 block">可以受理</span>
+                                    <span class="text-sm text-slate-500">经评审，该OHSMS申请符合受理条件，可以进入审核方案策划环节</span>
+                                </div>
+                            </label>
+                            <label class="flex items-start gap-3 p-4 border-2 border-slate-200 rounded-lg cursor-pointer hover:border-slate-300" id="rejectLabel">
+                                <input type="radio" name="conclusion" value="reject" class="mt-1 text-blue-600" onchange="handleConclusionChange(this.value)">
+                                <div class="flex-1">
+                                    <span class="font-medium text-slate-900 block">不能受理申请</span>
+                                    <span class="text-sm text-slate-500">经评审，该申请不符合受理条件，需退回至客服人员处理</span>
+                                    <textarea id="rejectReason" class="editable-field mt-2 hidden" rows="3" placeholder="详细说明拒绝受理的原因..."></textarea>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- OHSMS特殊评审结论 -->
+                    <div class="field-group border-amber-100 bg-amber-50/30" id="ohsmsSpecialConclusion">
+                        <h4 class="section-title border-amber-200 text-amber-900"><i class="fas fa-hard-hat text-amber-600"></i>OHSMS特殊评审结论</h4>
+                        <p class="text-xs text-slate-500 mb-3">客户在其他组织的场所提供服务的情况（OHSMS适用）</p>
+                        <div class="space-y-3">
+                            <label class="flex items-start gap-3">
+                                <input type="radio" name="ohsmsConclusion" value="all" class="mt-1 text-blue-600" checked onchange="handleOHSMSConclusion(this.value)">
+                                <span class="text-sm text-slate-700">对所有场所进行审核（包括在本组织之外其他场所提供服务的承包商人员）</span>
+                            </label>
+                            <label class="flex items-start gap-3">
+                                <input type="radio" name="ohsmsConclusion" value="partial" class="mt-1 text-blue-600" onchange="handleOHSMSConclusion(this.value)">
+                                <div class="text-sm flex-1">
+                                    <span class="text-slate-700">不对所有场所进行审核，不审核的场所包括：</span>
+                                    <div class="mt-2 space-y-2" id="siteSelectionArea">
+                                        <div class="site-checkbox" onclick="toggleSiteSelection(this)">
+                                            <input type="checkbox" value="天津分公司">
+                                            <i class="fas fa-square text-slate-300 unchecked"></i>
+                                            <i class="fas fa-check-square text-blue-600 checked hidden"></i>
+                                            <span class="text-sm">天津分公司（天津市滨海新区xxx路xxx号）</span>
+                                        </div>
+                                        <div class="site-checkbox" onclick="toggleSiteSelection(this)">
+                                            <input type="checkbox" value="上海研发中心">
+                                            <i class="fas fa-square text-slate-300 unchecked"></i>
+                                            <i class="fas fa-check-square text-blue-600 checked hidden"></i>
+                                            <span class="text-sm">上海研发中心（上海市浦东新区张江高科技园区xxx路xxx号）</span>
+                                        </div>
+                                        <div class="site-checkbox" onclick="toggleSiteSelection(this)">
+                                            <input type="checkbox" value="武汉生产基地">
+                                            <i class="fas fa-square text-slate-300 unchecked"></i>
+                                            <i class="fas fa-check-square text-blue-600 checked hidden"></i>
+                                            <span class="text-sm">武汉生产基地（湖北省武汉市东湖新技术开发区xxx路xxx号）</span>
+                                        </div>
+                                    </div>
+                                    <input type="text" class="editable-field mt-2" id="partialReason" placeholder="说明理由（200字以内）" maxlength="200" disabled>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 评审结论补充说明 -->
+                    <div id="conclusionSupplement">
+                        <label class="block text-xs font-medium text-slate-700 mb-1">评审结论补充说明</label>
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 leading-relaxed mb-2">
+                            <p>针对评审结论和审核方案需要特别说明的请在本栏中详细说明。</p>
+                        </div>
+                        <div class="rich-editor" id="conclusionEditor">
+                            <div class="rich-editor-toolbar">
+                                <button onclick="formatText('bold')" title="加粗"><i class="fas fa-bold"></i></button>
+                                <button onclick="formatText('italic')" title="斜体"><i class="fas fa-italic"></i></button>
+                                <button onclick="formatText('underline')" title="下划线"><i class="fas fa-underline"></i></button>
+                                <div class="w-px h-5 bg-slate-300 mx-1"></div>
+                                <button onclick="formatText('insertUnorderedList')" title="无序列表"><i class="fas fa-list-ul"></i></button>
+                                <button onclick="formatText('insertOrderedList')" title="有序列表"><i class="fas fa-list-ol"></i></button>
+                            </div>
+                            <div class="rich-editor-content" contenteditable="true" data-placeholder="上述提示文字保留，可在此处补充评审结论说明..." onfocus="clearPlaceholder(this)" onblur="addPlaceholder(this)"></div>
+                        </div>
+                    </div>
+
+                    <!-- 第一阶段不实施现场审核（仅初次认证显示） -->
+                    <div id="stage1Apply" class="bg-blue-50 rounded-xl border border-blue-200 p-4">
+                        <h4 class="font-medium text-slate-900 mb-3 flex items-center gap-2"><i class="fas fa-laptop-house text-blue-600"></i>第一阶段不实施现场审核申请（OHSMS初次认证）</h4>
+                        <label class="flex items-center gap-2 mb-3"><input type="checkbox" id="applyStage1NoSite" onchange="toggleStage1Apply(this.checked)"><span class="text-sm font-medium text-slate-700">申请第一阶段不实施现场审核</span></label>
+                        <div id="stage1ApplyContent" class="hidden space-y-3 pl-4 border-l-2 border-blue-300">
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1 required">不实施现场审核的理由</label><textarea class="editable-field" rows="2" placeholder="说明理由..."></textarea></div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1 required">客户及拟派审核组的现状说明</label>
+                                <div class="p-2 bg-white rounded border border-blue-200 text-xs text-slate-600 mb-2">侧重描述人员能力，对此类组织的了解程度</div>
+                                <textarea class="editable-field" rows="2" placeholder="上述提示保留，补充具体说明..."></textarea>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div><label class="block text-xs font-medium text-slate-700 mb-1">审核项目管理人员</label><div class="readonly-field">当前登录用户</div></div>
+                                <div><label class="block text-xs font-medium text-slate-700 mb-1">日期</label><div class="readonly-field">2026-03-25</div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================== 专业代码选择弹窗 ==================== -->
+    <div id="profCodeModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[85vh] flex flex-col">
+            <!-- 弹窗头部 -->
+            <div class="p-6 border-b border-slate-100 bg-blue-50 rounded-t-2xl flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-list-check text-blue-600 text-xl"></i>
+                    <h3 class="text-lg font-bold text-slate-900">选择专业代码</h3>
+                </div>
+                <button onclick="closeProfCodeModal()" class="w-8 h-8 rounded-full hover:bg-blue-100 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- 弹窗内容 -->
+            <div class="p-6 flex-1 overflow-hidden flex flex-col">
+                <!-- 搜索和工具栏 -->
+                <div class="flex gap-3 mb-4">
+                    <div class="flex-1 relative">
+                        <input type="text" id="modalProfCodeSearch" class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-sm" placeholder="搜索代码编号或分类名称（如：19.01.01 或 办公设备）" oninput="searchModalProfCode(this.value)">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="selectAllModalCodes()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                            <i class="fas fa-check-square"></i>全选
+                        </button>
+                        <button onclick="invertModalSelection()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                            <i class="fas fa-exchange-alt"></i>反选
+                        </button>
+                        <button onclick="clearModalSelection()" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                            <i class="fas fa-trash-alt"></i>清空
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 已选预览区域 -->
+                <div id="modalSelectedPreview" class="mb-4 max-h-24">
+                    <div class="text-xs text-slate-500 mb-2">已选择 <span id="selectedCount" class="font-bold text-blue-600">0</span> 项：</div>
+                    <div id="previewTags" class="flex flex-wrap gap-2">
+                        <span class="text-slate-400 text-sm">暂未选择</span>
+                    </div>
+                </div>
+
+                <!-- 列表区域 -->
+                <div class="flex-1 overflow-y-auto border border-slate-200 rounded-lg">
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-50 sticky top-0 z-10">
+                            <tr>
+                                <th class="w-12 py-3 px-4 text-left">
+                                    <input type="checkbox" id="headerCheckbox" onchange="toggleAllFromHeader()" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer">
+                                </th>
+                                <th class="py-3 px-4 text-left font-semibold text-slate-700">代码编号</th>
+                                <th class="py-3 px-4 text-left font-semibold text-slate-700">分类名称</th>
+                                <th class="py-3 px-4 text-left font-semibold text-slate-700">认可机构</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalProfCodeList" class="divide-y divide-slate-100">
+                            <tr><td colspan="4" class="py-8 text-center text-slate-400">加载中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 弹窗底部 -->
+            <div class="p-6 border-t border-slate-100 flex justify-between items-center">
+                <span class="text-sm text-slate-500">共 <span id="totalCodesCount">0</span> 条记录</span>
+                <div class="flex gap-3">
+                    <button onclick="closeProfCodeModal()" class="px-6 py-2.5 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-colors">取消</button>
+                    <button onclick="confirmProfCodeSelection()" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md shadow-blue-200 transition-colors">
+                        确认选择 (<span id="confirmCount">0</span>)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 变更审核提交确认弹窗（现场类型选择） ==================== -->
+    <div id="changeSubmitModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full">
+            <div class="p-6 border-b border-slate-100 bg-purple-50 rounded-t-2xl flex items-center gap-3">
+                <i class="fas fa-exchange-alt text-purple-600 text-xl"></i>
+                <h3 class="text-lg font-bold text-slate-900">变更审核提交确认</h3>
+            </div>
+            <div class="p-6 space-y-4">
+                <p class="text-sm text-slate-600">请确认本次变更审核的现场审核类型：</p>
+
+                <!-- 第一级选择：有现场/无现场 -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">现场审核类型 <span class="text-red-500">*</span></label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button id="btnHasSite" onclick="selectSiteType('hasSite')" class="p-4 border-2 border-slate-200 rounded-xl text-left hover:border-purple-400 transition-all group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center group-hover:bg-purple-200">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-slate-900">有现场</div>
+                                    <div class="text-xs text-slate-500">需要现场审核</div>
+                                </div>
+                            </div>
+                        </button>
+                        <button id="btnNoSite" onclick="selectSiteType('noSite')" class="p-4 border-2 border-slate-200 rounded-xl text-left hover:border-purple-400 transition-all group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center group-hover:bg-slate-200">
+                                    <i class="fas fa-laptop"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-slate-900">无现场</div>
+                                    <div class="text-xs text-slate-500">远程/文件审核</div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 第二级选择：文审/一阶段（仅选择有现场时显示） -->
+                <div id="siteSubOptions" class="hidden space-y-2 border-t border-slate-100 pt-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">审核阶段 <span class="text-red-500">*</span></label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button id="btnDocReview" onclick="selectAuditStage('docReview')" class="p-3 border-2 border-slate-200 rounded-lg text-left hover:border-blue-400 transition-all">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-file-alt text-blue-600"></i>
+                                <div>
+                                    <div class="font-medium text-slate-900 text-sm">文审</div>
+                                    <div class="text-xs text-slate-500">文件审查</div>
+                                </div>
+                            </div>
+                        </button>
+                        <button id="btnStage1" onclick="selectAuditStage('stage1')" class="p-3 border-2 border-slate-200 rounded-lg text-left hover:border-blue-400 transition-all">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-hard-hat text-amber-600"></i>
+                                <div>
+                                    <div class="font-medium text-slate-900 text-sm">一阶段</div>
+                                    <div class="text-xs text-slate-500">现场一阶段审核</div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                    <button onclick="closeChangeSubmitModal()" class="flex-1 px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-colors">取消</button>
+                    <button onclick="confirmChangeSubmit()" id="confirmChangeBtn" class="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>确认提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 通用弹窗 ==================== -->
+    <!-- 附件预览弹窗 -->
+    <div id="attachmentPreviewModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden">
+            <div class="p-5 border-b border-slate-100 bg-blue-50 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-eye text-blue-600 text-xl"></i>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900" id="attachmentPreviewTitle">附件预览</h3>
+                        <p class="text-xs text-slate-500" id="attachmentPreviewType">文件信息</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeAttachmentPreview()" class="w-8 h-8 rounded-lg hover:bg-white text-slate-500 hover:text-slate-800"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="p-6">
+                <div class="border border-slate-200 rounded-lg bg-slate-50 min-h-[220px] p-4 text-sm text-slate-700 leading-relaxed" id="attachmentPreviewBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 提交评审确认弹窗 -->
+    <div id="submitModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+            <div class="p-6 border-b border-slate-100 bg-blue-50 rounded-t-2xl">
+                <h3 class="text-lg font-bold text-slate-900">提交评审确认</h3>
+            </div>
+            <div class="p-6 space-y-4">
+                <p class="text-sm text-slate-600">即将提交OHSMS认证业务评审，提交后评审结论将生效并流转至下一阶段。是否确认提交？</p>
+                <div class="flex gap-3 pt-2">
+                    <button onclick="closeSubmitModal()" class="flex-1 px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-colors">取消</button>
+                    <button onclick="confirmSubmit()" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors">确认提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 拒绝受理弹窗 -->
+    <div id="rejectModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full">
+            <div class="p-6 border-b border-slate-100 flex items-center gap-3 bg-red-50 rounded-t-2xl">
+                <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                <h3 class="text-lg font-bold text-slate-900">拒绝受理确认</h3>
+            </div>
+            <div class="p-6 space-y-4">
+                <p class="text-sm text-slate-600">拒绝受理后，本次申请将全部认证领域回退至客服认证申请管理模块，客服人员可重新发起申请。</p>
+                <div><label class="block text-xs font-medium text-slate-700 mb-1 required">拒绝原因</label><textarea id="modalRejectReason" class="editable-field w-full" rows="4" placeholder="详细说明拒绝受理的原因，将反馈给客服人员..."></textarea></div>
+                <div class="flex gap-3 pt-2">
+                    <button onclick="closeRejectModal()" class="flex-1 px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-colors">取消</button>
+                    <button onclick="confirmReject()" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium transition-colors">确认拒绝</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 监督审核证书变更一阶段审核确认弹窗 -->
+    <div id="stage1ConfirmModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+            <div class="p-6 border-b border-slate-100 bg-amber-50 rounded-t-2xl flex items-center gap-3">
+                <i class="fas fa-question-circle text-amber-600 text-xl"></i>
+                <h3 class="text-lg font-bold text-slate-900">一阶段审核确认</h3>
+            </div>
+            <div class="p-6 space-y-4">
+                <p class="text-sm text-slate-600">检测到该监督审核项目存在证书变更申请，请确认是否需要实施一阶段审核：</p>
+                <div class="bg-amber-50 rounded-lg p-3 border border-amber-200 text-sm text-amber-800">
+                    <i class="fas fa-info-circle mr-1"></i>提示：涉及证书重大变更时通常需要一阶段审核确认
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button onclick="confirmStage1(true)" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors">需要一阶段审核</button>
+                    <button onclick="confirmStage1(false)" class="flex-1 px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-colors">无需一阶段审核</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 全局状态变量 ====================
+        let currentReviewType = 'initial';
+        let creditChecked = false;
+        let stage1Required = false;
+        let selectedProfCodes = [];
+        let changeSubmitState = { siteType: null, auditStage: null };
+
+        // 历史过程名称数据
+        const processHistoryData = [
+            '危险源辨识与风险评价', '法律法规与其他要求确定', '职业健康安全目标与方案',
+            '运行控制-机械安全', '运行控制-焊接作业', '运行控制-高空作业',
+            '运行控制-有限空间作业', '应急准备与响应', '事件调查与不符合纠正',
+            '职业健康监测', '培训、意识与能力', '沟通、参与和协商',
+            '文件控制', '记录控制', '内部审核', '管理评审'
+        ];
+
+        // 专业代码数据
+        const professionalCodeData = [
+            {code: "19.01.01", category: "办公设备的制造", accreditation: ["CNAS", "UKAS"]},
+            {code: "19.02.00", category: "家用电器的制造", accreditation: ["CNAS"]},
+            {code: "19.03.00", category: "电动机、发电机及变压器的制造", accreditation: ["CNAS", "DAKKS"]},
+            {code: "19.04.00", category: "配电及控制装置的制造", accreditation: ["CNAS"]},
+            {code: "19.05.00", category: "电气照明设备的制造", accreditation: ["CNAS", "UKAS"]},
+            {code: "19.06.00", category: "电子元器件及板卡的制造", accreditation: ["CNAS"]},
+            {code: "19.07.00", category: "计算机及外部设备的制造", accreditation: ["CNAS", "DAKKS", "UKAS"]},
+            {code: "19.08.00", category: "通信设备的制造", accreditation: ["CNAS"]},
+            {code: "19.09.00", category: "消费类电子产品的制造", accreditation: ["CNAS", "UKAS"]},
+            {code: "19.10.00", category: "测量、检测和导航仪器及装置的制造", accreditation: ["CNAS", "DAKKS"]},
+            {code: "19.11.00", category: "电线电缆的制造", accreditation: ["CNAS"]},
+            {code: "19.12.00", category: "电池和蓄电池的制造", accreditation: ["CNAS", "UKAS"]}
+        ];
+
+        // ==================== 初始化 ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            updateReviewType('initial');
+            renderMainProfCodeDisplay();
+        });
+
+        // ==================== 评审类型切换（已修改：仅保留初次认证和再认证） ====================
+        function switchReviewType(type) {
+            currentReviewType = type;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.tab-btn').classList.add('active');
+            updateReviewType(type);
+        }
+
+        function updateReviewType(type) {
+            currentReviewType = type;
+            const badge = document.getElementById('reviewTypeBadge');
+            const typeClasses = { 
+                'initial': 'type-initial', 
+                'recertification': 'type-recertification'
+            };
+            const typeLabels = { 
+                'initial': '初次认证', 
+                'recertification': '再认证'
+            };
+            badge.className = `review-type-badge ${typeClasses[type]}`;
+            badge.textContent = typeLabels[type];
+
+            // 同步更新导航可见性
+            updateNavVisibility();
+
+            const surveySection = document.getElementById('section-survey');
+            const navSurvey = document.getElementById('nav-survey');
+            const historyContent = document.getElementById('historyContent');
+            const historyEmpty = document.getElementById('historyEmpty');
+            const runningTimeField = document.getElementById('runningTimeField');
+            const stage1Apply = document.getElementById('stage1Apply');
+            const historyTypeLabel = document.getElementById('historyTypeLabel');
+
+            surveySection.classList.add('hidden');
+            navSurvey.classList.add('hidden');
+            historyContent.classList.add('hidden');
+            historyEmpty.classList.remove('hidden');
+            runningTimeField.classList.remove('hidden');
+            if (stage1Apply) stage1Apply.classList.add('hidden');
+
+            switch(type) {
+                case 'initial':
+                    historyEmpty.querySelector('p').textContent = '初次认证无历史证书信息';
+                    historyTypeLabel.textContent = '初次认证不显示';
+                    if (stage1Apply) stage1Apply.classList.remove('hidden');
+                    break;
+                case 'recertification':
+                    surveySection.classList.remove('hidden');
+                    navSurvey.classList.remove('hidden');
+                    historyContent.classList.remove('hidden');
+                    historyEmpty.classList.add('hidden');
+                    historyTypeLabel.textContent = '查看历史证书';
+                    runningTimeField.classList.add('hidden');
+                    break;
+            }
+        }
+
+        function updateNavVisibility() {
+            const navSurvey = document.getElementById('nav-survey');
+            const sectionSurvey = document.getElementById('section-survey');
+
+            if (navSurvey) navSurvey.classList.add('hidden');
+            if (sectionSurvey) sectionSurvey.classList.add('hidden');
+
+            switch(currentReviewType) {
+                case 'initial':
+                    const stage1Apply = document.getElementById('stage1Apply');
+                    if (stage1Apply) stage1Apply.classList.remove('hidden');
+                    break;
+
+                case 'recertification':
+                    if (navSurvey) navSurvey.classList.remove('hidden');
+                    if (sectionSurvey) sectionSurvey.classList.remove('hidden');
+                    break;
+            }
+        }
+
+        // ==================== 富文本编辑功能 ====================
+        function formatText(command) {
+            document.execCommand(command, false, null);
+        }
+
+        function clearPlaceholder(element) {
+            if (element.innerHTML === element.getAttribute('data-placeholder')) {
+                element.innerHTML = '';
+            }
+        }
+
+        function addPlaceholder(element) {
+            if (element.innerHTML.trim() === '') {
+                element.innerHTML = element.getAttribute('data-placeholder');
+            }
+        }
+
+        // ==================== 过程清单功能 ====================
+        function searchProcessHistory(input) {
+            const list = input.nextElementSibling;
+            const searchValue = input.value.toLowerCase();
+            if (searchValue.length === 0) { list.classList.remove('show'); return; }
+            const filtered = processHistoryData.filter(item => item.toLowerCase().includes(searchValue));
+            list.innerHTML = filtered.map(item => `<div class="history-item" onclick="selectHistory(this, '${item}')"><i class="fas fa-history mr-2 text-slate-400"></i>${item}</div>`).join('');
+            if (filtered.length > 0) list.classList.add('show'); else list.classList.remove('show');
+        }
+
+        function showHistory(input) {
+            if (input.value.length === 0) {
+                const list = input.nextElementSibling;
+                list.innerHTML = processHistoryData.slice(0, 5).map(item => `<div class="history-item" onclick="selectHistory(this, '${item}')"><i class="fas fa-history mr-2 text-slate-400"></i>${item}</div>`).join('');
+                list.classList.add('show');
+            }
+        }
+
+        function hideHistory(input) {
+            setTimeout(() => { input.nextElementSibling.classList.remove('show'); }, 200);
+        }
+
+        function selectHistory(element, value) {
+            const input = element.closest('.search-dropdown').querySelector('input');
+            input.value = value;
+            element.closest('.search-history-list').classList.remove('show');
+        }
+
+        function addProcessRow() {
+            const tbody = document.getElementById('processTableBody');
+            const rowCount = tbody.children.length + 1;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${rowCount}</td>
+                <td>
+                    <div class="search-dropdown">
+                        <input type="text" class="editable-field process-name-input" placeholder="输入过程名称（支持模糊搜索）" oninput="searchProcessHistory(this)" onblur="hideHistory(this)" onfocus="showHistory(this)">
+                        <div class="search-history-list"></div>
+                    </div>
+                </td>
+                <td><input type="text" class="editable-field" placeholder="主责部门"></td>
+                <td><input type="text" class="editable-field" placeholder="相关部门"></td>
+                <td><input type="text" class="editable-field" placeholder="标准条款（如：6.1.2）"></td>
+                <td><input type="text" class="editable-field" placeholder="绩效参数或文件"></td>
+                <td><button onclick="deleteProcessRow(this)" class="text-red-500 hover:text-red-700"><i class="fas fa-trash-alt"></i></button></td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function deleteProcessRow(btn) {
+            btn.closest('tr').remove();
+            refreshProcessRowNumbers();
+        }
+
+        function refreshProcessRowNumbers() {
+            document.querySelectorAll('#processTableBody tr').forEach((tr, idx) => { tr.cells[0].textContent = idx + 1; });
+        }
+
+        function createProcessRow(rowData, index) {
+            const tr = document.createElement('tr');
+            const values = rowData.map(value => value == null ? '' : String(value).trim());
+            tr.innerHTML = `
+                <td>${index}</td>
+                <td>
+                    <div class="search-dropdown">
+                        <input type="text" class="editable-field process-name-input" value="${escapeHtml(values[1] || '')}" placeholder="输入过程名称（支持模糊搜索）" oninput="searchProcessHistory(this)" onblur="hideHistory(this)" onfocus="showHistory(this)">
+                        <div class="search-history-list"></div>
+                    </div>
+                </td>
+                <td><input type="text" class="editable-field" value="${escapeHtml(values[2] || '')}" placeholder="主责部门"></td>
+                <td><input type="text" class="editable-field" value="${escapeHtml(values[3] || '')}" placeholder="相关部门"></td>
+                <td><input type="text" class="editable-field" value="${escapeHtml(values[4] || '')}" placeholder="标准条款（如：6.1.2）"></td>
+                <td><input type="text" class="editable-field" value="${escapeHtml(values[5] || '')}" placeholder="绩效参数或文件"></td>
+                <td><button onclick="deleteProcessRow(this)" class="text-red-500 hover:text-red-700"><i class="fas fa-trash-alt"></i></button></td>
+            `;
+            return tr;
+        }
+
+        function importProcessExcel(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const status = document.getElementById('processImportStatus');
+            status.textContent = `正在导入：${file.name}`;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    let rows = [];
+                    if (file.name.toLowerCase().endsWith('.csv')) {
+                        rows = e.target.result.split(/\r?\n/).filter(Boolean).map(line => line.split(',').map(cell => cell.trim()));
+                    } else {
+                        if (typeof XLSX === 'undefined') throw new Error('Excel解析组件未加载，请改用CSV或检查网络。');
+                        const workbook = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+                        rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1, defval: '' });
+                    }
+                    const dataRows = rows.filter(row => row.some(cell => String(cell).trim() !== ''));
+                    const first = dataRows[0] || [];
+                    const hasHeader = first.some(cell => /序号|过程|主责|相关|条款|绩效|文件/.test(String(cell)));
+                    const normalizedRows = (hasHeader ? dataRows.slice(1) : dataRows).map((row, idx) => {
+                        const cells = row.slice(0, 6);
+                        if (!/^\d+$/.test(String(cells[0] || '').trim())) cells.unshift(idx + 1);
+                        return cells;
+                    }).filter(row => row.slice(1, 6).some(cell => String(cell || '').trim() !== ''));
+                    if (normalizedRows.length === 0) throw new Error('未识别到可导入的过程数据。');
+                    const tbody = document.getElementById('processTableBody');
+                    tbody.innerHTML = '';
+                    normalizedRows.forEach((row, idx) => tbody.appendChild(createProcessRow(row, idx + 1)));
+                    status.textContent = `已导入 ${normalizedRows.length} 条过程`;
+                    showToast(`过程清单已导入 ${normalizedRows.length} 条`);
+                } catch (error) {
+                    status.textContent = '导入失败，请检查文件格式';
+                    showToast(error.message || '导入失败');
+                } finally {
+                    event.target.value = '';
+                }
+            };
+            if (file.name.toLowerCase().endsWith('.csv')) reader.readAsText(file, 'utf-8'); else reader.readAsArrayBuffer(file);
+        }
+
+        function escapeHtml(value) {
+            return String(value).replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+        }
+
+        function previewAttachment(fileName, fileType, content) {
+            document.getElementById('attachmentPreviewTitle').textContent = fileName;
+            document.getElementById('attachmentPreviewType').textContent = `${fileType} · 附件预览`;
+            document.getElementById('attachmentPreviewBody').innerHTML = `<div class="flex items-center gap-3 mb-4"><div class="w-12 h-12 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-blue-600"><i class="fas fa-file-alt text-xl"></i></div><div><div class="font-medium text-slate-900">${escapeHtml(fileName)}</div><div class="text-xs text-slate-500 mt-1">当前为业务评审页面内置的附件预览样例</div></div></div><p>${escapeHtml(content)}</p>`;
+            document.getElementById('attachmentPreviewModal').classList.remove('hidden');
+        }
+
+        function closeAttachmentPreview() {
+            document.getElementById('attachmentPreviewModal').classList.add('hidden');
+        }
+
+        function downloadAttachment(fileName, content) {
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+            showToast(`已开始下载：${fileName}`);
+        }
+
+        // ==================== 客户信用核查 ====================
+        function checkCredit() {
+            const btn = document.getElementById('checkCreditBtn');
+            const loading = document.getElementById('creditLoading');
+            const results = document.getElementById('creditResults');
+            btn.disabled = true;
+            loading.classList.remove('hidden');
+            results.classList.add('hidden');
+            setTimeout(() => {
+                loading.classList.add('hidden');
+                results.classList.remove('hidden');
+                btn.disabled = false;
+                creditChecked = true;
+                const cards = [
+                    { id: 'credit-card-1', status: 'success', text: '未列入严重违法失信名单' },
+                    { id: 'credit-card-2', status: 'success', text: '近1年内无责令停产停业记录' },
+                    { id: 'credit-card-3', status: 'success', text: '近1年内无重大职业健康安全事故' }
+                ];
+                cards.forEach(card => {
+                    const el = document.getElementById(card.id);
+                    el.className = `credit-check-card bg-white p-4 rounded-lg border ${card.status}`;
+                    el.querySelector('.status-icon').className = `w-10 h-10 rounded-full flex items-center justify-center status-icon ${card.status === 'success' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`;
+                    el.querySelector('.status-icon').innerHTML = `<i class="fas ${card.status === 'success' ? 'fa-check' : 'fa-times'}"></i>`;
+                    el.querySelector('.status-text').textContent = card.text;
+                    el.querySelector('.status-badge').textContent = card.status === 'success' ? '通过' : '异常';
+                    el.querySelector('.status-badge').className = `risk-badge ${card.status === 'success' ? 'risk-level-3' : 'risk-level-1'} status-badge`;
+                });
+            }, 1500);
+        }
+
+        // ==================== 认证风险评估 ====================
+        function checkRiskValidation() {
+            const suspend = document.getElementById('riskSuspend').value;
+            const illegal = document.getElementById('riskIllegal').value;
+            const other = document.getElementById('riskOther').value;
+            const alert = document.getElementById('riskAlert');
+            const hasRisk = suspend === 'Y' || illegal === 'Y' || other === 'Y';
+
+            if (hasRisk) {
+                alert.classList.remove('hidden');
+                const rejectRadio = document.querySelector('input[name="conclusion"][value="reject"]');
+                if (rejectRadio) {
+                    rejectRadio.checked = true;
+                    handleConclusionChange('reject');
+                }
+            } else {
+                alert.classList.add('hidden');
+            }
+        }
+
+        function updateRiskLevel(level) {
+            const badge = document.getElementById('currentRiskLevel');
+            const classes = { '1': 'risk-level-1', '2': 'risk-level-2', '3': 'risk-level-3' };
+            badge.className = `risk-badge ${classes[level]}`;
+            badge.textContent = level === '1' ? '一级风险' : level === '2' ? '二级风险' : '三级风险';
+        }
+
+        // ==================== 评审结论联动 ====================
+        function handleMultisiteChange(value) {
+            const rejectRadio = document.querySelector('input[name="conclusion"][value="reject"]');
+            const acceptRadio = document.querySelector('input[name="conclusion"][value="accept"]');
+            const unqualifiedReason = document.getElementById('unqualifiedReason');
+            const rejectReason = document.getElementById('rejectReason');
+
+            if (value === 'unqualified') {
+                rejectRadio.checked = true;
+                acceptRadio.disabled = true;
+                document.getElementById('acceptLabel').classList.add('opacity-50', 'cursor-not-allowed');
+                unqualifiedReason.disabled = false;
+                rejectReason.classList.remove('hidden');
+                handleConclusionChange('reject');
+            } else {
+                acceptRadio.disabled = false;
+                document.getElementById('acceptLabel').classList.remove('opacity-50', 'cursor-not-allowed');
+                unqualifiedReason.disabled = true;
+                if (!rejectRadio.checked) {
+                    rejectReason.classList.add('hidden');
+                }
+            }
+        }
+
+        function handleConclusionChange(value) {
+            const rejectReason = document.getElementById('rejectReason');
+            const conclusionSupplement = document.getElementById('conclusionSupplement');
+            const stage1Apply = document.getElementById('stage1Apply');
+            const ohsmsSpecialConclusion = document.getElementById('ohsmsSpecialConclusion');
+
+            if (value === 'reject') {
+                rejectReason.classList.remove('hidden');
+                if (conclusionSupplement) conclusionSupplement.classList.add('hidden');
+                if (stage1Apply) stage1Apply.classList.add('hidden');
+                if (ohsmsSpecialConclusion) ohsmsSpecialConclusion.classList.add('hidden');
+            } else {
+                rejectReason.classList.add('hidden');
+                if (conclusionSupplement) conclusionSupplement.classList.remove('hidden');
+                if (stage1Apply) stage1Apply.classList.remove('hidden');
+                if (ohsmsSpecialConclusion) ohsmsSpecialConclusion.classList.remove('hidden');
+            }
+        }
+
+        function handleOHSMSConclusion(value) {
+            const partialReason = document.getElementById('partialReason');
+            const siteSelectionArea = document.getElementById('siteSelectionArea');
+
+            if (value === 'partial') {
+                partialReason.disabled = false;
+                siteSelectionArea.classList.remove('opacity-50');
+            } else {
+                partialReason.disabled = true;
+                siteSelectionArea.classList.add('opacity-50');
+                document.querySelectorAll('.site-checkbox').forEach(el => {
+                    el.classList.remove('selected');
+                    el.querySelector('input').checked = false;
+                    el.querySelector('.unchecked').classList.remove('hidden');
+                    el.querySelector('.checked').classList.add('hidden');
+                });
+            }
+        }
+
+        function toggleSiteSelection(element) {
+            const checkbox = element.querySelector('input');
+            const unchecked = element.querySelector('.unchecked');
+            const checked = element.querySelector('.checked');
+
+            checkbox.checked = !checkbox.checked;
+
+            if (checkbox.checked) {
+                element.classList.add('selected');
+                unchecked.classList.add('hidden');
+                checked.classList.remove('hidden');
+            } else {
+                element.classList.remove('selected');
+                unchecked.classList.remove('hidden');
+                checked.classList.add('hidden');
+            }
+        }
+
+        function toggleStage1Apply(checked) {
+            document.getElementById('stage1ApplyContent').classList.toggle('hidden', !checked);
+        }
+
+        // ==================== 提交评审（已简化） ====================
+        function submitFinalReview() {
+            document.getElementById('submitModal').classList.remove('hidden');
+        }
+
+        function closeSubmitModal() {
+            document.getElementById('submitModal').classList.add('hidden');
+        }
+
+        function confirmSubmit() {
+            closeSubmitModal();
+            showToast('评审表单已提交' + (stage1Required ? '（含一阶段审核）' : ''));
+        }
+
+        function closeRejectModal() {
+            document.getElementById('rejectModal').classList.add('hidden');
+        }
+
+        function confirmReject() {
+            const reason = document.getElementById('modalRejectReason').value;
+            if (!reason.trim()) {
+                alert('请填写拒绝原因');
+                return;
+            }
+            closeRejectModal();
+            showToast('已拒绝受理，申请退回至客服处理');
+            document.getElementById('reviewStatus').textContent = '已驳回';
+            document.getElementById('reviewStatus').className = 'px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-700 border border-red-200';
+        }
+
+        // ==================== 变更审核辅助函数（保留但不再使用） ====================
+        function updateChangeImpact(value) {
+            const stage1Select = document.getElementById('changeStage1Required');
+            if (value === 'major' && stage1Select) {
+                stage1Select.value = 'Y';
+                toggleChangeStage1('Y');
+                showToast('重大变更已自动触发一阶段审核要求');
+            }
+        }
+
+        function toggleChangeStage1(value) {
+            const reasonDiv = document.getElementById('changeStage1Reason');
+            if (reasonDiv) {
+                reasonDiv.classList.toggle('hidden', value !== 'Y');
+            }
+        }
+
+        function checkChangeDoc(select) {
+            if (select.value === 'invalid') {
+                select.style.borderColor = '#ef4444';
+                select.style.backgroundColor = '#fef2f2';
+                showToast('发现无效资质文件，请退回补充材料');
+            } else if (select.value === 'valid') {
+                select.style.borderColor = '#22c55e';
+                select.style.backgroundColor = '#f0fdf4';
+            } else {
+                select.style.borderColor = '';
+                select.style.backgroundColor = '';
+            }
+        }
+
+        // ==================== 专业代码选择功能（弹窗版） ====================
+        function openProfCodeModal() {
+            document.getElementById('profCodeModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            renderModalProfCodeList();
+            updateModalPreview();
+        }
+
+        function closeProfCodeModal() {
+            document.getElementById('profCodeModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function searchModalProfCode(keyword) {
+            renderModalProfCodeList(keyword);
+        }
+
+        function renderModalProfCodeList(keyword = '') {
+            const tbody = document.getElementById('modalProfCodeList');
+            const lowerKeyword = keyword.toLowerCase();
+
+            let filtered = professionalCodeData;
+            if (keyword.trim()) {
+                filtered = professionalCodeData.filter(item => 
+                    item.code.toLowerCase().includes(lowerKeyword) || 
+                    item.category.toLowerCase().includes(lowerKeyword)
+                );
+            }
+
+            document.getElementById('totalCodesCount').textContent = filtered.length;
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="py-8 text-center text-slate-400">未找到匹配的专业代码</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(item => {
+                const isSelected = selectedProfCodes.some(s => s.code === item.code);
+                const accBadges = item.accreditation.map(acc => {
+                    const colorClass = acc === 'CNAS' ? 'bg-blue-100 text-blue-700' : 
+                                      acc === 'DAKKS' ? 'bg-pink-100 text-pink-700' : 
+                                      'bg-green-100 text-green-700';
+                    return `<span class="${colorClass} text-xs px-2 py-0.5 rounded font-medium">${acc}</span>`;
+                }).join(' ');
+
+                return `<tr class="hover:bg-blue-50 transition-colors ${isSelected ? 'bg-blue-50' : ''}">
+                    <td class="py-3 px-4">
+                        <input type="checkbox" value="${item.code}" ${isSelected ? 'checked' : ''} 
+                            onchange="toggleModalCode('${item.code}', '${item.category}', '${item.accreditation.join(',')}')"
+                            class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4">
+                    </td>
+                    <td class="py-3 px-4 font-mono font-semibold text-slate-700">${item.code}</td>
+                    <td class="py-3 px-4 text-slate-700">${item.category}</td>
+                    <td class="py-3 px-4">${accBadges || '<span class="text-slate-400 text-xs">-</span>'}</td>
+                </tr>`;
+            }).join('');
+
+            updateHeaderCheckbox();
+        }
+
+        function toggleModalCode(code, category, accreditationStr) {
+            const accreditation = accreditationStr ? accreditationStr.split(',') : [];
+            const index = selectedProfCodes.findIndex(s => s.code === code);
+            if (index >= 0) {
+                selectedProfCodes.splice(index, 1);
+            } else {
+                selectedProfCodes.push({code, category, accreditation});
+            }
+            renderModalProfCodeList(document.getElementById('modalProfCodeSearch').value);
+            updateModalPreview();
+        }
+
+        function updateModalPreview() {
+            const previewContainer = document.getElementById('previewTags');
+            const countSpan = document.getElementById('selectedCount');
+            const confirmCount = document.getElementById('confirmCount');
+
+            countSpan.textContent = selectedProfCodes.length;
+            confirmCount.textContent = selectedProfCodes.length;
+
+            if (selectedProfCodes.length === 0) {
+                previewContainer.innerHTML = '<span class="text-slate-400 text-sm">暂未选择</span>';
+            } else {
+                previewContainer.innerHTML = selectedProfCodes.map(item => {
+                    return `<span class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium border border-blue-200">
+                        <span class="font-mono font-bold">${item.code}</span>
+                        <span class="text-blue-400">|</span>
+                        <span class="truncate max-w-[150px]">${item.category}</span>
+                        <button onclick="event.stopPropagation(); removeFromPreview('${item.code}')" class="ml-1 w-4 h-4 flex items-center justify-center rounded-full hover:bg-blue-200 text-blue-600 transition-colors">
+                            <i class="fas fa-times text-[10px]"></i>
+                        </button>
+                    </span>`;
+                }).join('');
+            }
+        }
+
+        function removeFromPreview(code) {
+            const index = selectedProfCodes.findIndex(s => s.code === code);
+            if (index >= 0) {
+                selectedProfCodes.splice(index, 1);
+            }
+            renderModalProfCodeList(document.getElementById('modalProfCodeSearch').value);
+            updateModalPreview();
+        }
+
+        function selectAllModalCodes() {
+            const searchValue = document.getElementById('modalProfCodeSearch').value.toLowerCase();
+            let targetCodes = professionalCodeData;
+
+            if (searchValue) {
+                targetCodes = professionalCodeData.filter(item => 
+                    item.code.toLowerCase().includes(searchValue) || 
+                    item.category.toLowerCase().includes(searchValue)
+                );
+            }
+
+            let addedCount = 0;
+            targetCodes.forEach(item => {
+                if (!selectedProfCodes.some(s => s.code === item.code)) {
+                    selectedProfCodes.push({code: item.code, category: item.category, accreditation: item.accreditation});
+                    addedCount++;
+                }
+            });
+
+            renderModalProfCodeList(searchValue);
+            updateModalPreview();
+            showToast(addedCount > 0 ? `已添加 ${addedCount} 项` : '所有可见项已选中');
+        }
+
+        function invertModalSelection() {
+            const searchValue = document.getElementById('modalProfCodeSearch').value.toLowerCase();
+            let visibleCodes = professionalCodeData;
+
+            if (searchValue) {
+                visibleCodes = professionalCodeData.filter(item => 
+                    item.code.toLowerCase().includes(searchValue) || 
+                    item.category.toLowerCase().includes(searchValue)
+                );
+            }
+
+            visibleCodes.forEach(item => {
+                const index = selectedProfCodes.findIndex(s => s.code === item.code);
+                if (index >= 0) {
+                    selectedProfCodes.splice(index, 1);
+                } else {
+                    selectedProfCodes.push({code: item.code, category: item.category, accreditation: item.accreditation});
+                }
+            });
+
+            renderModalProfCodeList(searchValue);
+            updateModalPreview();
+            showToast('反选完成');
+        }
+
+        function clearModalSelection() {
+            if (selectedProfCodes.length === 0) return;
+
+            if (confirm(`确定要清空已选择的 ${selectedProfCodes.length} 个专业代码吗？`)) {
+                selectedProfCodes = [];
+                renderModalProfCodeList(document.getElementById('modalProfCodeSearch').value);
+                updateModalPreview();
+                showToast('已清空所有选择');
+            }
+        }
+
+        function toggleAllFromHeader() {
+            const headerCheckbox = document.getElementById('headerCheckbox');
+            const searchValue = document.getElementById('modalProfCodeSearch').value.toLowerCase();
+            let visibleCodes = professionalCodeData;
+
+            if (searchValue) {
+                visibleCodes = professionalCodeData.filter(item => 
+                    item.code.toLowerCase().includes(searchValue) || 
+                    item.category.toLowerCase().includes(searchValue)
+                );
+            }
+
+            if (headerCheckbox.checked) {
+                visibleCodes.forEach(item => {
+                    if (!selectedProfCodes.some(s => s.code === item.code)) {
+                        selectedProfCodes.push({code: item.code, category: item.category, accreditation: item.accreditation});
+                    }
+                });
+            } else {
+                visibleCodes.forEach(item => {
+                    const index = selectedProfCodes.findIndex(s => s.code === item.code);
+                    if (index >= 0) selectedProfCodes.splice(index, 1);
+                });
+            }
+
+            renderModalProfCodeList(searchValue);
+            updateModalPreview();
+        }
+
+        function updateHeaderCheckbox() {
+            const headerCheckbox = document.getElementById('headerCheckbox');
+            const searchValue = document.getElementById('modalProfCodeSearch').value.toLowerCase();
+            let visibleCodes = professionalCodeData;
+
+            if (searchValue) {
+                visibleCodes = professionalCodeData.filter(item => 
+                    item.code.toLowerCase().includes(searchValue) || 
+                    item.category.toLowerCase().includes(searchValue)
+                );
+            }
+
+            const allVisibleSelected = visibleCodes.every(item => 
+                selectedProfCodes.some(s => s.code === item.code)
+            );
+            const someVisibleSelected = visibleCodes.some(item => 
+                selectedProfCodes.some(s => s.code === item.code)
+            );
+
+            headerCheckbox.checked = allVisibleSelected;
+            headerCheckbox.indeterminate = someVisibleSelected && !allVisibleSelected;
+        }
+
+        function confirmProfCodeSelection() {
+            renderMainProfCodeDisplay();
+            closeProfCodeModal();
+            showToast(`已选择 ${selectedProfCodes.length} 个专业代码`);
+        }
+
+        function renderMainProfCodeDisplay() {
+            const container = document.getElementById('selectedProfCodesDisplay');
+
+            if (selectedProfCodes.length === 0) {
+                container.innerHTML = '<div class="text-sm text-slate-400 py-3 px-4 bg-slate-50 rounded-lg border border-slate-200 border-dashed">暂未选择专业代码，请点击下方按钮选择</div>';
+            } else {
+                container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-3">${selectedProfCodes.map(item => {
+                        const accBadges = item.accreditation.map(acc => {
+                            const colorClass = acc === 'CNAS' ? 'bg-blue-100 text-blue-700 border-blue-200' : 
+                                              acc === 'DAKKS' ? 'bg-pink-100 text-pink-700 border-pink-200' : 
+                                              'bg-green-100 text-green-700 border-green-200';
+                            return `<span class="${colorClass} text-[10px] px-2 py-0.5 rounded border font-medium">${acc}</span>`;
+                        }).join('');
+
+                        return `<div class="group flex items-start gap-3 p-3 bg-white border border-slate-200 rounded-lg shadow-sm hover:border-blue-300 hover:shadow-md transition-all">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="font-mono font-bold text-slate-800 text-sm">${item.code}</span>
+                                    <span class="text-slate-300">|</span>
+                                    <span class="text-sm text-slate-700 font-medium truncate">${item.category}</span>
+                                </div>
+                                <div class="flex flex-wrap gap-1">${accBadges || '<span class="text-slate-400 text-xs">无认可机构</span>'}</div>
+                            </div>
+                            <button onclick="removeMainProfCode('${item.code}')" class="mt-0.5 w-7 h-7 flex items-center justify-center rounded-full hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100" title="删除">
+                                <i class="fas fa-trash-alt text-xs"></i>
+                            </button>
+                        </div>`;
+                    }).join('')}</div>`;
+            }
+        }
+
+        function removeMainProfCode(code) {
+            const index = selectedProfCodes.findIndex(s => s.code === code);
+            if (index >= 0) {
+                selectedProfCodes.splice(index, 1);
+                renderMainProfCodeDisplay();
+                showToast('已删除');
+            }
+        }
+
+        // ==================== 导航切换 ====================
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            const clickedNav = event.currentTarget;
+            clickedNav.classList.add('active');
+
+            const section = document.getElementById(`section-${tab}`);
+            if (section) {
+                if (section.classList.contains('hidden')) {
+                    section.classList.remove('hidden');
+                }
+
+                const headerOffset = 100;
+                const elementPosition = section.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+
+            history.pushState(null, null, `#section-${tab}`);
+        }
+
+        // ==================== 通用功能 ====================
+        function saveReview() { 
+            showToast('评审信息已暂存（OHSMS案例数据）'); 
+        }
+
+        function showToast(message) {
+            const div = document.createElement('div');
+            div.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2';
+            div.innerHTML = `<i class="fas fa-check-circle text-green-400"></i><span>${message}</span>`;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 3000);
+        }
+    </script>
+
+</body>
+</html>
