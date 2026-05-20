@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -839,12 +840,15 @@
             <div id="section-history" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
                     <div class="flex items-center gap-2"><i class="fas fa-history text-blue-600"></i><h3 class="font-semibold text-slate-900">历史证书核查</h3></div>
-                    <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded" id="historyTypeLabel">初次认证不显示</span>
+                    <button type="button" id="historyRefreshBtn" onclick="refreshHistoryCertificates()" class="hidden px-3 py-1.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 text-xs font-medium transition-colors items-center gap-2">
+                        <i class="fas fa-rotate"></i>
+                        <span>查看历史证书</span>
+                    </button>
                 </div>
                 <div class="p-6">
                     <div id="historyEmpty" class="text-center py-8 text-slate-400"><i class="fas fa-inbox text-3xl mb-2"></i><p class="text-sm">初次认证无历史证书信息</p></div>
                     <div id="historyContent" class="hidden space-y-4">
-                        <div class="alert-box info mb-4"><i class="fas fa-info-circle mt-0.5"></i><div><p class="font-medium">证书状态核查规则</p><p class="mt-1 text-sm">当前证书状态仅可为有效、暂停、撤销、注销之一；若原证书被暂停/撤销/注销，需从处置日期起满1年禁止期后方可受理。</p></div></div>
+                        <div class="alert-box info mb-4"><i class="fas fa-info-circle mt-0.5"></i><div><p class="font-medium">证书状态核查规则</p><p class="mt-1 text-sm">若原证书被暂停/撤销/注销，需从处置日期起满1年禁止期后方可受理。</p></div></div>
                         <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
                             <div class="bg-green-50 rounded-lg p-4 border border-green-200">
                                 <div class="flex items-start justify-between gap-3 mb-3">
@@ -881,12 +885,6 @@
                                 </div>
                                 <div class="mt-3 p-3 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700"><i class="fas fa-ban mr-1"></i>核查结论：原证书暂停未满1年禁止期，需到2027-02-10后方可受理。</div>
                             </div>
-                        </div>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-slate-600">
-                            <div class="p-2 rounded-lg bg-green-50 border border-green-200 flex items-center gap-2"><span class="cert-status-pill cert-status-valid">有效</span><span>可受理</span></div>
-                            <div class="p-2 rounded-lg bg-amber-50 border border-amber-200 flex items-center gap-2"><span class="cert-status-pill cert-status-suspended">暂停</span><span>满1年后受理</span></div>
-                            <div class="p-2 rounded-lg bg-red-50 border border-red-200 flex items-center gap-2"><span class="cert-status-pill cert-status-revoked">撤销</span><span>满1年后受理</span></div>
-                            <div class="p-2 rounded-lg bg-slate-50 border border-slate-200 flex items-center gap-2"><span class="cert-status-pill cert-status-cancelled">注销</span><span>满1年后受理</span></div>
                         </div>
                     </div>
                 </div>
@@ -1472,7 +1470,7 @@
             const historyEmpty = document.getElementById('historyEmpty');
             const runningTimeField = document.getElementById('runningTimeField');
             const stage1Apply = document.getElementById('stage1Apply');
-            const historyTypeLabel = document.getElementById('historyTypeLabel');
+            const historyRefreshBtn = document.getElementById('historyRefreshBtn');
 
             surveySection.classList.add('hidden');
             navSurvey.classList.add('hidden');
@@ -1480,11 +1478,14 @@
             historyEmpty.classList.remove('hidden');
             runningTimeField.classList.remove('hidden');
             if (stage1Apply) stage1Apply.classList.add('hidden');
+            if (historyRefreshBtn) {
+                historyRefreshBtn.classList.add('hidden');
+                historyRefreshBtn.classList.remove('inline-flex');
+            }
 
             switch(type) {
                 case 'initial':
                     historyEmpty.querySelector('p').textContent = '初次认证无历史证书信息';
-                    historyTypeLabel.textContent = '初次认证不显示';
                     if (stage1Apply) stage1Apply.classList.remove('hidden');
                     break;
                 case 'recertification':
@@ -1492,10 +1493,33 @@
                     navSurvey.classList.remove('hidden');
                     historyContent.classList.remove('hidden');
                     historyEmpty.classList.add('hidden');
-                    historyTypeLabel.textContent = '查看历史证书';
+                    if (historyRefreshBtn) {
+                        historyRefreshBtn.classList.remove('hidden');
+                        historyRefreshBtn.classList.add('inline-flex');
+                        historyRefreshBtn.querySelector('span').textContent = '查看历史证书';
+                    }
                     runningTimeField.classList.add('hidden');
                     break;
             }
+        }
+
+        function refreshHistoryCertificates() {
+            const btn = document.getElementById('historyRefreshBtn');
+            const content = document.getElementById('historyContent');
+            if (!btn || !content) return;
+            const icon = btn.querySelector('i');
+            const label = btn.querySelector('span');
+            icon.classList.add('fa-spin');
+            label.textContent = '刷新中...';
+            btn.disabled = true;
+            content.classList.add('opacity-60');
+            setTimeout(() => {
+                icon.classList.remove('fa-spin');
+                label.textContent = '查看历史证书';
+                btn.disabled = false;
+                content.classList.remove('opacity-60');
+                showToast('历史证书信息已刷新');
+            }, 800);
         }
 
         function updateNavVisibility() {
