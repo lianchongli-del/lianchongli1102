@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -319,6 +320,102 @@
             resize: vertical;
         }
 
+        .certificate-domain-row {
+            background: #eff6ff;
+            color: #1e40af;
+            font-weight: 700;
+        }
+
+        .certificate-domain-row td {
+            border-color: #bfdbfe;
+            padding: 10px 14px !important;
+        }
+
+        .certificate-index {
+            width: 42px;
+            text-align: center;
+            color: #64748b;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            padding-left: 6px !important;
+            padding-right: 6px !important;
+        }
+
+        .certificate-table {
+            table-layout: fixed;
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .certificate-table th {
+            width: auto;
+            background: #f8fafc;
+            color: #334155;
+            font-weight: 700;
+            padding: 10px 12px;
+            white-space: nowrap;
+            text-align: left;
+        }
+
+        .certificate-table td {
+            padding: 12px;
+            vertical-align: top;
+            word-break: normal;
+        }
+
+        .certificate-table .certificate-number {
+            font-family: 'Inter', monospace;
+            color: #0f172a;
+            white-space: nowrap;
+        }
+
+        .certificate-table .certificate-date {
+            color: #334155;
+            white-space: nowrap;
+        }
+
+        .certificate-table .certificate-scope {
+            color: #1f2937;
+            min-width: 260px;
+        }
+
+        .application-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .application-field {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #ffffff;
+            padding: 12px;
+        }
+
+        .application-field label {
+            display: block;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .application-field .value {
+            color: #0f172a;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .application-field.col-span-2 {
+            grid-column: span 2 / span 2;
+        }
+
+        .application-field.col-span-3 {
+            grid-column: span 3 / span 3;
+        }
+
         @media (max-width: 768px) {
             .payment-field-row {
                 grid-template-columns: 1fr;
@@ -330,6 +427,15 @@
             }
 
             .payment-field-row .payment-wide {
+                grid-column: auto;
+            }
+
+            .application-summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .application-field.col-span-2,
+            .application-field.col-span-3 {
                 grid-column: auto;
             }
         }
@@ -405,7 +511,7 @@
             <div class="flex items-center space-x-6">
                 <div>
                     <h3 class="text-lg font-semibold text-slate-900" id="detailTitle">再认证审核申请 - JD202403001</h3>
-                    <p class="text-sm text-slate-500 mt-1" id="detailSubtitle">北京某某科技有限公司 | QMS/EMS体系再认证 | 审核时间：2026年4月15日-17日</p>
+                    <p class="text-sm text-slate-500 mt-1" id="detailSubtitle">北京某某科技有限公司 | QMS/EMS体系再认证</p>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
@@ -417,6 +523,10 @@
                     <i class="fas fa-envelope text-slate-400"></i>
                     重新发送邮件
                 </button>
+                <button onclick="saveApplication()" id="saveApplicationBtn" class="px-5 py-2 bg-white border border-blue-500 text-blue-600 rounded-lg hover:bg-blue-50 shadow-sm transition flex items-center gap-2 font-medium">
+                    <i class="fas fa-save"></i>
+                    保存
+                </button>
                 <button onclick="confirmSubmit()" id="confirmSubmitBtn" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-sm transition flex items-center gap-2 font-medium" disabled>
                     <i class="fas fa-check"></i>
                     确认提交
@@ -424,23 +534,23 @@
             </div>
         </div>
 
-        <!-- Tab导航 - 只保留调查表和通知 -->
+        <!-- Tab导航 -->
         <div class="bg-white border-b border-slate-200 rounded-t-lg">
             <nav class="flex space-x-1 px-6 overflow-x-auto" aria-label="Tabs">
-                <button onclick="switchTab('survey')" id="tab-survey" class="tab-active py-4 px-4 inline-flex items-center text-sm font-medium whitespace-nowrap transition-colors hover:text-blue-600">
-                    <i class="fas fa-clipboard-list mr-2"></i>
-                    获证方情况调查表
-                    <span id="surveyBadge" class="ml-2 px-2 py-0.5 bg-red-500 text-white text-xs rounded-full">待填写</span>
-                </button>
-                <button onclick="switchTab('notice')" id="tab-notice" class="text-slate-500 hover:text-slate-700 py-4 px-4 inline-flex items-center text-sm font-medium whitespace-nowrap transition-colors border-b-2 border-transparent hover:border-slate-300">
+                <button onclick="switchTab('notice')" id="tab-notice" class="tab-active py-4 px-4 inline-flex items-center text-sm font-medium whitespace-nowrap transition-colors hover:text-blue-600">
                     <i class="fas fa-bell mr-2"></i>
                     再认证审核通知
                     <span class="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">已发送</span>
                 </button>
-                <button onclick="switchTab('payment')" id="tab-payment" class="text-slate-500 hover:text-slate-700 py-4 px-4 inline-flex items-center text-sm font-medium whitespace-nowrap transition-colors border-b-2 border-transparent hover:border-slate-300">
-                    <i class="fas fa-file-invoice-dollar mr-2"></i>
-                    收款通知单
-                    <span id="paymentBadge" class="ml-2 px-2 py-0.5 bg-amber-100 text-amber-700 text-xs rounded-full">待填写</span>
+                <button onclick="switchTab('survey')" id="tab-survey" class="text-slate-500 hover:text-slate-700 py-4 px-4 inline-flex items-center text-sm font-medium whitespace-nowrap transition-colors border-b-2 border-transparent hover:border-slate-300">
+                    <i class="fas fa-clipboard-list mr-2"></i>
+                    获证方情况调查表
+                    <span id="surveyBadge" class="ml-2 px-2 py-0.5 bg-amber-100 text-amber-700 text-xs rounded-full">待填写</span>
+                </button>
+                <button onclick="switchTab('application')" id="tab-application" class="text-slate-500 hover:text-slate-700 py-4 px-4 inline-flex items-center text-sm font-medium whitespace-nowrap transition-colors border-b-2 border-transparent hover:border-slate-300">
+                    <i class="fas fa-file-signature mr-2"></i>
+                    认证申请单
+                    <span class="ml-2 px-2 py-0.5 bg-amber-100 text-amber-700 text-xs rounded-full">待填写</span>
                 </button>
             </nav>
         </div>
@@ -448,15 +558,15 @@
         <!-- Tab内容容器 -->
         <div class="bg-white shadow rounded-b-lg p-6 min-h-[600px] border-x border-b border-slate-200">
 
-            <!-- 1. 获证方情况调查表（默认第一个） -->
-            <div id="content-survey" class="tab-content">
+            <!-- 1. 获证方情况调查表 -->
+            <div id="content-survey" class="tab-content hidden">
                 <div class="flex justify-between items-start mb-6">
                     <div>
                         <h3 class="text-lg font-semibold text-slate-900">获证方情况调查表</h3>
                         <p class="text-sm text-slate-500 mt-1">请确认自上次审核以来的变更情况，所有信息需真实有效</p>
                     </div>
                     <div class="flex space-x-2">
-                        <span id="surveyStatusBadge" class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium border border-red-200">
+                        <span id="surveyStatusBadge" class="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-sm font-medium border border-amber-200">
                             待填写
                         </span>
                         <button onclick="toggleAgentMode()" id="agentModeBtn" class="px-4 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium hover:bg-purple-200 transition flex items-center gap-2 border border-purple-200">
@@ -479,14 +589,6 @@
                                 <label class="block text-sm font-medium text-slate-700 mb-2">客户名称</label>
                                 <input type="text" id="surveyCustomerName" class="bg-slate-100" readonly value="北京某某科技有限公司">
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-2 required">联系人/联系方式 </label>
-                                <input type="text" id="surveyContact" placeholder="请输入联系人及电话" value="">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-2 required">组织人数或体系覆盖人数 </label>
-                                <input type="number" id="surveyStaffCount" placeholder="请输入人数" value="">
-                            </div>
                         </div>
                     </div>
 
@@ -502,24 +604,6 @@
                         </div>
                     </div>
 
-                    <!-- 业务评审开关 -->
-                    <div class="border rounded-lg p-5 bg-amber-50 border-amber-200">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h4 class="font-semibold text-amber-900 flex items-center gap-2">
-                                    <i class="fas fa-gavel text-amber-600"></i>
-                                    是否需要业务评审
-                                </h4>
-                                <p class="text-sm text-amber-700 mt-1">如选择"是"，将流经业务评审节点；选择"否"直接进入方案策划</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" id="needBusinessReview" class="sr-only peer" onchange="toggleBusinessReview(this.checked)">
-                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                                <span class="ml-3 text-sm font-medium text-slate-700" id="reviewStatusText">否 / 是</span>
-                            </label>
-                        </div>
-                    </div>
-
                     <!-- 审核日期确认 -->
                     <div class="border rounded-lg p-5 border-slate-200">
                         <div class="sub-section-title mb-4">
@@ -530,8 +614,8 @@
                             <label class="flex items-center gap-3 p-4 bg-slate-50 rounded-lg border border-slate-200 cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition">
                                 <input type="radio" name="auditDateConfirm" value="yes" checked class="w-4 h-4 text-blue-600" onchange="toggleDateChange(false)">
                                 <div>
-                                    <span class="text-sm font-medium text-slate-900 block">同意《再认证/再认证通知书》中的审核日期</span>
-                                    <span class="text-xs text-slate-500">2026年4月15日 至 2026年4月17日</span>
+                                    <span class="text-sm font-medium text-slate-900 block">同意《监督/再认证通知书》中的审核日期</span>
+                                    <span class="text-xs text-slate-500">2026年4月</span>
                                 </div>
                             </label>
                             <label class="flex items-start gap-3 p-4 bg-slate-50 rounded-lg border border-slate-200 cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition">
@@ -539,10 +623,14 @@
                                 <div class="flex-1">
                                     <span class="text-sm font-medium text-slate-900 block mb-3">不同意，希望调整审核日期</span>
                                     <div id="dateAdjustForm" class="hidden space-y-3 pl-0">
-                                        <div class="grid grid-cols-2 gap-4">
+                                        <div class="grid grid-cols-3 gap-4">
                                             <div>
-                                                <label class="block text-xs font-medium text-slate-600 mb-1">希望的现场审核日期 <span class="text-red-500">*</span></label>
-                                                <input type="date" class="border-slate-300" id="preferredDate">
+                                                <label class="block text-xs font-medium text-slate-600 mb-1">希望开始日期 <span class="text-red-500">*</span></label>
+                                                <input type="date" class="border-slate-300" id="preferredStartDate">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-slate-600 mb-1">希望结束日期 <span class="text-red-500">*</span></label>
+                                                <input type="date" class="border-slate-300" id="preferredEndDate">
                                             </div>
                                             <div>
                                                 <label class="block text-xs font-medium text-slate-600 mb-1">不能安排的原因 <span class="text-red-500">*</span></label>
@@ -602,7 +690,7 @@
             </div>
 
             <!-- 2. 再认证审核通知（按MSF11-24格式） -->
-            <div id="content-notice" class="tab-content hidden">
+            <div id="content-notice" class="tab-content">
                 <div class="flex justify-between items-start mb-6">
                     <div>
                         <h3 class="text-lg font-semibold text-slate-900">再认证审核通知</h3>
@@ -644,6 +732,92 @@
                             若贵方不能在现证书有效期内完成再认证，现认证证书将在有效期到后自动失效，我中心也将发布相应的证书失效公告。
                         </p>
 
+                        <table class="notice-table certificate-table">
+                            <colgroup>
+                                <col style="width: 44px;">
+                                <col style="width: 180px;">
+                                <col style="width: 210px;">
+                                <col style="width: 120px;">
+                                <col style="width: 120px;">
+                                <col>
+                            </colgroup>
+                            <tr>
+                                <th class="certificate-index">序号</th>
+                                <th>证书编号</th>
+                                <th>认证标准</th>
+                                <th>首次发证日期</th>
+                                <th>有效期至</th>
+                                <th>审核范围</th>
+                            </tr>
+                            <tr class="certificate-domain-row">
+                                <td colspan="6">认证领域：QMS（质量管理体系）</td>
+                            </tr>
+                            <tr>
+                                <td class="certificate-index">1</td>
+                                <td class="certificate-number">00123Q34567R0S/37000</td>
+                                <td>GB/T 19001-2016 / ISO 9001:2015</td>
+                                <td class="certificate-date">2020年4月18日</td>
+                                <td class="certificate-date">2026年4月17日</td>
+                                <td class="certificate-scope">计算机软件开发、系统集成服务及相关管理活动</td>
+                            </tr>
+                            <tr>
+                                <td class="certificate-index">2</td>
+                                <td class="certificate-number">00123Q34568R0S/37000</td>
+                                <td>GB/T 19001-2016 / ISO 9001:2015</td>
+                                <td class="certificate-date">2021年6月10日</td>
+                                <td class="certificate-date">2027年6月9日</td>
+                                <td class="certificate-scope">信息技术服务运行维护及相关管理活动</td>
+                            </tr>
+                            <tr class="certificate-domain-row">
+                                <td colspan="6">认证领域：EMS（环境管理体系）</td>
+                            </tr>
+                            <tr>
+                                <td class="certificate-index">1</td>
+                                <td class="certificate-number">00123E34569R0S/37000</td>
+                                <td>GB/T 24001-2016 / ISO 14001:2015</td>
+                                <td class="certificate-date">2020年4月18日</td>
+                                <td class="certificate-date">2026年4月17日</td>
+                                <td class="certificate-scope">软件研发、办公运营及相关环境管理活动</td>
+                            </tr>
+                            <tr>
+                                <td class="certificate-index">2</td>
+                                <td class="certificate-number">00123E34570R0S/37000</td>
+                                <td>GB/T 24001-2016 / ISO 14001:2015</td>
+                                <td class="certificate-date">2021年6月10日</td>
+                                <td class="certificate-date">2027年6月9日</td>
+                                <td class="certificate-scope">系统集成项目实施现场及相关环境管理活动</td>
+                            </tr>
+                        </table>
+
+                        <div class="notice-bank-info">
+                            <div class="font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                                <i class="fas fa-file-invoice-dollar text-blue-600"></i>
+                                收款通知单
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <span class="text-slate-500">再认证费用：</span>
+                                    <span class="font-medium">18,600.00 元/人民币</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-500">收款账户：</span>
+                                    <span class="font-medium">中国质量认证中心</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-500">开户银行：</span>
+                                    <span class="font-medium">中国工商银行北京分行</span>
+                                </div>
+                                <div>
+                                    <span class="text-slate-500">银行账号：</span>
+                                    <span class="font-medium font-mono">0200003219001234567</span>
+                                </div>
+                                <div class="col-span-2">
+                                    <span class="text-slate-500">备注说明：</span>
+                                    <span class="font-medium">请收到通知后两周内汇入指定账户，汇款时请注明企业名称及项目编号。</span>
+                                </div>
+                            </div>
+                        </div>
+
                         <p class="notice-paragraph" style="margin-bottom: 16px; text-indent: 2em;">
                             未尽事宜请与我中心联系协商，联系方式是：
                         </p>
@@ -678,69 +852,406 @@
                 </div>
             </div>
 
-            <!-- 3. 收款通知单 -->
-            <div id="content-payment" class="tab-content hidden">
+            <!-- 3. 认证申请单 -->
+            <div id="content-application" class="tab-content hidden">
                 <div class="flex justify-between items-start mb-6">
                     <div>
-                        <h3 class="text-lg font-semibold text-slate-900">收款通知单</h3>
-                        <p class="text-sm text-slate-500">用于向获证方确认再认证费用及汇款账户信息</p>
+                        <h3 class="text-lg font-semibold text-slate-900">认证申请单</h3>
+                        <p class="text-sm text-slate-500">由初次认证已提交表单自动带入，认证类型为再认证，客户与领域信息已锁定</p>
                     </div>
-                    <div id="paymentStatusBadge" class="bg-amber-50 text-amber-700 px-4 py-2 rounded-lg text-sm font-medium border border-amber-200 flex items-center gap-2">
+                    <div class="bg-amber-50 text-amber-700 px-4 py-2 rounded-lg text-sm font-medium border border-amber-200 flex items-center gap-2">
                         <i class="fas fa-pen"></i>
-                        待填写费用
+                        待填写
                     </div>
                 </div>
 
-                <div class="payment-notice-panel">
-                    <div class="flex items-center gap-2 mb-5">
-                        <i class="fas fa-file-invoice-dollar text-blue-600"></i>
-                        <h4 class="font-semibold text-slate-900">收款通知单</h4>
-                    </div>
-
-                    <div class="payment-field-row">
-                        <label for="recertFee">再认证费用：</label>
-                        <input type="number" id="recertFee" min="0" step="0.01" placeholder="请输入再认证费用金额" oninput="handlePaymentInput()">
-                        <span class="text-sm font-semibold text-slate-700">元/人民币</span>
-                    </div>
-
-                    <div class="payment-field-row">
-                        <label for="payeeAccount">收款账户：</label>
-                        <input type="text" id="payeeAccount" value="中国质量认证中心">
-                    </div>
-
-                    <div class="payment-field-row">
-                        <label for="openingBank">开户银行：</label>
-                        <input type="text" id="openingBank" value="中国工商银行北京分行">
-                    </div>
-
-                    <div class="payment-field-row">
-                        <label for="bankAccountNo">银行账号：</label>
-                        <input type="text" id="bankAccountNo" value="0200003219001234567">
-                    </div>
-
-                    <div class="payment-field-row mb-0">
-                        <label for="paymentRemark">备注说明：</label>
-                        <textarea id="paymentRemark" class="payment-wide">请收到通知后两周内汇入指定账户，汇款时请注明企业名称及项目编号。</textarea>
-                    </div>
+                <div class="mb-3 px-4 py-2 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800 flex items-center gap-2">
+                    <i class="fas fa-info-circle"></i>
+                    <span><strong>填写规则：</strong>客户和认证领域已锁定，认证类型固定为再认证，其余内容已从初次认证已提交申请单带入。</span>
                 </div>
 
-                <div class="mt-5 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800 flex items-start gap-3">
-                    <i class="fas fa-info-circle mt-0.5"></i>
-                    <div>
-                        <p class="font-semibold mb-1">汇款提示</p>
-                        <p>费用金额保存后将随收款通知单一并发送给客户；账户信息可复制后用于邮件、合同或线下沟通。</p>
-                    </div>
-                </div>
+                <iframe
+                    title="再认证完整认证申请单"
+                    src="再认证-认证申请表单-完整.html"
+                    class="w-full min-h-[1200px] border border-slate-200 rounded-lg bg-white"
+                ></iframe>
 
-                <div class="flex justify-end space-x-3 pt-6 border-t border-slate-200 mt-6">
-                    <button onclick="copyPaymentInfo()" class="px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition flex items-center gap-2">
-                        <i class="fas fa-copy text-slate-400"></i>
-                        复制账户信息
-                    </button>
-                    <button onclick="savePaymentNotice()" class="px-8 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium shadow-sm flex items-center gap-2">
-                        <i class="fas fa-save"></i>
-                        保存收款通知单
-                    </button>
+                <div class="space-y-6 hidden">
+                    <div class="border rounded-lg p-5 bg-slate-50 border-slate-200">
+                        <div class="sub-section-title mb-4">
+                            <i class="fas fa-file-alt"></i>
+                            一、申请单信息
+                        </div>
+                        <div class="application-summary-grid">
+                            <div class="application-field">
+                                <label>申请编号</label>
+                                <div class="value">RCA-2026-00038</div>
+                            </div>
+                            <div class="application-field">
+                                <label>认证类型</label>
+                                <div class="value">再认证</div>
+                            </div>
+                            <div class="application-field">
+                                <label>申请日期</label>
+                                <div class="value">2026年3月30日</div>
+                            </div>
+                            <div class="application-field">
+                                <label>项目编号</label>
+                                <div class="value">JD202403001</div>
+                            </div>
+                            <div class="application-field">
+                                <label>关联合同</label>
+                                <div class="value">HT-CQC-2024-0398</div>
+                            </div>
+                            <div class="application-field">
+                                <label>当前状态</label>
+                                <div class="value">待填写</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-lg p-5 bg-white border-slate-200">
+                        <div class="sub-section-title mb-4">
+                            <i class="fas fa-building"></i>
+                            二、客户基本信息
+                            <span class="ml-2 px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded border border-slate-200">已选择，不可修改</span>
+                        </div>
+                        <div class="application-summary-grid">
+                            <div class="application-field col-span-2">
+                                <label>客户名称</label>
+                                <div class="value">北京某某科技有限公司</div>
+                            </div>
+                            <div class="application-field">
+                                <label>统一社会信用代码</label>
+                                <div class="value">91110108MA01CQC888</div>
+                            </div>
+                            <div class="application-field col-span-2">
+                                <label>注册地址</label>
+                                <div class="value">北京市海淀区中关村软件园8号楼</div>
+                            </div>
+                            <div class="application-field">
+                                <label>邮政编码</label>
+                                <div class="value">100085</div>
+                            </div>
+                            <div class="application-field col-span-2">
+                                <label>客户英文名称</label>
+                                <div class="value">Beijing Moumou Technology Co., Ltd.</div>
+                            </div>
+                            <div class="application-field col-span-2">
+                                <label>注册地址（英文）</label>
+                                <div class="value">Building 8, Zhongguancun Software Park, Haidian District, Beijing</div>
+                            </div>
+                            <div class="application-field col-span-2">
+                                <label>运营地址</label>
+                                <div class="value">北京市海淀区中关村软件园8号楼A座3层</div>
+                            </div>
+                            <div class="application-field">
+                                <label>运营地邮编</label>
+                                <div class="value">100085</div>
+                            </div>
+                            <div class="application-field">
+                                <label>联系人</label>
+                                <div class="value">李明</div>
+                            </div>
+                            <div class="application-field">
+                                <label>所在部门</label>
+                                <div class="value">质量管理部</div>
+                            </div>
+                            <div class="application-field">
+                                <label>职务</label>
+                                <div class="value">管理者代表</div>
+                            </div>
+                            <div class="application-field">
+                                <label>联系电话</label>
+                                <div class="value">010-62881234</div>
+                            </div>
+                            <div class="application-field">
+                                <label>电子邮箱</label>
+                                <div class="value">liming@example.com</div>
+                            </div>
+                            <div class="application-field">
+                                <label>传真</label>
+                                <div class="value">010-62885678</div>
+                            </div>
+                            <div class="application-field">
+                                <label>工作语言</label>
+                                <div class="value">汉语</div>
+                            </div>
+                            <div class="application-field">
+                                <label>关联合同</label>
+                                <div class="value">HT-CQC-2024-0398</div>
+                            </div>
+                            <div class="application-field col-span-3">
+                                <label>客户备注</label>
+                                <div class="value">客户已完成上一周期内部审核和管理评审，现场审核优先安排在工作日。</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-lg p-5 bg-white border-slate-200">
+                        <div class="sub-section-title mb-4">
+                            <i class="fas fa-certificate"></i>
+                            三、认证领域需求信息
+                            <span class="ml-2 px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded border border-slate-200">已选择，不可修改</span>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="border border-blue-200 rounded-lg p-4 bg-blue-50/50">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="font-semibold text-blue-900">QMS（质量管理体系）</div>
+                                    <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full border border-blue-200">已选择</span>
+                                </div>
+                                <div class="application-summary-grid">
+                                    <div class="application-field">
+                                        <label>认证类型</label>
+                                        <div class="value">再认证</div>
+                                    </div>
+                                    <div class="application-field">
+                                        <label>认证标准</label>
+                                        <div class="value">GB/T 19001-2016 / ISO 9001:2015</div>
+                                    </div>
+                                    <div class="application-field">
+                                        <label>覆盖人数</label>
+                                        <div class="value">128人</div>
+                                    </div>
+                                    <div class="application-field col-span-3">
+                                        <label>申请认证范围</label>
+                                        <div class="value">计算机软件开发、系统集成服务及相关管理活动；信息技术服务运行维护及相关管理活动。</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border border-emerald-200 rounded-lg p-4 bg-emerald-50/40">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="font-semibold text-emerald-900">EMS（环境管理体系）</div>
+                                    <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs rounded-full border border-emerald-200">已选择</span>
+                                </div>
+                                <div class="application-summary-grid">
+                                    <div class="application-field">
+                                        <label>认证类型</label>
+                                        <div class="value">再认证</div>
+                                    </div>
+                                    <div class="application-field">
+                                        <label>认证标准</label>
+                                        <div class="value">GB/T 24001-2016 / ISO 14001:2015</div>
+                                    </div>
+                                    <div class="application-field">
+                                        <label>覆盖人数</label>
+                                        <div class="value">128人</div>
+                                    </div>
+                                    <div class="application-field col-span-3">
+                                        <label>申请认证范围</label>
+                                        <div class="value">软件研发、办公运营、系统集成项目实施现场及相关环境管理活动。</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-lg p-5 bg-white border-slate-200">
+                        <div class="sub-section-title mb-4">
+                            <i class="fas fa-users"></i>
+                            四、组织与审核信息
+                        </div>
+                        <div class="application-summary-grid">
+                            <div class="application-field">
+                                <label>组织总人数</label>
+                                <div class="value">128人</div>
+                            </div>
+                            <div class="application-field">
+                                <label>体系覆盖人数</label>
+                                <div class="value">118人</div>
+                            </div>
+                            <div class="application-field">
+                                <label>是否多场所</label>
+                                <div class="value">否</div>
+                            </div>
+                            <div class="application-field">
+                                <label>固定场所数量</label>
+                                <div class="value">1个</div>
+                            </div>
+                            <div class="application-field">
+                                <label>临时服务现场</label>
+                                <div class="value">2个在建项目服务现场</div>
+                            </div>
+                            <div class="application-field">
+                                <label>有无倒班</label>
+                                <div class="value">无</div>
+                            </div>
+                            <div class="application-field">
+                                <label>倒班安排</label>
+                                <div class="value">无倒班</div>
+                            </div>
+                            <div class="application-field">
+                                <label>管理人员作息</label>
+                                <div class="value">09:00-12:00 / 13:00-18:00</div>
+                            </div>
+                            <div class="application-field">
+                                <label>工作性质</label>
+                                <div class="value">常年工作</div>
+                            </div>
+                            <div class="application-field col-span-2">
+                                <label>主要过程</label>
+                                <div class="value">需求分析、软件设计开发、测试验证、项目交付、运维服务、供应商管理。</div>
+                            </div>
+                            <div class="application-field">
+                                <label>外包过程</label>
+                                <div class="value">部分云资源托管</div>
+                            </div>
+                            <div class="application-field col-span-3">
+                                <label>组织架构说明</label>
+                                <div class="value">公司设总经理办公室、研发中心、项目交付部、运维服务部、质量管理部、综合管理部，各部门职责已在管理手册中明确。</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-lg p-5 bg-white border-slate-200">
+                        <div class="sub-section-title mb-4">
+                            <i class="fas fa-clipboard-check"></i>
+                            五、管理体系运行与合规信息
+                        </div>
+                        <div class="application-summary-grid">
+                            <div class="application-field">
+                                <label>体系建立时间</label>
+                                <div class="value">2020年1月</div>
+                            </div>
+                            <div class="application-field">
+                                <label>最近一次内审日期</label>
+                                <div class="value">2026年1月12日</div>
+                            </div>
+                            <div class="application-field">
+                                <label>最近一次管理评审日期</label>
+                                <div class="value">2026年1月25日</div>
+                            </div>
+                            <div class="application-field">
+                                <label>是否发生重大事故</label>
+                                <div class="value">否</div>
+                            </div>
+                            <div class="application-field">
+                                <label>是否受到政府处罚</label>
+                                <div class="value">否</div>
+                            </div>
+                            <div class="application-field">
+                                <label>是否有严重失信记录</label>
+                                <div class="value">否</div>
+                            </div>
+                            <div class="application-field col-span-2">
+                                <label>客户在申请认证前一年内是否被政府部门处罚或发生过事故</label>
+                                <div class="value">未发生政府处罚、重大质量事故、环境污染事故或职业健康安全事件。</div>
+                            </div>
+                            <div class="application-field">
+                                <label>既有认证机构</label>
+                                <div class="value">中国质量认证中心</div>
+                            </div>
+                            <div class="application-field col-span-3">
+                                <label>管理体系运行情况说明</label>
+                                <div class="value">管理体系持续运行有效，已按年度计划完成内部审核、管理评审、目标绩效监视和纠正改进活动，关键过程运行记录完整。</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-lg p-5 bg-white border-slate-200">
+                        <div class="sub-section-title mb-4">
+                            <i class="fas fa-shield-alt"></i>
+                            六、专项信息
+                        </div>
+                        <div class="application-summary-grid">
+                            <div class="application-field">
+                                <label>是否整合管理体系</label>
+                                <div class="value">是</div>
+                            </div>
+                            <div class="application-field">
+                                <label>整合程度</label>
+                                <div class="value">文件、职责、内审和管理评审已整合</div>
+                            </div>
+                            <div class="application-field">
+                                <label>信息资产限制</label>
+                                <div class="value">无不允许接触的信息资产</div>
+                            </div>
+                            <div class="application-field">
+                                <label>认证机构资质特殊要求</label>
+                                <div class="value">无特殊要求</div>
+                            </div>
+                            <div class="application-field">
+                                <label>外部法律法规要求</label>
+                                <div class="value">适用软件和信息技术服务相关法规</div>
+                            </div>
+                            <div class="application-field">
+                                <label>应急或业务连续性演练</label>
+                                <div class="value">2025年12月20日完成数据备份恢复演练</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-lg p-5 bg-white border-slate-200">
+                        <div class="sub-section-title mb-4">
+                            <i class="fas fa-calendar-alt"></i>
+                            七、审核与服务信息
+                        </div>
+                        <div class="application-summary-grid">
+                            <div class="application-field">
+                                <label>期望审核月份</label>
+                                <div class="value">2026年4月</div>
+                            </div>
+                            <div class="application-field">
+                                <label>不可安排日期</label>
+                                <div class="value">2026年4月4日-2026年4月6日</div>
+                            </div>
+                            <div class="application-field">
+                                <label>是否需要英文证书</label>
+                                <div class="value">是</div>
+                            </div>
+                            <div class="application-field">
+                                <label>证书寄送方式</label>
+                                <div class="value">快递寄送</div>
+                            </div>
+                            <div class="application-field">
+                                <label>收件人</label>
+                                <div class="value">李明</div>
+                            </div>
+                            <div class="application-field">
+                                <label>收件电话</label>
+                                <div class="value">13800138000</div>
+                            </div>
+                            <div class="application-field col-span-3">
+                                <label>证书寄送地址</label>
+                                <div class="value">北京市海淀区中关村软件园8号楼A座3层质量管理部</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-lg p-5 bg-white border-slate-200">
+                        <div class="sub-section-title mb-4">
+                            <i class="fas fa-paperclip"></i>
+                            八、应附文件和材料
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="file-tag">营业执照扫描件.pdf</span>
+                            <span class="file-tag">管理手册及程序文件.zip</span>
+                            <span class="file-tag">上一周期内审与管理评审记录.pdf</span>
+                            <span class="file-tag">认证场所清单.xlsx</span>
+                            <span class="file-tag">法律法规清单.xlsx</span>
+                            <span class="file-tag">重要环境因素清单.pdf</span>
+                            <span class="file-tag">上一周期证书扫描件.pdf</span>
+                            <span class="file-tag">客户公开文件确认记录.pdf</span>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-lg p-5 bg-slate-50 border-slate-200">
+                        <div class="sub-section-title mb-4">
+                            <i class="fas fa-info-circle"></i>
+                            九、其他内容
+                        </div>
+                        <div class="text-sm text-slate-700 leading-relaxed space-y-2">
+                            <p>申请方已知悉中国质量认证中心公开文件、认证流程、收费标准、获证方权利义务、申诉投诉渠道及证书暂停、撤销、注销相关要求。</p>
+                            <p>本申请单当前为待填写状态，客户和认证领域信息由再认证项目自动带入并锁定，其余内容基于初次认证已提交表单预填，可在提交前复核完善。</p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 pt-6 border-t border-slate-200">
+                        <button onclick="showNotification('认证申请单已暂存，状态仍为待填写', 'success')" class="px-8 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium shadow-sm flex items-center gap-2">
+                            <i class="fas fa-save"></i>
+                            暂存申请单
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -871,9 +1382,10 @@ const changeItems = [
     {id: 'legalStatus', label: '法律地位或所有权', hasDesc: true},
     {id: 'address', label: '注册地址或运营地址', hasDesc: true},
     {id: 'topManager', label: '最高管理者（法定代表人、总经理、管理体系负责人等）', hasDesc: true},
-    {id: 'contact', label: '联系人/联系方式', hasDesc: false, alwaysShow: true},
     {id: 'orgStructure', label: '组织机构', hasDesc: true},
     {id: 'staffCount', label: '组织人数或体系覆盖人数', hasDesc: false, alwaysShow: true},
+    {id: 'hasShiftWorkChange', label: '有无倒班', hasDesc: false, alwaysShow: true, inputType: 'select', options: ['无', '有']},
+    {id: 'shiftArrangementChange', label: '倒班安排', hasDesc: false, alwaysShow: true},
     {id: 'branches', label: '分支机构/常设多场所', hasDesc: true},
     {id: 'mainProcess', label: '管理体系的主要过程', hasDesc: true},
     {id: 'productService', label: '产品/服务（或业务）', hasDesc: true},
@@ -896,8 +1408,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 日期默认值
     const today = new Date().toISOString().split('T')[0];
-    const preferredDate = document.getElementById('preferredDate');
-    if(preferredDate) preferredDate.value = today;
+    const preferredStartDate = document.getElementById('preferredStartDate');
+    const preferredEndDate = document.getElementById('preferredEndDate');
+    if(preferredStartDate) preferredStartDate.value = today;
+    if(preferredEndDate) preferredEndDate.value = today;
 });
 
 // ===== 状态管理 =====
@@ -914,7 +1428,7 @@ function updateStatusDisplay() {
             text: '待确认',
             btnDisabled: true,
             surveyText: '待填写',
-            surveyClass: 'bg-red-100 text-red-800 border-red-200'
+            surveyClass: 'bg-amber-100 text-amber-700 border-amber-200'
         },
         'customer_filled': {
             class: 'status-customer-filled',
@@ -956,7 +1470,7 @@ function updateStatusDisplay() {
     }
 
     surveyBadge.textContent = config.surveyText;
-    surveyBadge.className = `ml-2 px-2 py-0.5 text-xs rounded-full ${applicationStatus === 'submitted' ? 'bg-green-500 text-white' : applicationStatus === 'customer_filled' ? 'bg-blue-500 text-white' : 'bg-red-500 text-white'}`;
+    surveyBadge.className = `ml-2 px-2 py-0.5 text-xs rounded-full ${applicationStatus === 'submitted' ? 'bg-green-100 text-green-700' : applicationStatus === 'customer_filled' ? 'bg-blue-100 text-blue-700' : 'bg-amber-100 text-amber-700'}`;
 
     surveyStatusBadge.textContent = config.surveyText;
     surveyStatusBadge.className = `px-3 py-1 rounded-full text-sm font-medium border ${config.surveyClass}`;
@@ -974,6 +1488,10 @@ function confirmSubmit() {
         updateStatusDisplay();
         showNotification('再认证审核申请已确认提交，流转至方案策划管理', 'success');
     }
+}
+
+function saveApplication() {
+    showNotification('已保存当前再认证审核申请', 'success');
 }
 
 // ===== Tab切换 =====
@@ -998,10 +1516,48 @@ function renderChangeChecklist() {
     container.innerHTML = '';
 
     changeItems.forEach((item, index) => {
+        if(item.id === 'hasShiftWorkChange' || item.id === 'shiftArrangementChange') {
+            return;
+        }
+
         const div = document.createElement('div');
         div.className = `change-item-card ${item.alwaysShow ? '' : ''}`;
 
         if(item.alwaysShow) {
+            if(item.id === 'staffCount') {
+                div.innerHTML = `
+                    <div class="grid grid-cols-3 gap-4">
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-sm font-semibold text-slate-800">组织人数或体系覆盖人数</span>
+                                <span class="px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded border border-red-200">必填</span>
+                            </div>
+                            <input type="text" class="w-full" placeholder="请输入人数" id="input_staffCount">
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-sm font-semibold text-slate-800">有无倒班</span>
+                                <span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded border border-slate-200">选填</span>
+                            </div>
+                            <select class="w-full" id="input_hasShiftWorkChange">
+                                <option value="">请选择</option>
+                                <option value="无">无</option>
+                                <option value="有">有</option>
+                            </select>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-sm font-semibold text-slate-800">倒班安排</span>
+                                <span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded border border-slate-200">选填</span>
+                            </div>
+                            <input type="text" class="w-full" placeholder="如：无倒班 / 两班倒 / 三班倒" id="input_shiftArrangementChange">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+                return;
+            }
+
             div.innerHTML = `
                 <div class="flex items-start gap-3">
                     <div class="flex-1">
@@ -1050,17 +1606,6 @@ function toggleChangeDetail(field, show) {
     }
 }
 
-function toggleBusinessReview(checked) {
-    const statusText = document.getElementById('reviewStatusText');
-    if(checked) {
-        statusText.textContent = '是（需流经业务评审）';
-        statusText.className = 'ml-3 text-sm font-medium text-blue-600';
-    } else {
-        statusText.textContent = '否 / 是';
-        statusText.className = 'ml-3 text-sm font-medium text-slate-700';
-    }
-}
-
 function toggleDateChange(show) {
     const form = document.getElementById('dateAdjustForm');
     if(show) {
@@ -1087,22 +1632,18 @@ function toggleAgentMode() {
 }
 
 function saveSurvey() {
-    // 验证必填项
-    const contact = document.getElementById('surveyContact').value;
-    const staffCount = document.getElementById('surveyStaffCount').value;
-
-    if(!contact || !staffCount) {
-        showNotification('请填写必填项：联系人、组织人数', 'error');
-        return;
-    }
-
     // 检查日期调整
     const dateConfirm = document.querySelector('input[name="auditDateConfirm"]:checked').value;
     if(dateConfirm === 'no') {
-        const preferredDate = document.getElementById('preferredDate').value;
+        const preferredStartDate = document.getElementById('preferredStartDate').value;
+        const preferredEndDate = document.getElementById('preferredEndDate').value;
         const reason = document.getElementById('dateChangeReason').value;
-        if(!preferredDate || !reason) {
+        if(!preferredStartDate || !preferredEndDate || !reason) {
             showNotification('请填写日期调整相关信息', 'error');
+            return;
+        }
+        if(preferredStartDate > preferredEndDate) {
+            showNotification('希望结束日期不能早于开始日期', 'error');
             return;
         }
     }
@@ -1180,11 +1721,11 @@ function handlePaymentInput() {
 
 function getPaymentNoticeData() {
     return {
-        fee: document.getElementById('recertFee').value.trim(),
-        payee: document.getElementById('payeeAccount').value.trim(),
-        bank: document.getElementById('openingBank').value.trim(),
-        accountNo: document.getElementById('bankAccountNo').value.trim(),
-        remark: document.getElementById('paymentRemark').value.trim()
+        fee: document.getElementById('recertFee')?.value.trim() || '18,600.00',
+        payee: document.getElementById('payeeAccount')?.value.trim() || '中国质量认证中心',
+        bank: document.getElementById('openingBank')?.value.trim() || '中国工商银行北京分行',
+        accountNo: document.getElementById('bankAccountNo')?.value.trim() || '0200003219001234567',
+        remark: document.getElementById('paymentRemark')?.value.trim() || '请收到通知后两周内汇入指定账户，汇款时请注明企业名称及项目编号。'
     };
 }
 
