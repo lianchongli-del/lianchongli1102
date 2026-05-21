@@ -1,0 +1,4130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>招标项目管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background: #f1f5f9;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #0f172a;
+        }
+
+        /* 顶部栏 */
+        .top-bar {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .role-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 13px;
+            cursor: pointer;
+            outline: none;
+            color: #334155;
+        }
+
+        /* 筛选栏 */
+        .filter-bar {
+            background: white;
+            margin: 20px 20px 0 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .quick-filters {
+            padding: 16px 20px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+            background: #fafafa;
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-item label {
+            font-size: 13px;
+            color: #334155;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .filter-item input,
+        .filter-item select {
+            padding: 6px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            background: white;
+            min-width: 120px;
+            color: #0f172a;
+        }
+
+        .filter-item input:focus,
+        .filter-item select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+
+        /* 表格区域 */
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin: 20px;
+            overflow: hidden;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            max-height: calc(100vh - 300px);
+            position: relative;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 1800px;
+            table-layout: fixed;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 13px;
+            border-bottom: 1px solid #e2e8f0;
+            white-space: nowrap;
+            background: white;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .data-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #475569;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .data-table tbody tr:hover td {
+            background: #f8fafc;
+        }
+
+        /* 冻结列 */
+        .col-sticky-left {
+            position: sticky;
+            left: 0;
+            z-index: 30;
+            background: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            width: 140px;
+            min-width: 140px;
+        }
+
+        .col-sticky-left-2 {
+            position: sticky;
+            left: 140px;
+            z-index: 30;
+            background: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            width: 240px;
+            min-width: 240px;
+        }
+
+        .col-sticky-right {
+            position: sticky;
+            right: 180px;
+            z-index: 30;
+            background: white;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.05);
+            width: 100px;
+            min-width: 100px;
+        }
+
+        .col-sticky-right-2 {
+            position: sticky;
+            right: 0;
+            z-index: 30;
+            background: white;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.05);
+            width: 180px;
+            min-width: 180px;
+        }
+
+        .data-table th.col-sticky-left,
+        .data-table th.col-sticky-left-2,
+        .data-table th.col-sticky-right,
+        .data-table th.col-sticky-right-2 {
+            z-index: 40;
+            background: #f8fafc;
+        }
+
+        .data-table tbody tr:hover .col-sticky-left,
+        .data-table tbody tr:hover .col-sticky-left-2,
+        .data-table tbody tr:hover .col-sticky-right,
+        .data-table tbody tr:hover .col-sticky-right-2 {
+            background: #f8fafc;
+        }
+
+        /* 状态标签 */
+        .status-badge {
+            display: block;
+            align-items: center;
+            text-align: center;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            gap: 4px;
+        }
+
+        .status-draft { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; text-align: center;}
+        .status-pending { background: #fffbeb; color: #92400e; border: 1px solid #fcd34d; }
+        .status-approved { background: #eff6ff; color: #1e40af; border: 1px solid #dbeafe; }
+        .status-rejected { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+        .status-material-apply { background: #f5f3ff; color: #6b21a8; border: 1px solid #ddd6fe; }
+        .status-material-upload { background: #eef2ff; color: #3730a3; border: 1px solid #c7d2fe; }
+        .status-bid-confirm { background: #ecfeff; color: #0e7490; border: 1px solid #a5f3fc; }
+        .status-result { background: #f5f3ff; color: #5b21b6; border: 1px solid #ddd6fe; }
+        .status-won { background: #f0fdf4; color: #065f46; border: 1px solid #bbf7d0; }
+        .status-lost { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+        /* 按钮 */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            white-space: nowrap;
+        }
+
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-secondary { background: white; border-color: #d1d5db; color: #334155; }
+        .btn-secondary:hover { background: #f8fafc; border-color: #9ca3af; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-warning { background: #f59e0b; color: white; }
+        .btn-warning:hover { background: #d97706; }
+        .btn-purple { background: #8b5cf6; color: white; }
+        .btn-purple:hover { background: #7c3aed; }
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+        .action-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+        .action-btn {
+            color: #2563eb;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .action-btn:hover { background: #eff6ff; color: #1d4ed8; }
+        .action-btn.delete { color: #ef4444; }
+        .action-btn.delete:hover { background: #fef2f2; color: #dc2626; }
+        .action-btn.success { color: #059669; }
+        .action-btn.success:hover { background: #f0fdf4; color: #047857; }
+        .action-btn.purple { color: #7c3aed; }
+        .action-btn.purple:hover { background: #f5f3ff; color: #6d28d9; }
+        .action-btn.warning { color: #d97706; }
+        .action-btn.warning:hover { background: #fffbeb; color: #b45309; }
+
+        /* ========== 弹窗样式 ========== */
+        .modal-overlay {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            z-index: 250;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-panel {
+            width: 100%;
+            height: 100%;
+            max-width: 780px;
+            max-height: 640px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: scale(0.96);
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-panel {
+            transform: scale(1);
+        }
+
+        .modal-panel-wide {
+            max-width: 900px;
+            max-height: 720px;
+        }
+
+        .modal-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to right, #f8fafc, #ffffff);
+            flex-shrink: 0;
+        }
+
+        .modal-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0f172a;
+            line-height: 1.4;
+        }
+
+        .modal-header p {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 28px 32px;
+        }
+
+        .modal-footer {
+            padding: 14px 24px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background: #f8fafc;
+            flex-shrink: 0;
+        }
+
+        /* 表单样式优化 */
+        .form-grid {
+            display: grid;
+            gap: 24px;
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-field.col-span-2 { grid-column: span 2; }
+        .form-field.col-span-3 { grid-column: span 3; }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #334155;
+            line-height: 1.4;
+        }
+
+        .form-label.required::after {
+            content: ' *';
+            color: #ef4444;
+            margin-left: 2px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            padding: 8px 12px;
+            font-size: 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: white;
+            color: #0f172a;
+            outline: none;
+            transition: all 0.2s;
+            width: 100%;
+            line-height: 1.5;
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: #94a3b8;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+
+        .form-input:read-only, .form-input.disabled {
+            background: #f1f5f9;
+            cursor: not-allowed;
+            color: #64748b;
+            border-color: #e2e8f0;
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        /* 文件上传区域 */
+        .file-upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.2s;
+            cursor: pointer;
+            background: white;
+        }
+
+        .file-upload-area:hover {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+
+        /* 详情抽屉 */
+        .drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.3);
+            z-index: 210;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .drawer-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 800px;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 24px rgba(0,0,0,0.1);
+            z-index: 220;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .drawer.active {
+            transform: translateX(0);
+        }
+
+        .drawer-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            background: white;
+            flex-shrink: 0;
+        }
+
+        .drawer-tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
+            padding: 0 24px;
+            flex-shrink: 0;
+            overflow-x: auto;
+        }
+
+        .drawer-tab {
+            padding: 12px 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .drawer-tab:hover {
+            color: #334155;
+            background: rgba(0,0,0,0.02);
+        }
+
+        .drawer-tab.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+            background: white;
+        }
+
+        .drawer-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+            scroll-behavior: smooth;
+        }
+
+        /* 详情区块 */
+        .detail-section {
+            padding: 20px 24px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .detail-section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .detail-item-label {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .detail-item-value {
+            font-size: 14px;
+            color: #0f172a;
+            font-weight: 500;
+        }
+
+        /* 时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 28px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e2e8f0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 24px;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -28px;
+            top: 2px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #d1d5db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #64748b;
+        }
+
+        .timeline-item.active .timeline-dot {
+            border-color: #2563eb;
+            background: #2563eb;
+            color: white;
+        }
+
+        .timeline-item.completed .timeline-dot {
+            border-color: #10b981;
+            background: #10b981;
+            color: white;
+        }
+
+        .timeline-item.rejected .timeline-dot {
+            border-color: #ef4444;
+            background: #ef4444;
+            color: white;
+        }
+
+        .timeline-content {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .timeline-item.active .timeline-content {
+            border-color: #bfdbfe;
+            background: #eff6ff;
+        }
+
+        /* 流程步骤条 */
+        .process-steps {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 16px 24px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            overflow-x: auto;
+        }
+
+        .process-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            background: #f1f5f9;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+
+        .process-step.active {
+            background: #eff6ff;
+            color: #2563eb;
+            border-color: #bfdbfe;
+        }
+
+        .process-step.completed {
+            background: #f0fdf4;
+            color: #15803d;
+            border-color: #bbf7d0;
+        }
+
+        .process-step.rejected {
+            background: #fef2f2;
+            color: #dc2626;
+            border-color: #fecaca;
+        }
+
+        .process-arrow {
+            color: #d1d5db;
+            font-size: 12px;
+        }
+
+        /* 标签 */
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-right: 4px;
+        }
+
+        .tag-blue { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+        .tag-green { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .tag-orange { background: #ffedd5; color: #9a3412; border: 1px solid #fed7aa; }
+        .tag-purple { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
+        .tag-red { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+        /* 文件列表 */
+        .file-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background: #f8fafc;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 8px;
+        }
+
+        /* Alert 提示框优化 */
+        .alert-box {
+            border-radius: 8px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .alert-box > i {
+            font-size: 18px;
+            margin-top: 1px;
+            flex-shrink: 0;
+        }
+
+        .alert-box > div {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 2px;
+            font-size: 13px;
+        }
+
+        .alert-desc {
+            font-size: 12px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .alert-info {
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
+            color: #1e40af;
+        }
+        .alert-info > i { color: #3b82f6; }
+
+        .alert-warning {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            color: #92400e;
+        }
+        .alert-warning > i { color: #f59e0b; }
+
+        .alert-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+        .alert-error > i { color: #ef4444; }
+
+        .alert-success {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+        .alert-success > i { color: #10b981; }
+
+        /* 紧急提醒 */
+        .urgent-banner {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            animation: pulse-urgent 2s infinite;
+        }
+
+        @keyframes pulse-urgent {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.85; }
+        }
+
+        /* 分页 */
+        .pagination { display: flex; gap: 4px; align-items: center; }
+        .page-btn {
+            padding: 6px 12px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .page-btn:hover { border-color: #3b82f6; color: #3b82f6; }
+        .page-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+
+        /* 统计卡片 */
+        .stat-cards {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 16px;
+            margin: 0 20px;
+            padding-top: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* 导入列表 */
+        .import-row {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .import-row:hover { background: #f8fafc; }
+        .import-row.selected { background: #eff6ff; border-left: 3px solid #2563eb; }
+
+        /* 树形选择 */
+        .tree-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tree-item:hover { background: #f8fafc; }
+        .tree-item.selected { background: #eff6ff; }
+
+        .tree-children {
+            padding-left: 24px;
+        }
+
+        /* 审批意见 */
+        .approval-opinion {
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 6px;
+            border-left: 3px solid #2563eb;
+            margin-top: 8px;
+        }
+
+        .approval-opinion.reject {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            padding: 12px 24px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 300;
+            opacity: 0;
+            transition: all 0.3s;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast-success { background: #10b981; }
+        .toast-error { background: #ef4444; }
+        .toast-info { background: #3b82f6; }
+
+        /* 自定义滚动条 */
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* 搜索高亮 */
+        .search-highlight {
+            background: #fef08a;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+
+        /* 结果登记特殊样式 */
+        .result-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .result-option:hover {
+            border-color: #3b82f6;
+            background: #f8fafc;
+        }
+
+        .result-option.selected-win {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .result-option.selected-lose {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        /* 报价单关联校验提示 */
+        .price-mismatch {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 部门-员工树形选择样式 */
+        .org-tree-dept {
+            background: #f8fafc;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+        .org-tree-dept-header {
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            background: #f1f5f9;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .org-tree-employee {
+            padding: 10px 14px 10px 36px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .org-tree-employee:last-child {
+            border-bottom: none;
+        }
+        .org-tree-employee:hover {
+            background: #eff6ff;
+        }
+        .org-tree-employee.selected {
+            background: #dbeafe;
+        }
+        .org-tree-employee .emp-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #e0e7ff;
+            color: #4338ca;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* 审批详情展示 */
+        .approval-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 14px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .approval-detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .approval-detail-label {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 500;
+        }
+        .approval-detail-value {
+            font-size: 13px;
+            color: #0f172a;
+            font-weight: 500;
+        }
+
+        /* 文件下载链接 */
+        .file-download-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            color: #1d4ed8;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+        .file-download-link:hover {
+            background: #dbeafe;
+            border-color: #93c5fd;
+        }
+        .file-download-link i {
+            color: #3b82f6;
+        }
+
+        /* 状态提示强化 */
+        .status-tip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-top: 4px;
+        }
+        .status-tip-urgent {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            animation: pulse-tip 1.5s infinite;
+        }
+        .status-tip-ready {
+            background: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+        .status-tip-wait {
+            background: #fffbeb;
+            color: #a16207;
+            border: 1px solid #fde68a;
+        }
+        .status-tip-uploaded {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+        }
+
+        @keyframes pulse-tip {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(0.98); }
+        }
+
+        /* 打包下载按钮 */
+        .btn-download-all {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+            border-radius: 6px;
+            color: #15803d;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-download-all:hover {
+            background: #dcfce7;
+            border-color: #4ade80;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+        .btn-download-all i {
+            animation: bounce-down 1.5s infinite;
+        }
+        @keyframes bounce-down {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(2px); }
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 1400px) {
+            .stat-cards { grid-template-columns: repeat(3, 1fr); }
+        }
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部栏 -->
+    <div class="top-bar">
+        <div class="flex items-center gap-4">
+            <h1 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <i class="fas fa-gavel text-blue-600"></i>
+                招标项目管理
+            </h1>
+            <span class="text-gray-300">|</span>
+
+            <!-- 角色切换 -->
+            <div class="flex items-center gap-2">
+                <span class="text-sm text-gray-500">当前角色：</span>
+                <select id="roleSelector" class="role-selector" onchange="switchRole(this.value)">
+                    <option value="marketer">市场人员（跟单人-张三）</option>
+                    <option value="manager">部门经理（李经理）</option>
+                    <option value="region_leader">区域领导</option>
+                    <option value="hq_leader">总部领导</option>
+                    <option value="demo" selected>演示账号（全部权限）</option>
+                </select>
+            </div>
+
+            <span class="text-gray-300">|</span>
+            <div class="flex items-center gap-3 text-sm">
+                <span class="text-gray-600">共 <strong class="text-gray-900 text-lg" id="total-count">20</strong> 个项目</span>
+                <span class="px-2 py-1 bg-orange-100 text-orange-700 rounded text-xs font-medium">
+                    <i class="fas fa-clock mr-1"></i>待处理 <span id="pending-count">8</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button class="btn btn-secondary btn-sm" onclick="toggleFilter()">
+                <i class="fas fa-filter"></i>
+                <span id="filter-text">收起筛选</span>
+            </button>
+            <button class="btn btn-secondary btn-sm">
+                <i class="fas fa-download"></i>
+                导出
+            </button>
+            <button class="btn btn-primary btn-sm" id="newProjectBtn" onclick="openNewProjectModal()">
+                <i class="fas fa-plus"></i>
+                新建招标项目
+            </button>
+        </div>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="stat-cards" id="statCards"></div>
+
+    <!-- 筛选栏 -->
+    <div class="filter-bar" id="filterBar">
+        <div class="quick-filters">
+            <div class="filter-item">
+                <label>项目编号</label>
+                <input type="text" id="filterProjectNo" placeholder="输入编号" style="width: 130px;" oninput="filterTable()">
+            </div>
+            <div class="filter-item">
+                <label>采购人</label>
+                <input type="text" id="filterCustomer" placeholder="输入采购人" style="width: 150px;" oninput="filterTable()">
+            </div>
+            <div class="filter-item">
+                <label>标的名称</label>
+                <input type="text" id="filterBidName" placeholder="输入标的名称" style="width: 150px;" oninput="filterTable()">
+            </div>
+            <div class="filter-item">
+                <label>应标单位</label>
+                <select id="filterBidUnit" style="width: 140px;" onchange="filterTable()">
+                    <option value="">全部</option>
+                    <option value="hq">中国质量认证中心</option>
+                    <option value="region">区域/分中心</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <label>项目状态</label>
+                <select id="filterStatus" style="width: 130px;" onchange="filterTable()">
+                    <option value="">全部</option>
+                    <option value="draft">草稿</option>
+                    <option value="pending_approval">待审批</option>
+                    <option value="pending_bid_confirm">待投标确认</option>
+                    <option value="pending_result">待登记结果</option>
+                    <option value="won">已中标</option>
+                    <option value="lost">未中标</option>
+                    <option value="rejected">已驳回</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <label>跟进人</label>
+                <select id="filterFollower" style="width: 100px;" onchange="filterTable()">
+                    <option value="">全部</option>
+                    <option value="张三">张三</option>
+                    <option value="李四">李四</option>
+                    <option value="王五">王五</option>
+                    <option value="赵六">赵六</option>
+                </select>
+            </div>
+            <div class="flex-1"></div>
+            <button class="btn btn-secondary btn-sm" onclick="resetFilter()">
+                <i class="fas fa-redo"></i>
+                重置
+            </button>
+        </div>
+    </div>
+
+    <!-- 表格区域 -->
+    <div class="table-container">
+        <div class="table-wrapper">
+            <table class="data-table" id="projectTable">
+                <thead id="tableHead">
+                    <tr>
+                        <th class="col-sticky-left" style="width:140px">项目编号</th>
+                        <th class="col-sticky-left-2" style="width:240px">标的名称</th>
+                        <th style="width:180px">采购人</th>
+                        <th style="width:140px">应标单位</th>
+                        <th style="width:100px">跟进人</th>
+                        <th style="width:120px">投标截止</th>
+                        <th style="width:100px">应标价</th>
+                        <th style="width:140px">关联商机</th>
+                        <th class="col-sticky-right" style="width:120px">状态</th>
+                        <th class="col-sticky-right-2" style="width:200px">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- 分页 -->
+        <div class="p-4 border-t border-gray-200 flex items-center justify-between bg-white">
+            <div class="text-sm text-gray-600">
+                显示第 <span class="font-medium">1</span> 到 <span class="font-medium" id="page-size">20</span> 条，共 <span class="font-medium" id="page-total">20</span> 条
+            </div>
+            <div class="pagination">
+                <button class="page-btn" disabled><i class="fas fa-chevron-left"></i></button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn" disabled><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+                <span>每页</span>
+                <select class="border border-gray-300 rounded px-2 py-1 text-sm">
+                    <option>15</option>
+                    <option>30</option>
+                    <option>50</option>
+                </select>
+                <span>条</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 弹窗区域 ==================== -->
+
+    <!-- 1. 新建/编辑招标项目弹窗 -->
+    <div id="projectModalOverlay" class="modal-overlay">
+        <div class="modal-panel modal-panel-wide">
+            <div class="modal-header">
+                <div>
+                    <h3 id="projectModalTitle">新建招标项目</h3>
+                    <p>带 * 号为必填项</p>
+                </div>
+                <button onclick="closeProjectModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="modal-body custom-scroll">
+                <!-- AI导入提示 -->
+                <div class="alert-box alert-info mb-4">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <div class="alert-title">AI能力底座平台招采数据关联</div>
+                        <div class="alert-desc">请先从平台招采数据中导入信息，系统将自动带出采购人、标的名称等数据，无需手动填写客户信息。</div>
+                    </div>
+                </div>
+
+                <!-- 跨区域提示 -->
+                <div id="regionAlert" class="hidden alert-box alert-error mb-4">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <div class="alert-title">跨区域跟进限制</div>
+                        <div class="alert-desc">该客户属于<span id="customerRegion" class="font-bold"></span>，您当前在<span id="userRegion" class="font-bold">华北区域</span>。未通过跨区域跟进报备，无法创建。</div>
+                        <button onclick="applyCrossRegion()" class="mt-2 text-xs bg-white border border-current rounded px-3 py-1 hover:bg-opacity-10">申请跨区域跟进</button>
+                    </div>
+                </div>
+
+                <!-- 导入按钮 -->
+                <div class="mb-5">
+                    <button onclick="openImportModal()" class="btn btn-primary w-full justify-center py-3">
+                        <i class="fas fa-download"></i>
+                        从AI能力底座平台招采数据导入
+                    </button>
+                </div>
+
+                <div class="form-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="form-field col-span-2">
+                        <label class="form-label required">采购人（客户）</label>
+                        <input type="text" id="pmCustomerName" class="form-input disabled" readonly placeholder="请先导入招采数据">
+                        <input type="hidden" id="pmCustomerId">
+                        <input type="hidden" id="pmCustomerRegion">
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label">所属区域</label>
+                        <input type="text" id="pmRegionDisplay" class="form-input disabled" readonly placeholder="自动显示">
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label required">招标方项目编号</label>
+                        <input type="text" id="pmProjectNo" class="form-input" placeholder="请输入编号">
+                    </div>
+
+                    <div class="form-field col-span-2">
+                        <label class="form-label required">标的名称</label>
+                        <input type="text" id="pmBidName" class="form-input" placeholder="导入后自动带出，可修改">
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label required">投标截止日期</label>
+                        <input type="datetime-local" id="pmDeadline" class="form-input">
+                    </div>
+
+                    <div class="form-field col-span-2">
+                        <label class="form-label">投标项目网址</label>
+                        <input type="url" id="pmUrl" class="form-input" placeholder="https://...">
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label required">应标单位</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="pmBidUnitName" class="form-input disabled flex-1" readonly placeholder="请选择">
+                            <button onclick="openBidUnitModal()" class="btn btn-primary btn-sm">
+                                <i class="fas fa-building"></i> 选择
+                            </button>
+                        </div>
+                        <input type="hidden" id="pmBidUnitId">
+                        <input type="hidden" id="pmBidUnitIsHQ">
+                    </div>
+
+                    <!-- 跟进人：部门-员工层级选择 -->
+                    <div class="form-field">
+                        <label class="form-label required">跟进人</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="pmFollowerName" class="form-input disabled flex-1" readonly placeholder="请选择跟进人">
+                            <button onclick="openFollowerTreeModal()" class="btn btn-primary btn-sm">
+                                <i class="fas fa-sitemap"></i> 选择
+                            </button>
+                        </div>
+                        <input type="hidden" id="pmFollowerId">
+                        <input type="hidden" id="pmFollowerDept">
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label">应标价（万元）</label>
+                        <input type="number" id="pmAmount" class="form-input" placeholder="非必填">
+                    </div>
+
+                    <div class="form-field col-span-2">
+                        <label class="form-label">内容摘要</label>
+                        <textarea id="pmSummary" class="form-textarea" rows="2" placeholder="请输入内容摘要..."></textarea>
+                    </div>
+
+                    <div class="form-field">
+                        <label class="form-label">关联商机</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="pmOpportunityName" class="form-input disabled flex-1" readonly placeholder="请选择商机（非必填）">
+                            <button onclick="openOpportunityModal()" class="btn btn-secondary btn-sm">选择</button>
+                        </div>
+                        <input type="hidden" id="pmOpportunityId">
+                    </div>
+
+                    <div class="form-field col-span-3">
+                        <label class="form-label">采购文件或公告截图</label>
+                        <div class="file-upload-area" onclick="document.getElementById('pmFileInput').click()">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-3"></i>
+                            <p class="text-sm text-gray-600 font-medium">点击上传文件</p>
+                            <p class="text-xs text-gray-400 mt-1">支持 PDF、Word、图片格式</p>
+                        </div>
+                        <input type="file" id="pmFileInput" multiple class="hidden" onchange="handleProjectFiles(this)">
+                        <div id="pmFileList" class="mt-2 space-y-1"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button onclick="saveProjectDraft()" class="btn btn-secondary">
+                    <i class="fas fa-save"></i> 保存草稿
+                </button>
+                <button onclick="submitProject()" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> 提交审批
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. AI招采数据导入弹窗 -->
+    <div id="importModalOverlay" class="modal-overlay">
+        <div class="modal-panel" style="max-width: 900px; max-height: 80vh;">
+            <div class="modal-header">
+                <h3>选择招标信息导入</h3>
+                <button onclick="closeImportModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="p-4 border-b border-gray-200 bg-white">
+                <div class="grid grid-cols-4 gap-3">
+                    <input type="text" id="searchBidNo" placeholder="招标编号" class="form-input" oninput="filterImportList()">
+                    <input type="text" id="searchBidName" placeholder="标的名称" class="form-input" oninput="filterImportList()">
+                    <input type="text" id="searchCustomer" placeholder="客户名称" class="form-input" oninput="filterImportList()">
+                    <select id="searchStatus" class="form-select" onchange="filterImportList()">
+                        <option value="">全部状态</option>
+                        <option value="bidding" selected>招标中</option>
+                        <option value="published">已发布</option>
+                        <option value="pending">待启动</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-auto p-0 custom-scroll">
+                <table class="data-table" style="min-width: auto;">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;"></th>
+                            <th>招标编号</th>
+                            <th>标的名称</th>
+                            <th>客户名称</th>
+                            <th>招标单位</th>
+                            <th>截止日期</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody id="importListBody"></tbody>
+                </table>
+            </div>
+
+            <div class="p-4 border-t border-gray-200 bg-gray-50 flex justify-between items-center">
+                <span class="text-sm text-gray-500">共 <span id="importCount">0</span> 条未创建记录</span>
+                <div class="flex gap-3">
+                    <button onclick="closeImportModal()" class="btn btn-secondary">取消</button>
+                    <button onclick="confirmImport()" class="btn btn-primary" id="confirmImportBtn" disabled>
+                        确认导入
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 应标单位选择弹窗 -->
+    <div id="bidUnitModalOverlay" class="modal-overlay">
+        <div class="modal-panel" style="max-width: 560px; max-height: 600px;">
+            <div class="modal-header">
+                <h3>选择应标单位</h3>
+                <button onclick="closeBidUnitModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="p-4 border-b border-gray-200">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="buSearch" class="form-input pl-10" placeholder="搜索机构名称..." oninput="filterBidUnit(this.value)">
+                </div>
+            </div>
+            <div class="flex-1 overflow-auto p-0 custom-scroll" id="bidUnitTree"></div>
+            <div class="modal-footer">
+                <button onclick="closeBidUnitModal()" class="btn btn-secondary">取消</button>
+                <button onclick="confirmBidUnit()" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. 跟进人选择弹窗（部门-员工层级树） -->
+    <div id="followerTreeModalOverlay" class="modal-overlay">
+        <div class="modal-panel" style="max-width: 520px; max-height: 600px;">
+            <div class="modal-header">
+                <div>
+                    <h3>选择跟进人</h3>
+                    <p>从当前区域（<span id="ftRegionName">华北区域</span>）的部门-员工层级中选择</p>
+                </div>
+                <button onclick="closeFollowerTreeModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="p-4 border-b border-gray-200">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="ftSearch" class="form-input pl-10" placeholder="搜索姓名或部门..." oninput="filterFollowerTree(this.value)">
+                </div>
+            </div>
+            <div class="flex-1 overflow-auto p-4 custom-scroll" id="followerTreeContainer"></div>
+            <div class="modal-footer">
+                <button onclick="closeFollowerTreeModal()" class="btn btn-secondary">取消</button>
+                <button onclick="confirmFollowerTree()" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. 商机选择弹窗 -->
+    <div id="opportunityModalOverlay" class="modal-overlay">
+        <div class="modal-panel" style="max-width: 700px; max-height: 560px;">
+            <div class="modal-header">
+                <h3>选择关联商机</h3>
+                <button onclick="closeOpportunityModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="p-4 border-b border-gray-200">
+                <div class="grid grid-cols-3 gap-3">
+                    <input type="text" id="oppSearchName" class="form-input" placeholder="商机名称" oninput="filterOpportunities()">
+                    <input type="text" id="oppSearchCustomer" class="form-input" placeholder="客户名称" oninput="filterOpportunities()">
+                    <select id="oppSearchStage" class="form-select" onchange="filterOpportunities()">
+                        <option value="">全部阶段</option>
+                        <option value="跟进中">跟进中</option>
+                        <option value="已成交">已成交</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex-1 overflow-auto p-0 custom-scroll">
+                <table class="data-table" style="min-width: auto;">
+                    <thead>
+                        <tr>
+                            <th style="width:40px"></th>
+                            <th>商机名称</th>
+                            <th>客户</th>
+                            <th>预计金额</th>
+                            <th>阶段</th>
+                        </tr>
+                    </thead>
+                    <tbody id="oppTableBody"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeOpportunityModal()" class="btn btn-secondary">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. 审批弹窗（展示全部申请信息） -->
+    <div id="approvalModalOverlay" class="modal-overlay">
+        <div class="modal-panel" style="max-width: 720px; max-height: 800px;">
+            <div class="modal-header">
+                <div>
+                    <h3>项目审批</h3>
+                    <p>请审核以下项目全部信息并给出审批意见</p>
+                </div>
+                <button onclick="closeApprovalModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body custom-scroll">
+                <!-- 申请信息详情 -->
+                <div class="alert-box alert-info mb-4" style="margin-bottom: 16px;">
+                    <i class="fas fa-file-invoice"></i>
+                    <div>
+                        <div class="alert-title">申请信息详情</div>
+                        <div class="alert-desc">以下为该招标项目的完整申请信息，请仔细核对后审批。</div>
+                    </div>
+                </div>
+
+                <div class="approval-detail-grid" id="approvalDetailGrid">
+                    <!-- 动态填充项目详情 -->
+                </div>
+
+                <div class="form-grid" style="grid-template-columns: 1fr; gap: 20px;">
+                    <div class="form-field">
+                        <label class="form-label required">审批结果</label>
+                        <div class="flex gap-6 mt-2">
+                            <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                <input type="radio" name="apResult" value="approve" class="w-4 h-4 text-blue-600" onchange="toggleApprovalRemark()" checked>
+                                <span class="text-sm font-medium">通过</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                <input type="radio" name="apResult" value="reject" class="w-4 h-4 text-red-600" onchange="toggleApprovalRemark()">
+                                <span class="text-sm font-medium">驳回</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-field" id="apRemarkField" style="display: none;">
+                        <label class="form-label required">审批意见</label>
+                        <textarea id="apRemark" class="form-textarea" rows="3" placeholder="请输入驳回原因..."></textarea>
+                    </div>
+                    <div class="form-field" id="apPassTip">
+                        <div class="alert-box alert-success" style="margin-bottom: 0;">
+                            <i class="fas fa-check-circle"></i>
+                            <div class="alert-desc">审批通过后，项目将自动流转至下一环节。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeApprovalModal()" class="btn btn-secondary">取消</button>
+                <button onclick="submitApproval()" class="btn btn-primary">提交审批</button>
+            </div>
+        </div>
+    </div>
+    <!-- 7. 投标确认弹窗 -->
+    <div id="bidConfirmModalOverlay" class="modal-overlay">
+        <div class="modal-panel" style="max-width: 640px; max-height: 680px;">
+            <div class="modal-header">
+                <div>
+                    <h3>投标确认</h3>
+                    <p>确认投标信息并上传标书文件</p>
+                </div>
+                <button onclick="closeBidConfirmModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body custom-scroll">
+                <div class="form-grid" style="grid-template-columns: 1fr; gap: 20px;">
+                    <div class="form-field">
+                        <label class="form-label">项目信息</label>
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 text-sm" id="bcProjectInfo"></div>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">关联报价单（选填）</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="bcQuoteNo" class="form-input disabled flex-1" readonly placeholder="请选择报价单">
+                            <button onclick="openQuoteModal()" class="btn btn-secondary btn-sm">选择</button>
+                            <button onclick="clearQuote()" class="btn btn-secondary btn-sm">清除</button>
+                        </div>
+                        <input type="hidden" id="bcQuoteId">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label required">报价金额（万元）</label>
+                        <input type="number" id="bcAmount" class="form-input" placeholder="请输入报价金额">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">上传标书文件（选填）</label>
+                        <div class="file-upload-area" style="padding: 20px;" onclick="document.getElementById('bcFileInput').click()">
+                            <i class="fas fa-cloud-upload-alt text-2xl text-gray-400 mb-2"></i>
+                            <p class="text-xs text-gray-600 font-medium">点击上传标书文件</p>
+                            <p class="text-xs text-gray-400 mt-1">支持 PDF、Word 格式</p>
+                        </div>
+                        <input type="file" id="bcFileInput" multiple class="hidden" onchange="handleBidFiles(this)">
+                        <div id="bcFileList" class="mt-2 space-y-1"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeBidConfirmModal()" class="btn btn-secondary">取消</button>
+                <button onclick="submitBidConfirm()" class="btn btn-success">确认投标</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. 报价单选择弹窗 -->
+    <div id="quoteModalOverlay" class="modal-overlay">
+        <div class="modal-panel" style="max-width: 640px; max-height: 480px;">
+            <div class="modal-header">
+                <h3>选择报价单</h3>
+                <button onclick="closeQuoteModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="flex-1 overflow-auto p-0 custom-scroll">
+                <table class="data-table" style="min-width: auto;">
+                    <thead>
+                        <tr>
+                            <th style="width:40px"></th>
+                            <th>报价单号</th>
+                            <th>金额（万元）</th>
+                            <th>有效期</th>
+                        </tr>
+                    </thead>
+                    <tbody id="quoteTableBody"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeQuoteModal()" class="btn btn-secondary">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 11. 结果登记弹窗 -->
+    <div id="resultModalOverlay" class="modal-overlay">
+        <div class="modal-panel" style="max-width: 660px; max-height: 740px;">
+            <div class="modal-header">
+                <div>
+                    <h3>中标结果登记</h3>
+                    <p>登记项目最终投标结果及成交信息</p>
+                </div>
+                <button onclick="closeResultModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body custom-scroll">
+                <div class="form-grid" style="grid-template-columns: 1fr; gap: 20px;">
+                    <!-- 项目信息 -->
+                    <div class="form-field">
+                        <label class="form-label">项目信息</label>
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 text-sm" id="rsProjectInfo"></div>
+                    </div>
+
+                    <!-- 是否中标 -->
+                    <div class="form-field">
+                        <label class="form-label required">是否中标</label>
+                        <div class="grid grid-cols-2 gap-4 mt-2">
+                            <div class="result-option" id="optWin" onclick="selectResultType(true)">
+                                <input type="radio" name="rsResult" value="win" class="w-4 h-4 text-green-600">
+                                <div>
+                                    <div class="font-semibold text-gray-900">是（中标）</div>
+                                    <div class="text-xs text-gray-500">我方成功中标该项目</div>
+                                </div>
+                            </div>
+                            <div class="result-option" id="optLose" onclick="selectResultType(false)">
+                                <input type="radio" name="rsResult" value="lose" class="w-4 h-4 text-red-600">
+                                <div>
+                                    <div class="font-semibold text-gray-900">否（未中标）</div>
+                                    <div class="text-xs text-gray-500">我方未中标该项目</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 中标字段 -->
+                    <div id="winFields" class="hidden space-y-4">
+                        <div class="form-field">
+                            <label class="form-label required">实际成交价格（万元）</label>
+                            <input type="number" id="rsWinAmount" class="form-input" placeholder="请输入实际成交价格">
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label required">关联报价单</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="rsQuoteNo" class="form-input disabled flex-1" readonly placeholder="请选择报价单">
+                                <button onclick="openResultQuoteModal()" class="btn btn-secondary btn-sm">选择</button>
+                            </div>
+                            <input type="hidden" id="rsQuoteId">
+                            <div id="priceMismatchTip" class="price-mismatch hidden">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>成交价格与报价单金额不一致，请修改报价单或重新选择</span>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label required">中标原因</label>
+                            <textarea id="rsWinReason" class="form-textarea" rows="2" placeholder="请录入中标原因..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 未中标字段（非必填） -->
+                    <div id="loseFields" class="hidden space-y-4">
+                        <div class="form-field">
+                            <label class="form-label">中标单位</label>
+                            <input type="text" id="rsLoseUnit" class="form-input" placeholder="请输入中标单位（如不公开则填未公开）">
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label">成交价格（万元）</label>
+                            <input type="number" id="rsLoseAmount" class="form-input" placeholder="请输入成交价格（如不公开则填0）">
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label">未中标原因</label>
+                            <textarea id="rsLoseReason" class="form-textarea" rows="2" placeholder="请录入未中标原因（选填）..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeResultModal()" class="btn btn-secondary">取消</button>
+                <button onclick="submitResult()" class="btn btn-primary">登记结果</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 12. 结果登记-报价单选择弹窗 -->
+    <div id="resultQuoteModalOverlay" class="modal-overlay">
+        <div class="modal-panel" style="max-width: 640px; max-height: 480px;">
+            <div class="modal-header">
+                <h3>选择报价单</h3>
+                <button onclick="closeResultQuoteModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="flex-1 overflow-auto p-0 custom-scroll">
+                <table class="data-table" style="min-width: auto;">
+                    <thead>
+                        <tr>
+                            <th style="width:40px"></th>
+                            <th>报价单号</th>
+                            <th>金额（万元）</th>
+                            <th>有效期</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultQuoteTableBody"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeResultQuoteModal()" class="btn btn-secondary">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 13. 删除确认弹窗 -->
+    <div id="deleteModalOverlay" class="modal-overlay">
+        <div class="modal-panel" style="max-width: 440px; max-height: 300px;">
+            <div class="modal-header" style="background: #fef2f2; border-color: #fecaca;">
+                <h3 class="text-base font-bold text-red-700 flex items-center gap-2"><i class="fas fa-exclamation-triangle"></i>确认删除</h3>
+                <button onclick="closeDeleteModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body flex flex-col items-center justify-center text-center">
+                <i class="fas fa-trash-alt text-4xl text-red-400 mb-4"></i>
+                <p class="text-gray-700 font-medium mb-2">确定要删除该项目吗？</p>
+                <p class="text-sm text-gray-500" id="deleteProjectInfo">项目编号：ZB20240001</p>
+                <p class="text-xs text-red-500 mt-2">删除后其他人可以重新录入该项目</p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeDeleteModal()" class="btn btn-secondary">取消</button>
+                <button onclick="confirmDelete()" class="btn btn-danger">确认删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <!-- ==================== 详情抽屉 ==================== -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeDetailDrawer()"></div>
+    <div class="drawer" id="detailDrawer">
+        <div class="drawer-header">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-lg font-bold text-gray-900" id="detailTitle">项目详情</h2>
+                    <div class="flex items-center gap-3 mt-1">
+                        <span class="text-xs text-gray-500" id="detailSubtitle">项目编号：ZB20240001</span>
+                        <span id="detailStatusBadge" class="status-badge status-draft">草稿</span>
+                    </div>
+                </div>
+                <button onclick="closeDetailDrawer()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-xmark text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 流程进度 -->
+        <div class="process-steps" id="processSteps"></div>
+
+        <!-- 锚点Tab -->
+        <div class="drawer-tabs" id="drawerTabs">
+            <div class="drawer-tab active" onclick="switchDetailTab('basic')">基本信息</div>
+            <div class="drawer-tab" onclick="switchDetailTab('approval')">审批记录</div>
+            <div class="drawer-tab" onclick="switchDetailTab('bid')">投标确认</div>
+            <div class="drawer-tab" onclick="switchDetailTab('result')">结果登记</div>
+            <div class="drawer-tab" onclick="switchDetailTab('logs')">操作日志</div>
+        </div>
+
+        <div class="drawer-body custom-scroll" id="detailBody">
+            <!-- 动态生成详情内容 -->
+        </div>
+
+        <div class="p-4 border-t border-gray-200 bg-gray-50 flex justify-end gap-3" id="detailFooter"></div>
+    </div>
+
+    <script>
+        // ==================== 全局数据 ====================
+
+        let currentRole = 'demo';
+        const roleNames = {
+            marketer: '市场人员（跟单人-张三）',
+            manager: '部门经理（李经理）',
+            region_leader: '区域领导',
+            hq_leader: '总部领导',
+            demo: '演示账号（全部权限）'
+        };
+
+        const currentUser = {
+            id: 'user_001',
+            name: '张三',
+            region: '华北区域',
+            regionCode: 'HB',
+            dept: '北京分中心'
+        };
+
+        // 演示模式：拥有全部权限
+        function isDemoMode() {
+            return currentRole === 'demo';
+        }
+
+        // 部门-员工层级数据（按区域组织）
+        const regionOrgTree = {
+            '华北区域': [
+                { dept: '北京分中心', employees: [
+                    { id: 'user_001', name: '张三' },
+                    { id: 'user_009', name: '周八' },
+                    { id: 'user_011', name: '郑十' }
+                ]},
+                { dept: '天津分中心', employees: [
+                    { id: 'user_010', name: '吴九' }
+                ]},
+                { dept: '质量部', employees: [
+                    { id: 'user_002', name: '李四' }
+                ]},
+                { dept: '市场部', employees: [
+                    { id: 'user_012', name: '钱十一' }
+                ]}
+            ],
+            '华东区域': [
+                { dept: '上海分中心', employees: [
+                    { id: 'user_004', name: '赵六' },
+                    { id: 'user_013', name: '孙十二' }
+                ]},
+                { dept: '江苏分中心', employees: [
+                    { id: 'user_014', name: '李十三' }
+                ]}
+            ],
+            '西南区域': [
+                { dept: '成都分中心', employees: [
+                    { id: 'user_003', name: '王五' },
+                    { id: 'user_015', name: '周十四' }
+                ]}
+            ],
+            '华南区域': [
+                { dept: '广东有限公司', employees: [
+                    { id: 'user_005', name: '孙七' }
+                ]},
+                { dept: '深圳分中心', employees: [
+                    { id: 'user_016', name: '吴十五' }
+                ]}
+            ],
+            '华中区域': [
+                { dept: '武汉分中心', employees: [
+                    { id: 'user_017', name: '郑十六' }
+                ]}
+            ]
+        };
+
+        // AI平台招采数据
+        const aiPlatformBids = [
+            {
+                id: 'bid_001',
+                bidNo: 'ZBCG-2024-001',
+                bidName: '2024年度云计算服务采购项目',
+                customerName: '中国石油天然气集团有限公司',
+                customerId: 'cust_001',
+                customerRegionCode: 'HB',
+                bidUnit: '中国质量认证中心',
+                bidUnitId: 'cqc-hq',
+                bidUnitIsHQ: true,
+                deadline: '2024-05-20T17:00',
+                status: 'bidding',
+                statusText: '招标中',
+                projectNo: 'CNPC-2024-IT-001',
+                summary: '采购云计算资源及服务',
+                url: 'http://bidding.cnpc.com.cn/001',
+                procurementContent: '云服务、存储、网络'
+            },
+            {
+                id: 'bid_002',
+                bidNo: 'ZBCG-2024-002',
+                bidName: '数据中心建设监理服务',
+                customerName: '国家电网有限公司',
+                customerId: 'cust_002',
+                customerRegionCode: 'HB',
+                bidUnit: '中国质量认证中心华北区域',
+                bidUnitId: 'cqc-hb',
+                bidUnitIsHQ: false,
+                deadline: '2024-06-15T14:00',
+                status: 'bidding',
+                statusText: '招标中',
+                projectNo: 'SGCC-2024-JL-002',
+                summary: '数据中心建设全过程监理',
+                url: 'http://bidding.sgcc.com.cn/002',
+                procurementContent: '监理服务'
+            },
+            {
+                id: 'bid_003',
+                bidNo: 'ZBCG-2024-003',
+                bidName: '信息安全管理体系认证服务',
+                customerName: '中国移动通信集团四川有限公司',
+                customerId: 'cust_003',
+                customerRegionCode: 'XN',
+                bidUnit: '成都分中心',
+                bidUnitId: 'cqc-cd',
+                bidUnitIsHQ: false,
+                deadline: '2024-05-10T10:00',
+                status: 'bidding',
+                statusText: '招标中',
+                projectNo: 'CMCC-2024-SEC-003',
+                summary: 'ISO27001认证服务采购',
+                url: 'http://bidding.cmcc.com.cn/003',
+                procurementContent: '认证服务'
+            },
+            {
+                id: 'bid_004',
+                bidNo: 'ZBCG-2024-004',
+                bidName: '质量管理体系认证服务采购',
+                customerName: '中国宝武钢铁集团',
+                customerId: 'cust_004',
+                customerRegionCode: 'HD',
+                bidUnit: '中国质量认证中心',
+                bidUnitId: 'cqc-hq',
+                bidUnitIsHQ: true,
+                deadline: '2024-07-20T16:00',
+                status: 'bidding',
+                statusText: '招标中',
+                projectNo: 'BAOWU-2024-QMS-004',
+                summary: 'ISO9001质量管理体系认证',
+                url: 'http://bidding.baowu.com.cn/004',
+                procurementContent: '质量管理体系认证服务'
+            },
+            {
+                id: 'bid_005',
+                bidNo: 'ZBCG-2024-005',
+                bidName: '环境管理体系审核服务',
+                customerName: '上海汽车集团股份有限公司',
+                customerId: 'cust_005',
+                customerRegionCode: 'HD',
+                bidUnit: '中国质量认证中心华东区域',
+                bidUnitId: 'cqc-hd',
+                bidUnitIsHQ: false,
+                deadline: '2024-06-30T15:00',
+                status: 'bidding',
+                statusText: '招标中',
+                projectNo: 'SAIC-2024-EMS-005',
+                summary: 'ISO14001环境管理体系审核',
+                url: 'http://bidding.saic.com.cn/005',
+                procurementContent: '环境管理体系审核服务'
+            },
+            {
+                id: 'bid_006',
+                bidNo: 'ZBCG-2024-006',
+                bidName: '职业健康安全管理体系认证',
+                customerName: '中国南方电网有限责任公司',
+                customerId: 'cust_006',
+                customerRegionCode: 'HN',
+                bidUnit: '中国质量认证中心华南区域',
+                bidUnitId: 'cqc-hn',
+                bidUnitIsHQ: false,
+                deadline: '2024-08-15T14:30',
+                status: 'bidding',
+                statusText: '招标中',
+                projectNo: 'CSG-2024-OHSMS-006',
+                summary: 'ISO45001职业健康安全管理体系认证',
+                url: 'http://bidding.csg.com.cn/006',
+                procurementContent: '职业健康安全管理体系认证'
+            },
+            {
+                id: 'bid_007',
+                bidNo: 'ZBCG-2024-007',
+                bidName: '食品安全管理体系认证服务',
+                customerName: '伊利实业集团股份有限公司',
+                customerId: 'cust_007',
+                customerRegionCode: 'HB',
+                bidUnit: '中国质量认证中心',
+                bidUnitId: 'cqc-hq',
+                bidUnitIsHQ: true,
+                deadline: '2024-09-10T10:00',
+                status: 'bidding',
+                statusText: '招标中',
+                projectNo: 'YILI-2024-FSMS-007',
+                summary: 'ISO22000食品安全管理体系认证',
+                url: 'http://bidding.yili.com.cn/007',
+                procurementContent: '食品安全管理体系认证服务'
+            },
+            {
+                id: 'bid_008',
+                bidNo: 'ZBCG-2024-008',
+                bidName: '能源管理体系认证服务',
+                customerName: '中国华能集团有限公司',
+                customerId: 'cust_008',
+                customerRegionCode: 'HZ',
+                bidUnit: '中国质量认证中心华中区域',
+                bidUnitId: 'cqc-hz',
+                bidUnitIsHQ: false,
+                deadline: '2024-07-25T17:00',
+                status: 'bidding',
+                statusText: '招标中',
+                projectNo: 'CHNG-2024-EnMS-008',
+                summary: 'ISO50001能源管理体系认证',
+                url: 'http://bidding.chng.com.cn/008',
+                procurementContent: '能源管理体系认证服务'
+            }
+        ];
+
+        // 客户数据
+        const customerDatabase = {
+            'cust_001': { name: '中国石油天然气集团有限公司', region: '华北区域', regionCode: 'HB', crossRegionApproved: true, follower: { id: 'user_002', name: '李四' } },
+            'cust_002': { name: '国家电网有限公司', region: '华北区域', regionCode: 'HB', crossRegionApproved: true, follower: null },
+            'cust_003': { name: '中国移动通信集团四川有限公司', region: '西南区域', regionCode: 'XN', crossRegionApproved: true, follower: { id: 'user_003', name: '王五' } },
+            'cust_004': { name: '中国宝武钢铁集团', region: '华东区域', regionCode: 'HD', crossRegionApproved: false, reportStatus: 'pending', follower: null },
+            'cust_005': { name: '上海汽车集团股份有限公司', region: '华东区域', regionCode: 'HD', crossRegionApproved: true, follower: null },
+            'cust_006': { name: '中国南方电网有限责任公司', region: '华南区域', regionCode: 'HN', crossRegionApproved: false, reportStatus: 'rejected', follower: { id: 'user_005', name: '孙七' } },
+            'cust_007': { name: '伊利实业集团股份有限公司', region: '华北区域', regionCode: 'HB', crossRegionApproved: true, follower: null },
+            'cust_008': { name: '中国华能集团有限公司', region: '华中区域', regionCode: 'HZ', crossRegionApproved: true, follower: null }
+        };
+
+        // 应标单位数据
+        const bidUnits = [
+            { id: 'cqc-hq', name: '中国质量认证中心', code: 'CQC-HQ', isHQ: true, isRegion: false },
+            { id: 'cqc-bj', name: '北京分中心', code: 'CQC-BJ', isHQ: false, isRegion: false, parent: '华北区域' },
+            { id: 'cqc-tj', name: '天津分中心', code: 'CQC-TJ', isHQ: false, isRegion: false, parent: '华北区域' },
+            { id: 'cqc-sh', name: '上海分中心', code: 'CQC-SH', isHQ: false, isRegion: false, parent: '华东区域' },
+            { id: 'cqc-cd', name: '成都分中心', code: 'CQC-CD', isHQ: false, isRegion: false, parent: '西南区域' },
+            { id: 'cqc-gd', name: '广东有限公司', code: 'CQC-GD', isHQ: false, isRegion: false, parent: '华南区域' },
+            { id: 'cqc-hb', name: '华北区域', code: 'CQC-HB', isHQ: false, isRegion: true },
+            { id: 'cqc-hd', name: '华东区域', code: 'CQC-HD', isHQ: false, isRegion: true },
+            { id: 'cqc-hn', name: '华南区域', code: 'CQC-HN', isHQ: false, isRegion: true },
+            { id: 'cqc-hz', name: '华中区域', code: 'CQC-HZ', isHQ: false, isRegion: true }
+        ];
+
+        // 商机数据
+        const opportunities = [
+            { id: 'opp_001', name: '中石油2024年体系认证商机', customer: '中国石油天然气集团有限公司', amount: 280, stage: '跟进中' },
+            { id: 'opp_002', name: '上汽集团新能源认证项目', customer: '上海汽车集团股份有限公司', amount: 450, stage: '跟进中' },
+            { id: 'opp_003', name: '国家电网供应商认证', customer: '国家电网有限公司', amount: 120, stage: '已成交' },
+            { id: 'opp_004', name: '华能集团三体系认证', customer: '中国华能集团有限公司', amount: 360, stage: '跟进中' }
+        ];
+
+        // 报价单数据
+        const quotes = [
+            { id: 'quo_001', no: 'BJ2024-Q-001', amount: 285, expiry: '2024-06-30' },
+            { id: 'quo_002', no: 'BJ2024-Q-002', amount: 445, expiry: '2024-07-15' },
+            { id: 'quo_003', no: 'BJ2024-Q-003', amount: 368, expiry: '2024-08-20' },
+            { id: 'quo_004', no: 'BJ2024-Q-004', amount: 195, expiry: '2024-05-30' },
+            { id: 'quo_005', no: 'BJ2024-Q-005', amount: 558, expiry: '2024-09-15' }
+        ];
+
+        // 招标项目假数据 - 按操作顺序排列（草稿→待审批→待投标确认→待登记结果→已中标/未中标/已驳回）
+        let projects = [
+            // ===== 1. 草稿 =====
+            {
+                id: 'ZB20240001',
+                customerId: 'cust_001',
+                customerName: '中国石油天然气集团有限公司',
+                customerRegionCode: 'HB',
+                bidName: 'ISO9001质量管理体系认证服务采购',
+                bidNo: 'CNPC-2024-QMS-001',
+                bidUnitId: 'cqc-hq',
+                bidUnitName: '中国质量认证中心',
+                bidUnitIsHQ: true,
+                followerId: 'user_001',
+                followerName: '张三',
+                followerDept: '北京分中心',
+                deadline: '2024-05-20T17:00',
+                url: 'http://bidding.cnpc.com.cn/001',
+                summary: 'ISO9001质量管理体系认证服务，覆盖总部及下属12个分公司',
+                amount: null,
+                files: ['招标公告.pdf'],
+                status: 'draft',
+                statusText: '草稿',
+                opportunityId: null,
+                opportunityName: null,
+                createTime: '2024-04-01 09:30',
+                createBy: '张三',
+                approval: null,
+                bidConfirm: null,
+                result: null,
+                logs: [{ time: '2024-04-01 09:30', user: '张三', action: '创建项目', remark: '保存为草稿' }]
+            },
+            {
+                id: 'ZB20240012',
+                customerId: 'cust_002',
+                customerName: '国家电网有限公司',
+                customerRegionCode: 'HB',
+                bidName: 'ISO50001能源管理体系认证服务',
+                bidNo: 'SGCC-2024-EnMS-012',
+                bidUnitId: 'cqc-bj',
+                bidUnitName: '北京分中心',
+                bidUnitIsHQ: false,
+                followerId: 'user_001',
+                followerName: '张三',
+                followerDept: '北京分中心',
+                deadline: '2024-07-10T09:00',
+                url: 'http://bidding.sgcc.com.cn/012',
+                summary: 'ISO50001能源管理体系认证，覆盖变电站及输电线路运维',
+                amount: null,
+                files: [],
+                status: 'draft',
+                statusText: '草稿',
+                opportunityId: null,
+                opportunityName: null,
+                createTime: '2024-04-15 14:00',
+                createBy: '张三',
+                approval: null,
+                bidConfirm: null,
+                result: null,
+                logs: [{ time: '2024-04-15 14:00', user: '张三', action: '创建草稿', remark: '信息待补充' }]
+            },
+            // ===== 2. 待审批 =====
+            {
+                id: 'ZB20240002',
+                customerId: 'cust_002',
+                customerName: '国家电网有限公司',
+                customerRegionCode: 'HB',
+                bidName: 'ISO14001环境管理体系审核服务',
+                bidNo: 'SGCC-2024-EMS-002',
+                bidUnitId: 'cqc-bj',
+                bidUnitName: '北京分中心',
+                bidUnitIsHQ: false,
+                followerId: 'user_001',
+                followerName: '张三',
+                followerDept: '北京分中心',
+                deadline: '2024-06-15T14:00',
+                url: 'http://bidding.sgcc.com.cn/002',
+                summary: 'ISO14001环境管理体系认证审核，包含初始审核及三年监督审核',
+                amount: 150,
+                files: ['招标文件.pdf', '公告截图.png'],
+                status: 'pending_approval',
+                statusText: '待审批',
+                opportunityId: 'opp_003',
+                opportunityName: '国家电网供应商认证',
+                createTime: '2024-04-02 10:15',
+                createBy: '张三',
+                approval: null,
+                bidConfirm: null,
+                result: null,
+                logs: [{ time: '2024-04-02 10:15', user: '张三', action: '提交审批', remark: '' }]
+            },
+            {
+                id: 'ZB20240013',
+                customerId: 'cust_008',
+                customerName: '中国华能集团有限公司',
+                customerRegionCode: 'HZ',
+                bidName: 'ISO14001环境管理体系再认证审核',
+                bidNo: 'CHNG-2024-EMS-RC-013',
+                bidUnitId: 'cqc-hq',
+                bidUnitName: '中国质量认证中心',
+                bidUnitIsHQ: true,
+                followerId: 'user_001',
+                followerName: '张三',
+                followerDept: '北京分中心',
+                deadline: '2024-08-01T16:00',
+                url: 'http://bidding.chng.com.cn/013',
+                summary: 'ISO14001环境管理体系再认证，新增碳排放核查业务范围',
+                amount: 380,
+                files: ['招标文件.pdf'],
+                status: 'pending_approval',
+                statusText: '待审批',
+                opportunityId: 'opp_004',
+                opportunityName: '华能集团三体系认证',
+                createTime: '2024-04-16 11:30',
+                createBy: '张三',
+                approval: null,
+                bidConfirm: null,
+                result: null,
+                logs: [{ time: '2024-04-16 11:30', user: '张三', action: '提交审批', remark: '' }]
+            },
+            // ===== 3. 待投标确认 =====
+            {
+                id: 'ZB20240003',
+                customerId: 'cust_005',
+                customerName: '上海汽车集团股份有限公司',
+                customerRegionCode: 'HD',
+                bidName: 'ISO45001职业健康安全管理体系认证',
+                bidNo: 'SAIC-2024-OHSMS-003',
+                bidUnitId: 'cqc-hq',
+                bidUnitName: '中国质量认证中心',
+                bidUnitIsHQ: true,
+                followerId: 'user_001',
+                followerName: '张三',
+                followerDept: '北京分中心',
+                deadline: '2024-06-30T15:00',
+                url: 'http://bidding.saic.com.cn/003',
+                summary: 'ISO45001职业健康安全管理体系认证，覆盖上海总部及五大生产基地',
+                amount: 320,
+                files: ['采购文件.pdf'],
+                status: 'pending_bid_confirm',
+                statusText: '待投标确认',
+                opportunityId: 'opp_002',
+                opportunityName: '上汽集团新能源认证项目',
+                createTime: '2024-04-03 14:20',
+                createBy: '张三',
+                approval: { status: 'approved', approver: '李经理', time: '2024-04-04 09:00', remark: '同意' },
+                bidConfirm: null,
+                result: null,
+                logs: [
+                    { time: '2024-04-03 14:20', user: '张三', action: '提交审批', remark: '' },
+                    { time: '2024-04-04 09:00', user: '李经理', action: '审批通过', remark: '同意' }
+                ]
+            },
+            {
+                id: 'ZB20240018',
+                customerId: 'cust_001',
+                customerName: '中国石油天然气集团有限公司',
+                customerRegionCode: 'HB',
+                bidName: 'ISO14064温室气体核查服务采购',
+                bidNo: 'CNPC-2024-GHG-018',
+                bidUnitId: 'cqc-hq',
+                bidUnitName: '中国质量认证中心',
+                bidUnitIsHQ: true,
+                followerId: 'user_001',
+                followerName: '张三',
+                followerDept: '北京分中心',
+                deadline: '2024-08-10T16:00',
+                url: 'http://bidding.cnpc.com.cn/018',
+                summary: 'ISO14064温室气体核查服务，覆盖上游勘探、中游储运、下游销售全链条',
+                amount: 420,
+                files: ['招标文件.pdf'],
+                status: 'pending_bid_confirm',
+                statusText: '待投标确认',
+                opportunityId: 'opp_001',
+                opportunityName: '中石油2024年体系认证商机',
+                createTime: '2024-04-12 09:00',
+                createBy: '张三',
+                approval: { status: 'approved', approver: '李经理', time: '2024-04-13 10:00', remark: '同意投标' },
+                bidConfirm: null,
+                result: null,
+                logs: [
+                    { time: '2024-04-12 09:00', user: '张三', action: '提交审批', remark: '' },
+                    { time: '2024-04-13 10:00', user: '李经理', action: '审批通过', remark: '同意投标' }
+                ]
+            },
+            {
+                id: 'ZB20240019',
+                customerId: 'cust_007',
+                customerName: '伊利实业集团股份有限公司',
+                customerRegionCode: 'HB',
+                bidName: 'HACCP食品安全管理体系认证服务',
+                bidNo: 'YILI-2024-HACCP-019',
+                bidUnitId: 'cqc-hq',
+                bidUnitName: '中国质量认证中心',
+                bidUnitIsHQ: true,
+                followerId: 'user_001',
+                followerName: '张三',
+                followerDept: '北京分中心',
+                deadline: '2024-07-05T10:00',
+                url: 'http://bidding.yili.com.cn/019',
+                summary: 'HACCP食品安全管理体系认证，覆盖液态奶、奶粉、冷饮等生产线',
+                amount: 280,
+                files: ['采购公告.pdf'],
+                status: 'pending_bid_confirm',
+                statusText: '待投标确认',
+                opportunityId: null,
+                opportunityName: null,
+                createTime: '2024-04-14 11:30',
+                createBy: '张三',
+                approval: { status: 'approved', approver: '李经理', time: '2024-04-15 09:00', remark: '可以投标' },
+                bidConfirm: null,
+                result: null,
+                logs: [
+                    { time: '2024-04-14 11:30', user: '张三', action: '提交审批', remark: '' },
+                    { time: '2024-04-15 09:00', user: '李经理', action: '审批通过', remark: '可以投标' }
+                ]
+            },
+            {
+                id: 'ZB20240020',
+                customerId: 'cust_002',
+                customerName: '国家电网有限公司',
+                customerRegionCode: 'HB',
+                bidName: 'ISO55001资产管理体系认证服务',
+                bidNo: 'SGCC-2024-AMS-020',
+                bidUnitId: 'cqc-hq',
+                bidUnitName: '中国质量认证中心',
+                bidUnitIsHQ: true,
+                followerId: 'user_001',
+                followerName: '张三',
+                followerDept: '北京分中心',
+                deadline: '2024-09-20T14:00',
+                url: 'http://bidding.sgcc.com.cn/020',
+                summary: 'ISO55001资产管理体系认证，覆盖输电设备、变电设备及配电网络资产全生命周期管理',
+                amount: 350,
+                files: ['招标文件.pdf'],
+                status: 'pending_bid_confirm',
+                statusText: '待投标确认',
+                opportunityId: null,
+                opportunityName: null,
+                createTime: '2024-04-16 13:00',
+                createBy: '张三',
+                approval: { status: 'approved', approver: '李经理', time: '2024-04-17 10:00', remark: '同意' },
+                bidConfirm: null,
+                result: null,
+                logs: [
+                    { time: '2024-04-16 13:00', user: '张三', action: '提交审批', remark: '' },
+                    { time: '2024-04-17 10:00', user: '李经理', action: '审批通过', remark: '同意' }
+                ]
+            },
+            // ===== 3. 待投标确认 =====
+            {
+                id: 'ZB20240005',
+                customerId: 'cust_001',
+                customerName: '中国石油天然气集团有限公司',
+                customerRegionCode: 'HB',
+                bidName: 'ISO50001能源管理体系认证服务',
+                bidNo: 'CNPC-2024-EnMS-005',
+                bidUnitId: 'cqc-hq',
+                bidUnitName: '中国质量认证中心',
+                bidUnitIsHQ: true,
+                followerId: 'user_001',
+                followerName: '张三',
+                followerDept: '北京分中心',
+                deadline: '2024-07-20T16:00',
+                url: 'http://bidding.cnpc.com.cn/005',
+                summary: 'ISO50001能源管理体系认证，覆盖炼油、化工、管道运输板块',
+                amount: 260,
+                files: ['招标文件.pdf'],
+                status: 'pending_bid_confirm',
+                statusText: '待投标确认',
+                opportunityId: 'opp_001',
+                opportunityName: '中石油2024年体系认证商机',
+                createTime: '2024-04-05 09:00',
+                createBy: '张三',
+                approval: { status: 'approved', approver: '李经理', time: '2024-04-05 16:00', remark: '同意' },
+                bidConfirm: null,
+                result: null,
+                logs: [
+                    { time: '2024-04-05 09:00', user: '张三', action: '提交审批', remark: '' },
+                    { time: '2024-04-05 16:00', user: '李经理', action: '审批通过', remark: '同意' }
+                ]
+            },
+            {
+                id: 'ZB20240015',
+                customerId: 'cust_001',
+                customerName: '中国石油天然气集团有限公司',
+                customerRegionCode: 'HB',
+                bidName: 'ISO27001信息安全管理体系认证服务',
+                bidNo: 'CNPC-2024-ISMS-015',
+                bidUnitId: 'cqc-hq',
+                bidUnitName: '中国质量认证中心',
+                bidUnitIsHQ: true,
+                followerId: 'user_001',
+                followerName: '张三',
+                followerDept: '北京分中心',
+                deadline: '2024-09-15T14:00',
+                url: 'http://bidding.cnpc.com.cn/015',
+                summary: 'ISO27001信息安全管理体系认证，覆盖勘探开发数据平台及办公网络',
+                amount: 180,
+                files: ['采购文件.pdf'],
+                status: 'pending_bid_confirm',
+                statusText: '待投标确认',
+                opportunityId: null,
+                opportunityName: null,
+                createTime: '2024-04-18 10:00',
+                createBy: '张三',
+                approval: { status: 'approved', approver: '李经理', time: '2024-04-18 16:00', remark: '可以投标' },
+                bidConfirm: null,
+                result: null,
+                logs: [
+                    { time: '2024-04-18 10:00', user: '张三', action: '提交审批', remark: '' },
+                    { time: '2024-04-18 16:00', user: '李经理', action: '审批通过', remark: '可以投标' }
+                ]
+            },
+            {
+                id: 'ZB20240017',
+                customerId: 'cust_002',
+                customerName: '国家电网有限公司',
+                customerRegionCode: 'HB',
+                bidName: 'ISO9001质量管理体系监督审核服务',
+                bidNo: 'SGCC-2024-QMS-SU-017',
+                bidUnitId: 'cqc-hq',
+                bidUnitName: '中国质量认证中心',
+                bidUnitIsHQ: true,
+                followerId: 'user_001',
+                followerName: '张三',
+                followerDept: '北京分中心',
+                deadline: '2024-07-25T10:00',
+                url: 'http://bidding.sgcc.com.cn/017',
+                summary: 'ISO9001质量管理体系年度监督审核，覆盖输电、变电、配电业务',
+                amount: 245,
+                files: ['招标文件.pdf'],
+                status: 'pending_bid_confirm',
+                statusText: '待投标确认',
+                opportunityId: null,
+                opportunityName: null,
+                createTime: '2024-04-20 09:00',
+                createBy: '张三',
+                approval: { status: 'approved', approver: '李经理', time: '2024-04-20 14:00', remark: '同意' },
+                bidConfirm: null,
+                result: null,
+                logs: [
+                    { time: '2024-04-20 09:00', user: '张三', action: '提交审批', remark: '' },
+                    { time: '2024-04-20 14:00', user: '李经理', action: '审批通过', remark: '同意' }
+                ]
+            },
+            // ===== 3. 待投标确认 =====
+            {
+                id: 'ZB20240006',
+                customerId: 'cust_008',
+                customerName: '中国华能集团有限公司',
+                customerRegionCode: 'HZ',
+                bidName: 'ISO9001/ISO14001/ISO45001三体系整合认证',
+                bidNo: 'CHNG-2024-IMS-006',
+                bidUnitId: 'cqc-hq',
+                bidUnitName: '中国质量认证中心',
+                bidUnitIsHQ: true,
+                followerId: 'user_001',
+                followerName: '张三',
+                followerDept: '北京分中心',
+                deadline: '2024-08-15T14:30',
+                url: 'http://bidding.chng.com.cn/006',
+                summary: '质量、环境、职业健康安全三体系整合认证，覆盖火电、风电、光伏板块',
+                amount: 420,
+                files: ['招标文件.pdf', '技术需求.docx'],
+                status: 'pending_bid_confirm',
+                statusText: '待投标确认',
+                opportunityId: 'opp_004',
+                opportunityName: '华能集团三体系认证',
+                createTime: '2024-04-08 13:30',
+                createBy: '张三',
+                approval: { status: 'approved', approver: '李经理', time: '2024-04-09 09:30', remark: '可以投标' },
+                bidConfirm: null,
+                result: null,
+                logs: [
+                    { time: '2024-04-08 13:30', user: '张三', action: '提交审批', remark: '' },
+                    { time: '2024-04-09 09:30', user: '李经理', action: '审批通过', remark: '可以投标' }
+                ]
+            },
+            {
+                id: 'ZB20240004',
+                customerId: 'cust_003',
+                customerName: '中国移动通信集团四川有限公司',
+                customerRegionCode: 'XN',
+                bidName: 'ISO27001信息安全管理体系认证服务',
+                bidNo: 'CMCC-2024-ISMS-004',
+                bidUnitId: 'cqc-cd',
+                bidUnitName: '成都分中心',
+                bidUnitIsHQ: false,
+                followerId: 'user_003',
+                followerName: '王五',
+                followerDept: '成都分中心',
+                deadline: '2024-05-10T10:00',
+                url: 'http://bidding.cmcc.com.cn/004',
+                summary: 'ISO27001信息安全管理体系认证，含风险评估及整改指导',
+                amount: 180,
+                files: ['招标公告.pdf'],
+                status: 'pending_bid_confirm',
+                statusText: '待投标确认',
+                opportunityId: null,
+                opportunityName: null,
+                createTime: '2024-03-25 11:00',
+                createBy: '王五',
+                approval: { status: 'approved', approver: '李经理', time: '2024-03-26 10:00', remark: '通过' },
+                bidConfirm: null,
+                result: null,
+                logs: [
+                    { time: '2024-03-25 11:00', user: '王五', action: '提交审批', remark: '' },
+                    { time: '2024-03-26 10:00', user: '李经理', action: '审批通过', remark: '通过' }
+                ]
+            },
+            {
+                id: 'ZB20240014',
+                customerId: 'cust_005',
+                customerName: '上海汽车集团股份有限公司',
+                customerRegionCode: 'HD',
+                bidName: 'ISO45001职业健康安全管理体系审核',
+                bidNo: 'SAIC-2024-OHSMS-014',
+                bidUnitId: 'cqc-sh',
+                bidUnitName: '上海分中心',
+                bidUnitIsHQ: false,
+                followerId: 'user_004',
+                followerName: '赵六',
+                followerDept: '上海分中心',
+                deadline: '2024-05-30T10:00',
+                url: 'http://bidding.saic.com.cn/014',
+                summary: 'ISO45001职业健康安全管理体系审核，覆盖总装车间及零部件工厂',
+                amount: 120,
+                files: ['公告截图.png'],
+                status: 'pending_bid_confirm',
+                statusText: '待投标确认',
+                opportunityId: null,
+                opportunityName: null,
+                createTime: '2024-04-08 09:00',
+                createBy: '赵六',
+                approval: { status: 'approved', approver: '李经理', time: '2024-04-09 10:30', remark: '同意' },
+                bidConfirm: null,
+                result: null,
+                logs: [
+                    { time: '2024-04-08 09:00', user: '赵六', action: '提交审批', remark: '' },
+                    { time: '2024-04-09 10:30', user: '李经理', action: '审批通过', remark: '同意' }
+                ]
+            },
+            // ===== 6. 待登记结果 =====
+            {
+                id: 'ZB20240007',
+                customerId: 'cust_002',
+                customerName: '国家电网有限公司',
+                customerRegionCode: 'HB',
+                bidName: 'ISO22000食品安全管理体系认证服务',
+                bidNo: 'SGCC-2024-FSMS-007',
+                bidUnitId: 'cqc-bj',
+                bidUnitName: '北京分中心',
+                bidUnitIsHQ: false,
+                followerId: 'user_001',
+                followerName: '张三',
+                followerDept: '北京分中心',
+                deadline: '2024-05-25T10:00',
+                url: 'http://bidding.sgcc.com.cn/007',
+                summary: 'ISO22000食品安全管理体系认证，覆盖员工食堂及配餐中心',
+                amount: 195,
+                files: ['招标文件.pdf'],
+                status: 'pending_result',
+                statusText: '待登记结果',
+                opportunityId: null,
+                opportunityName: null,
+                createTime: '2024-04-01 16:00',
+                createBy: '张三',
+                approval: { status: 'approved', approver: '李经理', time: '2024-04-02 11:00', remark: '同意投标' },
+                bidConfirm: { amount: 195, quoteId: null, quoteNo: null, files: ['标书.pdf'], confirmTime: '2024-04-10 09:00' },
+                result: null,
+                logs: [
+                    { time: '2024-04-01 16:00', user: '张三', action: '提交审批', remark: '' },
+                    { time: '2024-04-02 11:00', user: '李经理', action: '审批通过', remark: '同意投标' },
+                    { time: '2024-04-10 09:00', user: '张三', action: '确认投标', remark: '报价金额195万元' }
+                ]
+            },
+            {
+                id: 'ZB20240008',
+                customerId: 'cust_005',
+                customerName: '上海汽车集团股份有限公司',
+                customerRegionCode: 'HD',
+                bidName: 'IATF16949汽车行业质量管理体系认证',
+                bidNo: 'SAIC-2024-IATF-008',
+                bidUnitId: 'cqc-sh',
+                bidUnitName: '上海分中心',
+                bidUnitIsHQ: false,
+                followerId: 'user_004',
+                followerName: '赵六',
+                followerDept: '上海分中心',
+                deadline: '2024-06-20T09:00',
+                url: 'http://bidding.saic.com.cn/008',
+                summary: 'IATF16949汽车行业质量管理体系认证，覆盖乘用车、商用车生产线',
+                amount: 280,
+                files: ['招标公告.pdf'],
+                status: 'pending_result',
+                statusText: '待登记结果',
+                opportunityId: 'opp_002',
+                opportunityName: '上汽集团新能源认证项目',
+                createTime: '2024-04-10 10:30',
+                createBy: '赵六',
+                approval: { status: 'approved', approver: '李经理', time: '2024-04-11 14:00', remark: '通过' },
+                bidConfirm: { amount: 275, quoteId: 'quo_002', quoteNo: 'BJ2024-Q-002', files: ['标书.pdf', '报价单.pdf'], confirmTime: '2024-04-18 16:00' },
+                result: null,
+                logs: [
+                    { time: '2024-04-10 10:30', user: '赵六', action: '提交审批', remark: '' },
+                    { time: '2024-04-11 14:00', user: '李经理', action: '审批通过', remark: '通过' },
+                    { time: '2024-04-18 16:00', user: '赵六', action: '确认投标', remark: '关联报价单BJ2024-Q-002，报价275万元' }
+                ]
+            },
+            // ===== 7. 已中标 =====
+            {
+                id: 'ZB20240009',
+                customerId: 'cust_001',
+                customerName: '中国石油天然气集团有限公司',
+                customerRegionCode: 'HB',
+                bidName: 'ISO9001质量管理体系再认证及扩大范围',
+                bidNo: 'CNPC-2024-QMS-RC-009',
+                bidUnitId: 'cqc-hq',
+                bidUnitName: '中国质量认证中心',
+                bidUnitIsHQ: true,
+                followerId: 'user_001',
+                followerName: '张三',
+                followerDept: '北京分中心',
+                deadline: '2024-04-30T17:00',
+                url: 'http://bidding.cnpc.com.cn/009',
+                summary: 'ISO9001再认证审核，新增天然气勘探、储运业务范围',
+                amount: 560,
+                files: ['采购文件.pdf'],
+                status: 'won',
+                statusText: '已中标',
+                opportunityId: 'opp_001',
+                opportunityName: '中石油2024年体系认证商机',
+                createTime: '2024-03-15 09:00',
+                createBy: '张三',
+                approval: { status: 'approved', approver: '李经理', time: '2024-03-16 10:00', remark: '同意' },
+                bidConfirm: { amount: 558, quoteId: 'quo_005', quoteNo: 'BJ2024-Q-005', files: ['标书.pdf'], confirmTime: '2024-03-28 09:00' },
+                result: { isWin: true, winAmount: 558, actualAmount: 558, quoteId: 'quo_005', quoteNo: 'BJ2024-Q-005', winReason: '技术方案领先，价格合理，审核员资质齐全', registerTime: '2024-05-05 10:00', remark: '成功中标', contractNo: 'CNPC-CQC-2024-001' },
+                logs: [
+                    { time: '2024-03-15 09:00', user: '张三', action: '创建并提交审批', remark: '' },
+                    { time: '2024-03-16 10:00', user: '李经理', action: '审批通过', remark: '同意' },
+                    { time: '2024-03-28 09:00', user: '张三', action: '确认投标', remark: '报价558万元' },
+                    { time: '2024-05-05 10:00', user: '张三', action: '登记中标结果', remark: '中标金额558万元' }
+                ]
+            },
+            {
+                id: 'ZB20240016',
+                customerId: 'cust_003',
+                customerName: '中国移动通信集团四川有限公司',
+                customerRegionCode: 'XN',
+                bidName: 'ISO22301业务连续性管理体系认证',
+                bidNo: 'CMCC-2024-BCMS-016',
+                bidUnitId: 'cqc-cd',
+                bidUnitName: '成都分中心',
+                bidUnitIsHQ: false,
+                followerId: 'user_003',
+                followerName: '王五',
+                followerDept: '成都分中心',
+                deadline: '2024-06-05T09:00',
+                url: 'http://bidding.cmcc.com.cn/016',
+                summary: 'ISO22301业务连续性管理认证，覆盖通信网络运维及应急保障体系',
+                amount: 95,
+                files: ['招标公告.pdf'],
+                status: 'won',
+                statusText: '已中标',
+                opportunityId: null,
+                opportunityName: null,
+                createTime: '2024-03-28 14:00',
+                createBy: '王五',
+                approval: { status: 'approved', approver: '李经理', time: '2024-03-29 09:00', remark: '通过' },
+                bidConfirm: { amount: 92, quoteId: null, quoteNo: null, files: ['标书.pdf'], confirmTime: '2024-04-15 10:00' },
+                result: { isWin: true, winAmount: 92, actualAmount: 92, quoteId: null, quoteNo: null, winReason: '价格优势明显，服务方案完善，具备通信行业审核经验', registerTime: '2024-05-20 11:00', remark: '中标', contractNo: 'CMCC-CQC-2024-002' },
+                logs: [
+                    { time: '2024-03-28 14:00', user: '王五', action: '提交审批', remark: '' },
+                    { time: '2024-03-29 09:00', user: '李经理', action: '审批通过', remark: '通过' },
+                    { time: '2024-04-15 10:00', user: '王五', action: '确认投标', remark: '报价92万元' },
+                    { time: '2024-05-20 11:00', user: '王五', action: '登记中标', remark: '中标金额92万元' }
+                ]
+            },
+            // ===== 8. 未中标 =====
+            {
+                id: 'ZB20240010',
+                customerId: 'cust_003',
+                customerName: '中国移动通信集团四川有限公司',
+                customerRegionCode: 'XN',
+                bidName: 'ISO20000信息技术服务管理体系认证',
+                bidNo: 'CMCC-2024-ITSMS-010',
+                bidUnitId: 'cqc-cd',
+                bidUnitName: '成都分中心',
+                bidUnitIsHQ: false,
+                followerId: 'user_003',
+                followerName: '王五',
+                followerDept: '成都分中心',
+                deadline: '2024-05-15T14:00',
+                url: 'http://bidding.cmcc.com.cn/010',
+                summary: 'ISO20000 IT服务管理体系认证，覆盖数据中心运维及客户服务系统',
+                amount: 150,
+                files: ['招标公告.pdf'],
+                status: 'lost',
+                statusText: '未中标',
+                opportunityId: null,
+                opportunityName: null,
+                createTime: '2024-03-20 10:00',
+                createBy: '王五',
+                approval: { status: 'approved', approver: '李经理', time: '2024-03-21 09:00', remark: '可以投' },
+                bidConfirm: { amount: 148, quoteId: null, quoteNo: null, files: ['标书.pdf'], confirmTime: '2024-04-01 11:00' },
+                result: { isWin: false, loseUnit: '四川某某认证公司', loseAmount: 135, loseReason: '竞争对手价格更低，且本地服务响应更快', registerTime: '2024-05-10 16:00', remark: '竞争对手价格更低' },
+                logs: [
+                    { time: '2024-03-20 10:00', user: '王五', action: '提交审批', remark: '' },
+                    { time: '2024-03-21 09:00', user: '李经理', action: '审批通过', remark: '可以投' },
+                    { time: '2024-04-01 11:00', user: '王五', action: '确认投标', remark: '报价148万元' },
+                    { time: '2024-05-10 16:00', user: '王五', action: '登记未中标', remark: '竞争对手价格更低' }
+                ]
+            },
+            // ===== 9. 已驳回 =====
+            {
+                id: 'ZB20240011',
+                customerId: 'cust_006',
+                customerName: '中国南方电网有限责任公司',
+                customerRegionCode: 'HN',
+                bidName: 'ISO27001信息安全管理体系认证服务',
+                bidNo: 'CSG-2024-ISMS-011',
+                bidUnitId: 'cqc-gd',
+                bidUnitName: '广东有限公司',
+                bidUnitIsHQ: false,
+                followerId: 'user_005',
+                followerName: '孙七',
+                followerDept: '广州分中心',
+                deadline: '2024-06-10T10:00',
+                url: 'http://bidding.csg.com.cn/011',
+                summary: 'ISO27001信息安全管理体系认证，覆盖电网调度系统及客户信息平台',
+                amount: 220,
+                files: ['采购公告.pdf'],
+                status: 'rejected',
+                statusText: '已驳回',
+                opportunityId: null,
+                opportunityName: null,
+                createTime: '2024-04-12 09:30',
+                createBy: '孙七',
+                approval: { status: 'rejected', approver: '李经理', time: '2024-04-13 10:00', remark: '投标截止日期太近，准备时间不足，建议下一期再投' },
+                bidConfirm: null,
+                result: null,
+                logs: [
+                    { time: '2024-04-12 09:30', user: '孙七', action: '提交审批', remark: '' },
+                    { time: '2024-04-13 10:00', user: '李经理', action: '审批驳回', remark: '投标截止日期太近，准备时间不足，建议下一期再投' }
+                ]
+            }
+        ];
+
+        const statusConfig = {
+            draft: { class: 'status-draft', text: '草稿', step: 1, sortOrder: 1 },
+            pending_approval: { class: 'status-pending', text: '待审批', step: 2, sortOrder: 2 },
+            pending_bid_confirm: { class: 'status-bid-confirm', text: '待投标确认', step: 3, sortOrder: 3 },
+            pending_result: { class: 'status-result', text: '待登记结果', step: 4, sortOrder: 4 },
+            won: { class: 'status-won', text: '已中标', step: 5, sortOrder: 5 },
+            lost: { class: 'status-lost', text: '未中标', step: 5, sortOrder: 6 },
+            rejected: { class: 'status-rejected', text: '已驳回', step: 2, sortOrder: 7 }
+        };
+
+        const flowSteps = [
+            { key: 'create', label: '创建项目', status: ['draft', 'pending_approval', 'rejected', 'pending_bid_confirm', 'pending_result', 'won', 'lost'] },
+            { key: 'approval', label: '项目审批', status: ['pending_approval', 'rejected', 'pending_bid_confirm', 'pending_result', 'won', 'lost'] },
+            { key: 'bid_confirm', label: '投标确认', status: ['pending_bid_confirm', 'pending_result', 'won', 'lost'] },
+            { key: 'result', label: '结果登记', status: ['pending_result', 'won', 'lost'] },
+            { key: 'complete', label: '流程结束', status: ['won', 'lost'] }
+        ];
+
+        let currentProjectId = null;
+        let tempFiles = [];
+        let tempBidFiles = [];
+        let selectedImportData = null;
+        let selectedBidUnit = null;
+        let selectedOpportunity = null;
+        let selectedQuote = null;
+        let selectedResultQuote = null;
+        let editingProjectId = null;
+        let currentResultType = null;
+        let selectedFollower = null;
+
+        // ==================== 初始化 ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTable();
+            updateStats();
+            const d = new Date();
+            d.setDate(d.getDate() + 7);
+            d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+            document.getElementById('pmDeadline').value = d.toISOString().slice(0, 16);
+        });
+
+        // ==================== 角色切换 ====================
+        function switchRole(role) {
+            currentRole = role;
+            const newBtn = document.getElementById('newProjectBtn');
+            if (role === 'marketer' || role === 'demo') {
+                newBtn.classList.remove('hidden');
+            } else {
+                newBtn.classList.add('hidden');
+            }
+            renderTable();
+            updateStats();
+            showToast(`已切换至：${roleNames[role]}`, 'info');
+        }
+
+        // ==================== 统计卡片 ====================
+        function updateStats() {
+            const stats = { total: 0, draft: 0, pending: 0, bid: 0, result: 0, won: 0, lost: 0 };
+            projects.forEach(p => {
+                stats.total++;
+                if (p.status === 'draft') stats.draft++;
+                else if (p.status === 'pending_approval') stats.pending++;
+                else if (p.status === 'pending_bid_confirm') stats.bid++;
+                else if (p.status === 'pending_result') stats.result++;
+                else if (p.status === 'won') stats.won++;
+                else if (p.status === 'lost') stats.lost++;
+            });
+            const pendingProcess = stats.pending + stats.bid + stats.result;
+            document.getElementById('total-count').textContent = stats.total;
+            document.getElementById('pending-count').textContent = pendingProcess;
+            document.getElementById('page-total').textContent = stats.total;
+            document.getElementById('page-size').textContent = stats.total;
+
+            const cards = [
+                { label: '全部项目', value: stats.total, color: 'text-gray-700' },
+                { label: '草稿', value: stats.draft, color: 'text-gray-500' },
+                { label: '待审批', value: stats.pending, color: 'text-orange-600' },
+                { label: '待投标确认', value: stats.bid, color: 'text-green-600' },
+                { label: '已中标', value: stats.won, color: 'text-green-600' }
+            ];
+            document.getElementById('statCards').innerHTML = cards.map(c => `
+                <div class="stat-card" onclick="filterByStatus('${c.label}')">
+                    <div class="stat-value ${c.color}">${c.value}</div>
+                    <div class="stat-label">${c.label}</div>
+                </div>
+            `).join('');
+        }
+
+        function filterByStatus(label) {
+            const map = { '草稿': 'draft', '待审批': 'pending_approval', '待投标确认': 'pending_bid_confirm', '已中标': 'won' };
+            if (map[label]) {
+                document.getElementById('filterStatus').value = map[label];
+                filterTable();
+            }
+        }
+
+        // ==================== 表格渲染（按操作顺序排序） ====================
+        function renderTable(data = projects) {
+            const tbody = document.getElementById('tableBody');
+            let filtered = [...data];
+
+            // 非演示模式下按角色过滤
+            if (!isDemoMode()) {
+                if (currentRole === 'marketer') {
+                    filtered = filtered.filter(p => p.followerId === currentUser.id || p.createBy === currentUser.name);
+                }
+            }
+
+            const status = document.getElementById('filterStatus').value;
+            const customer = document.getElementById('filterCustomer').value.toLowerCase();
+            const bidName = document.getElementById('filterBidName').value.toLowerCase();
+            const projectNo = document.getElementById('filterProjectNo').value.toLowerCase();
+            const bidUnit = document.getElementById('filterBidUnit').value;
+            const follower = document.getElementById('filterFollower').value;
+
+            filtered = filtered.filter(p => {
+                return (!status || p.status === status) &&
+                       (!customer || p.customerName.toLowerCase().includes(customer)) &&
+                       (!bidName || p.bidName.toLowerCase().includes(bidName)) &&
+                       (!projectNo || p.id.toLowerCase().includes(projectNo) || p.bidNo.toLowerCase().includes(projectNo)) &&
+                       (!bidUnit || (bidUnit === 'hq' ? p.bidUnitIsHQ : !p.bidUnitIsHQ)) &&
+                       (!follower || p.followerName === follower);
+            });
+
+            // 按操作顺序排序（草稿→待审批→待投标确认→待登记结果→已中标→未中标→已驳回）
+            filtered.sort((a, b) => {
+                const orderA = statusConfig[a.status].sortOrder;
+                const orderB = statusConfig[b.status].sortOrder;
+                if (orderA !== orderB) return orderA - orderB;
+                return new Date(b.createTime) - new Date(a.createTime);
+            });
+
+            tbody.innerHTML = filtered.map(p => {
+                const st = statusConfig[p.status];
+                const amountDisplay = p.amount ? `${p.amount}万` : '-';
+                const oppDisplay = p.opportunityName ? `<span class="tag tag-blue">${p.opportunityName}</span>` : '-';
+
+                let actions = [];
+                const canEdit = isDemoMode() || (currentRole === 'marketer' && (p.followerId === currentUser.id || p.createBy === currentUser.name));
+                const canApprove = isDemoMode() || currentRole === 'manager';
+                const canAll = isDemoMode();
+
+                // 草稿：编辑、提交、删除
+                if (p.status === 'draft' && (canEdit || canAll)) {
+                    actions.push(`<button class="action-btn" onclick="editProject('${p.id}')"><i class="fas fa-edit"></i> 编辑</button>`);
+                    actions.push(`<button class="action-btn" onclick="submitProjectForApproval('${p.id}')"><i class="fas fa-paper-plane"></i> 提交</button>`);
+                }
+                // 待审批：审批
+                if (p.status === 'pending_approval' && (canApprove || canAll)) {
+                    actions.push(`<button class="action-btn warning" onclick="openApproval('${p.id}')"><i class="fas fa-gavel"></i> 审批</button>`);
+                }
+                // 待投标确认：确认投标
+                if (p.status === 'pending_bid_confirm' && (canEdit || canAll)) {
+                    actions.push(`<button class="action-btn success" onclick="openBidConfirm('${p.id}')"><i class="fas fa-check-circle"></i> 确认投标</button>`);
+                }
+                // 待登记结果：登记结果
+                if (p.status === 'pending_result' && (canEdit || canAll)) {
+                    actions.push(`<button class="action-btn" onclick="openResultRegister('${p.id}')"><i class="fas fa-clipboard-check"></i> 登记结果</button>`);
+                }
+
+                // 删除（除了已中标/未中标）
+                const canDelete = (isDemoMode() || currentRole === 'marketer' || currentRole === 'manager' || currentRole === 'region_leader' || currentRole === 'hq_leader') 
+                    && p.status !== 'won' && p.status !== 'lost';
+                if (canDelete) {
+                    actions.push(`<button class="action-btn delete" onclick="confirmDeleteProject('${p.id}')"><i class="fas fa-trash"></i> 删除</button>`);
+                }
+
+                actions.push(`<button class="action-btn" onclick="openDetail('${p.id}')"><i class="fas fa-eye"></i> 详情</button>`);
+                // 状态提示（更明显的视觉提示）
+                let statusExtra = '';
+
+                return `
+                    <tr>
+                        <td class="col-sticky-left font-mono text-gray-600 font-medium">${p.id}</td>
+                        <td class="col-sticky-left-2">
+                            <div class="font-semibold text-gray-900 text-sm">${p.bidName}</div>
+                            <div class="text-xs text-gray-500 mt-0.5">编号：${p.bidNo}</div>
+                        </td>
+                        <td>
+                            <div class="text-sm font-medium text-gray-900">${p.customerName}</div>
+                            <div class="text-xs text-gray-500">${getRegionName(p.customerRegionCode)}</div>
+                        </td>
+                        <td>
+                            <div class="text-sm ${p.bidUnitIsHQ ? 'text-purple-700 font-semibold' : 'text-gray-700'}">${p.bidUnitName}</div>
+                            ${p.bidUnitIsHQ ? '<span class="tag tag-purple mt-1">总部</span>' : ''}
+                        </td>
+                        <td>
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">${p.followerName.charAt(0)}</div>
+                                <span class="text-sm">${p.followerName}</span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-0.5">${p.followerDept}</div>
+                        </td>
+                        <td class="text-sm text-gray-700">${formatDate(p.deadline)}</td>
+                        <td class="text-sm font-medium ${p.amount ? 'text-green-600' : 'text-gray-400'}">${amountDisplay}</td>
+                        <td>${oppDisplay}</td>
+                        <td class="col-sticky-right">
+                            <div class="flex flex-col gap-1">
+                                <span class="status-badge ${st.class}">${st.text}</span>
+                                ${statusExtra}
+                            </div>
+                        </td>
+                        <td class="col-sticky-right-2"><div class="action-btns">${actions.join('')}</div></td>
+                    </tr>
+                `;
+            }).join('');
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" class="text-center py-12 text-gray-400"><i class="fas fa-inbox text-3xl mb-3 block"></i>暂无数据</td></tr>`;
+            }
+        }
+
+        function getRegionName(code) {
+            const map = { 'HB': '华北区域', 'HD': '华东区域', 'XN': '西南区域', 'HZ': '华中区域', 'HN': '华南区域' };
+            return map[code] || code;
+        }
+
+        function filterTable() { renderTable(); }
+        function resetFilter() {
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterCustomer').value = '';
+            document.getElementById('filterBidName').value = '';
+            document.getElementById('filterProjectNo').value = '';
+            document.getElementById('filterBidUnit').value = '';
+            document.getElementById('filterFollower').value = '';
+            renderTable();
+        }
+        function toggleFilter() { showToast('筛选栏已切换', 'info'); }
+
+        // ==================== 详情抽屉（锚点导航） ====================
+        function openDetail(projectId) {
+            const p = projects.find(x => x.id === projectId);
+            if (!p) return;
+
+            currentProjectId = projectId;
+            document.getElementById('detailTitle').textContent = p.bidName;
+            document.getElementById('detailSubtitle').textContent = `项目编号：${p.id} | 招标编号：${p.bidNo}`;
+
+            const st = statusConfig[p.status];
+            const badge = document.getElementById('detailStatusBadge');
+            badge.className = `status-badge ${st.class}`;
+            badge.textContent = st.text;
+
+            renderProcessSteps(p);
+            renderDetailContent(p);
+            renderDetailFooter(p);
+
+            document.getElementById('drawerOverlay').classList.add('active');
+            document.getElementById('detailDrawer').classList.add('active');
+        }
+
+        function renderProcessSteps(p) {
+            const container = document.getElementById('processSteps');
+            const currentStep = statusConfig[p.status].step;
+            const isRejected = p.status === 'rejected';
+
+            let html = '';
+            flowSteps.forEach((step, index) => {
+                const stepNum = index + 1;
+                let state = 'pending';
+                if (isRejected && stepNum === 2) state = 'rejected';
+                else if (stepNum < currentStep) state = 'completed';
+                else if (stepNum === currentStep) state = 'active';
+                else if (stepNum > currentStep && !isRejected) state = 'pending';
+
+                if ((step.key === 'material_apply' || step.key === 'material_upload') && !p.bidUnitIsHQ) return;
+
+                const iconMap = {
+                    create: 'fa-plus', approval: 'fa-gavel', bid_confirm: 'fa-check-circle', result: 'fa-clipboard-check', complete: 'fa-flag-checkered'
+                };
+
+                html += `<div class="process-step ${state}"><i class="fas ${iconMap[step.key]}"></i><span>${step.label}</span></div>`;
+                if (index < flowSteps.length - 1) html += `<i class="fas fa-chevron-right process-arrow"></i>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderDetailContent(p) {
+            const body = document.getElementById('detailBody');
+            let html = '';
+
+            // 基本信息
+            html += `
+                <div class="detail-section" id="sec-basic">
+                    <div class="detail-section-title"><i class="fas fa-file-invoice text-blue-600"></i> 基本信息</div>
+                    <div class="detail-grid">
+                        <div class="detail-item"><div class="detail-item-label">项目编号</div><div class="detail-item-value">${p.id}</div></div>
+                        <div class="detail-item"><div class="detail-item-label">招标方编号</div><div class="detail-item-value">${p.bidNo}</div></div>
+                        <div class="detail-item"><div class="detail-item-label">采购人</div><div class="detail-item-value">${p.customerName}</div></div>
+                        <div class="detail-item"><div class="detail-item-label">所属区域</div><div class="detail-item-value">${getRegionName(p.customerRegionCode)}</div></div>
+                        <div class="detail-item"><div class="detail-item-label">应标单位</div><div class="detail-item-value ${p.bidUnitIsHQ ? 'text-purple-700 font-semibold' : ''}">${p.bidUnitName} ${p.bidUnitIsHQ ? '<span class="tag tag-purple">总部</span>' : ''}</div></div>
+                        <div class="detail-item"><div class="detail-item-label">跟进人</div><div class="detail-item-value">${p.followerName}（${p.followerDept}）</div></div>
+                        <div class="detail-item"><div class="detail-item-label">投标截止日期</div><div class="detail-item-value">${formatDate(p.deadline)}</div></div>
+                        <div class="detail-item"><div class="detail-item-label">投标网址</div><div class="detail-item-value"><a href="${p.url}" target="_blank" class="text-blue-600 hover:underline text-xs">${p.url}</a></div></div>
+                        <div class="detail-item"><div class="detail-item-label">应标价</div><div class="detail-item-value ${p.amount ? 'text-green-600 font-bold' : 'text-gray-400'}">${p.amount ? p.amount + ' 万元' : '未填写'}</div></div>
+                        <div class="detail-item"><div class="detail-item-label">关联商机</div><div class="detail-item-value">${p.opportunityName || '<span class="text-gray-400">未关联</span>'}</div></div>
+                        <div class="detail-item col-span-2"><div class="detail-item-label">内容摘要</div><div class="detail-item-value text-sm leading-relaxed">${p.summary || '-'}</div></div>
+                        <div class="detail-item col-span-2"><div class="detail-item-label">采购文件</div><div class="detail-item-value">${p.files.map(f => `<span class="tag tag-blue"><i class="fas fa-file-alt mr-1"></i>${f}</span>`).join(' ') || '<span class="text-gray-400">无</span>'}</div></div>
+                    </div>
+                </div>
+            `;
+
+            // 审批记录
+            if (p.approval) {
+                html += `
+                    <div class="detail-section" id="sec-approval">
+                        <div class="detail-section-title"><i class="fas fa-gavel text-orange-600"></i> 审批记录</div>
+                        <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-semibold text-sm">审批结果：<span class="${p.approval.status === 'approved' ? 'text-green-600' : 'text-red-600'}">${p.approval.status === 'approved' ? '通过' : '驳回'}</span></span>
+                                <span class="text-xs text-gray-500">${p.approval.time}</span>
+                            </div>
+                            <div class="text-sm text-gray-600 mb-1">审批人：${p.approval.approver}</div>
+                            ${p.approval.remark ? `
+                            <div class="approval-opinion ${p.approval.status === 'rejected' ? 'reject' : ''}">
+                                <div class="text-xs font-semibold mb-1">审批意见</div>
+                                <div class="text-sm">${p.approval.remark}</div>
+                            </div>` : '<div class="text-xs text-gray-400 mt-2">无审批意见</div>'}
+                        </div>
+                    </div>
+                `;
+            }
+            // 投标确认
+            if (p.bidConfirm) {
+                html += `
+                    <div class="detail-section" id="sec-bid">
+                        <div class="detail-section-title"><i class="fas fa-check-circle text-green-600"></i> 投标确认</div>
+                        <div class="detail-grid">
+                            <div class="detail-item"><div class="detail-item-label">报价金额</div><div class="detail-item-value text-green-600 font-bold text-lg">${p.bidConfirm.amount} 万元</div></div>
+                            <div class="detail-item"><div class="detail-item-label">关联报价单</div><div class="detail-item-value">${p.bidConfirm.quoteNo || '<span class="text-gray-400">未关联</span>'}</div></div>
+                            <div class="detail-item"><div class="detail-item-label">确认时间</div><div class="detail-item-value">${p.bidConfirm.confirmTime}</div></div>
+                            <div class="detail-item col-span-2"><div class="detail-item-label">标书文件</div><div class="detail-item-value">${p.bidConfirm.files.map(f => `<span class="tag tag-blue"><i class="fas fa-file-alt mr-1"></i>${f}</span>`).join(' ') || '-'}</div></div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 结果登记
+            if (p.result) {
+                html += `
+                    <div class="detail-section" id="sec-result">
+                        <div class="detail-section-title"><i class="fas fa-trophy text-yellow-600"></i> 中标结果</div>
+                        <div class="p-4 ${p.result.isWin ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} rounded-lg border">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-12 h-12 rounded-full ${p.result.isWin ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'} flex items-center justify-center text-2xl">
+                                    <i class="fas ${p.result.isWin ? 'fa-trophy' : 'fa-times-circle'}"></i>
+                                </div>
+                                <div>
+                                    <div class="text-lg font-bold ${p.result.isWin ? 'text-green-700' : 'text-red-700'}">${p.result.isWin ? '中标' : '未中标'}</div>
+                                    <div class="text-xs text-gray-500">登记时间：${p.result.registerTime}</div>
+                                </div>
+                            </div>
+                            ${p.result.isWin ? `
+                                <div class="detail-grid mt-3">
+                                    <div class="detail-item"><div class="detail-item-label">实际成交价格</div><div class="detail-item-value text-green-600 font-bold">${p.result.actualAmount || p.result.winAmount} 万元</div></div>
+                                    <div class="detail-item"><div class="detail-item-label">关联报价单</div><div class="detail-item-value">${p.result.quoteNo || '-'}</div></div>
+                                    <div class="detail-item"><div class="detail-item-label">合同编号</div><div class="detail-item-value">${p.result.contractNo || '-'}</div></div>
+                                    <div class="detail-item col-span-2"><div class="detail-item-label">中标原因</div><div class="detail-item-value text-sm">${p.result.winReason || '-'}</div></div>
+                                </div>
+                            ` : `
+                                <div class="detail-grid mt-3">
+                                    <div class="detail-item"><div class="detail-item-label">中标单位</div><div class="detail-item-value">${p.result.loseUnit || '-'}</div></div>
+                                    <div class="detail-item"><div class="detail-item-label">成交价格</div><div class="detail-item-value">${p.result.loseAmount ? p.result.loseAmount + ' 万元' : '-'}</div></div>
+                                    <div class="detail-item col-span-2"><div class="detail-item-label">未中标原因</div><div class="detail-item-value text-sm">${p.result.loseReason || '-'}</div></div>
+                                </div>
+                            `}
+                            <div class="mt-3 text-sm text-gray-600"><span class="font-semibold">备注：</span>${p.result.remark || '-'}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 操作日志
+            html += `
+                <div class="detail-section" style="border-bottom: none;" id="sec-logs">
+                    <div class="detail-section-title"><i class="fas fa-history text-gray-600"></i> 操作日志</div>
+                    <div class="timeline">
+                        ${p.logs.map((log, i) => `
+                            <div class="timeline-item ${i === p.logs.length - 1 ? 'active' : 'completed'}">
+                                <div class="timeline-dot"><i class="fas ${i === p.logs.length - 1 ? 'fa-clock' : 'fa-check'}"></i></div>
+                                <div class="timeline-content">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="font-semibold text-sm">${log.action}</span>
+                                        <span class="text-xs text-gray-500">${log.time}</span>
+                                    </div>
+                                    <div class="text-xs text-gray-600">操作人：${log.user}</div>
+                                    ${log.remark ? `<div class="text-xs text-gray-500 mt-1">备注：${log.remark}</div>` : ''}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            body.innerHTML = html;
+        }
+
+        function renderDetailFooter(p) {
+            const footer = document.getElementById('detailFooter');
+            let btns = [];
+            const canEdit = isDemoMode() || (currentRole === 'marketer' && (p.followerId === currentUser.id || p.createBy === currentUser.name));
+            const canApprove = isDemoMode() || currentRole === 'manager';
+
+            if (p.status === 'draft' && (canEdit || isDemoMode())) {
+                btns.push(`<button onclick="editProject('${p.id}')" class="btn btn-primary"><i class="fas fa-edit"></i> 编辑</button>`);
+                btns.push(`<button onclick="submitProjectForApproval('${p.id}')" class="btn btn-success"><i class="fas fa-paper-plane"></i> 提交审批</button>`);
+            }
+            if (p.status === 'pending_approval' && (canApprove || isDemoMode())) {
+                btns.push(`<button onclick="openApproval('${p.id}')" class="btn btn-warning"><i class="fas fa-gavel"></i> 审批</button>`);
+            }
+            if (p.status === 'pending_bid_confirm' && (canEdit || isDemoMode())) {
+                btns.push(`<button onclick="openBidConfirm('${p.id}')" class="btn btn-success"><i class="fas fa-check-circle"></i> 确认投标</button>`);
+            }
+            if (p.status === 'pending_result' && (canEdit || isDemoMode())) {
+                btns.push(`<button onclick="openResultRegister('${p.id}')" class="btn btn-primary"><i class="fas fa-clipboard-check"></i> 登记结果</button>`);
+            }
+
+            footer.innerHTML = btns.join('');
+            footer.style.display = btns.length ? 'flex' : 'none';
+        }
+
+        function switchDetailTab(tab) {
+            document.querySelectorAll('.drawer-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const map = { 'basic': 'sec-basic', 'approval': 'sec-approval', 'bid': 'sec-bid', 'result': 'sec-result', 'logs': 'sec-logs' };
+            const el = document.getElementById(map[tab]);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function closeDetailDrawer() {
+            document.getElementById('detailDrawer').classList.remove('active');
+            document.getElementById('drawerOverlay').classList.remove('active');
+        }
+
+        // ==================== 新建/编辑项目弹窗 ====================
+        function openNewProjectModal() {
+            editingProjectId = null;
+            document.getElementById('projectModalTitle').textContent = '新建招标项目';
+            resetProjectForm();
+            openModal('projectModalOverlay');
+        }
+
+        function editProject(projectId) {
+            const p = projects.find(x => x.id === projectId);
+            if (!p) return;
+            editingProjectId = projectId;
+            document.getElementById('projectModalTitle').textContent = '编辑招标项目';
+
+            document.getElementById('pmCustomerName').value = p.customerName;
+            document.getElementById('pmCustomerId').value = p.customerId;
+            document.getElementById('pmCustomerRegion').value = p.customerRegionCode;
+            document.getElementById('pmRegionDisplay').value = getRegionName(p.customerRegionCode) + (p.customerRegionCode === currentUser.regionCode ? '（同区域）' : '（跨区域）');
+            document.getElementById('pmProjectNo').value = p.bidNo;
+            document.getElementById('pmBidName').value = p.bidName;
+            document.getElementById('pmDeadline').value = p.deadline;
+            document.getElementById('pmUrl').value = p.url || '';
+            document.getElementById('pmSummary').value = p.summary || '';
+            document.getElementById('pmAmount').value = p.amount || '';
+            document.getElementById('pmBidUnitName').value = p.bidUnitName;
+            document.getElementById('pmBidUnitId').value = p.bidUnitId;
+            document.getElementById('pmBidUnitIsHQ').value = p.bidUnitIsHQ ? '1' : '';
+
+            document.getElementById('pmFollowerName').value = p.followerName;
+            document.getElementById('pmFollowerId').value = p.followerId;
+            document.getElementById('pmFollowerDept').value = p.followerDept;
+            selectedFollower = { id: p.followerId, name: p.followerName, dept: p.followerDept };
+
+            document.getElementById('pmOpportunityName').value = p.opportunityName || '';
+            document.getElementById('pmOpportunityId').value = p.opportunityId || '';
+
+            tempFiles = [...p.files];
+            renderProjectFiles();
+
+            selectedBidUnit = bidUnits.find(b => b.id === p.bidUnitId);
+            selectedImportData = aiPlatformBids.find(b => b.customerId === p.customerId && b.bidNo === p.bidNo);
+
+            openModal('projectModalOverlay');
+        }
+
+        function closeProjectModal() { closeModal('projectModalOverlay'); }
+
+        function resetProjectForm() {
+            document.getElementById('pmCustomerName').value = '';
+            document.getElementById('pmCustomerId').value = '';
+            document.getElementById('pmCustomerRegion').value = '';
+            document.getElementById('pmRegionDisplay').value = '';
+            document.getElementById('pmProjectNo').value = '';
+            document.getElementById('pmBidName').value = '';
+            document.getElementById('pmUrl').value = '';
+            document.getElementById('pmSummary').value = '';
+            document.getElementById('pmAmount').value = '';
+            document.getElementById('pmBidUnitName').value = '';
+            document.getElementById('pmBidUnitId').value = '';
+            document.getElementById('pmBidUnitIsHQ').value = '';
+
+            document.getElementById('pmFollowerName').value = '';
+            document.getElementById('pmFollowerId').value = '';
+            document.getElementById('pmFollowerDept').value = '';
+            selectedFollower = null;
+
+            document.getElementById('pmOpportunityName').value = '';
+            document.getElementById('pmOpportunityId').value = '';
+            document.getElementById('regionAlert').classList.add('hidden');
+            tempFiles = [];
+            renderProjectFiles();
+            selectedImportData = null;
+            selectedBidUnit = null;
+            selectedOpportunity = null;
+        }
+
+        function saveProjectDraft() {
+            const data = getProjectFormData();
+            if (!data.customerId) { showToast('请先导入招采数据', 'error'); return; }
+            if (!data.followerId) { showToast('请选择跟进人', 'error'); return; }
+
+            if (editingProjectId) {
+                const p = projects.find(x => x.id === editingProjectId);
+                Object.assign(p, data, { status: 'draft', statusText: '草稿' });
+                p.logs.push({ time: now(), user: currentUser.name, action: '编辑保存草稿', remark: '' });
+            } else {
+                const newId = 'ZB' + (20240000 + projects.length + 1);
+                projects.unshift({
+                    id: newId, ...data, status: 'draft', statusText: '草稿',
+                    createTime: now(), createBy: currentUser.name,
+                    approval: null, bidConfirm: null, result: null,
+                    logs: [{ time: now(), user: currentUser.name, action: '创建草稿', remark: '保存为草稿' }]
+                });
+            }
+            closeProjectModal();
+            renderTable(); updateStats(); showToast('草稿已保存');
+        }
+
+        function submitProject() {
+            const data = getProjectFormData();
+            if (!data.customerId) { showToast('请先导入招采数据', 'error'); return; }
+            if (!data.bidNo) { showToast('请输入招标方项目编号', 'error'); return; }
+            if (!data.bidName) { showToast('请输入标的名称', 'error'); return; }
+            if (!data.deadline) { showToast('请选择投标截止日期', 'error'); return; }
+            if (!data.bidUnitId) { showToast('请选择应标单位', 'error'); return; }
+            if (!data.followerId) { showToast('请选择跟进人', 'error'); return; }
+
+            const customer = customerDatabase[data.customerId];
+            if (customer && customer.regionCode !== currentUser.regionCode && !customer.crossRegionApproved) {
+                showToast('该客户跨区域未报备，无法提交', 'error');
+                document.getElementById('regionAlert').classList.remove('hidden');
+                return;
+            }
+
+            if (editingProjectId) {
+                const p = projects.find(x => x.id === editingProjectId);
+                Object.assign(p, data, { status: 'pending_approval', statusText: '待审批' });
+                p.logs.push({ time: now(), user: currentUser.name, action: '提交审批', remark: '' });
+            } else {
+                const newId = 'ZB' + (20240000 + projects.length + 1);
+                projects.unshift({
+                    id: newId, ...data, status: 'pending_approval', statusText: '待审批',
+                    createTime: now(), createBy: currentUser.name,
+                    approval: null, bidConfirm: null, result: null,
+                    logs: [{ time: now(), user: currentUser.name, action: '提交审批', remark: '' }]
+                });
+            }
+            closeProjectModal();
+            renderTable(); updateStats(); showToast('项目已提交审批');
+        }
+
+        function submitProjectForApproval(projectId) {
+            const p = projects.find(x => x.id === projectId);
+            if (!p) return;
+            if (!p.bidNo || !p.bidName || !p.deadline || !p.bidUnitId || !p.followerId) {
+                showToast('项目信息不完整，请先编辑完善', 'error'); return;
+            }
+            p.status = 'pending_approval'; p.statusText = '待审批';
+            p.logs.push({ time: now(), user: currentUser.name, action: '提交审批', remark: '' });
+            renderTable(); updateStats(); showToast('已提交审批');
+        }
+
+        function getProjectFormData() {
+            const customerId = document.getElementById('pmCustomerId').value;
+            const customer = customerDatabase[customerId];
+            const bidUnitId = document.getElementById('pmBidUnitId').value;
+            const bidUnit = bidUnits.find(b => b.id === bidUnitId);
+            const followerId = document.getElementById('pmFollowerId').value;
+            const followerName = document.getElementById('pmFollowerName').value;
+            const followerDept = document.getElementById('pmFollowerDept').value;
+
+            return {
+                customerId: customerId,
+                customerName: document.getElementById('pmCustomerName').value,
+                customerRegionCode: customer ? customer.regionCode : '',
+                bidName: document.getElementById('pmBidName').value,
+                bidNo: document.getElementById('pmProjectNo').value,
+                bidUnitId: bidUnitId,
+                bidUnitName: document.getElementById('pmBidUnitName').value,
+                bidUnitIsHQ: bidUnit ? bidUnit.isHQ : false,
+                followerId: followerId,
+                followerName: followerName,
+                followerDept: followerDept || currentUser.dept,
+                deadline: document.getElementById('pmDeadline').value,
+                url: document.getElementById('pmUrl').value,
+                summary: document.getElementById('pmSummary').value,
+                amount: document.getElementById('pmAmount').value ? parseFloat(document.getElementById('pmAmount').value) : null,
+                files: [...tempFiles],
+                opportunityId: document.getElementById('pmOpportunityId').value || null,
+                opportunityName: document.getElementById('pmOpportunityName').value || null
+            };
+        }
+
+        // ==================== AI招采数据导入 ====================
+        function openImportModal() {
+            renderImportList();
+            openModal('importModalOverlay');
+        }
+
+        function closeImportModal() { closeModal('importModalOverlay'); selectedImportData = null; }
+
+        function renderImportList(filtered = aiPlatformBids) {
+            const tbody = document.getElementById('importListBody');
+            document.getElementById('importCount').textContent = filtered.length;
+
+            tbody.innerHTML = filtered.map(item => `
+                <tr class="${selectedImportData?.id === item.id ? 'selected' : ''}" onclick="selectImport('${item.id}')" data-id="${item.id}">
+                    <td>
+                        <div class="w-5 h-5 rounded-full border-2 ${selectedImportData?.id === item.id ? 'bg-blue-500 border-blue-500' : 'border-gray-300'} flex items-center justify-center">
+                            ${selectedImportData?.id === item.id ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                        </div>
+                    </td>
+                    <td class="font-medium">${highlightText(item.bidNo, document.getElementById('searchBidNo')?.value)}</td>
+                    <td>${highlightText(item.bidName, document.getElementById('searchBidName')?.value)}</td>
+                    <td>${highlightText(item.customerName, document.getElementById('searchCustomer')?.value)}</td>
+                    <td>${item.bidUnit}</td>
+                    <td>${formatDate(item.deadline)}</td>
+                    <td><span class="tag tag-green">${item.statusText}</span></td>
+                </tr>
+            `).join('');
+
+            document.getElementById('confirmImportBtn').disabled = !selectedImportData;
+        }
+
+        function filterImportList() {
+            const no = document.getElementById('searchBidNo').value.toLowerCase();
+            const name = document.getElementById('searchBidName').value.toLowerCase();
+            const customer = document.getElementById('searchCustomer').value.toLowerCase();
+            const status = document.getElementById('searchStatus').value;
+
+            const filtered = aiPlatformBids.filter(item => {
+                return (!no || item.bidNo.toLowerCase().includes(no)) &&
+                       (!name || item.bidName.toLowerCase().includes(name)) &&
+                       (!customer || item.customerName.toLowerCase().includes(customer)) &&
+                       (!status || item.status === status);
+            });
+            renderImportList(filtered);
+        }
+
+        function selectImport(id) {
+            const data = aiPlatformBids.find(b => b.id === id);
+            selectedImportData = data;
+            renderImportList();
+        }
+
+        function confirmImport() {
+            const data = selectedImportData;
+            if (!data) return;
+
+            document.getElementById('pmCustomerName').value = data.customerName;
+            document.getElementById('pmCustomerId').value = data.customerId;
+            document.getElementById('pmCustomerRegion').value = data.customerRegionCode;
+            document.getElementById('pmProjectNo').value = data.projectNo;
+            document.getElementById('pmBidName').value = data.bidName;
+            document.getElementById('pmUrl').value = data.url || '';
+            document.getElementById('pmDeadline').value = data.deadline;
+            document.getElementById('pmSummary').value = data.summary || '';
+
+            document.getElementById('pmBidUnitName').value = data.bidUnit;
+            document.getElementById('pmBidUnitId').value = data.bidUnitId;
+            document.getElementById('pmBidUnitIsHQ').value = data.bidUnitIsHQ ? '1' : '';
+            selectedBidUnit = bidUnits.find(b => b.id === data.bidUnitId);
+
+            const customer = customerDatabase[data.customerId];
+            const isSameRegion = data.customerRegionCode === currentUser.regionCode;
+            const regionHtml = isSameRegion 
+                ? `${getRegionName(data.customerRegionCode)}（同区域）` 
+                : `${getRegionName(data.customerRegionCode)}（跨区域）`;
+            document.getElementById('pmRegionDisplay').value = regionHtml;
+
+            const alertBox = document.getElementById('regionAlert');
+            if (!isSameRegion) {
+                if (!customer || !customer.crossRegionApproved) {
+                    alertBox.classList.remove('hidden');
+                    document.getElementById('customerRegion').textContent = getRegionName(data.customerRegionCode);
+                } else {
+                    alertBox.classList.add('hidden');
+                }
+            } else {
+                alertBox.classList.add('hidden');
+            }
+            closeImportModal();
+            showToast('招采数据导入成功，请补充完善信息后提交');
+        }
+
+        function applyCrossRegion() {
+            showToast('已提交跨区域跟进申请，请等待审核', 'info');
+        }
+
+        // ==================== 应标单位选择 ====================
+        function openBidUnitModal() {
+            renderBidUnitTree();
+            openModal('bidUnitModalOverlay');
+        }
+
+        function closeBidUnitModal() { closeModal('bidUnitModalOverlay'); }
+
+        function renderBidUnitTree(filtered = bidUnits) {
+            const container = document.getElementById('bidUnitTree');
+            const hq = filtered.find(b => b.isHQ);
+            const regions = {};
+            filtered.filter(b => !b.isHQ && !b.isRegion).forEach(b => {
+                if (!regions[b.parent]) regions[b.parent] = [];
+                regions[b.parent].push(b);
+            });
+
+            let html = '';
+            if (hq) {
+                html += `
+                    <div class="tree-item ${selectedBidUnit?.id === hq.id ? 'selected' : ''}" onclick="selectBidUnit('${hq.id}')">
+                        <i class="fas fa-building text-orange-500"></i>
+                        <div class="flex-1">
+                            <div class="font-medium text-sm">${hq.name}</div>
+                            <div class="text-xs text-gray-500">${hq.code}</div>
+                        </div>
+                        <span class="tag tag-orange">总部</span>
+                    </div>
+                `;
+            }
+
+            Object.keys(regions).forEach(region => {
+                html += `<div class="px-4 py-2 bg-gray-50 text-xs font-semibold text-gray-600 uppercase tracking-wider">${region}</div>`;
+                regions[region].forEach(b => {
+                    html += `
+                        <div class="tree-item ${selectedBidUnit?.id === b.id ? 'selected' : ''}" onclick="selectBidUnit('${b.id}')">
+                            <i class="fas fa-code-branch text-blue-500"></i>
+                            <div class="flex-1">
+                                <div class="font-medium text-sm">${b.name}</div>
+                                <div class="text-xs text-gray-500">${b.code}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+
+            container.innerHTML = html;
+        }
+
+        function filterBidUnit(keyword) {
+            const filtered = bidUnits.filter(b => b.name.includes(keyword) || b.code.includes(keyword));
+            renderBidUnitTree(filtered);
+        }
+
+        function selectBidUnit(bidUnitId) {
+            const unit = bidUnits.find(b => b.id === bidUnitId);
+            selectedBidUnit = unit;
+            document.getElementById('pmBidUnitName').value = unit.name;
+            document.getElementById('pmBidUnitId').value = unit.id;
+            document.getElementById('pmBidUnitIsHQ').value = unit.isHQ ? '1' : '';
+            renderBidUnitTree();
+        }
+
+        function confirmBidUnit() {
+            if (!selectedBidUnit) { showToast('请选择一个应标单位', 'error'); return; }
+            closeBidUnitModal();
+        }
+
+        // ==================== 跟进人选择（部门-员工层级树） ====================
+        function openFollowerTreeModal() {
+            document.getElementById('ftRegionName').textContent = currentUser.region;
+            renderFollowerTree();
+            openModal('followerTreeModalOverlay');
+        }
+
+        function closeFollowerTreeModal() { closeModal('followerTreeModalOverlay'); }
+
+        function renderFollowerTree(keyword = '') {
+            const container = document.getElementById('followerTreeContainer');
+            const depts = regionOrgTree[currentUser.region] || [];
+
+            let html = '';
+            depts.forEach(dept => {
+                const filteredEmployees = keyword 
+                    ? dept.employees.filter(emp => emp.name.includes(keyword) || dept.dept.includes(keyword))
+                    : dept.employees;
+
+                if (keyword && filteredEmployees.length === 0) return;
+
+                html += `
+                    <div class="org-tree-dept">
+                        <div class="org-tree-dept-header">
+                            <i class="fas fa-building text-gray-400"></i>
+                            <span>${dept.dept}</span>
+                            <span class="text-xs text-gray-400 ml-auto">${filteredEmployees.length}人</span>
+                        </div>
+                `;
+
+                filteredEmployees.forEach(emp => {
+                    const isSelected = selectedFollower && selectedFollower.id === emp.id;
+                    html += `
+                        <div class="org-tree-employee ${isSelected ? 'selected' : ''}" onclick="selectFollowerFromTree('${emp.id}', '${emp.name}', '${dept.dept}')">
+                            <div class="emp-avatar">${emp.name.charAt(0)}</div>
+                            <div class="flex-1">
+                                <div class="text-sm font-medium text-gray-900">${emp.name}</div>
+                                <div class="text-xs text-gray-500">${dept.dept}</div>
+                            </div>
+                            ${isSelected ? '<i class="fas fa-check text-blue-500"></i>' : ''}
+                        </div>
+                    `;
+                });
+
+                html += `</div>`;
+            });
+
+            container.innerHTML = html || '<div class="text-center py-8 text-gray-400 text-sm">暂无匹配数据</div>';
+        }
+
+        function filterFollowerTree(keyword) {
+            renderFollowerTree(keyword);
+        }
+
+        function selectFollowerFromTree(id, name, dept) {
+            selectedFollower = { id, name, dept };
+            renderFollowerTree(document.getElementById('ftSearch').value);
+        }
+
+        function confirmFollowerTree() {
+            if (!selectedFollower) { showToast('请选择一个跟进人', 'error'); return; }
+            document.getElementById('pmFollowerName').value = selectedFollower.name;
+            document.getElementById('pmFollowerId').value = selectedFollower.id;
+            document.getElementById('pmFollowerDept').value = selectedFollower.dept;
+            closeFollowerTreeModal();
+        }
+
+        // ==================== 商机选择 ====================
+        function openOpportunityModal() {
+            renderOpportunityList();
+            openModal('opportunityModalOverlay');
+        }
+
+        function closeOpportunityModal() { closeModal('opportunityModalOverlay'); }
+
+        function renderOpportunityList(filtered = opportunities) {
+            document.getElementById('oppTableBody').innerHTML = filtered.map(o => `
+                <tr onclick="selectOpportunity('${o.id}')" class="cursor-pointer hover:bg-gray-50">
+                    <td>
+                        <div class="w-5 h-5 rounded-full border-2 ${selectedOpportunity?.id === o.id ? 'bg-blue-500 border-blue-500' : 'border-gray-300'} flex items-center justify-center">
+                            ${selectedOpportunity?.id === o.id ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                        </div>
+                    </td>
+                    <td class="font-medium text-sm">${o.name}</td>
+                    <td class="text-sm text-gray-600">${o.customer}</td>
+                    <td class="text-sm font-medium text-green-600">${o.amount}万</td>
+                    <td><span class="tag ${o.stage === '已成交' ? 'tag-green' : 'tag-blue'}">${o.stage}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function filterOpportunities() {
+            const name = document.getElementById('oppSearchName').value.toLowerCase();
+            const customer = document.getElementById('oppSearchCustomer').value.toLowerCase();
+            const stage = document.getElementById('oppSearchStage').value;
+            renderOpportunityList(opportunities.filter(o => 
+                (!name || o.name.toLowerCase().includes(name)) &&
+                (!customer || o.customer.toLowerCase().includes(customer)) &&
+                (!stage || o.stage === stage)
+            ));
+        }
+
+        function selectOpportunity(oppId) {
+            const opp = opportunities.find(o => o.id === oppId);
+            selectedOpportunity = opp;
+            document.getElementById('pmOpportunityName').value = opp.name;
+            document.getElementById('pmOpportunityId').value = opp.id;
+            renderOpportunityList();
+            setTimeout(closeOpportunityModal, 200);
+        }
+
+        // ==================== 文件处理 ====================
+        function handleProjectFiles(input) {
+            Array.from(input.files).forEach(f => tempFiles.push(f.name));
+            renderProjectFiles();
+        }
+
+        function renderProjectFiles() {
+            document.getElementById('pmFileList').innerHTML = tempFiles.map((f, i) => `
+                <div class="flex items-center justify-between p-2 bg-gray-50 rounded text-xs">
+                    <span class="flex items-center gap-2"><i class="fas fa-file-alt text-blue-500"></i>${f}</span>
+                    <button onclick="removeProjectFile(${i})" class="text-red-500 hover:text-red-700"><i class="fas fa-times"></i></button>
+                </div>
+            `).join('');
+        }
+
+        function removeProjectFile(index) { tempFiles.splice(index, 1); renderProjectFiles(); }
+
+        // ==================== 审批弹窗（展示全部信息） ====================
+        function openApproval(projectId) {
+            const p = projects.find(x => x.id === projectId);
+            if (!p) return;
+            currentProjectId = projectId;
+
+            const grid = document.getElementById('approvalDetailGrid');
+            grid.innerHTML = `
+                <div class="approval-detail-item">
+                    <div class="approval-detail-label">项目编号</div>
+                    <div class="approval-detail-value">${p.id}</div>
+                </div>
+                <div class="approval-detail-item">
+                    <div class="approval-detail-label">招标方编号</div>
+                    <div class="approval-detail-value">${p.bidNo}</div>
+                </div>
+                <div class="approval-detail-item">
+                    <div class="approval-detail-label">标的名称</div>
+                    <div class="approval-detail-value">${p.bidName}</div>
+                </div>
+                <div class="approval-detail-item">
+                    <div class="approval-detail-label">采购人</div>
+                    <div class="approval-detail-value">${p.customerName}</div>
+                </div>
+                <div class="approval-detail-item">
+                    <div class="approval-detail-label">所属区域</div>
+                    <div class="approval-detail-value">${getRegionName(p.customerRegionCode)}</div>
+                </div>
+                <div class="approval-detail-item">
+                    <div class="approval-detail-label">应标单位</div>
+                    <div class="approval-detail-value ${p.bidUnitIsHQ ? 'text-purple-700' : ''}">${p.bidUnitName} ${p.bidUnitIsHQ ? '(总部)' : ''}</div>
+                </div>
+                <div class="approval-detail-item">
+                    <div class="approval-detail-label">跟进人</div>
+                    <div class="approval-detail-value">${p.followerName}（${p.followerDept}）</div>
+                </div>
+                <div class="approval-detail-item">
+                    <div class="approval-detail-label">投标截止日期</div>
+                    <div class="approval-detail-value">${formatDate(p.deadline)}</div>
+                </div>
+                <div class="approval-detail-item">
+                    <div class="approval-detail-label">应标价</div>
+                    <div class="approval-detail-value ${p.amount ? 'text-green-600 font-bold' : 'text-gray-400'}">${p.amount ? p.amount + ' 万元' : '未填写'}</div>
+                </div>
+                <div class="approval-detail-item">
+                    <div class="approval-detail-label">关联商机</div>
+                    <div class="approval-detail-value">${p.opportunityName || '未关联'}</div>
+                </div>
+                <div class="approval-detail-item col-span-2">
+                    <div class="approval-detail-label">内容摘要</div>
+                    <div class="approval-detail-value text-sm leading-relaxed">${p.summary || '-'}</div>
+                </div>
+                <div class="approval-detail-item col-span-2">
+                    <div class="approval-detail-label">采购文件</div>
+                    <div class="approval-detail-value">${p.files.map(f => `<span class="tag tag-blue">${f}</span>`).join(' ') || '无'}</div>
+                </div>
+            `;
+
+            document.querySelectorAll('input[name="apResult"]').forEach(r => r.checked = false);
+            document.querySelector('input[name="apResult"][value="approve"]').checked = true;
+            document.getElementById('apRemark').value = '';
+            toggleApprovalRemark();
+            openModal('approvalModalOverlay');
+        }
+
+        function closeApprovalModal() { closeModal('approvalModalOverlay'); }
+
+        function toggleApprovalRemark() {
+            const result = document.querySelector('input[name="apResult"]:checked')?.value;
+            const remarkField = document.getElementById('apRemarkField');
+            const passTip = document.getElementById('apPassTip');
+            if (result === 'reject') {
+                remarkField.style.display = 'block';
+                passTip.style.display = 'none';
+                remarkField.querySelector('label').textContent = '审批意见（驳回原因）*';
+            } else {
+                remarkField.style.display = 'none';
+                passTip.style.display = 'block';
+            }
+        }
+
+        function submitApproval() {
+            const result = document.querySelector('input[name="apResult"]:checked')?.value;
+            const remark = document.getElementById('apRemark').value;
+            if (!result) { showToast('请选择审批结果', 'error'); return; }
+            if (result === 'reject' && !remark) { showToast('驳回时必须填写审批意见', 'error'); return; }
+
+            const p = projects.find(x => x.id === currentProjectId);
+            if (!p) return;
+
+            if (result === 'approve') {
+                p.status = 'pending_bid_confirm';
+                p.statusText = '待投标确认';
+                p.approval = { status: 'approved', approver: currentUser.name, time: now(), remark: '' };
+                p.logs.push({ time: now(), user: currentUser.name, action: '审批通过', remark: '' });
+                showToast('审批已通过');
+            } else {
+                p.status = 'rejected'; p.statusText = '已驳回';
+                p.approval = { status: 'rejected', approver: currentUser.name, time: now(), remark: remark };
+                p.logs.push({ time: now(), user: currentUser.name, action: '审批驳回', remark: remark });
+                showToast('项目已驳回', 'error');
+            }
+            closeApprovalModal(); renderTable(); updateStats();
+            if (document.getElementById('detailDrawer').classList.contains('active')) openDetail(currentProjectId);
+        }
+        // ==================== 投标确认 ====================
+        function openBidConfirm(projectId) {
+            const p = projects.find(x => x.id === projectId);
+            if (!p) return;
+            currentProjectId = projectId;
+            document.getElementById('bcProjectInfo').innerHTML = `
+                <div class="grid grid-cols-2 gap-2 text-sm">
+                    <div><span class="text-gray-500">项目编号：</span>${p.id}</div>
+                    <div><span class="text-gray-500">标的名称：</span>${p.bidName}</div>
+                    <div><span class="text-gray-500">采购人：</span>${p.customerName}</div>
+                    <div><span class="text-gray-500">应标单位：</span>${p.bidUnitName}</div>
+                </div>
+            `;
+            document.getElementById('bcQuoteNo').value = '';
+            document.getElementById('bcQuoteId').value = '';
+            document.getElementById('bcAmount').value = p.amount || '';
+            tempBidFiles = [];
+            renderBidFiles();
+            openModal('bidConfirmModalOverlay');
+        }
+
+        function closeBidConfirmModal() { closeModal('bidConfirmModalOverlay'); }
+
+        function openQuoteModal() {
+            renderQuoteList();
+            openModal('quoteModalOverlay');
+        }
+
+        function closeQuoteModal() { closeModal('quoteModalOverlay'); }
+
+        function renderQuoteList() {
+            document.getElementById('quoteTableBody').innerHTML = quotes.map(q => `
+                <tr onclick="selectQuote('${q.id}')" class="cursor-pointer hover:bg-gray-50">
+                    <td>
+                        <div class="w-5 h-5 rounded-full border-2 ${selectedQuote?.id === q.id ? 'bg-blue-500 border-blue-500' : 'border-gray-300'} flex items-center justify-center">
+                            ${selectedQuote?.id === q.id ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                        </div>
+                    </td>
+                    <td class="font-medium text-sm">${q.no}</td>
+                    <td class="text-sm font-medium text-green-600">${q.amount}万</td>
+                    <td class="text-sm text-gray-500">${q.expiry}</td>
+                </tr>
+            `).join('');
+        }
+
+        function selectQuote(quoteId) {
+            const q = quotes.find(x => x.id === quoteId);
+            selectedQuote = q;
+            document.getElementById('bcQuoteNo').value = q.no;
+            document.getElementById('bcQuoteId').value = q.id;
+            document.getElementById('bcAmount').value = q.amount;
+            renderQuoteList();
+            setTimeout(closeQuoteModal, 200);
+        }
+
+        function clearQuote() { selectedQuote = null; document.getElementById('bcQuoteNo').value = ''; document.getElementById('bcQuoteId').value = ''; }
+
+        function handleBidFiles(input) {
+            Array.from(input.files).forEach(f => tempBidFiles.push(f.name));
+            renderBidFiles();
+        }
+
+        function renderBidFiles() {
+            document.getElementById('bcFileList').innerHTML = tempBidFiles.map((f, i) => `
+                <div class="flex items-center justify-between p-2 bg-gray-50 rounded text-xs">
+                    <span class="flex items-center gap-2"><i class="fas fa-file-alt text-green-500"></i>${f}</span>
+                    <button onclick="removeBidFile(${i})" class="text-red-500 hover:text-red-700"><i class="fas fa-times"></i></button>
+                </div>
+            `).join('');
+        }
+
+        function removeBidFile(index) { tempBidFiles.splice(index, 1); renderBidFiles(); }
+
+        function submitBidConfirm() {
+            const amount = document.getElementById('bcAmount').value;
+            if (!amount) { showToast('请输入报价金额', 'error'); return; }
+            const p = projects.find(x => x.id === currentProjectId);
+            p.bidConfirm = {
+                amount: parseFloat(amount),
+                quoteId: document.getElementById('bcQuoteId').value || null,
+                quoteNo: document.getElementById('bcQuoteNo').value || null,
+                files: [...tempBidFiles],
+                confirmTime: now()
+            };
+            p.status = 'pending_result'; p.statusText = '待登记结果';
+            p.logs.push({ time: now(), user: currentUser.name, action: '确认投标', remark: `报价${amount}万元` });
+            closeBidConfirmModal(); renderTable(); updateStats(); showToast('投标已确认');
+            if (document.getElementById('detailDrawer').classList.contains('active')) openDetail(currentProjectId);
+        }
+
+        // ==================== 结果登记 ====================
+        function openResultRegister(projectId) {
+            const p = projects.find(x => x.id === projectId);
+            if (!p) return;
+            currentProjectId = projectId;
+
+            document.getElementById('rsProjectInfo').innerHTML = `
+                <div class="grid grid-cols-2 gap-2 text-sm">
+                    <div><span class="text-gray-500">项目编号：</span>${p.id}</div>
+                    <div><span class="text-gray-500">标的名称：</span>${p.bidName}</div>
+                    <div><span class="text-gray-500">采购人：</span>${p.customerName}</div>
+                    <div><span class="text-gray-500">投标报价：</span>${p.bidConfirm?.amount || '-'} 万元</div>
+                </div>
+            `;
+
+            document.querySelectorAll('input[name="rsResult"]').forEach(r => r.checked = false);
+            document.getElementById('winFields').classList.add('hidden');
+            document.getElementById('loseFields').classList.add('hidden');
+            document.getElementById('optWin').classList.remove('selected-win');
+            document.getElementById('optLose').classList.remove('selected-lose');
+
+            document.getElementById('rsWinAmount').value = '';
+            document.getElementById('rsQuoteNo').value = '';
+            document.getElementById('rsQuoteId').value = '';
+            document.getElementById('rsWinReason').value = '';
+            document.getElementById('priceMismatchTip').classList.add('hidden');
+
+            document.getElementById('rsLoseUnit').value = '';
+            document.getElementById('rsLoseAmount').value = '';
+            document.getElementById('rsLoseReason').value = '';
+
+            currentResultType = null;
+            selectedResultQuote = null;
+
+            openModal('resultModalOverlay');
+        }
+
+        function closeResultModal() { closeModal('resultModalOverlay'); }
+
+        function selectResultType(isWin) {
+            currentResultType = isWin ? 'win' : 'lose';
+            document.querySelectorAll('input[name="rsResult"]').forEach(r => r.checked = false);
+
+            if (isWin) {
+                document.querySelector('input[name="rsResult"][value="win"]').checked = true;
+                document.getElementById('optWin').classList.add('selected-win');
+                document.getElementById('optLose').classList.remove('selected-lose');
+                document.getElementById('winFields').classList.remove('hidden');
+                document.getElementById('loseFields').classList.add('hidden');
+            } else {
+                document.querySelector('input[name="rsResult"][value="lose"]').checked = true;
+                document.getElementById('optLose').classList.add('selected-lose');
+                document.getElementById('optWin').classList.remove('selected-win');
+                document.getElementById('loseFields').classList.remove('hidden');
+                document.getElementById('winFields').classList.add('hidden');
+            }
+        }
+
+        function openResultQuoteModal() {
+            const tbody = document.getElementById('resultQuoteTableBody');
+            tbody.innerHTML = quotes.map(q => `
+                <tr onclick="selectResultQuote('${q.id}')" class="cursor-pointer hover:bg-gray-50">
+                    <td>
+                        <div class="w-5 h-5 rounded-full border-2 ${selectedResultQuote?.id === q.id ? 'bg-blue-500 border-blue-500' : 'border-gray-300'} flex items-center justify-center">
+                            ${selectedResultQuote?.id === q.id ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                        </div>
+                    </td>
+                    <td class="font-medium text-sm">${q.no}</td>
+                    <td class="text-sm font-medium text-green-600">${q.amount}万</td>
+                    <td class="text-sm text-gray-500">${q.expiry}</td>
+                </tr>
+            `).join('');
+            openModal('resultQuoteModalOverlay');
+        }
+
+        function closeResultQuoteModal() { closeModal('resultQuoteModalOverlay'); }
+
+        function selectResultQuote(quoteId) {
+            const q = quotes.find(x => x.id === quoteId);
+            selectedResultQuote = q;
+            document.getElementById('rsQuoteNo').value = q.no;
+            document.getElementById('rsQuoteId').value = q.id;
+
+            const winAmount = parseFloat(document.getElementById('rsWinAmount').value);
+            if (winAmount && winAmount !== q.amount) {
+                document.getElementById('priceMismatchTip').classList.remove('hidden');
+            } else {
+                document.getElementById('priceMismatchTip').classList.add('hidden');
+            }
+
+            openResultQuoteModal();
+            setTimeout(closeResultQuoteModal, 200);
+        }
+
+        document.getElementById('rsWinAmount')?.addEventListener('input', function() {
+            if (selectedResultQuote) {
+                const winAmount = parseFloat(this.value);
+                if (winAmount && winAmount !== selectedResultQuote.amount) {
+                    document.getElementById('priceMismatchTip').classList.remove('hidden');
+                } else {
+                    document.getElementById('priceMismatchTip').classList.add('hidden');
+                }
+            }
+        });
+
+        function submitResult() {
+            const result = document.querySelector('input[name="rsResult"]:checked')?.value;
+            if (!result) { showToast('请选择是否中标', 'error'); return; }
+
+            const p = projects.find(x => x.id === currentProjectId);
+            const isWin = result === 'win';
+
+            if (isWin) {
+                const actualAmount = parseFloat(document.getElementById('rsWinAmount').value);
+                const quoteId = document.getElementById('rsQuoteId').value;
+                const quoteNo = document.getElementById('rsQuoteNo').value;
+                const winReason = document.getElementById('rsWinReason').value;
+
+                if (!actualAmount) { showToast('请输入实际成交价格', 'error'); return; }
+                if (!quoteId) { showToast('中标结果必须关联报价单', 'error'); return; }
+                if (!winReason) { showToast('请录入中标原因', 'error'); return; }
+
+                const quote = quotes.find(q => q.id === quoteId);
+                if (quote && actualAmount !== quote.amount) {
+                    showToast('成交价格与报价单金额不一致，请修改后重新提交', 'error'); return;
+                }
+
+                p.result = {
+                    isWin: true,
+                    winAmount: actualAmount,
+                    actualAmount: actualAmount,
+                    quoteId: quoteId,
+                    quoteNo: quoteNo,
+                    winReason: winReason,
+                    registerTime: now(),
+                    remark: winReason,
+                    contractNo: null
+                };
+                p.status = 'won'; p.statusText = '已中标';
+                p.logs.push({ time: now(), user: currentUser.name, action: '登记中标结果', remark: `成交价格${actualAmount}万元，关联报价单${quoteNo}` });
+                showToast('恭喜！中标结果已登记');
+            } else {
+                const loseUnit = document.getElementById('rsLoseUnit').value;
+                const loseAmount = parseFloat(document.getElementById('rsLoseAmount').value);
+                const loseReason = document.getElementById('rsLoseReason').value;
+
+                p.result = {
+                    isWin: false,
+                    loseUnit: loseUnit || '',
+                    loseAmount: isNaN(loseAmount) ? null : loseAmount,
+                    loseReason: loseReason || '',
+                    registerTime: now(),
+                    remark: loseReason || '未中标'
+                };
+                p.status = 'lost'; p.statusText = '未中标';
+                p.logs.push({ time: now(), user: currentUser.name, action: '登记未中标', remark: loseReason || '未中标' });
+                showToast('未中标结果已登记');
+            }
+
+            closeResultModal(); renderTable(); updateStats();
+            if (document.getElementById('detailDrawer').classList.contains('active')) openDetail(currentProjectId);
+        }
+
+        // ==================== 删除 ====================
+        function confirmDeleteProject(projectId) {
+            const p = projects.find(x => x.id === projectId);
+            if (!p) return;
+            currentProjectId = projectId;
+            document.getElementById('deleteProjectInfo').textContent = `项目编号：${p.id} - ${p.bidName}`;
+            openModal('deleteModalOverlay');
+        }
+
+        function closeDeleteModal() { closeModal('deleteModalOverlay'); }
+
+        function confirmDelete() {
+            const index = projects.findIndex(x => x.id === currentProjectId);
+            if (index > -1) { projects.splice(index, 1); showToast('项目已删除'); }
+            closeDeleteModal(); renderTable(); updateStats();
+            if (document.getElementById('detailDrawer').classList.contains('active')) closeDetailDrawer();
+        }
+        // ==================== 工具函数 ====================
+        function openModal(overlayId) { document.getElementById(overlayId).classList.add('active'); }
+        function closeModal(overlayId) { document.getElementById(overlayId).classList.remove('active'); }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const d = new Date(dateStr);
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+        }
+
+        function now() {
+            const d = new Date();
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+        }
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast toast-${type}`;
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function highlightText(text, keyword) {
+            if (!keyword) return text;
+            const regex = new RegExp(`(${keyword})`, 'gi');
+            return text.replace(regex, '<span class="search-highlight">$1</span>');
+        }
+
+        // 点击外部关闭弹窗
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) this.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>

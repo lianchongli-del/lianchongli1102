@@ -1,0 +1,2187 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">公海客户详情</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        html, body { height: 100vh; overflow: hidden; margin: 0; padding: 0; }
+
+        .main-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-nav {
+            height: 64px;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e5e7eb;
+            z-index: 100;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .left-sidebar {
+            width: 420px;
+            min-width: 360px;
+            height: 100%;
+            overflow-y: auto;
+            background: #f8fafc;
+            border-right: 1px solid #e5e7eb;
+            padding: 20px;
+        }
+
+        .left-sidebar::-webkit-scrollbar { width: 6px; }
+        .left-sidebar::-webkit-scrollbar-track { background: transparent; }
+        .left-sidebar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+
+        .right-content {
+            flex: 1;
+            height: 100%;
+            overflow-y: auto;
+            background: #f1f5f9;
+            padding: 0 20px;
+        }
+
+        .right-content::-webkit-scrollbar { width: 8px; }
+        .right-content::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+
+        .customer-header {
+            background: linear-gradient(135deg, #64748b 0%, #94a3b8 100%);
+            position: relative;
+        }
+
+        .sea-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 4px 12px;
+            background: rgba(255,255,255,0.25);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 20px;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .anchor-nav-container {
+            position: sticky;
+            top: 0;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 0;
+            z-index: 50;
+            margin: 0px -20px 20px -20px;
+            width: calc(100% + 40px);
+        }
+
+        .anchor-nav {
+            display: flex;
+            gap: 8px;
+            padding: 12px 20px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .anchor-nav::-webkit-scrollbar { display: none; }
+
+        .anchor-btn {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #64748b;
+            background: #f1f5f9;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+            cursor: pointer;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .anchor-btn:hover { background: #e2e8f0; color: #475569; }
+        .anchor-btn.active { background: #64748b; color: white; }
+
+        .business-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            scroll-margin-top: 80px;
+        }
+
+        .data-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-table td {
+            padding: 16px;
+            font-size: 14px;
+            color: #334155;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .data-table tr:hover td { background: #f8fafc; }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: #64748b; font-size: 13px; }
+        .info-value { color: #1e293b; font-size: 13px; font-weight: 500; text-align: right; max-width: 60%; }
+
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .timeline-container {
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e2e8f0;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 24px;
+        }
+
+        .timeline-item:last-child { padding-bottom: 0; }
+
+        .timeline-dot {
+            position: absolute;
+            left: -20px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #64748b;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #64748b;
+        }
+
+        .timeline-dot.return { background: #f59e0b; box-shadow: 0 0 0 2px #f59e0b; }
+        .timeline-dot.claim { background: #10b981; box-shadow: 0 0 0 2px #10b981; }
+        .timeline-dot.follow { background: #3b82f6; box-shadow: 0 0 0 2px #3b82f6; }
+
+        .timeline-content {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 14px;
+        }
+
+        .timeline-meta {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .timeline-body {
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.5;
+            margin-top: 8px;
+        }
+
+        .main-tab-nav-container {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            margin: -20px -20px 20px -20px;
+            padding: 0 20px;
+            width: calc(100% + 40px);
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+
+        .main-tab-nav {
+            display: flex;
+            gap: 0;
+        }
+
+        .main-tab-btn {
+            padding: 16px 28px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .main-tab-btn:hover { color: #64748b; }
+        .main-tab-btn.active {
+            color: #64748b;
+            border-bottom-color: #64748b;
+            background: #f8fafc;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary { background: #64748b; color: white; }
+        .btn-primary:hover { background: #475569; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-secondary { background: white; color: #374151; border: 1px solid #d1d5db; }
+        .btn-secondary:hover { background: #f9fafb; }
+
+        .warning-box {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: start;
+            gap: 12px;
+        }
+
+        .warning-box i { color: #f59e0b; margin-top: 2px; }
+
+        .return-history-card {
+            border-left: 4px solid #f59e0b;
+            background: #fffbeb;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .tag-enterprise { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+        .tag-government { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+        .tag-strategic { background: #fce7f3; color: #be185d; border: 1px solid #fbcfe8; }
+        .tag-normal { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
+
+        .grade-a-plus { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 11px; display: inline-block; }
+
+        .sea-info-card {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .sea-info-title {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .sea-info-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .hidden { display: none !important; }
+
+
+
+        .cert-field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .cert-field-card { border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; background: #fff; }
+        .cert-field-card.claimed { background: #f8fafc; }
+        .cert-field-card.available { border-color: #bbf7d0; background: #f0fdf4; }
+        .cert-field-card.pending { border-color: #fde68a; background: #fffbeb; }
+        .cert-field-title { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; font-size: 13px; font-weight: 700; color: #1e293b; }
+        .cert-field-meta { font-size: 12px; color: #64748b; line-height: 1.7; }
+        .cert-status { display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 10px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+        .cert-status.claimed { background: #dbeafe; color: #1e40af; }
+        .cert-status.available { background: #dcfce7; color: #166534; }
+        .cert-status.pending { background: #fef3c7; color: #92400e; }
+
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+        .market-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 18px;
+            background: white;
+            transition: all 0.2s;
+        }
+        .market-card.primary {
+            border-color: #86efac;
+            background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
+        }
+        .market-card:hover {
+            border-color: #94a3b8;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+        }
+        .market-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 8px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            background: #dcfce7;
+            color: #166534;
+        }
+        .dev-note {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px;
+        }
+
+        .sub-tab-nav {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 12px;
+            overflow-x: auto;
+        }
+        .sub-tab-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            background: transparent;
+            white-space: nowrap;
+        }
+        .sub-tab-btn:hover { background: #f1f5f9; color: #475569; }
+        .sub-tab-btn.active { background: #eff6ff; color: #3b82f6; }
+        .sub-tab-btn.locked { color: #94a3b8; }
+
+        .scope-hero {
+            background: linear-gradient(135deg, #ffffff 0%, #eef6ff 100%);
+            border: 1px solid #dbeafe;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .scope-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .scope-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 9px;
+            border-radius: 999px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .scope-chip.active { color: #1d4ed8; background: #eff6ff; border-color: #bfdbfe; }
+        .scope-chip.public { color: #166534; background: #f0fdf4; border-color: #bbf7d0; }
+        .scope-chip.locked { color: #64748b; background: #f8fafc; border-color: #e2e8f0; }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-normal { background: #dcfce7; color: #166534; }
+        .status-suspended { background: #fef3c7; color: #92400e; }
+        .status-muted { background: #f1f5f9; color: #64748b; }
+
+        .cert-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.2s;
+            background: #fff;
+        }
+        .cert-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-color: #bfdbfe;
+        }
+
+        .relation-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-left: 8px;
+        }
+        .relation-tag.plan { background: #fef3c7; color: #92400e; }
+        .relation-tag.opportunity { background: #ede9fe; color: #6d28d9; }
+        .relation-tag.independent { background: #f1f5f9; color: #64748b; }
+
+        .permission-empty {
+            border: 1px dashed #cbd5e1;
+            border-radius: 10px;
+            background: #f8fafc;
+            color: #64748b;
+        }
+
+        .scope-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+        .scope-mini-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            padding: 10px;
+        }
+        .scope-mini-card.active { border-color: #bfdbfe; background: #eff6ff; }
+        .scope-mini-card.pool { border-color: #bbf7d0; background: #f0fdf4; }
+        .scope-mini-card.other { background: #f8fafc; color: #64748b; }
+        .scope-code { font-size: 12px; font-weight: 800; color: #1e293b; }
+        .scope-name { font-size: 12px; color: #64748b; margin-top: 4px; }
+        .scope-state {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 6px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .scope-state.following { background: #dbeafe; color: #1e40af; }
+        .scope-state.pool { background: #dcfce7; color: #166534; }
+        .scope-state.cross { background: #fef3c7; color: #92400e; }
+
+        .site-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.2s;
+            background: white;
+        }
+        .site-card:hover { border-color: #94a3b8; box-shadow: 0 2px 8px rgba(15,23,42,0.08); }
+        .site-type-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; background: #f1f5f9; color: #475569; }
+        .site-contact-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+        .site-contact-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            min-height: 132px;
+            transition: all 0.2s;
+        }
+        .site-contact-card:hover { background: #fff; border-color: #cbd5e1; box-shadow: 0 2px 8px rgba(15,23,42,0.06); }
+        .site-contact-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: #e2e8f0;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .resource-filter-bar {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        /* 认领弹窗 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-container {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 85vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.95);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+        }
+
+        .modal-close:hover {
+            background: #cbd5e1;
+            color: #1e293b;
+        }
+
+        .modal-body { padding: 24px; overflow-y: auto; }
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background: #f8fafc;
+        }
+
+        .form-group { margin-bottom: 16px; }
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+        .form-textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            min-height: 100px;
+            resize: vertical;
+        }
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            background: white;
+        }
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: #64748b;
+            box-shadow: 0 0 0 3px rgba(100,116,139,0.12);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- 顶部导航 -->
+        <nav class="top-nav flex items-center justify-between px-6">
+            <div class="flex items-center space-x-4">
+                <button onclick="history.back()" class="text-gray-600 hover:text-gray-800 transition-colors">
+                    <i class="fas fa-arrow-left text-lg"></i>
+                </button>
+                <h1 class="text-xl font-bold text-gray-800">
+                    <i class="fas fa-water text-slate-500 mr-2"></i>公海客户详情
+                </h1>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="openClaimModal()" class="btn btn-success">
+                    <i class="fas fa-layer-group mr-1"></i>跟进申请
+                </button>
+                <button onclick="exportData()" class="btn btn-primary">
+                    <i class="fas fa-download mr-1"></i>导出
+                </button>
+            </div>
+        </nav>
+
+        <!-- 主体内容 -->
+        <div class="content-wrapper">
+            <!-- 左侧：客户基础信息 -->
+            <div class="left-sidebar">
+                <!-- 客户基本信息 -->
+                <div class="section-card">
+                    <div class="customer-header px-5 py-4 text-white relative">
+                        <div class="sea-badge">
+                            <i class="fas fa-water"></i>
+                            <span id="detailSeaBadge">区域公海</span>
+                        </div>
+                        <div class="flex items-center justify-between mb-2">
+                            <h2 class="text-lg font-bold" id="detailCustomerName">丰源新能源集团有限公司</h2>
+                        </div>
+                        <p class="text-gray-100 text-xs">客户编号：<span id="detailCustomerId">C20240315001</span></p>
+                    </div>
+
+                    <div class="p-4">
+                        <!-- 公海信息统计 -->
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div class="sea-info-card">
+                                <div class="sea-info-title">退回天数</div>
+                                <div class="sea-info-value text-orange-600" id="detailInPoolDays">3天</div>
+                            </div>
+                            <div class="sea-info-card">
+                                <div class="sea-info-title">距上次跟进</div>
+                                <div class="sea-info-value text-red-600" id="detailNoDealDays">95天</div>
+                            </div>
+                        </div>
+
+                        <!-- 退回历史提示 -->
+                        <div class="warning-box">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div class="flex-1">
+                                <div class="font-semibold text-amber-800 text-sm">退回公海提醒</div>
+                                <div class="text-amber-700 text-xs mt-1" id="detailSeaWarning">该客户因保护期到期于2026-04-12退回区域公海，原跟进人：张明；现按认证领域重新开放跟进。</div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="mb-4">
+                            <p class="text-xs text-gray-500 font-medium mb-2 flex items-center">
+                                <i class="fas fa-layer-group mr-1"></i>当前可跟进
+                            </p>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div class="sea-info-card" style="padding: 10px; margin-bottom: 0;">
+                                    <div class="sea-info-title">认证领域</div>
+                                    <div class="sea-info-value text-blue-600">8项</div>
+                                </div>
+                                <div class="sea-info-card" style="padding: 10px; margin-bottom: 0;">
+                                    <div class="sea-info-title">可申请</div>
+                                    <div class="sea-info-value text-green-600" id="detailAvailableCount">2项</div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-sm mt-3 w-full justify-center" onclick="openClaimModal()">
+                                <i class="fas fa-list-check mr-1"></i>申请跟进领域
+                            </button>
+                        </div>
+
+                        <div class="mb-4">
+                            <p class="text-xs text-gray-500 font-medium mb-2 flex items-center">
+                                <i class="fas fa-certificate mr-1"></i>认证领域概览
+                            </p>
+                            <div class="scope-summary-grid">
+                                <div class="scope-mini-card active"><div class="flex items-center justify-between"><span class="scope-code">QMS</span><span class="scope-state following">原跟进</span></div><div class="scope-name">质量管理体系</div></div>
+                                <div class="scope-mini-card active"><div class="flex items-center justify-between"><span class="scope-code">EMS</span><span class="scope-state following">原跟进</span></div><div class="scope-name">环境管理体系</div></div>
+                                <div class="scope-mini-card active"><div class="flex items-center justify-between"><span class="scope-code">OHSMS</span><span class="scope-state following">原跟进</span></div><div class="scope-name">职业健康安全</div></div>
+                                <div class="scope-mini-card active"><div class="flex items-center justify-between"><span class="scope-code">FSMS</span><span class="scope-state following">原跟进</span></div><div class="scope-name">食品安全管理</div></div>
+                                <div class="scope-mini-card active"><div class="flex items-center justify-between"><span class="scope-code">HACCP</span><span class="scope-state following">跨区</span></div><div class="scope-name">危害分析控制点</div></div>
+                                <div class="scope-mini-card other"><div class="flex items-center justify-between"><span class="scope-code">ISMS</span><span class="scope-state cross">跨区</span></div><div class="scope-name">信息安全管理</div></div>
+                                <div class="scope-mini-card pool"><div class="flex items-center justify-between"><span class="scope-code">ITSMS</span><span class="scope-state pool">可申请</span></div><div class="scope-name">信息技术服务</div></div>
+                                <div class="scope-mini-card pool"><div class="flex items-center justify-between"><span class="scope-code">EnMS</span><span class="scope-state pool">可申请</span></div><div class="scope-name">能源管理体系</div></div>
+                            </div>
+                        </div>
+
+                        <!-- 标签系统 -->
+                        <div class="mb-4">
+                            <p class="text-xs text-gray-500 font-medium mb-2 flex items-center">
+                                <i class="fas fa-tags mr-1"></i>客户标签
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="tag tag-enterprise"><i class="fas fa-landmark mr-1"></i>中央企业</span>
+                                <span class="tag tag-strategic"><i class="fas fa-crown mr-1"></i>战略客户</span>
+                                <span class="tag tag-normal">A+级客户</span>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-gray-100 pt-3 space-y-2">
+                            <div class="info-row">
+                                <span class="info-label">客户类型</span>
+                                <span class="info-value" id="detailCustomerType">中央企业</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">企业分类</span>
+                                <span class="info-value"><span class="grade-a-plus" id="detailGrade">A+</span></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">英文名称</span>
+                            <span class="info-value" id="detailNameEn" style="font-size: 12px; color: #475569;">Fengyuan New Energy Group Co., Ltd.</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">英文地址</span>
+                            <span class="info-value" id="detailAddressEn" style="font-size: 12px; color: #475569; white-space: normal; text-align: left; max-width: 100%;">No.9 Dongzhimen North Street, PetroChina Tower, Dongcheng District, Beijing, China</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">统一社会信用代码</span>
+                                <span class="info-value font-mono text-xs">91110000100010433W</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">行业分类</span>
+                                <span class="info-value" id="detailIndustry">电力、热力生产供应</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">所在区域</span>
+                                <span class="info-value" id="detailRegion">华北区域 - 北京</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">企业规模</span>
+                                <span class="info-value">大型（1,650人）</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">注册资金</span>
+                                <span class="info-value">48,690万元</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">成立日期</span>
+                                <span class="info-value">1990-02-09</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">法定代表人</span>
+                                <span class="info-value">戴厚良</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 地址信息（公海只读） -->
+                <div class="section-card">
+                    <div class="bg-gray-50 px-5 py-3 border-b border-gray-100">
+                        <h3 class="font-semibold text-gray-800 flex items-center text-sm">
+                            <i class="fas fa-map-marker-alt text-slate-500 mr-2"></i>地址信息
+                            <span class="ml-2 px-2 py-0.5 bg-gray-200 text-gray-600 rounded text-xs">只读</span>
+                        </h3>
+                    </div>
+                    <div class="p-4">
+                        <div class="mb-3">
+                            <span class="text-xs text-gray-500 block mb-1">注册地址</span>
+                            <span class="text-sm font-medium text-gray-800">北京市东城区东直门北大街9号中国石油大厦</span>
+                        </div>
+                        <div class="mb-3">
+                            <span class="text-xs text-gray-500 block mb-1">英文地址</span>
+                            <span class="text-sm font-medium text-gray-800">No.9 Dongzhimen North Street, PetroChina Tower, Dongcheng District, Beijing, China</span>
+                        </div>
+                        <div class="pt-3 border-t border-gray-100">
+                            <span class="text-xs text-gray-500 block mb-1">运营地址</span>
+                            <span class="text-sm font-medium text-gray-800">北京市海淀区中关村软件园二期8号楼</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 开票信息（公海只读） -->
+                <div class="section-card">
+                    <div class="bg-gray-50 px-5 py-3 border-b border-gray-100">
+                        <h3 class="font-semibold text-gray-800 flex items-center text-sm">
+                            <i class="fas fa-file-invoice-dollar text-slate-500 mr-2"></i>开票信息
+                            <span class="ml-2 px-2 py-0.5 bg-gray-200 text-gray-600 rounded text-xs">跟进后可维护</span>
+                        </h3>
+                    </div>
+                    <div class="p-4 space-y-2">
+                        <div class="info-row"><span class="info-label">发票名称</span><span class="info-value">丰源新能源集团有限公司</span></div>
+                        <div class="info-row"><span class="info-label">税号</span><span class="info-value font-mono text-xs">91110000100010433W</span></div>
+                        <div class="info-row"><span class="info-label">开户银行</span><span class="info-value">中国工商银行北京分行</span></div>
+                        <div class="info-row"><span class="info-label">银行账户</span><span class="info-value font-mono text-xs">0200 0001 0900 1234 567</span></div>
+                    </div>
+                </div>
+
+                <!-- 备注信息（公海只读） -->
+                <div class="section-card">
+                    <div class="bg-gray-50 px-5 py-3 border-b border-gray-100">
+                        <h3 class="font-semibold text-gray-800 flex items-center text-sm">
+                            <i class="fas fa-sticky-note text-slate-500 mr-2"></i>历史备注
+                        </h3>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            该客户为集团级战略客户，需优先安排审核资源。客户对信息安全要求较高，所有审核人员需提前报备并签署保密协议。当前处于公海状态，仅支持查看历史信息与发起领域跟进申请。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 公海流转摘要 -->
+                <div class="section-card return-history-card">
+                    <div class="px-5 py-3 border-b border-amber-200">
+                        <h3 class="font-semibold text-gray-800 flex items-center text-sm">
+                            <i class="fas fa-history text-amber-600 mr-2"></i>公海流转摘要
+                        </h3>
+                    </div>
+                    <div class="p-4">
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3 pb-3 border-b border-amber-100">
+                                <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center flex-shrink-0 text-xs font-bold">
+                                    退
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="font-medium text-sm text-gray-800">退回公海</span>
+                                        <span class="text-xs text-gray-500">2026-04-12</span>
+                                    </div>
+                                    <p class="text-xs text-gray-600 mb-1">退回原因：<span class="text-amber-700 font-medium">保护期到期</span></p>
+                                    <p class="text-xs text-gray-500">操作人：系统自动 | 原跟进人：张明</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0 text-xs font-bold">
+                                    领
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="font-medium text-sm text-gray-800">认领认证领域</span>
+                                        <span class="text-xs text-gray-500">2023-01-15</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500">认证领域：QMS、EMS | 跟进人：张明 | 来源：区域公海</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 右侧：主Tab内容 -->
+            <div class="right-content">
+                <!-- 主Tab导航 -->
+                <div class="main-tab-nav-container">
+                    <div class="main-tab-nav">
+                        <button class="main-tab-btn active" onclick="switchMainTab('history')">
+                            <i class="fas fa-bullseye"></i>市场开发
+                        </button>
+                        <button class="main-tab-btn" onclick="switchMainTab('followup')">
+                            <i class="fas fa-tasks"></i>历史跟进
+                        </button>
+                        <button class="main-tab-btn" onclick="switchMainTab('resource')">
+                            <i class="fas fa-address-book"></i>客户资源
+                        </button>
+                        <button class="main-tab-btn" onclick="switchMainTab('business')">
+                            <i class="fas fa-briefcase"></i>客户往来业务
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab 1: 市场开发 -->
+                <div id="panel-history" class="fade-in">
+                    <div class="anchor-nav-container">
+                        <div class="anchor-nav">
+                            <a href="#available-scopes" class="anchor-btn active" onclick="highlightAnchor(this)">
+                                <i class="fas fa-layer-group mr-1"></i>可跟进领域
+                            </a>
+                            <a href="#customer-profile" class="anchor-btn" onclick="highlightAnchor(this)">
+                                <i class="fas fa-building mr-1"></i>客户画像
+                            </a>
+                        </div>
+                    </div>
+
+                    <div id="available-scopes" class="business-section">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                                <i class="fas fa-layer-group text-green-600 mr-2"></i>当前可跟进领域
+                            </h3>
+                            <button class="btn btn-success" onclick="openClaimModal()">
+                                <i class="fas fa-check-circle mr-1"></i>申请跟进
+                            </button>
+                        </div>
+
+                        <div class="market-grid">
+                            <div class="market-card primary">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div>
+                                        <div class="text-xl font-bold text-gray-900">ITSMS</div>
+                                        <div class="text-sm text-gray-600 mt-1">信息技术服务管理体系</div>
+                                    </div>
+                                    <span class="market-tag">可申请</span>
+                                </div>
+                                <div class="mt-4 grid grid-cols-2 gap-2 text-xs">
+                                    <div class="bg-white rounded-lg border border-green-100 p-2"><span class="text-gray-500 block">归属区域</span><span class="font-semibold text-gray-800">未认领</span></div>
+                                    <div class="bg-white rounded-lg border border-green-100 p-2"><span class="text-gray-500 block">跟进状态</span><span class="font-semibold text-green-700">可申请</span></div>
+                                </div>
+                            </div>
+
+                            <div class="market-card primary">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div>
+                                        <div class="text-xl font-bold text-gray-900">EnMS</div>
+                                        <div class="text-sm text-gray-600 mt-1">能源管理体系</div>
+                                    </div>
+                                    <span class="market-tag">可申请</span>
+                                </div>
+                                <div class="mt-4 grid grid-cols-2 gap-2 text-xs">
+                                    <div class="bg-white rounded-lg border border-green-100 p-2"><span class="text-gray-500 block">归属区域</span><span class="font-semibold text-gray-800">未认领</span></div>
+                                    <div class="bg-white rounded-lg border border-green-100 p-2"><span class="text-gray-500 block">跟进状态</span><span class="font-semibold text-green-700">可申请</span></div>
+                                </div>
+                            </div>
+
+                            <div class="market-card">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div>
+                                        <div class="text-xl font-bold text-gray-900">6项</div>
+                                        <div class="text-sm text-gray-600 mt-1">已有历史跟进领域</div>
+                                    </div>
+                                    <span class="px-2 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold">参考</span>
+                                </div>
+                                <div class="text-sm text-gray-600 leading-relaxed">
+                                    QMS、EMS、OHSMS、FSMS、HACCP、ISMS 已有历史跟进记录。
+                                </div>
+                                <div class="mt-4 text-xs text-gray-500">
+                                    最近跟进：2026-01-10；退回原因：保护期到期。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="customer-profile" class="business-section">
+                        <h3 class="text-lg font-bold text-gray-800 flex items-center mb-4">
+                            <i class="fas fa-building text-slate-500 mr-2"></i>客户基础画像
+                        </h3>
+                        <div class="grid grid-cols-4 gap-4">
+                            <div class="dev-note"><div class="text-xs text-gray-500">客户等级</div><div class="text-lg font-bold text-gray-900 mt-1">A+ 战略客户</div></div>
+                            <div class="dev-note"><div class="text-xs text-gray-500">企业属性</div><div class="text-lg font-bold text-gray-900 mt-1">中央企业</div></div>
+                            <div class="dev-note"><div class="text-xs text-gray-500">行业方向</div><div class="text-lg font-bold text-gray-900 mt-1">新能源 / 电力</div></div>
+                            <div class="dev-note"><div class="text-xs text-gray-500">开发窗口</div><div class="text-lg font-bold text-green-700 mt-1">已开放</div></div>
+                        </div>
+                        <div class="mt-4 grid grid-cols-2 gap-4">
+                            <div class="dev-note">
+                                <div class="font-semibold text-gray-800 mb-2">基础信息</div>
+                                <div class="space-y-2 text-sm text-gray-600">
+                                    <div>统一社会信用代码：<span class="font-mono text-gray-800">91110000100010433W</span></div>
+                                    <div>企业规模：大型（1,650人）</div>
+                                    <div>注册资金：48,690万元</div>
+                                    <div>注册地址：北京市东城区东直门北大街9号中国石油大厦</div>
+                                </div>
+                            </div>
+                            <div class="dev-note">
+                                <div class="font-semibold text-gray-800 mb-2">公海状态</div>
+                                <div class="space-y-2 text-sm text-gray-600">
+                                    <div>当前状态：区域公海</div>
+                                    <div>退回原因：保护期到期</div>
+                                    <div>当前可申请领域：ITSMS、EnMS</div>
+                                    <div>已认领领域：QMS、EMS、OHSMS、FSMS、HACCP、ISMS</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: 历史跟进记录 -->
+                <div id="panel-followup" class="hidden fade-in">
+                    <div class="business-section">
+                        <div class="flex items-center justify-between gap-4 mb-5">
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                                    <i class="fas fa-history text-blue-600 mr-2"></i>历史跟进可见范围
+                                </h3>
+                                <p class="text-sm text-gray-500 mt-1">公海详情不展示已跟进领域的具体跟进记录，历史业务明细按认证领域在客户往来业务中查看。</p>
+                            </div>
+                            <button class="btn btn-primary" onclick="switchMainTab('business')">
+                                <i class="fas fa-briefcase mr-1"></i>查看客户往来业务
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div class="border border-green-200 bg-green-50 rounded-xl p-5">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="font-bold text-green-900"><i class="fas fa-unlock mr-2"></i>未跟进领域</div>
+                                    <span class="scope-state pool">历史业务公开</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2" id="public-followup-scope-list"></div>
+                            </div>
+                            <div class="border border-slate-200 bg-slate-50 rounded-xl p-5">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="font-bold text-slate-900"><i class="fas fa-lock mr-2"></i>已跟进领域</div>
+                                    <span class="scope-state following">业务明细不公开</span>
+                                </div>
+                                <div class="flex flex-wrap gap-2" id="locked-followup-scope-list"></div>
+                                <div class="text-sm text-slate-500 mt-4">仅保留领域归属状态，不展示跟进人沟通内容、商机明细、方案、任务和证书业务明细。</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="text-sm font-semibold text-gray-700 flex items-center">
+                                    <i class="fas fa-stream text-purple-500 mr-2"></i>公开历史跟进记录
+                                </h4>
+                                <span class="text-xs text-gray-500">仅展示未跟进领域</span>
+                            </div>
+                            <div class="timeline-container" id="public-followup-timeline"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: 客户资源 -->
+                <div id="panel-resource" class="hidden fade-in">
+                    <div class="business-section">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                                <i class="fas fa-building text-slate-500 mr-2"></i>场所信息
+                            </h3>
+                            <span class="text-xs text-gray-500">公海客户资源只展示场所概况</span>
+                        </div>
+                        <div class="resource-filter-bar">
+                            <div>
+                                <div class="text-sm font-semibold text-gray-800">场所领域筛选</div>
+                                <div class="text-xs text-gray-500 mt-1">按认证领域查看关联场所范围，不展示具体联系人信息。</div>
+                            </div>
+                            <select class="form-select w-56" id="site-contact-domain-filter" onchange="setSiteContactFilter(this.value)">
+                                <option value="ALL">全部认证领域</option>
+                                <option value="QMS">QMS 质量管理体系</option>
+                                <option value="EMS">EMS 环境管理体系</option>
+                                <option value="OHSMS">OHSMS 职业健康安全</option>
+                                <option value="FSMS">FSMS 食品安全</option>
+                                <option value="HACCP">HACCP 危害分析</option>
+                                <option value="ISMS">ISMS 信息安全</option>
+                                <option value="ITSMS">ITSMS 信息技术服务</option>
+                                <option value="EnMS">EnMS 能源管理</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-1 gap-4" id="sites-list"></div>
+                    </div>
+                </div>
+
+                <!-- Tab 4: 客户往来业务 -->
+                <div id="panel-business" class="hidden fade-in">
+                    <div class="anchor-nav-container">
+                        <div class="anchor-nav">
+                            <a href="#scope-overview" class="anchor-btn active" onclick="highlightAnchor(this)">
+                                <i class="fas fa-certificate mr-1"></i>认证领域
+                            </a>
+                            <a href="#scope-public-flow" class="anchor-btn" onclick="highlightAnchor(this)">
+                                <i class="fas fa-stream mr-1"></i>流转记录
+                            </a>
+                            <a href="#opportunity-history" class="anchor-btn" onclick="highlightAnchor(this)">
+                                <i class="fas fa-funnel-dollar mr-1"></i>历史商机
+                            </a>
+                            <a href="#scheme" class="anchor-btn" onclick="highlightAnchor(this)">
+                                <i class="fas fa-clipboard-check mr-1"></i>认证方案
+                            </a>
+                            <a href="#task" class="anchor-btn" onclick="highlightAnchor(this)">
+                                <i class="fas fa-calendar-check mr-1"></i>审核任务
+                            </a>
+                            <a href="#certificate" class="anchor-btn" onclick="highlightAnchor(this)">
+                                <i class="fas fa-certificate mr-1"></i>证书信息
+                            </a>
+                        </div>
+                    </div>
+
+                    <div id="scope-overview" class="business-section">
+                        <div class="scope-hero mb-5">
+                            <div class="flex items-start justify-between gap-4">
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900 flex items-center">
+                                        <i class="fas fa-certificate text-blue-600 mr-2"></i>认证领域业务公开范围
+                                    </h3>
+                                    <p class="text-sm text-gray-600 mt-2 leading-relaxed">
+                                        公海客户按认证领域控制历史业务可见性：未跟进领域的历史业务数据公开；已跟进领域只展示归属状态，不公开具体业务数据。
+                                    </p>
+                                </div>
+                                <div class="scope-toolbar flex-shrink-0">
+                                    <span class="scope-chip public"><i class="fas fa-unlock"></i>公开 <span id="public-scope-count">2</span></span>
+                                    <span class="scope-chip locked"><i class="fas fa-lock"></i>不公开 <span id="locked-scope-count">6</span></span>
+                                    <span class="scope-chip active"><i class="fas fa-layer-group"></i>共 8 项</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="sub-tab-nav mb-4" id="public-domain-tabs"></div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4" id="public-domain-detail">
+                            <div class="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5">
+                                <div class="flex items-start justify-between gap-4">
+                                    <div>
+                                        <div class="text-sm text-gray-500 mb-1">当前认证领域</div>
+                                        <h4 class="text-xl font-bold text-gray-900"><span id="public-domain-code">全部公开领域</span> <span id="public-domain-name"></span></h4>
+                                    </div>
+                                    <span class="scope-state pool" id="public-domain-status">历史业务公开</span>
+                                </div>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
+                                    <div class="bg-gray-50 rounded-lg p-3"><p class="text-xs text-gray-500 mb-1">归属区域</p><p class="font-semibold text-gray-800" id="public-domain-region">未认领</p></div>
+                                    <div class="bg-gray-50 rounded-lg p-3"><p class="text-xs text-gray-500 mb-1">所属公司</p><p class="font-semibold text-gray-800" id="public-domain-company">未认领</p></div>
+                                    <div class="bg-gray-50 rounded-lg p-3"><p class="text-xs text-gray-500 mb-1">跟进人</p><p class="font-semibold text-gray-800" id="public-domain-owner">-</p></div>
+                                    <div class="bg-gray-50 rounded-lg p-3"><p class="text-xs text-gray-500 mb-1">可见规则</p><p class="font-semibold text-gray-800" id="public-domain-rule">仅未跟进领域</p></div>
+                                </div>
+                            </div>
+                            <div class="bg-blue-50 border border-blue-100 rounded-xl p-5">
+                                <div class="text-sm font-semibold text-blue-900 mb-3">公开业务数据</div>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between"><span class="text-blue-700">流转记录</span><span class="font-bold text-blue-900" id="public-flow-count">2</span></div>
+                                    <div class="flex justify-between"><span class="text-blue-700">历史商机</span><span class="font-bold text-blue-900" id="public-opp-count">2</span></div>
+                                    <div class="flex justify-between"><span class="text-blue-700">认证方案</span><span class="font-bold text-blue-900" id="public-scheme-count">2</span></div>
+                                    <div class="flex justify-between"><span class="text-blue-700">证书</span><span class="font-bold text-blue-900" id="public-cert-count">1</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="scope-public-flow" class="business-section">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                                <i class="fas fa-stream text-purple-600 mr-2"></i>领域流转记录
+                            </h3>
+                            <span class="text-sm text-gray-500" id="public-selected-scope-note">当前查看：全部公开领域</span>
+                        </div>
+                        <div class="timeline-container" id="public-scope-flow-timeline"></div>
+                    </div>
+
+                    <div id="opportunity-history" class="business-section">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                                <i class="fas fa-funnel-dollar text-blue-600 mr-2"></i>历史商机
+                                <span class="ml-2 text-sm font-normal text-gray-500">仅公开未跟进领域</span>
+                            </h3>
+                            <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white business-filter" onchange="selectPublicBusinessScope(this.value)">
+                                <option value="ALL">全部公开领域</option>
+                                <option value="ITSMS">ITSMS</option>
+                                <option value="EnMS">EnMS</option>
+                            </select>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="data-table w-full">
+                                <thead>
+                                    <tr>
+                                        <th>商机编号</th>
+                                        <th>领域</th>
+                                        <th>商机名称</th>
+                                        <th>认证标准</th>
+                                        <th>预计金额</th>
+                                        <th>当前阶段</th>
+                                        <th>创建时间</th>
+                                        <th>最后跟进</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr data-domain-row="ITSMS">
+                                        <td class="font-mono text-blue-600">PRJ-2025-0118</td>
+                                        <td><span class="px-2 py-1 bg-sky-100 text-sky-700 rounded text-xs font-bold">ITSMS</span></td>
+                                        <td><div class="font-medium text-gray-800">信息技术服务管理体系导入</div><div class="text-xs text-gray-500 mt-1">总部信息化服务支持范围</div></td>
+                                        <td><span class="px-2 py-1 bg-sky-100 text-sky-700 rounded text-xs">ISO/IEC 20000-1</span></td>
+                                        <td class="font-medium">¥42,000</td>
+                                        <td><span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs font-medium">历史线索</span></td>
+                                        <td class="text-gray-500">2025-06-18</td>
+                                        <td class="text-gray-500">2025-07-02</td>
+                                    </tr>
+                                    <tr data-domain-row="EnMS">
+                                        <td class="font-mono text-blue-600">PRJ-2025-0136</td>
+                                        <td><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-xs font-bold">EnMS</span></td>
+                                        <td><div class="font-medium text-gray-800">能源管理体系认证评估</div><div class="text-xs text-gray-500 mt-1">保定储能试制中心</div></td>
+                                        <td><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-xs">ISO 50001</span></td>
+                                        <td class="font-medium">¥38,000</td>
+                                        <td><span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs font-medium">历史线索</span></td>
+                                        <td class="text-gray-500">2025-08-11</td>
+                                        <td class="text-gray-500">2025-08-25</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="scheme" class="business-section">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                                <i class="fas fa-clipboard-check text-blue-600 mr-2"></i>认证方案
+                            </h3>
+                            <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white business-filter" onchange="selectPublicBusinessScope(this.value)">
+                                <option value="ALL">全部公开领域</option>
+                                <option value="ITSMS">ITSMS</option>
+                                <option value="EnMS">EnMS</option>
+                            </select>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="data-table w-full">
+                                <thead>
+                                    <tr>
+                                        <th>领域</th>
+                                        <th>项目编号</th>
+                                        <th>审核标准</th>
+                                        <th>审核类型</th>
+                                        <th>体系人数</th>
+                                        <th>专业代码</th>
+                                        <th>审核组长</th>
+                                        <th>状态</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr data-domain-row="ITSMS">
+                                        <td><span class="px-2 py-1 bg-sky-100 text-sky-700 rounded text-xs font-bold">ITSMS</span></td>
+                                        <td class="font-mono text-blue-600">PRJ-2025-0118</td>
+                                        <td><span class="px-2 py-1 bg-sky-100 text-sky-700 rounded text-xs">ISO/IEC 20000-1</span></td>
+                                        <td>初审</td>
+                                        <td>120</td>
+                                        <td>33.01.01</td>
+                                        <td>待分配</td>
+                                        <td><span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">历史草稿</span></td>
+                                    </tr>
+                                    <tr data-domain-row="EnMS">
+                                        <td><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-xs font-bold">EnMS</span></td>
+                                        <td class="font-mono text-blue-600">PRJ-2025-0136</td>
+                                        <td><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded text-xs">ISO 50001</span></td>
+                                        <td>初审</td>
+                                        <td>180</td>
+                                        <td>25.01.02</td>
+                                        <td>待分配</td>
+                                        <td><span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">历史草稿</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="task" class="business-section">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                                <i class="fas fa-calendar-check text-indigo-600 mr-2"></i>审核任务
+                            </h3>
+                            <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white business-filter" onchange="selectPublicBusinessScope(this.value)">
+                                <option value="ALL">全部公开领域</option>
+                                <option value="ITSMS">ITSMS</option>
+                                <option value="EnMS">EnMS</option>
+                            </select>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="data-table w-full">
+                                <thead>
+                                    <tr>
+                                        <th>任务编号</th>
+                                        <th>领域</th>
+                                        <th>审核类型</th>
+                                        <th>审核内容</th>
+                                        <th>审核时间</th>
+                                        <th>人日</th>
+                                        <th>金额</th>
+                                        <th>状态</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr data-domain-row="ITSMS">
+                                        <td class="font-mono">TSK-2025-0316</td>
+                                        <td>ITSMS</td>
+                                        <td>初次审核</td>
+                                        <td class="max-w-xs truncate">总部信息技术服务支持范围...</td>
+                                        <td>待定</td>
+                                        <td>6</td>
+                                        <td>¥42,000</td>
+                                        <td><span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">历史暂存</span></td>
+                                    </tr>
+                                    <tr data-domain-row="EnMS">
+                                        <td class="font-mono">TSK-2025-0362</td>
+                                        <td>EnMS</td>
+                                        <td>初次审核</td>
+                                        <td class="max-w-xs truncate">储能试制中心能源管理体系...</td>
+                                        <td>待定</td>
+                                        <td>5</td>
+                                        <td>¥38,000</td>
+                                        <td><span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">历史暂存</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="certificate" class="business-section">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                                <i class="fas fa-certificate text-green-600 mr-2"></i>证书信息
+                            </h3>
+                            <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white business-filter" onchange="selectPublicBusinessScope(this.value)">
+                                <option value="ALL">全部公开领域</option>
+                                <option value="ITSMS">ITSMS</option>
+                                <option value="EnMS">EnMS</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="cert-card" data-domain-row="ITSMS">
+                                <div class="flex items-start justify-between mb-3">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center mr-3">
+                                            <i class="fas fa-server text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-gray-800 text-sm">ISO/IEC 20000-1</p>
+                                            <p class="text-xs text-gray-500">ITSMS 信息技术服务</p>
+                                        </div>
+                                    </div>
+                                    <span class="status-badge status-muted text-xs">历史草稿</span>
+                                </div>
+                                <div class="space-y-1 text-xs">
+                                    <div class="flex justify-between"><span class="text-gray-500">证书编号</span><span class="font-mono">待生成</span></div>
+                                    <div class="flex justify-between"><span class="text-gray-500">当前状态</span><span class="font-medium">未发证</span></div>
+                                </div>
+                            </div>
+
+                            <div class="cert-card" data-domain-row="EnMS">
+                                <div class="flex items-start justify-between mb-3">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center mr-3">
+                                            <i class="fas fa-bolt text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-gray-800 text-sm">ISO 50001</p>
+                                            <p class="text-xs text-gray-500">EnMS 能源管理体系</p>
+                                        </div>
+                                    </div>
+                                    <span class="status-badge status-muted text-xs">历史草稿</span>
+                                </div>
+                                <div class="space-y-1 text-xs">
+                                    <div class="flex justify-between"><span class="text-gray-500">证书编号</span><span class="font-mono">待生成</span></div>
+                                    <div class="flex justify-between"><span class="text-gray-500">当前状态</span><span class="font-medium">未发证</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 领域跟进弹窗 -->
+    <div id="claimModal" class="modal-overlay">
+        <div class="modal-container" style="max-width: 760px;">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-layer-group text-green-600 mr-2"></i>跟进申请
+                </div>
+                <button class="modal-close" onclick="closeModal('claimModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-building text-green-600 mt-1"></i>
+                        <div>
+                            <h4 class="font-bold text-gray-800" id="claimCustomerName">丰源新能源集团有限公司</h4>
+                            <p class="text-xs text-gray-500 mt-1" id="claimCustomerMeta">客户编号：C20240315001 | 所属区域：华北区域 | 所属公司：北京认证中心</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required">选择认证领域</label>
+                    <div class="cert-field-grid" id="detailCertFieldGrid"></div>
+                    <p class="text-xs text-gray-500 mt-2">已认领跟进的认证领域不可重复申请；本页面仅展示当前区域可处理的认证领域；可申请领域暂无归属区域和归属公司。</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required">跟进说明</label>
+                    <textarea class="form-textarea" id="detailClaimReason" placeholder="请简要说明所选认证领域的跟进计划..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">预计首次跟进时间</label>
+                    <input type="date" class="form-input" id="detailFirstFollowDate">
+                </div>
+
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4">
+                    <div class="flex items-start gap-2">
+                        <i class="fas fa-exclamation-triangle text-yellow-600 mt-0.5"></i>
+                        <div class="text-sm text-yellow-800">
+                            <p class="font-medium mb-1">领域跟进须知：</p>
+                            <ul class="list-disc list-inside text-xs space-y-1">
+                                <li>企业创建完成后，8个认证领域默认开启业务跟踪</li>
+                                <li>每个认证领域仅可关联一名跟进人，并同步归属区域与所属公司</li>
+                                <li>本区域申请二次确认后直接生效；跨区域申请需沿用原审批流程</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('claimModal')">取消</button>
+                <button class="btn btn-success" onclick="executeClaim()">
+                    <i class="fas fa-check mr-1"></i>确认跟进所选领域
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DETAIL_CUSTOMERS = {
+            C20240315001: {
+                id: 'C20240315001',
+                name: '丰源新能源集团有限公司',
+                nameEn: 'Fengyuan New Energy Group Co., Ltd.',
+                type: '中央企业',
+                industry: '电力、热力生产供应',
+                region: '华北区域',
+                grade: 'A+',
+                status: '区域公海',
+                inPoolDays: 32,
+                noDealDays: 95,
+                warningText: '该客户因保护期到期于2026-04-12退回区域公海，原跟进人：张明；现按认证领域重新开放跟进。',
+                addressEn: 'No.9 Dongzhimen North Street, PetroChina Tower, Dongcheng District, Beijing, China'
+            },
+            C20240310002: {
+                id: 'C20240310002',
+                name: '天津某贸易股份有限公司',
+                nameEn: 'Tianjin Moumou Trading Co., Ltd.',
+                type: '外资企业',
+                industry: '批发和零售业',
+                region: '华北区域',
+                grade: 'A',
+                status: '区域公海',
+                inPoolDays: 15,
+                noDealDays: 86,
+                warningText: '该客户因90天未跟进释放至区域公海，当前仅未认领认证领域可申请跟进。',
+                addressEn: 'No. 18 Ninth Avenue, Binhai New Area, Tianjin, China'
+            },
+            N20240301001: {
+                id: 'N20240301001',
+                name: '河北某化工股份有限公司',
+                nameEn: 'Hebei Moumou Chemical Co., Ltd.',
+                type: '中央企业',
+                industry: '制造业',
+                region: '华北区域',
+                grade: 'A+',
+                status: '全国公海',
+                inPoolDays: 15,
+                noDealDays: 1101,
+                warningText: '由华北区域公海自动转入全国公海，超过730天无成交；跨区域客户仅对所选认证领域发起审批。',
+                addressEn: 'No. 88 Chemical Industry Road, Shijiazhuang, Hebei, China'
+            },
+            N20240315003: {
+                id: 'N20240315003',
+                name: '上海某电子科技有限公司',
+                nameEn: 'Shanghai Moumou Electronics Technology Co., Ltd.',
+                type: '民营企业',
+                industry: '制造业',
+                region: '华东区域',
+                grade: 'A',
+                status: '全国公海',
+                inPoolDays: 45,
+                noDealDays: 816,
+                warningText: '由华东区域公海自动转入全国公海；当前区域如需跟进，需按认证领域提交跨区域申请。',
+                addressEn: 'No. 399 Zhangjiang Road, Pudong New Area, Shanghai, China'
+            }
+        };
+
+        let detailCustomer = DETAIL_CUSTOMERS.C20240315001;
+        let detailSeaType = 'regional';
+        let currentSiteContactScopeFilter = 'ALL';
+
+        const DETAIL_CERT_FIELDS = [
+            { name: 'QMS', status: 'claimed', ownerRegion: '华北区域', ownerCompany: '北京认证中心', follower: '张明' },
+            { name: 'EMS', status: 'claimed', ownerRegion: '华北区域', ownerCompany: '北京认证中心', follower: '张明' },
+            { name: 'OHSMS', status: 'claimed', ownerRegion: '华北区域', ownerCompany: '北京认证中心', follower: '陈静' },
+            { name: 'FSMS', status: 'claimed', ownerRegion: '华北区域', ownerCompany: '天津办事处', follower: '赵倩' },
+            { name: 'HACCP', status: 'claimed', ownerRegion: '华南区域', ownerCompany: '华南认证中心', follower: '周海' },
+            { name: 'ISMS', status: 'claimed', ownerRegion: '华北区域', ownerCompany: '北京认证中心', follower: '王芳' },
+            { name: 'ITSMS', status: 'available', ownerRegion: '', ownerCompany: '', follower: '' },
+            { name: 'EnMS', status: 'available', ownerRegion: '', ownerCompany: '', follower: '' }
+        ];
+        const DETAIL_CURRENT_USER = { name: '刘明', region: '华北区域', company: '北京认证中心' };
+        const DETAIL_SCOPE_NAMES = {
+            QMS: '质量管理体系',
+            EMS: '环境管理体系',
+            OHSMS: '职业健康安全管理体系',
+            FSMS: '食品安全管理体系',
+            HACCP: '危害分析与关键控制点',
+            ISMS: '信息安全管理体系',
+            ITSMS: '信息技术服务管理体系',
+            EnMS: '能源管理体系'
+        };
+        const PUBLIC_BUSINESS_COUNTS = {
+            ITSMS: { flow: 1, opp: 1, scheme: 1, cert: 1 },
+            EnMS: { flow: 1, opp: 1, scheme: 1, cert: 1 }
+        };
+        const PUBLIC_SCOPE_FLOW_DATA = {
+            ITSMS: [
+                {
+                    type: 'opportunity',
+                    title: '信息技术服务管理体系历史跟进',
+                    relation: '历史跟进',
+                    time: '2025-07-02',
+                    unit: '北京认证中心',
+                    method: '电话沟通',
+                    body: '记录过信息技术服务管理体系导入需求，当前领域未被跟进，历史跟进记录对公海详情公开。'
+                }
+            ],
+            EnMS: [
+                {
+                    type: 'plan',
+                    title: '能源管理体系认证评估跟进',
+                    relation: '历史跟进',
+                    time: '2025-08-25',
+                    unit: '北京认证中心',
+                    method: '需求登记',
+                    body: '记录过能源管理体系认证评估需求，当前领域未被跟进，历史跟进记录对公海详情公开。'
+                }
+            ]
+        };
+        let currentPublicBusinessScope = 'ALL';
+        const sitesData = [
+            {
+                id: 1,
+                name: '总部办公楼',
+                nameEn: 'Beijing Headquarters',
+                employees: 450,
+                type: 'fixed',
+                isHeadquarters: true,
+                province: '北京市',
+                city: '北京市',
+                district: '东城区',
+                addressDetail: '东直门北大街9号中国石油大厦',
+                contacts: [
+                    { scopes: ['QMS'] },
+                    { scopes: ['EMS'] },
+                    { scopes: ['ISMS'] },
+                    { scopes: ['ITSMS'] },
+                    { scopes: ['ISMS', 'ITSMS'] }
+                ]
+            },
+            {
+                id: 2,
+                name: '天津生产基地',
+                nameEn: 'Tianjin Production Base',
+                employees: 1200,
+                type: 'fixed',
+                isHeadquarters: false,
+                province: '天津市',
+                city: '天津市',
+                district: '滨海新区',
+                addressDetail: '第九大街18号',
+                contacts: [
+                    { scopes: ['QMS'] },
+                    { scopes: ['OHSMS'] },
+                    { scopes: ['FSMS'] },
+                    { scopes: ['HACCP'] }
+                ]
+            },
+            {
+                id: 3,
+                name: '保定储能试制中心',
+                nameEn: 'Baoding Energy Storage Pilot Center',
+                employees: 180,
+                type: 'service',
+                isHeadquarters: false,
+                province: '河北省',
+                city: '保定市',
+                district: '高新区',
+                addressDetail: '向阳北大街2899号',
+                contacts: [
+                    { scopes: ['EMS'] },
+                    { scopes: ['EnMS'] }
+                ]
+            }
+        ];
+
+        function initDetailFromQuery() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id') || 'C20240315001';
+            detailSeaType = params.get('sea') === 'national' || id.startsWith('N') ? 'national' : 'regional';
+            detailCustomer = DETAIL_CUSTOMERS[id] || {
+                ...DETAIL_CUSTOMERS.C20240315001,
+                id,
+                name: id.startsWith('N') ? '全国公海客户' : '区域公海客户',
+                status: detailSeaType === 'national' ? '全国公海' : '区域公海'
+            };
+            applyCustomerBusinessRules();
+            renderDetailHeader();
+            renderSites();
+            renderPublicBusinessView();
+        }
+
+        function applyCustomerBusinessRules() {
+            const isNational = detailSeaType === 'national' || detailCustomer.status === '全国公海';
+            DETAIL_CERT_FIELDS.forEach((field, index) => {
+                field.status = 'available';
+                field.ownerRegion = '';
+                field.ownerCompany = '';
+                field.follower = '';
+                if (isNational) {
+                    if (index === 0 || index === 2 || index === 5) {
+                        field.status = 'claimed';
+                        field.ownerRegion = detailCustomer.region;
+                        field.ownerCompany = detailCustomer.region === '华东区域' ? '上海认证中心' : '北京认证中心';
+                        field.follower = index === 5 ? '张磊' : '原区域跟进人';
+                    }
+                } else if (index === 0 || index === 1 || index === 2 || index === 3 || index === 4 || index === 5) {
+                    field.status = 'claimed';
+                    field.ownerRegion = index === 4 ? '华南区域' : DETAIL_CURRENT_USER.region;
+                    field.ownerCompany = index === 3 ? '天津办事处' : (index === 4 ? '华南认证中心' : DETAIL_CURRENT_USER.company);
+                    field.follower = ['张明', '张明', '陈静', '赵倩', '周海', '张磊'][index];
+                }
+            });
+        }
+
+        function renderDetailHeader() {
+            document.title = `公海客户详情 - ${detailCustomer.name}`;
+            document.getElementById('detailSeaBadge').textContent = detailCustomer.status;
+            document.getElementById('detailCustomerName').textContent = detailCustomer.name;
+            document.getElementById('detailCustomerId').textContent = detailCustomer.id;
+            document.getElementById('detailInPoolDays').textContent = `${detailCustomer.inPoolDays}天`;
+            document.getElementById('detailNoDealDays').textContent = `${detailCustomer.noDealDays}天`;
+            document.getElementById('detailSeaWarning').textContent = detailCustomer.warningText;
+            document.getElementById('detailAvailableCount').textContent = `${DETAIL_CERT_FIELDS.filter(field => field.status === 'available').length}项`;
+            document.getElementById('detailCustomerType').textContent = detailCustomer.type;
+            document.getElementById('detailGrade').textContent = detailCustomer.grade;
+            document.getElementById('detailNameEn').textContent = detailCustomer.nameEn;
+            document.getElementById('detailAddressEn').textContent = detailCustomer.addressEn;
+            document.getElementById('detailIndustry').textContent = detailCustomer.industry;
+            document.getElementById('detailRegion').textContent = `${detailCustomer.region} - ${detailCustomer.status}`;
+        }
+
+        function getPublicField(scopeCode) {
+            return DETAIL_CERT_FIELDS.find(field => field.name === scopeCode);
+        }
+
+        function isPublicBusinessScope(scopeCode) {
+            return getPublicField(scopeCode)?.status === 'available';
+        }
+
+        function getScopeCounts(scopeCode) {
+            if (scopeCode === 'ALL') {
+                return DETAIL_CERT_FIELDS
+                    .filter(field => isPublicBusinessScope(field.name))
+                    .reduce((sum, field) => {
+                        const count = PUBLIC_BUSINESS_COUNTS[field.name] || { flow: 0, opp: 0, scheme: 0, cert: 0 };
+                        sum.flow += count.flow;
+                        sum.opp += count.opp;
+                        sum.scheme += count.scheme;
+                        sum.cert += count.cert;
+                        return sum;
+                    }, { flow: 0, opp: 0, scheme: 0, cert: 0 });
+            }
+            return isPublicBusinessScope(scopeCode)
+                ? (PUBLIC_BUSINESS_COUNTS[scopeCode] || { flow: 0, opp: 0, scheme: 0, cert: 0 })
+                : { flow: '-', opp: '-', scheme: '-', cert: '-' };
+        }
+
+        function renderPublicBusinessView() {
+            renderFollowupVisibility();
+            renderPublicDomainTabs();
+            renderBusinessFilters();
+            selectPublicBusinessScope(currentPublicBusinessScope, true);
+        }
+
+        function renderFollowupVisibility() {
+            const publicList = document.getElementById('public-followup-scope-list');
+            const lockedList = document.getElementById('locked-followup-scope-list');
+            const timeline = document.getElementById('public-followup-timeline');
+            if (!publicList || !lockedList) return;
+            const publicFields = DETAIL_CERT_FIELDS.filter(field => field.status === 'available');
+            const lockedFields = DETAIL_CERT_FIELDS.filter(field => field.status !== 'available');
+            publicList.innerHTML = publicFields.map(field => `
+                <div class="bg-white border border-green-100 rounded-lg p-3">
+                    <div class="font-bold text-gray-900">${field.name}</div>
+                    <div class="text-xs text-gray-500 mt-1">${DETAIL_SCOPE_NAMES[field.name] || ''}</div>
+                </div>
+            `).join('') || '<div class="col-span-2 text-sm text-green-700 bg-white border border-green-100 rounded-lg p-3">暂无未跟进领域</div>';
+            lockedList.innerHTML = lockedFields.map(field => {
+                const tagText = field.status === 'pending' ? '审批中' : '已跟进';
+                return `<span class="px-2 py-1 bg-white border border-slate-200 text-slate-700 rounded text-xs">${field.name} · ${tagText}</span>`;
+            }).join('') || '<span class="px-2 py-1 bg-white border border-slate-200 text-slate-500 rounded text-xs">暂无已跟进领域</span>';
+            if (!timeline) return;
+            const records = publicFields.flatMap(field => (PUBLIC_SCOPE_FLOW_DATA[field.name] || []).map(record => ({ ...record, code: field.name })));
+            timeline.innerHTML = records.map(record => `
+                <div class="timeline-item">
+                    <div class="timeline-dot follow"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <div>
+                                <span class="timeline-title">${record.code} · ${record.title}</span>
+                                <span class="relation-tag ${record.type}">
+                                    <i class="fas fa-link text-xs"></i>${record.relation}
+                                </span>
+                            </div>
+                            <span class="text-xs text-gray-500">${record.time}</span>
+                        </div>
+                        <div class="timeline-meta">
+                            <span class="mr-3"><i class="fas fa-building mr-1"></i>${record.unit}</span>
+                            <span><i class="fas fa-history mr-1"></i>${record.method}</span>
+                        </div>
+                        <div class="timeline-body">${record.body}</div>
+                    </div>
+                </div>
+            `).join('') || `
+                <div class="permission-empty p-5 text-center">
+                    <i class="fas fa-unlock text-gray-400 text-xl mb-2"></i>
+                    <div class="font-semibold text-gray-700">当前没有可公开的历史跟进记录</div>
+                    <div class="text-sm text-gray-500 mt-1">已跟进领域的历史跟进记录不在公海详情中展示。</div>
+                </div>
+            `;
+        }
+
+        function renderPublicDomainTabs() {
+            const tabs = document.getElementById('public-domain-tabs');
+            if (!tabs) return;
+            const publicCount = DETAIL_CERT_FIELDS.filter(field => field.status === 'available').length;
+            const lockedCount = DETAIL_CERT_FIELDS.length - publicCount;
+            document.getElementById('public-scope-count').textContent = publicCount;
+            document.getElementById('locked-scope-count').textContent = lockedCount;
+            tabs.innerHTML = [
+                `<button class="sub-tab-btn ${currentPublicBusinessScope === 'ALL' ? 'active' : ''}" data-domain="ALL" onclick="selectPublicBusinessScope('ALL')">全部公开领域<span class="ml-1 px-1.5 py-0.5 bg-green-100 text-green-700 rounded text-xs">${publicCount}项</span></button>`,
+                ...[...DETAIL_CERT_FIELDS].sort((a, b) => {
+                    const weight = field => field.status === 'available' ? 0 : (field.status === 'pending' ? 1 : 2);
+                    return weight(a) - weight(b);
+                }).map(field => {
+                    const isPublic = field.status === 'available';
+                    const isPending = field.status === 'pending';
+                    const tagClass = isPublic ? 'bg-green-100 text-green-700' : (isPending ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600');
+                    const tagText = isPublic ? '公开' : (isPending ? '审批中' : '不公开');
+                    return `<button class="sub-tab-btn ${currentPublicBusinessScope === field.name ? 'active' : ''} ${isPublic ? '' : 'locked'}" data-domain="${field.name}" onclick="selectPublicBusinessScope('${field.name}')">${field.name}<span class="ml-1 px-1.5 py-0.5 ${tagClass} rounded text-xs">${tagText}</span></button>`;
+                })
+            ].join('');
+        }
+
+        function renderBusinessFilters() {
+            const options = [
+                '<option value="ALL">全部公开领域</option>',
+                ...DETAIL_CERT_FIELDS.map(field => {
+                    const suffix = field.status === 'available' ? '公开' : (field.status === 'pending' ? '审批中' : '不公开');
+                    return `<option value="${field.name}">${field.name} ${suffix}</option>`;
+                })
+            ].join('');
+            document.querySelectorAll('.business-filter').forEach(select => {
+                select.innerHTML = options;
+            });
+        }
+
+        function updatePublicBusinessSummary(scopeCode) {
+            const field = getPublicField(scopeCode);
+            const counts = getScopeCounts(scopeCode);
+            const isAll = scopeCode === 'ALL';
+            const isPublic = isAll || isPublicBusinessScope(scopeCode);
+            document.getElementById('public-domain-code').textContent = isAll ? '全部公开领域' : scopeCode;
+            document.getElementById('public-domain-name').textContent = isAll ? '' : (DETAIL_SCOPE_NAMES[scopeCode] || '');
+            document.getElementById('public-domain-status').textContent = isPublic ? '历史业务公开' : (field?.status === 'pending' ? '审批中不公开' : '已跟进不公开');
+            document.getElementById('public-domain-status').className = `scope-state ${isPublic ? 'pool' : 'following'}`;
+            document.getElementById('public-domain-region').textContent = isAll ? '未认领领域' : (field?.ownerRegion || '未认领');
+            document.getElementById('public-domain-company').textContent = isAll ? '未认领领域' : (field?.ownerCompany || '未认领');
+            document.getElementById('public-domain-owner').textContent = isAll ? '-' : (field?.follower || '-');
+            document.getElementById('public-domain-rule').textContent = isPublic ? '业务数据公开' : '仅展示归属状态';
+            document.getElementById('public-flow-count').textContent = counts.flow;
+            document.getElementById('public-opp-count').textContent = counts.opp;
+            document.getElementById('public-scheme-count').textContent = counts.scheme;
+            document.getElementById('public-cert-count').textContent = counts.cert;
+            document.getElementById('public-selected-scope-note').textContent = isAll ? '当前查看：全部公开领域' : `当前查看：${scopeCode} ${DETAIL_SCOPE_NAMES[scopeCode] || ''}`;
+        }
+
+        function renderPublicScopeTimeline(scopeCode) {
+            const timeline = document.getElementById('public-scope-flow-timeline');
+            if (!timeline) return;
+            if (scopeCode !== 'ALL' && !isPublicBusinessScope(scopeCode)) {
+                timeline.innerHTML = `
+                    <div class="permission-empty p-5 text-center">
+                        <i class="fas fa-lock text-gray-400 text-xl mb-2"></i>
+                        <div class="font-semibold text-gray-700">该认证领域已有跟进人，历史业务数据不公开</div>
+                        <div class="text-sm text-gray-500 mt-1">公海详情只展示归属区域、所属公司和跟进状态。</div>
+                    </div>
+                `;
+                return;
+            }
+            const records = (scopeCode === 'ALL'
+                ? DETAIL_CERT_FIELDS.filter(field => isPublicBusinessScope(field.name)).flatMap(field => (PUBLIC_SCOPE_FLOW_DATA[field.name] || []).map(record => ({ ...record, code: field.name })))
+                : (PUBLIC_SCOPE_FLOW_DATA[scopeCode] || []).map(record => ({ ...record, code: scopeCode })));
+            timeline.innerHTML = records.map(record => `
+                <div class="timeline-item">
+                    <div class="timeline-dot follow"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <div>
+                                <span class="timeline-title">${record.code} · ${record.title}</span>
+                                <span class="relation-tag ${record.type}">
+                                    <i class="fas fa-link text-xs"></i>${record.relation}
+                                </span>
+                            </div>
+                            <span class="text-xs text-gray-500">${record.time}</span>
+                        </div>
+                        <div class="timeline-meta">
+                            <span class="mr-3"><i class="fas fa-building mr-1"></i>${record.unit}</span>
+                            <span><i class="fas fa-history mr-1"></i>${record.method}</span>
+                        </div>
+                        <div class="timeline-body">${record.body}</div>
+                    </div>
+                </div>
+            `).join('') || '<div class="permission-empty p-5 text-center text-sm">当前公开领域暂无流转记录。</div>';
+        }
+
+        function filterPublicBusinessRows(scopeCode) {
+            const sections = ['opportunity-history', 'scheme', 'task', 'certificate'];
+            sections.forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                if (!section) return;
+                section.querySelectorAll('.permission-empty').forEach(el => el.remove());
+                let visibleCount = 0;
+                section.querySelectorAll('[data-domain-row]').forEach(row => {
+                    const rowScope = row.getAttribute('data-domain-row');
+                    const matched = isPublicBusinessScope(rowScope) && (scopeCode === 'ALL' || rowScope === scopeCode);
+                    row.classList.toggle('hidden', !matched);
+                    if (matched) visibleCount += 1;
+                });
+                if (visibleCount === 0) {
+                    const body = section.querySelector('tbody');
+                    const grid = section.querySelector('.grid');
+                    const locked = scopeCode !== 'ALL' && !isPublicBusinessScope(scopeCode);
+                    const message = locked
+                        ? '<i class="fas fa-lock mr-1"></i>该认证领域已有跟进人，历史业务数据不公开'
+                        : '当前公开领域暂无该类业务数据';
+                    if (body) {
+                        const empty = document.createElement('tr');
+                        empty.className = 'permission-empty';
+                        const colCount = section.querySelectorAll('thead th').length || 1;
+                        empty.innerHTML = `<td colspan="${colCount}" class="py-6 text-center text-gray-500 bg-gray-50">${message}</td>`;
+                        body.appendChild(empty);
+                    } else if (grid) {
+                        const empty = document.createElement('div');
+                        empty.className = 'permission-empty md:col-span-3 py-6 text-center text-gray-500';
+                        empty.innerHTML = message;
+                        grid.appendChild(empty);
+                    }
+                }
+            });
+            document.querySelectorAll('.business-filter').forEach(select => {
+                select.value = scopeCode;
+            });
+        }
+
+        function selectPublicBusinessScope(scopeCode, skipTabRender = false) {
+            currentPublicBusinessScope = scopeCode;
+            if (!skipTabRender) renderPublicDomainTabs();
+            document.querySelectorAll('#public-domain-tabs .sub-tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.domain === scopeCode);
+            });
+            updatePublicBusinessSummary(scopeCode);
+            renderPublicScopeTimeline(scopeCode);
+            filterPublicBusinessRows(scopeCode);
+        }
+
+        function formatRegionAddress(province, city, district, detail) {
+            const cityText = province === city ? '' : city;
+            return `${province || ''}${cityText || ''}${district || ''}${detail || ''}`;
+        }
+
+        function renderSites() {
+            const container = document.getElementById('sites-list');
+            if (!container) return;
+            container.innerHTML = sitesData.map(site => {
+                const matchedScopes = Array.from(new Set((site.contacts || [])
+                    .flatMap(contact => contact.scopes || [])
+                    .filter(scope => currentSiteContactScopeFilter === 'ALL' || scope === currentSiteContactScopeFilter)));
+                if (currentSiteContactScopeFilter !== 'ALL' && matchedScopes.length === 0) return '';
+                const typeLabel = site.isHeadquarters ? '总部场所' : (site.type === 'service' ? '服务点' : '固定场所');
+                return `
+                    <div class="site-card">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center">
+                                    <i class="fas fa-${site.type === 'service' ? 'warehouse' : 'building'} text-xl"></i>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <h5 class="font-bold text-lg text-gray-800">${site.name}</h5>
+                                        <span class="site-type-badge">${typeLabel}</span>
+                                        <span class="px-2 py-0.5 bg-gray-100 text-gray-500 rounded text-xs">历史资源</span>
+                                    </div>
+                                    <p class="text-sm text-gray-500">${site.nameEn || ''}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="bg-gray-50 rounded-lg p-3"><p class="text-xs text-gray-500 mb-1">场所人数</p><p class="font-bold text-gray-800">${site.employees}人</p></div>
+                            <div class="bg-gray-50 rounded-lg p-3"><p class="text-xs text-gray-500 mb-1">关联领域</p><p class="font-bold text-gray-800">${matchedScopes.length}项</p></div>
+                            <div class="bg-gray-50 rounded-lg p-3"><p class="text-xs text-gray-500 mb-1">场所类型</p><p class="font-bold text-gray-800">${typeLabel}</p></div>
+                        </div>
+                        <div class="mt-3 bg-gray-50 rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">场所地址</p>
+                            <p class="font-medium text-gray-800">${formatRegionAddress(site.province, site.city, site.district, site.addressDetail)}</p>
+                        </div>
+                        <div class="mt-4 border-t border-gray-100 pt-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <p class="text-xs text-gray-500">关联认证领域${currentSiteContactScopeFilter === 'ALL' ? '' : ` · ${currentSiteContactScopeFilter}`}</p>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                ${matchedScopes.map(scope => `<span class="px-2 py-1 bg-white border border-slate-200 text-slate-700 rounded text-xs" title="${DETAIL_SCOPE_NAMES[scope] || scope}">${scope}</span>`).join('') || '<span class="text-sm text-gray-400 bg-gray-50 rounded-lg p-3">暂无关联领域</span>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function setSiteContactFilter(scope) {
+            currentSiteContactScopeFilter = scope;
+            renderSites();
+        }
+
+        function renderDetailCertFields() {
+            const grid = document.getElementById('detailCertFieldGrid');
+            if (!grid) return;
+            grid.innerHTML = DETAIL_CERT_FIELDS.map(field => {
+                const available = field.status === 'available';
+                const statusText = field.status === 'available'
+                    ? (detailSeaType === 'national' ? '需跨区申请' : '可申请跟进')
+                    : (field.status === 'pending' ? '审批中' : '已认领跟进');
+                return `
+                    <label class="cert-field-card ${field.status}" style="cursor: ${available ? 'pointer' : 'not-allowed'};">
+                        <div class="cert-field-title">
+                            <span>${available ? `<input type="checkbox" class="detail-cert-checkbox mr-2" value="${field.name}">` : ''}${field.name}</span>
+                            <span class="cert-status ${field.status}">${statusText}</span>
+                        </div>
+                        <div class="cert-field-meta">
+                            <div>归属区域：${field.ownerRegion || ''}</div>
+                            <div>归属公司：${field.ownerCompany || ''}</div>
+                            <div>跟进人：${field.follower || '-'}</div>
+                        </div>
+                    </label>
+                `;
+            }).join('');
+        }
+
+        // Tab切换
+        function switchMainTab(type) {
+            const buttons = document.querySelectorAll('.main-tab-btn');
+            const panels = {
+                'history': document.getElementById('panel-history'),
+                'followup': document.getElementById('panel-followup'),
+                'resource': document.getElementById('panel-resource'),
+                'business': document.getElementById('panel-business')
+            };
+
+            const tabOrder = ['history', 'followup', 'resource', 'business'];
+            buttons.forEach((btn, index) => {
+                btn.classList.toggle('active', tabOrder[index] === type);
+            });
+
+            Object.keys(panels).forEach(key => {
+                if (key === type) {
+                    panels[key].classList.remove('hidden');
+                } else {
+                    panels[key].classList.add('hidden');
+                }
+            });
+
+            if (type === 'history') {
+                document.querySelectorAll('.anchor-btn').forEach((btn, index) => {
+                    if (index === 0) btn.classList.add('active');
+                    else btn.classList.remove('active');
+                });
+            }
+        }
+
+        function highlightAnchor(element) {
+            document.querySelectorAll('.anchor-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // 锚点滚动
+        const rightContent = document.querySelector('.right-content');
+        const sections = ['available-scopes', 'customer-profile', 'scope-overview', 'scope-public-flow', 'opportunity-history', 'scheme', 'task', 'certificate'];
+
+        rightContent.addEventListener('scroll', () => {
+            const scrollPos = rightContent.scrollTop + 100;
+
+            sections.forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                if (section && !section.closest('.hidden')) {
+                    const top = section.offsetTop - 80;
+                    const bottom = top + section.offsetHeight;
+
+                    if (scrollPos >= top && scrollPos < bottom) {
+                        document.querySelectorAll('.anchor-btn').forEach(btn => {
+                            btn.classList.remove('active');
+                            if (btn.getAttribute('href') === '#' + sectionId) {
+                                btn.classList.add('active');
+                            }
+                        });
+                    }
+                }
+            });
+        });
+
+        document.querySelectorAll('.anchor-btn').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    rightContent.scrollTo({
+                        top: targetElement.offsetTop - 70,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // 弹窗控制
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function openClaimModal() {
+            renderDetailCertFields();
+            document.getElementById('claimCustomerName').textContent = detailCustomer.name;
+            document.getElementById('claimCustomerMeta').textContent = `客户编号：${detailCustomer.id} | 所属区域：${detailCustomer.region} | 当前状态：${detailCustomer.status}`;
+            document.getElementById('detailFirstFollowDate').value = '';
+            document.getElementById('detailClaimReason').value = '';
+            openModal('claimModal');
+        }
+
+        function executeClaim() {
+            const selected = Array.from(document.querySelectorAll('.detail-cert-checkbox:checked')).map(cb => cb.value);
+            const reason = document.getElementById('detailClaimReason').value.trim();
+            if (selected.length === 0) {
+                alert('请选择至少一个未认领的认证领域');
+                return;
+            }
+            if (!reason) {
+                alert('请填写跟进说明');
+                return;
+            }
+            DETAIL_CERT_FIELDS.forEach(field => {
+                if (selected.includes(field.name)) {
+                    if (detailSeaType === 'national') {
+                        field.status = 'pending';
+                        field.ownerRegion = detailCustomer.region;
+                        field.ownerCompany = '来源区域审批中';
+                        field.follower = '审批通过后生效';
+                    } else {
+                        field.status = 'claimed';
+                        field.ownerRegion = DETAIL_CURRENT_USER.region;
+                        field.ownerCompany = DETAIL_CURRENT_USER.company;
+                        field.follower = DETAIL_CURRENT_USER.name;
+                    }
+                }
+            });
+            renderDetailHeader();
+            renderPublicBusinessView();
+            alert(detailSeaType === 'national'
+                ? `跨区域跟进申请已提交：${selected.join('、')} 进入审批中。`
+                : `领域跟进成功！${selected.join('、')} 已归入我的跟进列表。`);
+            closeModal('claimModal');
+        }
+
+        function exportData() {
+            alert('正在导出客户数据...');
+        }
+
+        // 点击弹窗外部关闭
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initDetailFromQuery();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,3330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>跨区域跟进申请管理 - 客户营销系统V2.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f1f5f9;
+            min-height: 100vh;
+        }
+
+        /* 顶部栏 */
+        .top-bar {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .user-region-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: #dbeafe;
+            color: #1e40af;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid #bfdbfe;
+            margin-left: 16px;
+        }
+
+        /* 列表类型切换 */
+        .view-toggle {
+            display: flex;
+            gap: 0;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-left: 24px;
+        }
+
+        .view-toggle-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .view-toggle-btn.active {
+            background: white;
+            color: #3b82f6;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .view-toggle-btn:hover:not(.active) {
+            color: #374151;
+        }
+
+        /* 统计栏 */
+        .stats-bar {
+            display: flex;
+            gap: 12px;
+            margin-left: 24px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: #f8fafc;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .stat-item:hover, .stat-item.active {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            color: #1e293b;
+            font-size: 16px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* 筛选栏 */
+        .filter-bar {
+            background: white;
+            margin: 20px 24px 0 24px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .quick-filters {
+            padding: 16px 20px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+            background: #fafafa;
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-item label {
+            font-size: 13px;
+            color: #374151;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .filter-item input,
+        .filter-item select {
+            padding: 6px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            background: white;
+        }
+
+        .filter-item input:focus,
+        .filter-item select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+
+        /* 表格区域 */
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin: 20px 24px;
+            overflow: hidden;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            max-height: calc(100vh - 320px);
+            position: relative;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 1600px;
+            table-layout: fixed;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 13px;
+            border-bottom: 1px solid #e2e8f0;
+            white-space: nowrap;
+            background: white;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .data-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #475569;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .data-table tbody tr:hover td {
+            background: #f8fafc;
+        }
+
+        /* 冻结列 */
+        .col-sticky-left {
+            position: sticky;
+            left: 0;
+            z-index: 30;
+            background: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            width: 160px;
+            min-width: 160px;
+        }
+
+        .col-sticky-left-2 {
+            position: sticky;
+            left: 160px;
+            z-index: 30;
+            background: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            width: 200px;
+            min-width: 200px;
+        }
+
+        .col-sticky-right {
+            position: sticky;
+            right: 0;
+            z-index: 30;
+            background: white;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.05);
+            width: 180px;
+            min-width: 140px;
+        }
+
+        .data-table th.col-sticky-left,
+        .data-table th.col-sticky-left-2,
+        .data-table th.col-sticky-right {
+            z-index: 40;
+            background: #f8fafc;
+        }
+
+        .data-table tbody tr:hover .col-sticky-left,
+        .data-table tbody tr:hover .col-sticky-left-2,
+        .data-table tbody tr:hover .col-sticky-right {
+            background: #f8fafc;
+        }
+
+        /* 状态标签 */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-draft { background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; }
+        .status-pending { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+        .status-first { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+        .status-second { background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
+        .status-approved { background: #d1fae5; color: #065f46; border: 1px solid #86efac; }
+        .status-rejected { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .status-expired { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .status-revoked { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
+
+        /* 区域标签 */
+        .region-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+
+        .region-from { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+        .region-to { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+
+        .cross-arrow {
+            color: #9ca3af;
+            margin: 0 4px;
+            font-size: 12px;
+        }
+
+        .data-table th:nth-child(4),
+        .data-table td:nth-child(4) {
+            width: 260px;
+            min-width: 260px;
+            white-space: normal;
+            overflow: visible;
+            text-overflow: clip;
+        }
+
+        .cross-region-full {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: wrap;
+            line-height: 1.7;
+        }
+
+        /* 步骤条 */
+        .step-container {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            position: relative;
+            padding: 0 20px;
+        }
+
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+
+        .step-line {
+            position: absolute;
+            top: 16px;
+            left: -50%;
+            width: 100%;
+            height: 2px;
+            background-color: #e2e8f0;
+            z-index: 0;
+        }
+
+        .step-line.active { background-color: #3b82f6; }
+
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 1;
+            position: relative;
+            background-color: white;
+            border: 2px solid #e2e8f0;
+            color: #64748b;
+        }
+
+        .step-circle.completed {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+        }
+
+        .step-circle.current {
+            background-color: white;
+            border-color: #3b82f6;
+            color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .step-circle.rejected {
+            background-color: white;
+            border-color: #ef4444;
+            color: #dc2626;
+        }
+
+        /* 按钮 */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+
+        .btn-secondary { background: white; border-color: #d1d5db; color: #374151; }
+        .btn-secondary:hover { background: #f9fafb; }
+
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+
+        .btn-warning { background: #f59e0b; color: white; }
+        .btn-warning:hover { background: #d97706; }
+
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+        .action-btn {
+            color: #3b82f6;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .action-btn:hover { background: #eff6ff; color: #1d4ed8; }
+        .action-btn.danger { color: #dc2626; }
+        .action-btn.danger:hover { background: #fef2f2; }
+
+        .action-btns { display: flex; gap: 8px; }
+
+        /* 分页 */
+        .pagination { display: flex; gap: 4px; align-items: center; }
+        .page-btn {
+            padding: 6px 12px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .page-btn:hover { border-color: #3b82f6; color: #3b82f6; }
+        .page-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+
+        /* 侧边栏抽屉 */
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 1050;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .drawer-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .side-drawer {
+            position: fixed;
+            top: 0;
+            right: -900px;
+            width: 900px;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+            z-index: 1100;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .side-drawer.active { right: 0; }
+
+        .drawer-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            flex-shrink: 0;
+        }
+
+        .drawer-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .drawer-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+            background: #f8fafc;
+        }
+
+        .drawer-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e5e7eb;
+            background: white;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        /* 详情页标签 */
+        .detail-tabs {
+            display: flex;
+            border-bottom: 1px solid #e5e7eb;
+            background: white;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .detail-tab {
+            padding: 16px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .detail-tab:hover { color: #3b82f6; }
+        .detail-tab.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .detail-section {
+            padding: 24px;
+            display: none;
+        }
+
+        .detail-section.active { display: block; }
+
+        /* 卡片样式 */
+        .detail-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .detail-card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #fafafa;
+        }
+
+        .detail-card-body { padding: 20px; }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #111827;
+            font-weight: 600;
+        }
+
+        .info-value.subtle {
+            font-weight: 400;
+            color: #4b5563;
+        }
+
+        /* 审批意见卡片 */
+        .approval-opinion {
+            border-left: 3px solid #e2e8f0;
+            padding: 12px 16px;
+            margin: 8px 0;
+            background: #f8fafc;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .approval-opinion.approved {
+            border-color: #22c55e;
+            background-color: #f0fdf4;
+        }
+
+        .approval-opinion.rejected {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+
+        /* 模态框 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-panel {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh;
+        }
+
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .modal-header-blue { background: #eff6ff; border-bottom-color: #bfdbfe; }
+        .modal-header-green { background: #f0fdf4; border-bottom-color: #bbf7d0; }
+        .modal-header-amber { background: #fffbeb; border-bottom-color: #fcd34d; }
+        .modal-header-red { background: #fef2f2; border-bottom-color: #fecaca; }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background: #fafafa;
+            flex-shrink: 0;
+        }
+
+        /* 表单样式 */
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: all 0.2s;
+            background-color: white;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-textarea {
+            resize: none;
+            min-height: 100px;
+        }
+
+        .readonly-field {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #1e293b;
+            min-height: 36px;
+            width: 100%;
+        }
+
+        .field-group {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        /* 警示框 */
+        .alert-box {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .alert-box.info {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+        }
+
+        .alert-box.warning {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            color: #92400e;
+        }
+
+        .alert-box.error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        /* 决策卡片 */
+        .decision-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 12px;
+        }
+
+        .decision-card:hover {
+            border-color: #bfdbfe;
+            background: #f8fafc;
+        }
+
+        .decision-card.selected-approve {
+            border-color: #22c55e;
+            background-color: #f0fdf4;
+        }
+
+        .decision-card.selected-reject {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-left: 4px solid;
+            padding: 16px 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            z-index: 9999;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        #toast.toast-success { border-color: #22c55e; }
+        #toast.toast-error { border-color: #ef4444; }
+        #toast.toast-warning { border-color: #f59e0b; }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* 隐藏 */
+        .hidden { display: none !important; }
+
+        /* 自定义滚动条 */
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+        /* 日志时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 28px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e5e7eb;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .timeline-item:last-child { padding-bottom: 0; }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #3b82f6;
+        }
+
+        .timeline-item.completed::before { border-color: #22c55e; }
+        .timeline-item.rejected::before { border-color: #ef4444; }
+
+        .timeline-time {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .timeline-content {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        /* 倒计时 */
+        .countdown-warning { color: #ea580c; font-weight: 600; }
+        .countdown-danger { color: #dc2626; font-weight: 600; }
+
+            /* 客户搜索下拉样式 */
+        .customer-dropdown-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .customer-dropdown-item:hover {
+            background: #eff6ff;
+        }
+        .customer-dropdown-item:last-child {
+            border-bottom: none;
+        }
+        .customer-dropdown-item .customer-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .customer-dropdown-item .customer-meta {
+            font-size: 12px;
+            color: #64748b;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .customer-dropdown-item .region-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .customer-dropdown-item.selected {
+            background: #eff6ff;
+            border-left: 3px solid #3b82f6;
+        }
+        .customer-empty-tip {
+            padding: 20px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: #d1d5db;
+        }
+        .empty-state h3 {
+            font-size: 16px;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        .empty-state p {
+            font-size: 13px;
+            color: #9ca3af;
+        }
+</style>
+<base target="_blank">
+</head>
+<body>
+    <!-- 顶部栏 -->
+    <div class="top-bar">
+        <div class="flex items-center gap-4">
+            <h1 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <i class="fas fa-exchange-alt text-blue-600"></i>
+                跨区域跟进申请管理
+            </h1>
+
+            <div class="user-region-badge">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>当前区域：华北区域</span>
+            </div>
+
+            <!-- 列表类型切换 -->
+            <div class="view-toggle">
+                <button class="view-toggle-btn active" id="btn-my-initiated" onclick="switchView('my-initiated')">
+                    <i class="fas fa-user-edit"></i>
+                    我发起的
+                </button>
+                <button class="view-toggle-btn" id="btn-my-approval" onclick="switchView('my-approval')">
+                    <i class="fas fa-clipboard-check"></i>
+                    我审批的
+                </button>
+            </div>
+
+            <!-- 统计栏 - 我发起的 -->
+            <div class="stats-bar" id="stats-my-initiated">
+                <div class="stat-item active" onclick="filterByStatus('all')">
+                    <span class="stat-value" id="stat-all-initiated">8</span>
+                    <span class="stat-label">全部</span>
+                </div>
+                <div class="stat-item" onclick="filterByStatus('draft')">
+                    <span class="stat-value" id="stat-draft-initiated">2</span>
+                    <span class="stat-label">草稿</span>
+                </div>
+                <div class="stat-item" onclick="filterByStatus('pending')">
+                    <span class="stat-value" id="stat-pending-initiated">2</span>
+                    <span class="stat-label">审批中</span>
+                </div>
+                <div class="stat-item" onclick="filterByStatus('approved')">
+                    <span class="stat-value" id="stat-approved-initiated">2</span>
+                    <span class="stat-label">已通过</span>
+                </div>
+                <div class="stat-item" onclick="filterByStatus('expired')">
+                    <span class="stat-value" id="stat-expired-initiated">2</span>
+                    <span class="stat-label">已过期</span>
+                </div>
+            </div>
+
+            <!-- 统计栏 - 我审批的 -->
+            <div class="stats-bar hidden" id="stats-my-approval">
+                <div class="stat-item active" onclick="filterByStatus('all')">
+                    <span class="stat-value" id="stat-all-approval">6</span>
+                    <span class="stat-label">全部</span>
+                </div>
+                <div class="stat-item" onclick="filterByStatus('current_review')">
+                    <span class="stat-value" id="stat-current-approval">2</span>
+                    <span class="stat-label">待当前区域初审</span>
+                </div>
+                <div class="stat-item" onclick="filterByStatus('cross_review')">
+                    <span class="stat-value" id="stat-cross-approval">2</span>
+                    <span class="stat-label">待跨区域二审</span>
+                </div>
+                <div class="stat-item" onclick="filterByStatus('final_review')">
+                    <span class="stat-value" id="stat-final-approval">0</span>
+                    <span class="stat-label">待跨区域终审</span>
+                </div>
+                <div class="stat-item" onclick="filterByStatus('approved')">
+                    <span class="stat-value" id="stat-approved-approval">2</span>
+                    <span class="stat-label">已审批</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button class="btn btn-secondary btn-sm" onclick="toggleFilter()">
+                <i class="fas fa-filter"></i>
+                <span id="filter-text">收起筛选</span>
+                <i class="fas fa-chevron-up ml-1" id="filter-icon"></i>
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="exportData()">
+                <i class="fas fa-download"></i>
+                导出
+            </button>
+            <button class="btn btn-primary btn-sm" id="btn-new-report" onclick="openNewReportModal()">
+                <i class="fas fa-plus"></i>
+                发起跟进申请
+            </button>
+        </div>
+    </div>
+
+    <!-- 筛选栏 -->
+    <div class="filter-bar">
+        <div class="quick-filters">
+            <div class="filter-item">
+                <label>跟进申请单号</label>
+                <input type="text" id="filter-id" placeholder="输入编号" style="width: 130px;">
+            </div>
+            <div class="filter-item">
+                <label>客户名称</label>
+                <input type="text" id="filter-name" placeholder="输入名称" style="width: 150px;">
+            </div>
+            <div class="filter-item">
+                <label>归属区域</label>
+                <select id="filter-from-region" style="width: 110px;">
+                    <option value="">全部</option>
+                    <option>华北区域</option>
+                    <option>华东区域</option>
+                    <option>华南区域</option>
+                    <option>西南区域</option>
+                    <option>华中区域</option>
+                    <option>东北区域</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <label>申请状态</label>
+                <select id="filter-status" style="width: 110px;">
+                    <option value="">全部</option>
+                    <option value="draft">草稿</option>
+                    <option value="current_review">当前区域初审中</option>
+                    <option value="cross_review">跨区域二审中</option>
+                    <option value="final_review">跨区域终审中</option>
+                    <option value="approved">已通过</option>
+                    <option value="rejected">已驳回</option>
+                    <option value="expired">已过期</option>
+                    <option value="revoked">已撤销</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <label>有效期至</label>
+                <input type="date" id="filter-expire" style="width: 130px;">
+            </div>
+            <div class="flex-1"></div>
+            <button class="btn btn-primary btn-sm" onclick="searchData()">
+                <i class="fas fa-search"></i>
+                查询
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="resetData()">
+                重置
+            </button>
+        </div>
+    </div>
+
+    <!-- 表格区域 -->
+    <div class="table-container">
+        <div class="table-wrapper custom-scroll">
+            <table class="data-table" id="reportTable">
+                <thead>
+                    <tr>
+                        <th class="col-sticky-left">跟进申请单号</th>
+                        <th class="col-sticky-left-2">客户名称</th>
+                        <th>客户类型</th>
+                        <th>跨区域情况</th>
+                        <th>认证领域</th>
+                        <th>有效期</th>
+                        <th>剩余天数</th>
+                        <th>当前状态</th>
+                        <th>审批进度</th>
+                        <th>发起人</th>
+                        <th>发起时间</th>
+                        <th class="col-sticky-right">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 分页 -->
+        <div class="p-4 border-t border-gray-200 flex items-center justify-between bg-white">
+            <div class="text-sm text-gray-600">
+                显示第 <span class="font-medium" id="page-start">1</span> 到 <span class="font-medium" id="page-end">10</span> 条，共 <span class="font-medium" id="total-count">14</span> 条
+            </div>
+            <div class="pagination" id="pagination">
+            </div>
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+                <span>每页</span>
+                <select class="border border-gray-300 rounded px-2 py-1 text-sm" onchange="changePageSize(this.value)">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+                <span>条</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div id="toast">
+        <i class="fas fa-check-circle text-green-500"></i>
+        <span id="toast-message">操作成功</span>
+    </div>
+
+    <!-- 侧边栏详情抽屉 -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeSideDrawer()"></div>
+    <div class="side-drawer" id="sideDrawer">
+        <div class="drawer-header">
+            <div>
+                <div class="drawer-title">
+                    <i class="fas fa-file-alt text-gray-700"></i>
+                    跟进申请单详情
+                </div>
+                <div class="text-sm text-gray-500 mt-1" id="drawerSubtitle">编号：BR20240308001</div>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="closeSideDrawer()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="detail-tabs">
+            <div class="detail-tab active" onclick="switchDetailTab('basic')">基本信息</div>
+            <div class="detail-tab" onclick="switchDetailTab('process')">审批流程</div>
+            <div class="detail-tab" onclick="switchDetailTab('opinions')">审批意见</div>
+            <div class="detail-tab" onclick="switchDetailTab('logs')">操作日志</div>
+        </div>
+
+        <div class="drawer-body custom-scroll">
+            <!-- 基本信息 -->
+            <div class="detail-section active" id="tab-basic">
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <i class="fas fa-info-circle text-blue-600"></i>
+                        跟进申请基本信息
+                    </div>
+                    <div class="detail-card-body">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">跟进申请单号</span>
+                                <span class="info-value font-mono" id="detail-id">BR20240308001</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">申请状态</span>
+                                <span class="info-value" id="detail-status">
+                                    <span class="status-badge status-approved">已通过</span>
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">客户名称</span>
+                                <span class="info-value" id="detail-customer">东方建设集团有限公司</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">客户类型</span>
+                                <span class="info-value" id="detail-type">中央企业</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">统一信用代码</span>
+                                <span class="info-value subtle font-mono" id="detail-code">91110109MA00xxxxxx</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">所属行业</span>
+                                <span class="info-value" id="detail-industry">建筑业</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <i class="fas fa-exchange-alt text-blue-600"></i>
+                        跨区域信息
+                    </div>
+                    <div class="detail-card-body">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">客户归属区域</span>
+                                <span class="info-value">
+                                    <span class="region-tag region-from" id="detail-from-region">华东区域</span>
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">跟单人所在区域</span>
+                                <span class="info-value">
+                                    <span class="region-tag region-to" id="detail-to-region">华北区域</span>
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">申请事由</span>
+                                <span class="info-value subtle" id="detail-reason">客户总部在上海，但生产基地位于华北地区，需要协调华北审核资源进行现场审核。</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <i class="fas fa-certificate text-blue-600"></i>
+                        业务信息
+                    </div>
+                    <div class="detail-card-body">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">关联认证领域</span>
+                                <span class="info-value" id="detail-fields">
+                                    <span style="display: inline-flex; gap: 4px;">
+                                        <span class="region-tag" style="background: #dbeafe; color: #1e40af;">QMS</span>
+                                        <span class="region-tag" style="background: #dcfce7; color: #166534;">EMS</span>
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">申请有效期</span>
+                                <span class="info-value" id="detail-validity">90天</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">有效期起止</span>
+                                <span class="info-value" id="detail-period">2024-03-08 至 2024-06-06</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">剩余天数</span>
+                                <span class="info-value" id="detail-remaining">
+                                    <span class="countdown-warning">7天</span>
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">预计成交时间</span>
+                                <span class="info-value" id="detail-deal-time">2024年5月</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">预期目标</span>
+                                <span class="info-value subtle" id="detail-target">完成QMS和EMS双体系初次认证，预计合同金额15万元。</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 审批流程 -->
+            <div class="detail-section" id="tab-process">
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <i class="fas fa-tasks text-blue-600"></i>
+                        审批流程进度
+                    </div>
+                    <div class="detail-card-body">
+                        <div class="step-container mt-6 mb-6" id="process-steps">
+                            <!-- 动态生成步骤 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 审批意见 -->
+            <div class="detail-section" id="tab-opinions">
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <i class="fas fa-comments text-blue-600"></i>
+                        审批意见记录
+                    </div>
+                    <div class="detail-card-body" id="approval-opinions">
+                        <!-- 动态生成意见 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 操作日志 -->
+            <div class="detail-section" id="tab-logs">
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <i class="fas fa-history text-blue-600"></i>
+                        操作日志
+                    </div>
+                    <div class="detail-card-body">
+                        <div class="timeline" id="operation-logs">
+                            <!-- 动态生成日志 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="drawer-footer" id="drawer-footer">
+            <button class="btn btn-secondary" onclick="closeSideDrawer()">关闭</button>
+            <button class="btn btn-danger" id="btn-revoke" onclick="openRevokeFromDrawer()">
+                <i class="fas fa-undo"></i>
+                撤销跟进申请
+            </button>
+        </div>
+    </div>
+
+    <!-- ========== 弹窗区域 ========== -->
+
+    <!-- 1. 发起跟进申请弹窗 -->
+    <div class="modal-overlay" id="newReportModal">
+        <div class="modal-panel" style="width: 700px; height: 700px;">
+            <div class="modal-header modal-header-blue">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-plus-circle text-blue-600"></i>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">发起跨区域跟进申请</h2>
+                        <p class="text-xs text-gray-500">提交后将进入初审流程</p>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="closeModal('newReportModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body custom-scroll">
+                <div class="alert-box info mb-4">
+                    <i class="fas fa-info-circle"></i>
+                    <div class="text-sm">
+                        <p class="font-semibold mb-1">申请说明</p>
+                        <ul class="list-disc list-inside space-y-1 text-xs opacity-90">
+                            <li>客户归属区域与跟单人区域不一致时，需提交跨区域跟进申请</li>
+                            <li>跟进申请有效期默认90天</li>
+                            <li>审批流程：当前区域部门经理初审 → 跨区域部门经理二审 → 跨区域区域总监终审</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="field-group">
+                        <div class="section-title">
+                            <i class="fas fa-building"></i>
+                            客户信息
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">选择客户 <span class="text-red-500">*</span><span class="text-xs text-gray-500 font-normal ml-1">支持模糊搜索</span></label>
+                            <div class="relative">
+                                <input type="text" id="report-customer-input" class="form-input pr-10" placeholder="请输入客户名称关键字搜索..." oninput="searchCustomer(this.value)" onclick="showCustomerDropdown()">
+                                <div class="absolute right-3 top-2.5 text-gray-400">
+                                    <i id="customer-search-icon" class="fas fa-search"></i>
+                                    <div id="customer-search-loading" class="hidden">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                    </div>
+                                </div>
+                                <div id="customer-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
+                                    <!-- 动态生成客户列表 -->
+                                </div>
+                            </div>
+                            <input type="hidden" id="report-customer-id" value="">
+                            <p class="text-xs text-gray-500 mt-1">输入至少2个字符开始搜索，选择后将自动回填客户信息</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">客户归属区域</label>
+                                <input type="text" class="readonly-field" id="customer-region" readonly placeholder="选择客户后自动显示">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">跟单人所在区域</label>
+                                <input type="text" class="readonly-field" readonly value="华北区域">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <div class="section-title">
+                            <i class="fas fa-edit"></i>
+                            申请内容
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">申请事由 <span class="text-red-500">*</span></label>
+                            <textarea class="form-textarea" id="report-reason" rows="3" placeholder="请详细说明跨区域跟进的原因，如：客户总部在北京，生产基地在华北，需协调两地审核资源"></textarea>
+                            <p class="text-xs text-gray-500 mt-1">需说明"申请事由合理性"及"是否影响原归属区域利益"</p>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">关联认证领域</label>
+                            <div class="flex gap-3 flex-wrap">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" class="rounded text-blue-600 w-4 h-4" checked>
+                                    <span class="text-sm text-slate-700">QMS</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" class="rounded text-blue-600 w-4 h-4">
+                                    <span class="text-sm text-slate-700">EMS</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" class="rounded text-blue-600 w-4 h-4">
+                                    <span class="text-sm text-slate-700">OHSMS</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" class="rounded text-blue-600 w-4 h-4">
+                                    <span class="text-sm text-slate-700">FSMS</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">申请有效期</label>
+                                <select class="form-select" id="report-validity">
+                                    <option value="30">30天</option>
+                                    <option value="90" selected>90天（默认）</option>
+                                    <option value="180">180天</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1.5">预计成交时间</label>
+                                <input type="month" class="form-input" id="report-deal-time">
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">预期目标</label>
+                            <textarea class="form-textarea" rows="2" placeholder="请说明预期达成的业务目标"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox" class="rounded text-amber-600 mt-0.5 w-4 h-4" id="confirm-cross-region">
+                            <div class="text-sm text-amber-800">
+                                <span class="font-semibold block mb-0.5">确认理解跟进申请规则</span>
+                                <span class="text-xs opacity-90">我确认了解跨区域跟进需遵守的区域利益协调原则，获批后将严格按跟进申请范围开展工作，接受原归属区域监督。</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button onclick="closeModal('newReportModal')" class="btn btn-secondary">取消</button>
+                <button onclick="saveDraft()" class="btn btn-secondary">保存草稿</button>
+                <button onclick="submitNewReport()" class="btn btn-primary">提交初审</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 审批弹窗（三级/二级共用） -->
+    <div class="modal-overlay" id="approvalModal">
+        <div class="modal-panel" style="width: 700px; height: 700px;">
+            <div class="modal-header modal-header-blue" id="approval-header">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-gavel text-blue-600"></i>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900" id="approval-title">跟进申请审批（跨区域区域总监终审）</h2>
+                        <p class="text-xs text-gray-500">审批单号：<span id="approval-report-id">BR20240308001</span></p>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="closeModal('approvalModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body custom-scroll">
+                <!-- 跟进申请信息展示 -->
+                <div class="field-group mb-4">
+                    <div class="section-title">
+                        <i class="fas fa-file-text"></i>
+                        跟进申请基本信息
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div class="space-y-3">
+                            <div>
+                                <span class="text-xs text-slate-500 block mb-1">客户名称</span>
+                                <span class="font-medium text-slate-900" id="approval-customer">东方建设集团有限公司</span>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-500 block mb-1">发起人/区域</span>
+                                <span class="font-medium text-slate-900" id="approval-initiator">张营销 / 华北区域</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div>
+                                <span class="text-xs text-slate-500 block mb-1">跨区域情况</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-medium text-slate-700" id="approval-from-region">华东</span>
+                                    <i class="fas fa-arrow-right text-slate-400"></i>
+                                    <span class="font-medium text-orange-600" id="approval-to-region">华北</span>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-500 block mb-1">关联领域</span>
+                                <div class="flex gap-1">
+                                    <span class="region-tag" style="background: #dbeafe; color: #1e40af;">QMS</span>
+                                    <span class="region-tag" style="background: #dcfce7; color: #166534;">EMS</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-span-2">
+                            <span class="text-xs text-slate-500 block mb-1">申请事由</span>
+                            <div class="readonly-field text-sm" id="approval-reason">
+                                客户总部在上海，但生产基地位于华北地区，需要协调华北审核资源进行现场审核。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 前置审批意见（仅二审/终审时显示） -->
+                <div class="mb-4" id="previous-opinion-section">
+                    <!-- 动态插入前置审批意见 -->
+                </div>
+
+                <!-- 审批决策 -->
+                <div class="mb-4">
+                    <label class="block text-xs font-semibold text-slate-700 mb-3">审批决策 <span class="text-red-500">*</span></label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <label class="decision-card" onclick="selectDecision(this, 'approve')" id="decision-approve">
+                            <input type="radio" name="approval-decision" value="approve" class="w-4 h-4 text-green-600" onchange="toggleApprovalInput(true)">
+                            <div>
+                                <div class="font-semibold text-slate-900">通过跟进申请</div>
+                                <div class="text-xs text-slate-500 mt-0.5">开通临时跨区域权限</div>
+                            </div>
+                        </label>
+                        <label class="decision-card" onclick="selectDecision(this, 'reject')" id="decision-reject">
+                            <input type="radio" name="approval-decision" value="reject" class="w-4 h-4 text-red-600" onchange="toggleApprovalInput(false)">
+                            <div>
+                                <div class="font-semibold text-slate-900">驳回申请</div>
+                                <div class="text-xs text-slate-500 mt-0.5">说明原因并退回</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 审批意见输入 -->
+                <div class="mb-4">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+                        审批意见 
+                        <span id="comment-required" class="hidden text-red-500">*</span>
+                        <span id="comment-optional" class="text-gray-400 font-normal">（选填）</span>
+                    </label>
+                    <textarea class="form-textarea" id="approval-comment" rows="3" placeholder="选填：可补充同意理由（非必填）"></textarea>
+                    <p id="comment-tip-approve" class="text-xs text-gray-500 mt-1">审批通过时，备注信息为选填</p>
+                    <p id="comment-tip-reject" class="text-xs text-red-500 mt-1 hidden">审批驳回时，必须填写审批意见</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button onclick="closeModal('approvalModal')" class="btn btn-secondary">取消</button>
+                <button onclick="submitApproval()" class="btn btn-primary">确认审批</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 撤销确认弹窗 -->
+    <div class="modal-overlay" id="revokeModal">
+        <div class="modal-panel" style="width: 500px; height: auto;">
+            <div class="modal-header modal-header-red">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-exclamation-triangle text-red-600"></i>
+                    <h2 class="text-lg font-bold text-slate-900">确认撤销跟进申请</h2>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="closeModal('revokeModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="text-center py-4">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-exclamation-triangle text-2xl text-red-600"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">确认撤销跟进申请？</h3>
+                    <p class="text-sm text-slate-600 mb-4">
+                        撤销后，您将立即失去对该客户的跨区域操作权限。<br>
+                        <span class="text-red-600 font-medium">此操作不可恢复，需重新发起跟进申请。</span>
+                    </p>
+
+                    <div class="text-left bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm mb-4">
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-500">跟进申请单号</span>
+                            <span class="font-medium font-mono" id="revoke-report-id">BR20240308001</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">客户名称</span>
+                            <span class="font-medium" id="revoke-customer">东方建设集团有限公司</span>
+                        </div>
+                    </div>
+
+                    <div class="text-left">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">撤销原因 <span class="text-red-500">*</span></label>
+                        <select class="form-select mb-2" id="revoke-reason-select" onchange="toggleOtherReason(this)">
+                            <option>业务已完成，无需继续跟进</option>
+                            <option>客户主动终止合作</option>
+                            <option>资源调配，转交他人跟进</option>
+                            <option value="other">其他原因</option>
+                        </select>
+                        <textarea class="form-textarea hidden" id="revoke-other-reason" rows="2" placeholder="请说明其他原因..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer justify-center">
+                <button onclick="closeModal('revokeModal')" class="btn btn-secondary px-6">取消</button>
+                <button onclick="submitRevoke()" class="btn btn-danger px-6">确认撤销</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 假数据 - 跨区域跟进申请单
+        const reportData = [
+            // ========== 我发起的（华北区域张营销发起）==========
+            {
+                id: 'BR20240308001',
+                customerId: 'C001',
+                customerName: '东方建设集团有限公司',
+                customerType: '中央企业',
+                creditCode: '91110109MA00xxxxxx',
+                industry: '建筑业',
+                fromRegion: '华东区域',
+                toRegion: '华北区域',
+                reason: '客户总部在上海，但生产基地位于华北地区，需要协调华北审核资源进行现场审核。',
+                certFields: ['QMS', 'EMS'],
+                validityDays: 90,
+                startDate: '2024-03-08',
+                endDate: '2024-06-06',
+                remainingDays: 7,
+                expectedDealTime: '2024年5月',
+                target: '完成QMS和EMS双体系初次认证，预计合同金额15万元。',
+                status: 'approved',
+                statusText: '已通过',
+                statusStep: 6,
+                initUser: '张营销',
+                initRegion: '华北区域',
+                initTime: '2024-03-08 10:30',
+                currentAreaManagerApproval: {
+                    approver: '赵主管',
+                    region: '华北区域',
+                    role: '部门经理',
+                    result: 'approve',
+                    opinion: '事由真实，客户确有跨区域服务需求，建议通过。已核实客户联系人及业务需求。',
+                    time: '2024-03-08 14:30'
+                },
+                crossAreaManagerApproval: {
+                    approver: '李经理',
+                    region: '华东区域',
+                    role: '部门经理',
+                    result: 'approve',
+                    opinion: '客户情况属实，确有跨区域服务需求，建议提交区域总监终审。',
+                    time: '2024-03-08 16:00'
+                },
+                crossAreaDirectorApproval: {
+                    approver: '王总监',
+                    region: '华东区域',
+                    role: '区域总监',
+                    result: 'approve',
+                    opinion: '同意跟进申请，请协调好与原归属区域跟单人的沟通。',
+                    time: '2024-03-09 09:15'
+                },
+                logs: [
+                    { action: 'create', title: '提交跟进申请', desc: '张营销提交跨区域跟进申请', time: '2024-03-08 10:30:00', operator: '张营销' },
+                    { action: 'update', title: '当前区域初审通过', desc: '赵主管（华北区域部门经理）当前区域初审通过', time: '2024-03-08 14:30:00', operator: '赵主管' },
+                    { action: 'update', title: '跨区域二审通过', desc: '李经理（华东区域部门经理）二审通过', time: '2024-03-08 16:00:00', operator: '李经理' },
+                    { action: 'update', title: '跨区域终审通过', desc: '王总监（华东区域总监）跨区域终审通过，开通权限', time: '2024-03-09 09:15:00', operator: '王总监' },
+                    { action: 'complete', title: '权限生效', desc: '系统自动开通跨区域操作权限', time: '2024-03-09 09:16:00', operator: '系统' }
+                ]
+            },
+            {
+                id: 'BR20240412002',
+                customerId: 'C002',
+                customerName: '华东信息技术有限公司',
+                customerType: '民营企业',
+                creditCode: '91310110MA00XXXXXX',
+                industry: '信息技术',
+                fromRegion: '华东区域',
+                toRegion: '华北区域',
+                reason: '客户在北京设立分公司，需要华北区域支持进行ISO27001认证。',
+                certFields: ['ISMS'],
+                validityDays: 90,
+                startDate: '2024-04-12',
+                endDate: '2024-07-11',
+                remainingDays: 45,
+                expectedDealTime: '2024年6月',
+                target: '完成信息安全管理体系认证',
+                status: 'cross_review',
+                statusText: '跨区域二审中',
+                statusStep: 3,
+                initUser: '张营销',
+                initRegion: '华北区域',
+                initTime: '2024-04-12 09:00',
+                currentAreaManagerApproval: {
+                    approver: '赵主管',
+                    region: '华北区域',
+                    role: '部门经理',
+                    result: 'approve',
+                    opinion: '客户情况属实，建议通过。',
+                    time: '2024-04-12 14:00'
+                },
+                crossAreaManagerApproval: {
+                    approver: '钱经理',
+                    region: '华东区域',
+                    role: '部门经理',
+                    result: 'approve',
+                    opinion: '客户情况属实，建议提交区域总监终审。',
+                    time: '2024-04-12 16:00'
+                },
+                crossAreaDirectorApproval: null,
+                logs: [
+                    { action: 'create', title: '提交跟进申请', desc: '张营销提交跨区域跟进申请', time: '2024-04-12 09:00:00', operator: '张营销' },
+                    { action: 'update', title: '当前区域初审通过', desc: '赵主管（华北区域部门经理）当前区域初审通过', time: '2024-04-12 14:00:00', operator: '赵主管' },
+                    { action: 'update', title: '跨区域二审通过', desc: '钱经理（华东区域部门经理）二审通过，提交区域总监终审', time: '2024-04-12 16:00:00', operator: '钱经理' }
+                ]
+            },
+            {
+                id: 'BR20240415006',
+                customerId: 'C001',
+                customerName: '东方建设集团有限公司',
+                customerType: '中央企业',
+                creditCode: '91110109MA00xxxxxx',
+                industry: '建筑业',
+                fromRegion: '华东区域',
+                toRegion: '华北区域',
+                reason: '新增认证领域需求，申请QMS监督审核及EMS再认证。',
+                certFields: ['QMS', 'EMS', 'OHSMS'],
+                validityDays: 90,
+                startDate: '',
+                endDate: '',
+                remainingDays: null,
+                expectedDealTime: '2024年9月',
+                target: '完成新增认证领域及监督审核',
+                status: 'draft',
+                statusText: '草稿',
+                statusStep: 0,
+                initUser: '张营销',
+                initRegion: '华北区域',
+                initTime: '2024-04-15 16:00',
+                currentAreaManagerApproval: null,
+                crossAreaDirectorApproval: null,
+                logs: [
+                    { action: 'create', title: '保存草稿', desc: '张营销保存跟进申请草稿', time: '2024-04-15 16:00:00', operator: '张营销' }
+                ]
+            },
+            {
+                id: 'BR20240418007',
+                customerId: 'C010',
+                customerName: '浙江智能制造股份公司',
+                customerType: '外资企业',
+                creditCode: '91330000MA00XXXXXX',
+                industry: '制造业',
+                fromRegion: '华东区域',
+                toRegion: '华北区域',
+                reason: '客户计划在北京建设新工厂，需要前期认证咨询支持。',
+                certFields: ['QMS', 'EMS', 'OHSMS'],
+                validityDays: 90,
+                startDate: '',
+                endDate: '',
+                remainingDays: null,
+                expectedDealTime: '2024年10月',
+                target: '完成三体系整合认证',
+                status: 'draft',
+                statusText: '草稿',
+                statusStep: 0,
+                initUser: '张营销',
+                initRegion: '华北区域',
+                initTime: '2024-04-18 10:30',
+                currentAreaManagerApproval: null,
+                crossAreaDirectorApproval: null,
+                logs: [
+                    { action: 'create', title: '保存草稿', desc: '张营销保存跟进申请草稿', time: '2024-04-18 10:30:00', operator: '张营销' }
+                ]
+            },
+            {
+                id: 'BR20240301005',
+                customerId: 'C005',
+                customerName: '华中电力设备有限公司',
+                customerType: '国有企业',
+                creditCode: '91420100MA00XXXXXX',
+                industry: '电力设备',
+                fromRegion: '华中区域',
+                toRegion: '华北区域',
+                reason: '客户在北京设立办事处，需要华北区域提供技术支持。',
+                certFields: ['QMS'],
+                validityDays: 30,
+                startDate: '2024-03-01',
+                endDate: '2024-03-31',
+                remainingDays: -15,
+                expectedDealTime: '2024年3月',
+                target: '完成年度监督审核',
+                status: 'expired',
+                statusText: '已过期',
+                statusStep: 9,
+                initUser: '张营销',
+                initRegion: '华北区域',
+                initTime: '2024-03-01 09:00',
+                currentAreaManagerApproval: {
+                    approver: '赵主管',
+                    region: '华北区域',
+                    role: '部门经理',
+                    result: 'approve',
+                    opinion: '同意跟进申请。',
+                    time: '2024-03-01 12:00'
+                },
+                crossAreaManagerApproval: {
+                    approver: '孙经理',
+                    region: '华中区域',
+                    role: '部门经理',
+                    result: 'approve',
+                    opinion: '同意，建议提交区域总监终审。',
+                    time: '2024-03-01 14:00'
+                },
+                crossAreaDirectorApproval: {
+                    approver: '周总监',
+                    region: '华中区域',
+                    role: '区域总监',
+                    result: 'approve',
+                    opinion: '同意。',
+                    time: '2024-03-02 10:00'
+                },
+                logs: [
+                    { action: 'create', title: '提交跟进申请', desc: '张营销提交跨区域跟进申请', time: '2024-03-01 09:00:00', operator: '张营销' },
+                    { action: 'update', title: '当前区域初审通过', desc: '赵主管（华北区域部门经理）当前区域初审通过', time: '2024-03-01 12:00:00', operator: '赵主管' },
+                    { action: 'update', title: '跨区域二审通过', desc: '孙经理（华中区域部门经理）二审通过', time: '2024-03-01 14:00:00', operator: '孙经理' },
+                    { action: 'update', title: '跨区域终审通过', desc: '周总监（华中区域总监）跨区域终审通过', time: '2024-03-02 10:00:00', operator: '周总监' },
+                    { action: 'complete', title: '权限生效', desc: '系统开通权限', time: '2024-03-02 10:01:00', operator: '系统' },
+                    { action: 'update', title: '权限过期', desc: '跟进申请有效期已过期', time: '2024-04-01 00:00:00', operator: '系统' }
+                ]
+            },
+            {
+                id: 'BR20240220008',
+                customerId: 'C006',
+                customerName: '东北重工业集团有限公司',
+                customerType: '中央企业',
+                creditCode: '91210100MA00XXXXXX',
+                industry: '重工业',
+                fromRegion: '东北区域',
+                toRegion: '华北区域',
+                reason: '客户在北京设立研发中心，需要华北区域支持。',
+                certFields: ['QMS', 'EMS'],
+                validityDays: 90,
+                startDate: '2024-02-20',
+                endDate: '2024-05-21',
+                remainingDays: -25,
+                expectedDealTime: '2024年4月',
+                target: '完成双体系认证',
+                status: 'revoked',
+                statusText: '已撤销',
+                statusStep: 8,
+                initUser: '张营销',
+                initRegion: '华北区域',
+                initTime: '2024-02-20 10:00',
+                currentAreaManagerApproval: {
+                    approver: '赵主管',
+                    region: '华北区域',
+                    role: '部门经理',
+                    result: 'approve',
+                    opinion: '同意跟进申请。',
+                    time: '2024-02-20 14:00'
+                },
+                crossAreaManagerApproval: {
+                    approver: '钱经理',
+                    region: '东北区域',
+                    role: '部门经理',
+                    result: 'approve',
+                    opinion: '同意，建议提交区域总监终审。',
+                    time: '2024-02-20 16:00'
+                },
+                crossAreaDirectorApproval: {
+                    approver: '吴总监',
+                    region: '东北区域',
+                    role: '区域总监',
+                    result: 'approve',
+                    opinion: '同意。',
+                    time: '2024-02-21 09:00'
+                },
+                logs: [
+                    { action: 'create', title: '提交跟进申请', desc: '张营销提交跟进申请', time: '2024-02-20 10:00:00', operator: '张营销' },
+                    { action: 'update', title: '当前区域初审通过', desc: '赵主管（华北区域部门经理）当前区域初审通过', time: '2024-02-20 14:00:00', operator: '赵主管' },
+                    { action: 'update', title: '跨区域二审通过', desc: '钱经理（东北区域部门经理）二审通过', time: '2024-02-20 16:00:00', operator: '钱经理' },
+                    { action: 'update', title: '跨区域终审通过', desc: '吴总监（东北区域总监）跨区域终审通过', time: '2024-02-21 09:00:00', operator: '吴总监' },
+                    { action: 'update', title: '撤销跟进申请', desc: '张营销主动撤销跟进申请，原因：客户项目延期', time: '2024-03-15 14:00:00', operator: '张营销' }
+                ]
+            },
+            {
+                id: 'BR20240420009',
+                customerId: 'C008',
+                customerName: '东南电子科技有限公司',
+                customerType: '民营企业',
+                creditCode: '91350000MA00XXXXXX',
+                industry: '电子',
+                fromRegion: '东南区域',
+                toRegion: '华北区域',
+                reason: '客户在北京设立总部，需要华北区域提供认证支持。',
+                certFields: ['QMS'],
+                validityDays: 90,
+                startDate: '',
+                endDate: '',
+                remainingDays: null,
+                expectedDealTime: '2024年8月',
+                target: '完成质量管理体系认证',
+                status: 'current_review',
+                statusText: '当前区域初审中',
+                statusStep: 1,
+                initUser: '张营销',
+                initRegion: '华北区域',
+                initTime: '2024-04-20 14:00',
+                currentAreaManagerApproval: null,
+                crossAreaDirectorApproval: null,
+                logs: [
+                    { action: 'create', title: '提交跟进申请', desc: '张营销提交跨区域跟进申请', time: '2024-04-20 14:00:00', operator: '张营销' }
+                ]
+            },
+            {
+                id: 'BR20240410010',
+                customerId: 'C007',
+                customerName: '西北矿业股份有限公司',
+                customerType: '国有企业',
+                creditCode: '91610000MA00XXXXXX',
+                industry: '矿业',
+                fromRegion: '西北区域',
+                toRegion: '华北区域',
+                reason: '客户在北京上市，需要华北区域协助进行合规认证。',
+                certFields: ['QMS', 'EMS', 'OHSMS'],
+                validityDays: 90,
+                startDate: '',
+                endDate: '',
+                remainingDays: null,
+                expectedDealTime: '2024年7月',
+                target: '完成三体系认证，支持上市流程',
+                status: 'rejected',
+                statusText: '已驳回',
+                statusStep: 7,
+                initUser: '张营销',
+                initRegion: '华北区域',
+                initTime: '2024-04-10 11:00',
+                currentAreaManagerApproval: {
+                    approver: '赵主管',
+                    region: '华北区域',
+                    role: '部门经理',
+                    result: 'approve',
+                    opinion: '客户情况属实，建议通过。',
+                    time: '2024-04-10 14:00'
+                },
+                crossAreaManagerApproval: {
+                    approver: '马经理',
+                    region: '西北区域',
+                    role: '部门经理',
+                    result: 'reject',
+                    opinion: '经核实，该客户已有西北区域专属服务人员跟进，建议由原区域继续跟进。',
+                    time: '2024-04-11 10:30'
+                },
+                crossAreaDirectorApproval: null,
+                logs: [
+                    { action: 'create', title: '提交跟进申请', desc: '张营销提交跨区域跟进申请', time: '2024-04-10 11:00:00', operator: '张营销' },
+                    { action: 'update', title: '当前区域初审通过', desc: '赵主管（华北区域部门经理）当前区域初审通过', time: '2024-04-10 14:00:00', operator: '赵主管' },
+                    { action: 'update', title: '跨区域二审驳回', desc: '马经理（西北区域部门经理）二审驳回', time: '2024-04-11 10:30:00', operator: '马经理' }
+                ]
+            },
+            // ========== 我审批的（其他区域发起，需要华北区域审批）==========
+            {
+                id: 'BR20240421001',
+                customerId: 'C011',
+                customerName: '北京创新科技有限公司',
+                customerType: '民营企业',
+                creditCode: '91110108MA00XXXXXX',
+                industry: '信息技术',
+                fromRegion: '华北区域',
+                toRegion: '华东区域',
+                reason: '客户在上海设立分公司，需要华东区域协助进行ISO9001认证。',
+                certFields: ['QMS'],
+                validityDays: 90,
+                startDate: '',
+                endDate: '',
+                remainingDays: null,
+                expectedDealTime: '2024年8月',
+                target: '完成质量管理体系认证',
+                status: 'current_review',
+                statusText: '当前区域初审中',
+                statusStep: 1,
+                initUser: '陈销售',
+                initRegion: '华东区域',
+                initTime: '2024-04-21 09:30',
+                currentAreaManagerApproval: null,
+                crossAreaDirectorApproval: null,
+                logs: [
+                    { action: 'create', title: '提交跟进申请', desc: '陈销售提交跨区域跟进申请', time: '2024-04-21 09:30:00', operator: '陈销售' }
+                ],
+                needMyApproval: false,
+                myApprovalLevel: null
+            },
+            {
+                id: 'BR20240420002',
+                customerId: 'C012',
+                customerName: '华北建筑集团有限公司',
+                customerType: '国有企业',
+                creditCode: '91110105MA00XXXXXX',
+                industry: '建筑业',
+                fromRegion: '华北区域',
+                toRegion: '华南区域',
+                reason: '客户在华南地区有项目，需要当地审核资源支持。',
+                certFields: ['QMS', 'EMS'],
+                validityDays: 90,
+                startDate: '',
+                endDate: '',
+                remainingDays: null,
+                expectedDealTime: '2024年9月',
+                target: '完成双体系认证',
+                status: 'current_review',
+                statusText: '当前区域初审中',
+                statusStep: 1,
+                initUser: '刘业务员',
+                initRegion: '华南区域',
+                initTime: '2024-04-20 15:00',
+                currentAreaManagerApproval: null,
+                crossAreaDirectorApproval: null,
+                logs: [
+                    { action: 'create', title: '提交跟进申请', desc: '刘业务员提交跨区域跟进申请', time: '2024-04-20 15:00:00', operator: '刘业务员' }
+                ],
+                needMyApproval: false,
+                myApprovalLevel: null
+            },
+            {
+                id: 'BR20240418003',
+                customerId: 'C013',
+                customerName: '首都能源投资有限公司',
+                customerType: '中央企业',
+                creditCode: '91110102MA00XXXXXX',
+                industry: '能源',
+                fromRegion: '华北区域',
+                toRegion: '西南区域',
+                reason: '客户在成都投资建厂，需要西南区域提供认证服务。',
+                certFields: ['QMS', 'EMS', 'OHSMS'],
+                validityDays: 90,
+                startDate: '',
+                endDate: '',
+                remainingDays: null,
+                expectedDealTime: '2024年10月',
+                target: '完成三体系认证',
+                status: 'cross_review',
+                statusText: '跨区域二审中',
+                statusStep: 3,
+                initUser: '王经理',
+                initRegion: '西南区域',
+                initTime: '2024-04-18 10:00',
+                currentAreaManagerApproval: {
+                    approver: '赵主管',
+                    region: '华北区域',
+                    role: '市场部负责人',
+                    result: 'approve',
+                    opinion: '客户情况属实，建议通过终审。',
+                    time: '2024-04-18 16:00'
+                },
+                crossAreaDirectorApproval: null,
+                logs: [
+                    { action: 'create', title: '提交跟进申请', desc: '王经理提交跨区域跟进申请', time: '2024-04-18 10:00:00', operator: '王经理' },
+                    { action: 'update', title: '当前区域初审通过', desc: '赵主管初审通过，提交终审', time: '2024-04-18 16:00:00', operator: '赵主管' }
+                ],
+                needMyApproval: true,
+                myApprovalLevel: 'final'
+            },
+            {
+                id: 'BR20240415004',
+                customerId: 'C014',
+                customerName: '京津冀协同发展集团',
+                customerType: '国有企业',
+                creditCode: '91110101MA00XXXXXX',
+                industry: '综合',
+                fromRegion: '华北区域',
+                toRegion: '东北区域',
+                reason: '客户在沈阳有项目，需要东北区域协助进行体系认证。',
+                certFields: ['QMS'],
+                validityDays: 90,
+                startDate: '',
+                endDate: '',
+                remainingDays: null,
+                expectedDealTime: '2024年8月',
+                target: '完成质量管理体系认证',
+                status: 'cross_review',
+                statusText: '跨区域二审中',
+                statusStep: 3,
+                initUser: '李销售',
+                initRegion: '东北区域',
+                initTime: '2024-04-15 14:00',
+                currentAreaManagerApproval: {
+                    approver: '周经理',
+                    region: '华北区域',
+                    role: '市场部负责人',
+                    result: 'approve',
+                    opinion: '同意跟进申请。',
+                    time: '2024-04-15 16:30'
+                },
+                crossAreaDirectorApproval: null,
+                logs: [
+                    { action: 'create', title: '提交跟进申请', desc: '李销售提交跨区域跟进申请', time: '2024-04-15 14:00:00', operator: '李销售' },
+                    { action: 'update', title: '当前区域初审通过', desc: '周经理初审通过，提交终审', time: '2024-04-15 16:30:00', operator: '周经理' }
+                ],
+                needMyApproval: true,
+                myApprovalLevel: 'final'
+            },
+            {
+                id: 'BR20240410005',
+                customerId: 'C015',
+                customerName: '北京高新技术有限公司',
+                customerType: '民营企业',
+                creditCode: '91110109MA00XXXXXX',
+                industry: '高新技术',
+                fromRegion: '华北区域',
+                toRegion: '华南区域',
+                reason: '客户在深圳设立研发中心，需要华南区域提供认证支持。',
+                certFields: ['QMS', 'ISMS'],
+                validityDays: 90,
+                startDate: '2024-04-10',
+                endDate: '2024-07-09',
+                remainingDays: 60,
+                expectedDealTime: '2024年6月',
+                target: '完成质量及信息安全双体系认证',
+                status: 'approved',
+                statusText: '已通过',
+                statusStep: 6,
+                initUser: '张业务',
+                initRegion: '华南区域',
+                initTime: '2024-04-10 09:00',
+                currentAreaManagerApproval: {
+                    approver: '王主管',
+                    region: '华北区域',
+                    role: '市场部负责人',
+                    result: 'approve',
+                    opinion: '同意跟进申请，已核实客户情况。',
+                    time: '2024-04-10 14:00'
+                },
+                crossAreaDirectorApproval: {
+                    approver: '李总监',
+                    region: '华北区域',
+                    role: '区域负责人',
+                    result: 'approve',
+                    opinion: '同意跟进申请。',
+                    time: '2024-04-11 10:00'
+                },
+                logs: [
+                    { action: 'create', title: '提交跟进申请', desc: '张业务提交跨区域跟进申请', time: '2024-04-10 09:00:00', operator: '张业务' },
+                    { action: 'update', title: '当前区域初审通过', desc: '陈主管（华南区域部门经理）当前区域初审通过', time: '2024-04-10 12:00:00', operator: '陈主管' },
+                    { action: 'update', title: '跨区域二审通过', desc: '王主管（华北区域部门经理）二审通过', time: '2024-04-10 14:00:00', operator: '王主管' },
+                    { action: 'update', title: '跨区域终审通过', desc: '李总监（华北区域总监）跨区域终审通过', time: '2024-04-11 10:00:00', operator: '李总监' }
+                ],
+                needMyApproval: false
+            },
+            {
+                id: 'BR20240405006',
+                customerId: 'C016',
+                customerName: '天津港务集团有限公司',
+                customerType: '国有企业',
+                creditCode: '91120101MA00XXXXXX',
+                industry: '港口物流',
+                fromRegion: '华北区域',
+                toRegion: '华东区域',
+                reason: '客户在上海港有合作项目，需要华东区域提供审核资源。',
+                certFields: ['QMS', 'EMS', 'OHSMS'],
+                validityDays: 90,
+                startDate: '2024-04-05',
+                endDate: '2024-07-04',
+                remainingDays: 55,
+                expectedDealTime: '2024年6月',
+                target: '完成三体系认证',
+                status: 'approved',
+                statusText: '已通过',
+                statusStep: 6,
+                initUser: '赵营销',
+                initRegion: '华东区域',
+                initTime: '2024-04-05 10:30',
+                currentAreaManagerApproval: {
+                    approver: '钱主管',
+                    region: '华北区域',
+                    role: '市场部负责人',
+                    result: 'approve',
+                    opinion: '同意跟进申请。',
+                    time: '2024-04-05 15:00'
+                },
+                crossAreaDirectorApproval: {
+                    approver: '孙总监',
+                    region: '华北区域',
+                    role: '区域负责人',
+                    result: 'approve',
+                    opinion: '同意。',
+                    time: '2024-04-06 09:00'
+                },
+                logs: [
+                    { action: 'create', title: '提交跟进申请', desc: '赵营销提交跨区域跟进申请', time: '2024-04-05 10:30:00', operator: '赵营销' },
+                    { action: 'update', title: '当前区域初审通过', desc: '郑主管（华东区域部门经理）当前区域初审通过', time: '2024-04-05 14:00:00', operator: '郑主管' },
+                    { action: 'update', title: '跨区域二审通过', desc: '钱主管（华北区域部门经理）二审通过', time: '2024-04-05 15:00:00', operator: '钱主管' },
+                    { action: 'update', title: '跨区域终审通过', desc: '孙总监（华北区域总监）跨区域终审通过', time: '2024-04-06 09:00:00', operator: '孙总监' }
+                ],
+                needMyApproval: false
+            }
+        ];
+
+        let currentData = [...reportData];
+        let currentPage = 1;
+        let pageSize = 10;
+        let currentDetailReport = null;
+        let currentApprovalLevel = 'second';
+        let currentView = 'my-initiated'; // 'my-initiated' 或 'my-approval'
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            filterDataByView();
+            renderTable();
+
+            // 设置默认月份
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            document.getElementById('report-deal-time').value = `${year}-${month}`;
+        });
+
+        // 切换视图
+        function switchView(view) {
+            currentView = view;
+            currentPage = 1;
+
+            // 更新按钮样式
+            document.getElementById('btn-my-initiated').classList.toggle('active', view === 'my-initiated');
+            document.getElementById('btn-my-approval').classList.toggle('active', view === 'my-approval');
+
+            // 显示/隐藏统计栏
+            document.getElementById('stats-my-initiated').classList.toggle('hidden', view !== 'my-initiated');
+            document.getElementById('stats-my-approval').classList.toggle('hidden', view !== 'my-approval');
+
+            // 显示/隐藏发起跟进申请按钮
+            document.getElementById('btn-new-report').style.display = view === 'my-initiated' ? 'inline-flex' : 'none';
+
+            // 重置筛选条件
+            document.querySelectorAll('.filter-item input, .filter-item select').forEach(el => el.value = '');
+
+            // 过滤数据
+            filterDataByView();
+            renderTable();
+        }
+
+        // 根据视图过滤数据
+        function filterDataByView() {
+            if (currentView === 'my-initiated') {
+                // 我发起的：当前用户（张营销，华北区域）发起的跟进申请
+                currentData = reportData.filter(r => r.initUser === '张营销' && r.initRegion === '华北区域');
+            } else {
+                // 我审批的：客户归属区域为华北区域的跟进申请（其他区域申请跟进华北区域的客户）
+                currentData = reportData.filter(r => r.fromRegion === '华北区域');
+            }
+        }
+
+        // 更新统计
+        function updateStats() {
+            // 我发起的统计
+            const initiatedData = reportData.filter(r => r.initUser === '张营销' && r.initRegion === '华北区域');
+            document.getElementById('stat-all-initiated').textContent = initiatedData.length;
+            document.getElementById('stat-draft-initiated').textContent = initiatedData.filter(r => r.status === 'draft').length;
+            document.getElementById('stat-pending-initiated').textContent = initiatedData.filter(r => ['current_review', 'cross_review', 'final_review'].includes(r.status)).length;
+            document.getElementById('stat-approved-initiated').textContent = initiatedData.filter(r => r.status === 'approved').length;
+            document.getElementById('stat-expired-initiated').textContent = initiatedData.filter(r => r.status === 'expired').length;
+
+            // 我审批的统计
+            const approvalData = reportData.filter(r => r.fromRegion === '华北区域');
+            document.getElementById('stat-all-approval').textContent = approvalData.length;
+            document.getElementById('stat-current-approval').textContent = approvalData.filter(r => r.status === 'current_review').length;
+            document.getElementById('stat-cross-approval').textContent = approvalData.filter(r => r.status === 'cross_review').length;
+            document.getElementById('stat-final-approval').textContent = approvalData.filter(r => r.status === 'final_review').length;
+            document.getElementById('stat-approved-approval').textContent = approvalData.filter(r => ['approved', 'rejected'].includes(r.status)).length;
+        }
+
+        // 渲染表格
+        function renderTable(data = currentData) {
+            const tbody = document.getElementById('tableBody');
+            let html = '';
+
+            const start = (currentPage - 1) * pageSize;
+            const end = Math.min(start + pageSize, data.length);
+            const pageData = data.slice(start, end);
+
+            document.getElementById('page-start').textContent = data.length > 0 ? start + 1 : 0;
+            document.getElementById('page-end').textContent = end;
+            document.getElementById('total-count').textContent = data.length;
+
+            if (pageData.length === 0) {
+                html = `
+                    <tr>
+                        <td colspan="12" class="text-center py-12 text-gray-500">
+                            <div class="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                <h3>暂无数据</h3>
+                                <p>当前列表暂无跟进申请记录</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                pageData.forEach(row => {
+                    const statusClassMap = {
+                        'draft': 'status-draft',
+                        'current_review': 'status-first',
+                        'cross_review': 'status-second',
+                        'final_review': 'status-pending',
+                        'first': 'status-first',
+                        'second': 'status-second',
+                        'approved': 'status-approved',
+                        'rejected': 'status-rejected',
+                        'expired': 'status-expired',
+                        'revoked': 'status-revoked'
+                    };
+                    const statusClass = statusClassMap[row.status] || 'status-draft';
+
+                    // 剩余天数样式
+                    let remainingHtml = '-';
+                    if (row.remainingDays !== null) {
+                        if (row.remainingDays < 0) {
+                            remainingHtml = `<span class="text-gray-400">已过期</span>`;
+                        } else if (row.remainingDays <= 7) {
+                            remainingHtml = `<span class="countdown-danger">${row.remainingDays} 天</span>`;
+                        } else if (row.remainingDays <= 30) {
+                            remainingHtml = `<span class="countdown-warning">${row.remainingDays} 天</span>`;
+                        } else {
+                            remainingHtml = `<span class="text-green-600">${row.remainingDays} 天</span>`;
+                        }
+                    }
+
+                    // 审批进度
+                    const progressMap = {
+                        draft: '<span class="text-gray-400">-</span>',
+                        current_review: '<span class="text-blue-600">初审中</span>',
+                        cross_review: '<span class="text-purple-600">二审中</span>',
+                        final_review: '<span class="text-purple-600">终审中</span>',
+                        approved: '<span class="text-green-600">已通过</span>',
+                        rejected: '<span class="text-red-600">已驳回</span>',
+                        expired: '<span class="text-red-600">已过期</span>',
+                        revoked: '<span class="text-gray-400">已撤销</span>'
+                    };
+                    let progressHtml = progressMap[row.status] || '<span class="text-gray-400">-</span>';
+
+                    // 操作按钮
+                    let actionBtns = `<button class="action-btn" onclick="event.stopPropagation(); viewDetail('${row.id}')">详情</button>`;
+
+                    if (currentView === 'my-initiated') {
+                        // 我发起的列表操作
+                        if (row.status === 'draft') {
+                            actionBtns += `<button class="action-btn" onclick="event.stopPropagation(); editDraft('${row.id}')">编辑</button>
+                                           <button class="action-btn danger" onclick="event.stopPropagation(); deleteDraft('${row.id}')">删除</button>`;
+                        } else if (row.status === 'approved') {
+                            actionBtns += `<button class="action-btn danger" onclick="event.stopPropagation(); openRevoke('${row.id}')">撤销</button>`;
+                        }
+                    } else {
+                        // 我审批的列表操作
+                        if (row.needMyApproval) {
+                            actionBtns += `<button class="action-btn" onclick="event.stopPropagation(); openApproval('${row.id}', '${row.myApprovalLevel}')">审批</button>`;
+                        }
+                    }
+
+                    html += `
+                        <tr onclick="viewDetail('${row.id}')">
+                            <td class="col-sticky-left font-mono text-gray-600">${row.id}</td>
+                            <td class="col-sticky-left-2">
+                                <div class="font-medium text-gray-900">${row.customerName}</div>
+                                <div class="text-xs text-gray-500">${row.customerType}</div>
+                            </td>
+                            <td>${row.customerType}</td>
+                            <td>
+                                <div class="cross-region-full">
+                                    <span class="region-tag region-from">${row.fromRegion}</span>
+                                    <i class="fas fa-arrow-right cross-arrow"></i>
+                                    <span class="region-tag region-to">${row.toRegion}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                    ${row.certFields.map(f => `<span class="region-tag" style="background: #dbeafe; color: #1e40af;">${f}</span>`).join('')}
+                                </div>
+                            </td>
+                            <td>${row.startDate ? row.startDate + ' 至 ' + row.endDate : '-'}</td>
+                            <td>${remainingHtml}</td>
+                            <td><span class="status-badge ${statusClass}">${row.statusText}</span></td>
+                            <td>${progressHtml}</td>
+                            <td>${row.initUser}<br><span class="text-xs text-gray-500">${row.initRegion}</span></td>
+                            <td class="text-gray-500" style="font-size: 12px;">${row.initTime}</td>
+                            <td class="col-sticky-right">
+                                <div class="action-btns">${actionBtns}</div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            tbody.innerHTML = html;
+            renderPagination(data.length);
+        }
+
+        function renderPagination(total) {
+            const totalPages = Math.ceil(total / pageSize);
+            let html = `<button class="page-btn" ${currentPage === 1 ? 'disabled style="opacity:0.5"' : ''} onclick="changePage(${currentPage - 1})"><i class="fas fa-chevron-left"></i></button>`;
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<button class="page-btn" disabled>...</button>`;
+                }
+            }
+
+            html += `<button class="page-btn" ${currentPage === totalPages || totalPages === 0 ? 'disabled style="opacity:0.5"' : ''} onclick="changePage(${currentPage + 1})"><i class="fas fa-chevron-right"></i></button>`;
+            document.getElementById('pagination').innerHTML = html;
+        }
+
+        function changePage(page) {
+            const total = currentData.length;
+            const totalPages = Math.ceil(total / pageSize);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            renderTable();
+        }
+
+        function changePageSize(size) {
+            pageSize = parseInt(size);
+            currentPage = 1;
+            renderTable();
+        }
+
+        // 筛选功能
+        function filterByStatus(status) {
+            document.querySelectorAll('.stat-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            // 先按视图过滤
+            filterDataByView();
+
+            // 再按状态过滤
+            if (status !== 'all') {
+                if (status === 'pending') {
+                    currentData = currentData.filter(r => ['current_review', 'cross_review', 'final_review'].includes(r.status));
+                } else if (status === 'expired') {
+                    currentData = currentData.filter(r => r.status === 'expired');
+                } else {
+                    currentData = currentData.filter(r => r.status === status);
+                }
+            }
+            currentPage = 1;
+            renderTable();
+        }
+
+        function searchData() {
+            // 先按视图过滤
+            filterDataByView();
+
+            const id = document.getElementById('filter-id').value.toLowerCase();
+            const name = document.getElementById('filter-name').value.toLowerCase();
+            const fromRegion = document.getElementById('filter-from-region').value;
+            const status = document.getElementById('filter-status').value;
+
+            currentData = currentData.filter(row => {
+                if (id && !row.id.toLowerCase().includes(id)) return false;
+                if (name && !row.customerName.toLowerCase().includes(name)) return false;
+                if (fromRegion && row.fromRegion !== fromRegion) return false;
+                if (status && row.status !== status) return false;
+                return true;
+            });
+            currentPage = 1;
+            renderTable();
+        }
+
+        function resetData() {
+            document.querySelectorAll('.filter-item input, .filter-item select').forEach(el => el.value = '');
+            filterDataByView();
+            currentPage = 1;
+            renderTable();
+        }
+
+        function toggleFilter() {
+            const icon = document.getElementById('filter-icon');
+            const text = document.getElementById('filter-text');
+            if (icon.classList.contains('fa-chevron-up')) {
+                icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                text.textContent = '展开筛选';
+            } else {
+                icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                text.textContent = '收起筛选';
+            }
+        }
+
+        function exportData() {
+            showToast('正在导出跟进申请数据...', 'success');
+            setTimeout(() => showToast('导出成功！'), 1500);
+        }
+
+        // 详情侧边栏
+        function viewDetail(id) {
+            const report = reportData.find(r => r.id === id);
+            if (!report) return;
+
+            currentDetailReport = report;
+
+            document.getElementById('drawerSubtitle').textContent = `编号：${report.id} | 状态：${report.statusText}`;
+
+            // 基本信息
+            document.getElementById('detail-id').textContent = report.id;
+            document.getElementById('detail-status').innerHTML = `<span class="status-badge status-${report.status}">${report.statusText}</span>`;
+            document.getElementById('detail-customer').textContent = report.customerName;
+            document.getElementById('detail-type').textContent = report.customerType;
+            document.getElementById('detail-code').textContent = report.creditCode;
+            document.getElementById('detail-industry').textContent = report.industry;
+            document.getElementById('detail-from-region').textContent = report.fromRegion;
+            document.getElementById('detail-to-region').textContent = report.toRegion;
+            document.getElementById('detail-reason').textContent = report.reason;
+            document.getElementById('detail-fields').innerHTML = report.certFields.map(f => 
+                `<span class="region-tag" style="background: #dbeafe; color: #1e40af; margin-right: 4px;">${f}</span>`
+            ).join('');
+            document.getElementById('detail-validity').textContent = report.validityDays + '天';
+            document.getElementById('detail-period').textContent = report.startDate ? `${report.startDate} 至 ${report.endDate}` : '-';
+            document.getElementById('detail-deal-time').textContent = report.expectedDealTime;
+            document.getElementById('detail-target').textContent = report.target;
+
+            // 剩余天数
+            const remainingEl = document.getElementById('detail-remaining');
+            if (report.remainingDays !== null) {
+                if (report.remainingDays < 0) {
+                    remainingEl.innerHTML = `<span class="text-gray-400">已过期</span>`;
+                } else if (report.remainingDays <= 7) {
+                    remainingEl.innerHTML = `<span class="countdown-danger">${report.remainingDays} 天（即将过期）</span>`;
+                } else if (report.remainingDays <= 30) {
+                    remainingEl.innerHTML = `<span class="countdown-warning">${report.remainingDays} 天</span>`;
+                } else {
+                    remainingEl.innerHTML = `<span class="text-green-600">${report.remainingDays} 天</span>`;
+                }
+            } else {
+                remainingEl.textContent = '-';
+            }
+
+            // 审批流程步骤
+            const steps = [
+                { title: '提交申请', time: report.initTime, completed: report.statusStep >= 0 },
+                { title: '当前区域初审', time: report.currentAreaManagerApproval?.time || '', completed: report.statusStep >= 2, rejected: report.status === 'rejected' && report.currentAreaManagerApproval?.result === 'reject' },
+                { title: '跨区域二审', time: report.crossAreaManagerApproval?.time || '', completed: report.statusStep >= 4, rejected: report.status === 'rejected' && report.crossAreaManagerApproval?.result === 'reject' },
+                { title: '跨区域终审', time: report.crossAreaDirectorApproval?.time || '', completed: report.statusStep >= 6, rejected: report.status === 'rejected' && report.crossAreaDirectorApproval?.result === 'reject' },
+                { title: '权限生效', time: report.status === 'approved' ? report.crossAreaDirectorApproval?.time : '', completed: report.status === 'approved' }
+            ];
+
+            let stepsHtml = '';
+            steps.forEach((step, idx) => {
+                const isLast = idx === steps.length - 1;
+                const circleClass = step.rejected ? 'rejected' : (step.completed ? 'completed' : '');
+                const icon = step.rejected ? '<i class="fas fa-times"></i>' : (step.completed ? '<i class="fas fa-check"></i>' : (idx + 1));
+                const timeHtml = step.time ? `<span class="text-xs text-slate-400 mt-0.5">${step.time.split(' ')[0]}</span>` : '';
+
+                stepsHtml += `
+                    <div class="step-item">
+                        ${!isLast ? `<div class="step-line ${step.completed ? 'active' : ''}"></div>` : ''}
+                        <div class="step-circle ${circleClass}">${icon}</div>
+                        <span class="text-xs mt-2 ${step.completed ? 'text-slate-600' : 'text-slate-400'} font-medium">${step.title}</span>
+                        ${timeHtml}
+                    </div>
+                `;
+            });
+            document.getElementById('process-steps').innerHTML = stepsHtml;
+
+            // 审批意见
+            let opinionsHtml = '';
+            if (report.currentAreaManagerApproval) {
+                const resultClass = report.currentAreaManagerApproval.result === 'approve' ? 'approved' : 'rejected';
+                const resultText = report.currentAreaManagerApproval.result === 'approve' ? '初审通过' : '初审驳回';
+                const resultBadge = report.currentAreaManagerApproval.result === 'approve' ? 
+                    '<span class="status-badge status-approved">通过</span>' : 
+                    '<span class="status-badge status-rejected">驳回</span>';
+
+                opinionsHtml += `
+                    <div class="approval-opinion ${resultClass}">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="font-semibold text-sm text-slate-900">初审意见</span>
+                                ${resultBadge}
+                            </div>
+                            <span class="text-xs text-slate-500">${report.currentAreaManagerApproval.time}</span>
+                        </div>
+                        <div class="text-xs text-slate-500 mb-1">${report.currentAreaManagerApproval.region} - ${report.currentAreaManagerApproval.role}：${report.currentAreaManagerApproval.approver}</div>
+                        <p class="text-sm text-slate-700">${report.currentAreaManagerApproval.opinion}</p>
+                    </div>
+                `;
+            }
+            if (report.crossAreaDirectorApproval) {
+                const resultClass = report.crossAreaDirectorApproval.result === 'approve' ? 'approved' : 'rejected';
+                const resultBadge = report.crossAreaDirectorApproval.result === 'approve' ? 
+                    '<span class="status-badge status-approved">通过</span>' : 
+                    '<span class="status-badge status-rejected">驳回</span>';
+
+                opinionsHtml += `
+                    <div class="approval-opinion ${resultClass}">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="font-semibold text-sm text-slate-900">终审意见</span>
+                                ${resultBadge}
+                            </div>
+                            <span class="text-xs text-slate-500">${report.crossAreaDirectorApproval.time}</span>
+                        </div>
+                        <div class="text-xs text-slate-500 mb-1">${report.crossAreaDirectorApproval.region} - ${report.crossAreaDirectorApproval.role}：${report.crossAreaDirectorApproval.approver}</div>
+                        <p class="text-sm text-slate-700">${report.crossAreaDirectorApproval.opinion}</p>
+                    </div>
+                `;
+            }
+            if (!opinionsHtml) {
+                opinionsHtml = '<div style="text-align: center; padding: 40px; color: #9ca3af;">暂无审批意见</div>';
+            }
+            document.getElementById('approval-opinions').innerHTML = opinionsHtml;
+
+            // 操作日志
+            const logsHtml = report.logs.map(log => {
+                const iconClass = {
+                    'create': 'fa-plus bg-green-100 text-green-600',
+                    'update': 'fa-edit bg-blue-100 text-blue-600',
+                    'complete': 'fa-check bg-purple-100 text-purple-600',
+                    'transfer': 'fa-exchange-alt bg-amber-100 text-amber-600'
+                }[log.action] || 'fa-info bg-gray-100 text-gray-600';
+
+                return `
+                    <div class="timeline-item ${log.action === 'complete' ? 'completed' : ''}">
+                        <div class="timeline-time">${log.time}</div>
+                        <div class="timeline-content">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-semibold text-sm text-slate-900">${log.title}</span>
+                                <span class="text-xs text-slate-500">${log.operator}</span>
+                            </div>
+                            <p class="text-xs text-slate-600">${log.desc}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('operation-logs').innerHTML = logsHtml;
+
+            // 底部按钮控制
+            const btnRevoke = document.getElementById('btn-revoke');
+
+            // 只有"我发起的"视图才能显示撤销按钮
+            if (currentView === 'my-initiated') {
+                if (report.status === 'approved') {
+                    btnRevoke.style.display = 'inline-flex';
+                } else {
+                    btnRevoke.style.display = 'none';
+                }
+            } else {
+                btnRevoke.style.display = 'none';
+            }
+
+            // 打开侧边栏
+            document.getElementById('drawerOverlay').classList.add('active');
+            document.getElementById('sideDrawer').classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            switchDetailTab('basic');
+        }
+
+        function closeSideDrawer() {
+            document.getElementById('drawerOverlay').classList.remove('active');
+            document.getElementById('sideDrawer').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function switchDetailTab(tab) {
+            document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.detail-section').forEach(s => s.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tab).classList.add('active');
+        }
+
+        // 弹窗控制
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = '';
+
+            // 关闭所有可能打开的下拉框，防止fixed定位元素残留
+            const dropdown = document.getElementById('customer-dropdown');
+            if (dropdown) dropdown.classList.add('hidden');
+        }
+
+        // 发起跟进申请 - 修复：使用正确的元素id
+        function openNewReportModal() {
+            // 获取元素前先检查是否存在，避免报错
+            const customerInput = document.getElementById('report-customer-input');
+            const customerId = document.getElementById('report-customer-id');
+            const customerRegion = document.getElementById('customer-region');
+            const reportReason = document.getElementById('report-reason');
+            const confirmCheckbox = document.getElementById('confirm-cross-region');
+            const reportValidity = document.getElementById('report-validity');
+            const reportDealTime = document.getElementById('report-deal-time');
+
+            // 清空表单
+            if (customerInput) customerInput.value = '';
+            if (customerId) customerId.value = '';
+            if (customerRegion) customerRegion.value = '';
+            if (reportReason) reportReason.value = '';
+            if (confirmCheckbox) confirmCheckbox.checked = false;
+
+            // 重置下拉选择
+            if (reportValidity) reportValidity.value = '90';
+
+            // 设置默认月份为当前月
+            if (reportDealTime) {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                reportDealTime.value = `${year}-${month}`;
+            }
+
+            // 重置选中客户
+            selectedCustomer = null;
+
+            // 隐藏下拉框（如果之前打开着）
+            const dropdown = document.getElementById('customer-dropdown');
+            if (dropdown) dropdown.classList.add('hidden');
+
+            openModal('newReportModal');
+        }
+
+        // 客户库数据
+        const customerDatabase = [
+            { id: 'C001', name: '东方建设集团有限公司', region: '华东区域', type: '中央企业', industry: '建筑业', code: '91110109MA00xxxxxx' },
+            { id: 'C002', name: '华东信息技术有限公司', region: '华东区域', type: '民营企业', industry: '信息技术', code: '91310110MA00XXXXXX' },
+            { id: 'C003', name: '华南食品工业集团', region: '华南区域', type: '国有企业', industry: '食品制造', code: '91440300MA00XXXXXX' },
+            { id: 'C004', name: '西南能源开发有限公司', region: '西南区域', type: '中央企业', industry: '能源', code: '91500100MA00XXXXXX' },
+            { id: 'C005', name: '华中电力设备有限公司', region: '华中区域', type: '国有企业', industry: '电力设备', code: '91420100MA00XXXXXX' },
+            { id: 'C006', name: '东北重工业集团有限公司', region: '东北区域', type: '中央企业', industry: '重工业', code: '91210100MA00XXXXXX' },
+            { id: 'C007', name: '西北矿业股份有限公司', region: '西北区域', type: '国有企业', industry: '矿业', code: '91610000MA00XXXXXX' },
+            { id: 'C008', name: '东南电子科技有限公司', region: '东南区域', type: '民营企业', industry: '电子', code: '91350000MA00XXXXXX' },
+            { id: 'C009', name: '江苏建筑工程有限公司', region: '华东区域', type: '民营企业', industry: '建筑业', code: '91320000MA00XXXXXX' },
+            { id: 'C010', name: '浙江智能制造股份公司', region: '华东区域', type: '外资企业', industry: '制造业', code: '91330000MA00XXXXXX' },
+            { id: 'C011', name: '北京创新科技有限公司', region: '华北区域', type: '民营企业', industry: '信息技术', code: '91110108MA00XXXXXX' },
+            { id: 'C012', name: '华北建筑集团有限公司', region: '华北区域', type: '国有企业', industry: '建筑业', code: '91110105MA00XXXXXX' },
+            { id: 'C013', name: '首都能源投资有限公司', region: '华北区域', type: '中央企业', industry: '能源', code: '91110102MA00XXXXXX' },
+            { id: 'C014', name: '京津冀协同发展集团', region: '华北区域', type: '国有企业', industry: '综合', code: '91110101MA00XXXXXX' },
+            { id: 'C015', name: '北京高新技术有限公司', region: '华北区域', type: '民营企业', industry: '高新技术', code: '91110109MA00XXXXXX' },
+            { id: 'C016', name: '天津港务集团有限公司', region: '华北区域', type: '国有企业', industry: '港口物流', code: '91120101MA00XXXXXX' }
+        ];
+
+        let selectedCustomer = null;
+        let searchTimeout = null;
+
+        // 显示客户下拉列表 - 修复：使用fixed定位避免被裁剪
+        function showCustomerDropdown() {
+            const dropdown = document.getElementById('customer-dropdown');
+            const input = document.getElementById('report-customer-input');
+
+            if (!dropdown || !input) return;
+
+            // 使用fixed定位避免被modal-body的overflow裁剪
+            dropdown.style.position = 'fixed';
+            dropdown.style.zIndex = '9999';
+
+            // 计算相对于视窗的位置
+            const rect = input.getBoundingClientRect();
+            dropdown.style.top = (rect.bottom + 2) + 'px';  // +2px间隙
+            dropdown.style.left = rect.left + 'px';
+            dropdown.style.width = rect.width + 'px';
+            dropdown.style.maxHeight = '280px';
+
+            if (input.value.trim().length >= 1) {  // 改为1个字符即搜索
+                searchCustomer(input.value);
+            } else {
+                renderCustomerDropdown(customerDatabase);
+            }
+
+            dropdown.classList.remove('hidden');
+        }
+
+        // 搜索客户 - 修复：优化延迟和空值处理
+        function searchCustomer(keyword) {
+            clearTimeout(searchTimeout);
+            const dropdown = document.getElementById('customer-dropdown');
+            const loading = document.getElementById('customer-search-loading');
+            const icon = document.getElementById('customer-search-icon');
+
+            if (!dropdown) return;
+
+            if (keyword.length === 0) {
+                renderCustomerDropdown(customerDatabase);
+                dropdown.classList.remove('hidden');
+                return;
+            }
+
+            // 显示加载状态
+            if (icon) icon.classList.add('hidden');
+            if (loading) loading.classList.remove('hidden');
+
+            searchTimeout = setTimeout(() => {
+                const filtered = customerDatabase.filter(c => 
+                    c.name.toLowerCase().includes(keyword.toLowerCase()) ||
+                    c.code.toLowerCase().includes(keyword.toLowerCase()) ||
+                    c.industry.toLowerCase().includes(keyword.toLowerCase())
+                );
+                renderCustomerDropdown(filtered);
+
+                // 重新计算位置，因为内容变化可能导致高度变化
+                const input = document.getElementById('report-customer-input');
+                if (input && !dropdown.classList.contains('hidden')) {
+                    const rect = input.getBoundingClientRect();
+                    dropdown.style.top = (rect.bottom + 2) + 'px';
+                    dropdown.style.left = rect.left + 'px';
+                    dropdown.style.width = rect.width + 'px';
+                }
+
+                dropdown.classList.remove('hidden');
+
+                if (icon) icon.classList.remove('hidden');
+                if (loading) loading.classList.add('hidden');
+            }, 150);  // 减少延迟到150ms，响应更快
+        }
+
+        // 渲染客户下拉列表
+        function renderCustomerDropdown(customers) {
+            const dropdown = document.getElementById('customer-dropdown');
+
+            if (customers.length === 0) {
+                dropdown.innerHTML = '<div class="customer-empty-tip"><i class="fas fa-inbox mr-2"></i>未找到匹配客户</div>';
+                return;
+            }
+
+            dropdown.innerHTML = customers.map(c => `
+                <div class="customer-dropdown-item ${selectedCustomer?.id === c.id ? 'selected' : ''}" onclick="selectCustomer('${c.id}')">
+                    <div class="customer-name">${c.name}</div>
+                    <div class="customer-meta">
+                        <span class="region-badge" style="background: ${getRegionColor(c.region)}; color: ${getRegionTextColor(c.region)};">${c.region}</span>
+                        <span>${c.type}</span>
+                        <span>|</span>
+                        <span>${c.industry}</span>
+                        <span class="font-mono text-gray-400">${c.code}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 获取区域背景色
+        function getRegionColor(region) {
+            const colors = {
+                '华东区域': '#dbeafe',
+                '华南区域': '#dcfce7',
+                '华北区域': '#fef3c7',
+                '华中区域': '#fce7f3',
+                '西南区域': '#f3e8ff',
+                '西北区域': '#ecfdf5',
+                '东北区域': '#fef9c3',
+                '东南区域': '#e0e7ff'
+            };
+            return colors[region] || '#f3f4f6';
+        }
+
+        // 获取区域文字色
+        function getRegionTextColor(region) {
+            const colors = {
+                '华东区域': '#1e40af',
+                '华南区域': '#166534',
+                '华北区域': '#92400e',
+                '华中区域': '#be185d',
+                '西南区域': '#6b21a8',
+                '西北区域': '#065f46',
+                '东北区域': '#854d0e',
+                '东南区域': '#3730a3'
+            };
+            return colors[region] || '#374151';
+        }
+
+        // 选择客户 - 修复：添加空值检查
+        function selectCustomer(customerId) {
+            const customer = customerDatabase.find(c => c.id === customerId);
+            if (!customer) return;
+
+            selectedCustomer = customer;
+            const input = document.getElementById('report-customer-input');
+            const hiddenInput = document.getElementById('report-customer-id');
+            const regionInput = document.getElementById('customer-region');
+            const dropdown = document.getElementById('customer-dropdown');
+
+            if (input) input.value = customer.name;
+            if (hiddenInput) hiddenInput.value = customer.id;
+            if (regionInput) regionInput.value = customer.region;
+            if (dropdown) dropdown.classList.add('hidden');
+
+            // 显示选中提示
+            showToast(`已选择客户：${customer.name}（${customer.region}）`, 'success');
+        }
+
+        // 点击外部关闭下拉 - 修复：兼容fixed定位
+        document.addEventListener('click', function(e) {
+            const input = document.getElementById('report-customer-input');
+            const dropdown = document.getElementById('customer-dropdown');
+            if (!input || !dropdown) return;
+
+            // 检查点击是否在下拉或输入框内（兼容fixed定位）
+            const isClickInsideInput = input.contains(e.target);
+            const isClickInsideDropdown = dropdown.contains(e.target);
+
+            if (!isClickInsideInput && !isClickInsideDropdown) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        // 窗口大小改变时隐藏下拉（防止fixed定位错位）
+        window.addEventListener('resize', function() {
+            const dropdown = document.getElementById('customer-dropdown');
+            if (dropdown) dropdown.classList.add('hidden');
+        });
+
+        // 模态框滚动时隐藏下拉（防止fixed定位错位）
+        document.querySelectorAll('.modal-body').forEach(modalBody => {
+            modalBody.addEventListener('scroll', function() {
+                const dropdown = document.getElementById('customer-dropdown');
+                if (dropdown && !dropdown.classList.contains('hidden')) {
+                    // 重新计算位置或隐藏
+                    const input = document.getElementById('report-customer-input');
+                    if (input) {
+                        const rect = input.getBoundingClientRect();
+                        // 如果输入框滚出视窗，隐藏下拉
+                        if (rect.top < 0 || rect.bottom > window.innerHeight) {
+                            dropdown.classList.add('hidden');
+                        } else {
+                            dropdown.style.top = (rect.bottom + 2) + 'px';
+                            dropdown.style.left = rect.left + 'px';
+                        }
+                    }
+                }
+            });
+        });
+
+        // 原函数保留兼容
+        function onCustomerSelect(value) {
+            const customer = customerDatabase.find(c => c.id === value);
+            if (customer) {
+                document.getElementById('customer-region').value = customer.region;
+            }
+        }
+
+        function saveDraft() {
+            showToast('草稿已保存', 'success');
+            closeModal('newReportModal');
+        }
+
+        function submitNewReport() {
+            const customer = document.getElementById('report-customer-id').value;
+            const customerName = document.getElementById('report-customer-input').value;
+            const reason = document.getElementById('report-reason').value;
+            const confirm = document.getElementById('confirm-cross-region').checked;
+
+            if (!customer || !customerName) {
+                showToast('请选择客户', 'error');
+                return;
+            }
+            if (!reason.trim()) {
+                showToast('请填写申请事由', 'error');
+                return;
+            }
+            if (!confirm) {
+                showToast('请确认理解跟进申请规则', 'error');
+                return;
+            }
+
+            showToast('跟进申请已提交，等待部门负责人初审', 'success');
+            closeModal('newReportModal');
+
+            // 模拟添加新数据
+            const selectedCust = customerDatabase.find(c => c.id === customer);
+            const customerMap = { [customer]: selectedCust?.name || customerName };
+            const regionMap = { [customer]: selectedCust?.region || document.getElementById('customer-region').value };
+
+            const newReport = {
+                id: 'BR' + new Date().toISOString().slice(0,10).replace(/-/g,'') + String(Math.random()).slice(2,5),
+                customerId: customer,
+                customerName: customerMap[customer],
+                customerType: selectedCust?.type || '企业',
+                fromRegion: regionMap[customer],
+                toRegion: '华北区域',
+                reason: reason,
+                certFields: ['QMS'],
+                validityDays: parseInt(document.getElementById('report-validity').value) || 90,
+                startDate: '',
+                endDate: '',
+                remainingDays: null,
+                expectedDealTime: document.getElementById('report-deal-time').value,
+                target: '',
+                status: 'current_review',
+                statusText: '当前区域初审中',
+                statusStep: 1,
+                initUser: '张营销',
+                initRegion: '华北区域',
+                initTime: new Date().toLocaleString('zh-CN'),
+                currentAreaManagerApproval: null,
+                crossAreaDirectorApproval: null,
+                logs: [{ action: 'create', title: '提交跟进申请', desc: '张营销提交跨区域跟进申请', time: new Date().toLocaleString('zh-CN'), operator: '张营销' }]
+            };
+
+            reportData.unshift(newReport);
+            filterDataByView();
+            updateStats();
+            renderTable();
+        }
+
+        // 审批
+        function openApproval(id, level) {
+            const report = reportData.find(r => r.id === id);
+            if (!report) return;
+
+            currentDetailReport = report;
+            currentApprovalLevel = level;
+
+            document.getElementById('approval-report-id').textContent = id;
+            document.getElementById('approval-customer').textContent = report.customerName;
+            document.getElementById('approval-initiator').textContent = `${report.initUser} / ${report.initRegion}`;
+            document.getElementById('approval-from-region').textContent = report.fromRegion;
+            document.getElementById('approval-to-region').textContent = report.toRegion;
+            document.getElementById('approval-reason').textContent = report.reason;
+
+            // 重置审批意见输入
+            document.getElementById('approval-comment').value = '';
+            document.getElementById('approval-comment').placeholder = '选填：可补充同意理由（非必填）';
+
+            // 重置决策选择
+            document.querySelectorAll('.decision-card').forEach(c => {
+                c.classList.remove('selected-approve', 'selected-reject');
+            });
+            document.querySelectorAll('input[name="approval-decision"]').forEach(r => r.checked = false);
+
+            // 重置审批意见提示
+            document.getElementById('comment-required').classList.add('hidden');
+            document.getElementById('comment-optional').classList.remove('hidden');
+            document.getElementById('comment-tip-approve').classList.remove('hidden');
+            document.getElementById('comment-tip-reject').classList.add('hidden');
+
+            // 根据级别调整显示
+            const header = document.getElementById('approval-header');
+            const title = document.getElementById('approval-title');
+            const previousOpinionSection = document.getElementById('previous-opinion-section');
+
+            if (level === 'current') {
+                header.className = 'modal-header modal-header-green';
+                title.textContent = '跟进申请审批（当前区域部门经理初审）';
+                previousOpinionSection.style.display = 'none';
+            } else if (level === 'cross') {
+                header.className = 'modal-header modal-header-blue';
+                title.textContent = '跟进申请审批（跨区域部门经理二审）';
+                previousOpinionSection.style.display = 'block';
+            } else {
+                header.className = 'modal-header modal-header-blue';
+                title.textContent = '跟进申请审批（跨区域区域总监终审）';
+                previousOpinionSection.style.display = 'block';
+            }
+
+            openModal('approvalModal');
+        }
+
+        function selectDecision(element, type) {
+            document.querySelectorAll('.decision-card').forEach(c => {
+                c.classList.remove('selected-approve', 'selected-reject');
+            });
+
+            const commentInput = document.getElementById('approval-comment');
+            const requiredSpan = document.getElementById('comment-required');
+            const optionalSpan = document.getElementById('comment-optional');
+            const tipApprove = document.getElementById('comment-tip-approve');
+            const tipReject = document.getElementById('comment-tip-reject');
+
+            if (type === 'approve') {
+                element.classList.add('selected-approve');
+                // 通过时：必填标识隐藏，选填标识显示，提示文本更新
+                requiredSpan.classList.add('hidden');
+                optionalSpan.classList.remove('hidden');
+                commentInput.placeholder = '选填：可补充同意理由（非必填）';
+                tipApprove.classList.remove('hidden');
+                tipReject.classList.add('hidden');
+            } else {
+                element.classList.add('selected-reject');
+                // 驳回时：必填标识显示，选填标识隐藏，提示文本更新
+                requiredSpan.classList.remove('hidden');
+                optionalSpan.classList.add('hidden');
+                commentInput.placeholder = '必填：请详细说明驳回原因，以便发起人了解并改进...';
+                tipApprove.classList.add('hidden');
+                tipReject.classList.remove('hidden');
+            }
+            element.querySelector('input').checked = true;
+        }
+
+        function toggleApprovalInput(isApprove) {
+            const comment = document.getElementById('approval-comment');
+            const requiredSpan = document.getElementById('comment-required');
+            const optionalSpan = document.getElementById('comment-optional');
+            const tipApprove = document.getElementById('comment-tip-approve');
+            const tipReject = document.getElementById('comment-tip-reject');
+
+            if (isApprove) {
+                comment.placeholder = '选填：可补充同意理由（非必填）';
+                requiredSpan.classList.add('hidden');
+                optionalSpan.classList.remove('hidden');
+                tipApprove.classList.remove('hidden');
+                tipReject.classList.add('hidden');
+            } else {
+                comment.placeholder = '必填：请详细说明驳回原因，以便发起人了解并改进...';
+                requiredSpan.classList.remove('hidden');
+                optionalSpan.classList.add('hidden');
+                tipApprove.classList.add('hidden');
+                tipReject.classList.remove('hidden');
+            }
+        }
+
+        function submitApproval() {
+            const decision = document.querySelector('input[name="approval-decision"]:checked')?.value;
+            const comment = document.getElementById('approval-comment').value;
+
+            if (!decision) {
+                showToast('请选择审批决策', 'error');
+                return;
+            }
+            // 修复：只有驳回时才需要填写审批意见，通过时可选填
+            if (decision === 'reject' && !comment.trim()) {
+                showToast('驳回申请必须填写审批意见', 'error');
+                return;
+            }
+
+            const report = currentDetailReport;
+            const now = new Date().toLocaleString('zh-CN');
+
+            if (currentApprovalLevel === 'current') {
+                // 当前区域部门经理初审
+                report.currentAreaManagerApproval = {
+                    approver: '赵主管',
+                    region: '华北区域',
+                    role: '部门经理',
+                    result: decision,
+                    opinion: comment || '当前区域初审通过',
+                    time: now
+                };
+
+                if (decision === 'approve') {
+                    report.status = 'cross_review';
+                    report.statusText = '跨区域二审中';
+                    report.statusStep = 3;
+                    report.logs.push({ action: 'update', title: '当前区域初审通过', desc: '赵主管（华北区域部门经理）当前区域初审通过，提交跨区域二审', time: now, operator: '赵主管' });
+                    showToast('当前区域初审通过，已提交跨区域部门经理二审', 'success');
+                } else {
+                    report.status = 'rejected';
+                    report.statusText = '已驳回';
+                    report.statusStep = 7;
+                    report.logs.push({ action: 'update', title: '当前区域初审驳回', desc: '赵主管初审驳回：' + comment, time: now, operator: '赵主管' });
+                    report.needMyApproval = false;
+                    showToast('已驳回申请', 'warning');
+                }
+            } else if (currentApprovalLevel === 'cross') {
+                // 跨区域部门经理二审
+                report.crossAreaManagerApproval = {
+                    approver: '钱经理',
+                    region: report.fromRegion,
+                    role: '部门经理',
+                    result: decision,
+                    opinion: comment || '跨区域二审通过',
+                    time: now
+                };
+
+                if (decision === 'approve') {
+                    report.status = 'final_review';
+                    report.statusText = '跨区域终审中';
+                    report.statusStep = 5;
+                    report.logs.push({ action: 'update', title: '跨区域二审通过', desc: '钱经理（' + report.fromRegion + '部门经理）二审通过，提交跨区域区域总监终审', time: now, operator: '钱经理' });
+                    showToast('跨区域二审通过，已提交跨区域区域总监终审', 'success');
+                } else {
+                    report.status = 'rejected';
+                    report.statusText = '已驳回';
+                    report.statusStep = 7;
+                    report.logs.push({ action: 'update', title: '跨区域二审驳回', desc: '钱经理二审驳回：' + comment, time: now, operator: '钱经理' });
+                    report.needMyApproval = false;
+                    showToast('已驳回申请', 'warning');
+                }
+            } else if (currentApprovalLevel === 'final') {
+                // 跨区域区域总监终审
+                report.crossAreaDirectorApproval = {
+                    approver: '李总监',
+                    region: report.fromRegion,
+                    role: '区域总监',
+                    result: decision,
+                    opinion: comment || '跨区域终审通过',
+                    time: now
+                };
+
+                if (decision === 'approve') {
+                    report.status = 'approved';
+                    report.statusText = '已通过';
+                    report.statusStep = 6;
+                    report.startDate = new Date().toISOString().slice(0,10);
+                    const end = new Date();
+                    end.setDate(end.getDate() + report.validityDays);
+                    report.endDate = end.toISOString().slice(0,10);
+                    report.remainingDays = report.validityDays;
+                    report.logs.push({ action: 'update', title: '跨区域终审通过', desc: '李总监（' + report.fromRegion + '区域总监）跨区域终审通过，开通权限', time: now, operator: '李总监' });
+                    report.logs.push({ action: 'complete', title: '权限生效', desc: '系统自动开通跨区域操作权限', time: now, operator: '系统' });
+                    report.needMyApproval = false;
+                    showToast('跨区域终审通过，系统已开通跨区域操作权限', 'success');
+                } else {
+                    report.status = 'rejected';
+                    report.statusText = '已驳回';
+                    report.statusStep = 7;
+                    report.logs.push({ action: 'update', title: '跨区域终审驳回', desc: '李总监终审驳回：' + comment, time: now, operator: '李总监' });
+                    report.needMyApproval = false;
+                    showToast('已驳回申请', 'warning');
+                }
+            }
+
+            closeModal('approvalModal');
+            updateStats();
+            filterDataByView();
+            renderTable();
+        }
+
+        // 撤销
+        function openRevoke(id) {
+            const report = reportData.find(r => r.id === id);
+            if (!report) return;
+            currentDetailReport = report;
+
+            document.getElementById('revoke-report-id').textContent = id;
+            document.getElementById('revoke-customer').textContent = report.customerName;
+            document.getElementById('revoke-reason-select').value = '业务已完成，无需继续跟进';
+            document.getElementById('revoke-other-reason').classList.add('hidden');
+
+            openModal('revokeModal');
+        }
+
+        function openRevokeFromDrawer() {
+            if (currentDetailReport) {
+                openRevoke(currentDetailReport.id);
+            }
+        }
+
+        function toggleOtherReason(select) {
+            const other = document.getElementById('revoke-other-reason');
+            if (select.value === 'other') {
+                other.classList.remove('hidden');
+            } else {
+                other.classList.add('hidden');
+            }
+        }
+
+        function submitRevoke() {
+            const report = currentDetailReport;
+            const now = new Date().toLocaleString('zh-CN');
+            const reasonSelect = document.getElementById('revoke-reason-select');
+            const reason = reasonSelect.value === 'other' ? 
+                document.getElementById('revoke-other-reason').value : 
+                reasonSelect.value;
+
+            report.status = 'revoked';
+            report.statusText = '已撤销';
+            report.statusStep = 6;
+            report.logs.push({ action: 'update', title: '撤销跟进申请', desc: `张营销撤销跟进申请，原因：${reason}`, time: now, operator: '张营销' });
+
+            showToast('跟进申请已撤销，跨区域权限已收回', 'success');
+            closeModal('revokeModal');
+            closeSideDrawer();
+            updateStats();
+            renderTable();
+        }
+
+        // 其他操作
+        function editDraft(id) {
+            showToast('打开草稿编辑：' + id, 'success');
+        }
+
+        function deleteDraft(id) {
+            if (confirm('确定删除此草稿吗？')) {
+                const idx = reportData.findIndex(r => r.id === id);
+                if (idx > -1) {
+                    reportData.splice(idx, 1);
+                    filterDataByView();
+                    updateStats();
+                    renderTable();
+                    showToast('草稿已删除', 'success');
+                }
+            }
+        }
+
+        // Toast
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = toast.querySelector('i');
+            const msg = document.getElementById('toast-message');
+
+            msg.textContent = message;
+            toast.className = type === 'error' ? 'toast-error' : (type === 'warning' ? 'toast-warning' : 'toast-success');
+            icon.className = type === 'error' ? 'fas fa-times-circle text-red-500' : (type === 'warning' ? 'fas fa-exclamation-triangle text-amber-500' : 'fas fa-check-circle text-green-500');
+
+            toast.style.display = 'flex';
+            setTimeout(() => toast.style.display = 'none', 3000);
+        }
+
+        // 点击遮罩关闭
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

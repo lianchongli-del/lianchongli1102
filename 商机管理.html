@@ -1,0 +1,4599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商机管理 - 商机列表</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f1f5f9;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .user-region-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: #dbeafe;
+            color: #1e40af;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid #bfdbfe;
+        }
+
+        .top-bar {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .view-switcher {
+            display: flex;
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 4px;
+            margin-left: 24px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .view-tab {
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #64748b;
+            border: none;
+            background: transparent;
+        }
+
+        .view-tab:hover { color: #374151; }
+
+        .view-tab.active {
+            background: white;
+            color: #3b82f6;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-weight: 600;
+        }
+
+        .view-tab .count {
+            background: #e2e8f0;
+            color: #64748b;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .view-tab.active .count {
+            background: #dbeafe;
+            color: #3b82f6;
+        }
+
+        .filter-bar {
+            background: white;
+            margin: 20px 20px 0 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .quick-filters {
+            padding: 16px 20px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+            background: #fafafa;
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-item label {
+            font-size: 13px;
+            color: #374151;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .filter-item input,
+        .filter-item select {
+            padding: 6px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            background: white;
+        }
+
+        .filter-item input:focus,
+        .filter-item select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+
+        .filter-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .filter-panel.expanded {
+            max-height: 300px;
+        }
+
+        .advanced-filters {
+            padding: 16px 20px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+            background: white;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin: 20px;
+            overflow: hidden;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            max-height: calc(100vh - 320px);
+            position: relative;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 2000px;
+            table-layout: fixed;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 13px;
+            border-bottom: 1px solid #e2e8f0;
+            white-space: nowrap;
+            background: white;
+            overflow: hidden;
+        }
+
+        .data-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #475569;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .data-table tbody tr:hover td {
+            background: #f8fafc;
+        }
+
+        .col-sticky-left {
+            position: sticky;
+            left: 0;
+            z-index: 30;
+            background: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            width: 140px;
+            min-width: 140px;
+        }
+
+        .col-sticky-left-2 {
+            position: sticky;
+            left: 140px;
+            z-index: 30;
+            background: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            width: 260px;
+            min-width: 260px;
+        }
+
+        .col-sticky-right {
+            position: sticky;
+            right: 220px;
+            z-index: 30;
+            background: white;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.05);
+            width: 100px;
+            min-width: 100px;
+        }
+
+        .col-sticky-right-2 {
+            position: sticky;
+            right: 0;
+            z-index: 30;
+            background: white;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.05);
+            width: 140px;
+            min-width: 140px;
+        }
+
+        .data-table th.col-sticky-left,
+        .data-table th.col-sticky-left-2 {
+            z-index: 40;
+            background: #f8fafc;
+        }
+
+        .data-table th.col-sticky-right,
+        .data-table th.col-sticky-right-2 {
+            z-index: 40;
+            background: #f8fafc;
+        }
+
+        .data-table tbody tr:hover .col-sticky-left,
+        .data-table tbody tr:hover .col-sticky-left-2,
+        .data-table tbody tr:hover .col-sticky-right,
+        .data-table tbody tr:hover .col-sticky-right-2 {
+            background: #f8fafc;
+        }
+
+        .col-id { width: 140px; }
+        .col-name { width: 260px; }
+        .col-type { width: 100px; }
+        .col-business-type { width: 110px; }
+        .col-cert-field { width: 200px; }
+        .col-amount { width: 120px; }
+        .col-deal-time { width: 110px; }
+        .col-contact { width: 120px; }
+        .col-follower { width: 120px; }
+        .col-reg-time { width: 130px; }
+        .col-last-follow { width: 130px; }
+        .col-source { width: 100px; }
+        .col-status { width: 120px; }
+        .col-region { width: 120px; }
+        .col-action { width: 220px; }
+
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            padding-right: 20px !important;
+        }
+
+        .sortable:hover {
+            background: #e2e8f0;
+        }
+
+        .sort-icon {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 11px;
+        }
+
+        .sortable.asc .sort-icon,
+        .sortable.desc .sort-icon {
+            color: #3b82f6;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-right: 4px;
+            margin-bottom: 2px;
+        }
+
+        .tag-cert { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+        .tag-service { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+        .tag-qms { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .tag-ems { background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
+        .tag-ohsms { background: #fce7f3; color: #be185d; border: 1px solid #fbcfe8; }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-new { background: #dbeafe; color: #1e40af; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-following { background: #dcfce7; color: #166534; }
+        .status-completed { background: #f3f4f6; color: #374151; }
+        .status-won { background: #d1fae5; color: #065f46; border: 1px solid #86efac; }
+        .status-lost { background: #fee2e2; color: #991b1b; }
+        .status-returned { background: #f3f4f6; color: #374151; }
+        .status-pool { background: #e0e7ff; color: #3730a3; }
+
+        .amount { font-family: 'Courier New', monospace; font-weight: 600; color: #059669; }
+        .amount-empty { color: #9ca3af; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-secondary { background: white; border-color: #d1d5db; color: #374151; }
+        .btn-secondary:hover { background: #f9fafb; }
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
+        .btn-danger { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+        .btn-danger:hover { background: #fef2f2; }
+        .btn-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .btn-success:hover { background: #d1fae5; }
+        .btn-warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+        .btn-warning:hover { background: #fde68a; }
+        .btn-purple { background: #f3e8ff; color: #7c3aed; border: 1px solid #d8b4fe; }
+        .btn-purple:hover { background: #ede9fe; }
+
+        .action-btns { display: flex; gap: 8px; }
+        .action-btn {
+            color: #3b82f6;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .action-btn:hover { background: #eff6ff; color: #1d4ed8; }
+        .action-btn.danger { color: #dc2626; }
+        .action-btn.danger:hover { background: #fef2f2; }
+        .action-btn.success { color: #059669; }
+        .action-btn.success:hover { background: #d1fae5; }
+        .action-btn.purple { color: #7c3aed; }
+        .action-btn.purple:hover { background: #f3e8ff; }
+
+        .pagination { display: flex; gap: 4px; align-items: center; }
+        .page-btn {
+            padding: 6px 12px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .page-btn:hover { border-color: #3b82f6; color: #3b82f6; }
+        .page-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+
+        .customer-name {
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .customer-name i { color: #3b82f6; font-size: 14px; }
+
+        .stats-bar {
+            display: flex;
+            gap: 16px;
+            margin-left: 24px;
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: #f8fafc;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .stat-item:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        .stat-item.active {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        .stat-value {
+            font-weight: 700;
+            color: #1e293b;
+            font-size: 16px;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .cert-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .business-parent-row td {
+            border-bottom-color: #dbe4ef;
+            cursor: pointer;
+        }
+
+        .business-parent-row:hover td {
+            background: #f8fafc;
+        }
+
+        .business-parent-row.expanded td {
+            background: #f8fbff;
+        }
+
+        .business-domain-row td {
+            background: #f8fbff;
+            color: #475569;
+            font-size: 12px;
+            border-bottom: 1px solid #edf2f7;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .business-domain-row .col-sticky-left,
+        .business-domain-row .col-sticky-left-2,
+        .business-domain-row .col-sticky-right,
+        .business-domain-row .col-sticky-right-2 {
+            background: #f8fbff;
+        }
+
+        .business-domain-row:hover td,
+        .business-domain-row:hover .col-sticky-left,
+        .business-domain-row:hover .col-sticky-left-2,
+        .business-domain-row:hover .col-sticky-right,
+        .business-domain-row:hover .col-sticky-right-2 {
+            background: #f1f7ff;
+        }
+
+        .tree-toggle {
+            width: 22px;
+            height: 22px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: white;
+            color: #64748b;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            vertical-align: middle;
+            cursor: pointer;
+        }
+
+        .tree-toggle i {
+            font-size: 11px;
+            transition: transform 0.18s;
+        }
+
+        .tree-toggle.expanded i {
+            transform: rotate(90deg);
+        }
+
+        .tree-toggle-placeholder {
+            display: inline-block;
+            width: 30px;
+        }
+
+        .domain-row-id {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .domain-row-id i {
+            color: #60a5fa;
+            font-size: 11px;
+        }
+
+        .domain-row-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .domain-row-summary {
+            color: #64748b;
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        .domain-row-muted {
+            color: #94a3b8;
+        }
+
+        .follower-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .follower-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #e0e7ff;
+            color: #4338ca;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .pool-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            background: #e0e7ff;
+            color: #3730a3;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .region-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .region-local { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+
+        #toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #111827;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 2000;
+        }
+
+        .side-drawer {
+            position: fixed;
+            top: 0;
+            right: -900px;
+            width: 900px;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+            z-index: 1100;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .side-drawer.active {
+            right: 0;
+        }
+
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 1050;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .drawer-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .drawer-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            flex-shrink: 0;
+        }
+
+        .drawer-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .drawer-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+            background: #f8fafc;
+        }
+
+        .drawer-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e5e7eb;
+            background: white;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .detail-tabs {
+            display: flex;
+            border-bottom: 1px solid #e5e7eb;
+            background: white;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .detail-tab {
+            padding: 16px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .detail-tab:hover {
+            color: #3b82f6;
+        }
+
+        .detail-tab.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .detail-section {
+            padding: 24px;
+            display: none;
+        }
+
+        .detail-section.active {
+            display: block;
+        }
+
+        .detail-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .detail-card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #fafafa;
+        }
+
+        .detail-card-body {
+            padding: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #111827;
+            font-weight: 600;
+        }
+
+        .info-value.subtle {
+            font-weight: 400;
+            color: #4b5563;
+        }
+
+        .plan-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .plan-card:hover {
+            border-color: #bfdbfe;
+            box-shadow: 0 2px 8px rgba(59,130,246,0.08);
+        }
+
+        .plan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .plan-title {
+            font-weight: 600;
+            color: #111827;
+            font-size: 14px;
+        }
+
+        .plan-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .plan-status-pending { background: #fef3c7; color: #92400e; }
+        .plan-status-completed { background: #dcfce7; color: #166534; }
+        .plan-status-overdue { background: #fee2e2; color: #991b1b; }
+
+        .plan-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+
+        .plan-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 28px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e5e7eb;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 24px;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #3b82f6;
+        }
+
+        .timeline-item.success::before { border-color: #22c55e; }
+        .timeline-item.warning::before { border-color: #f59e0b; }
+
+        .timeline-time {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .timeline-content {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .timeline-type {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .timeline-type-phone { background: #dbeafe; color: #1e40af; }
+        .timeline-type-visit { background: #d1fae5; color: #065f46; }
+        .timeline-type-email { background: #fce7f3; color: #9d174d; }
+
+        .timeline-text {
+            font-size: 13px;
+            color: #374151;
+            line-height: 1.6;
+        }
+
+        .log-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .log-item:last-child {
+            border-bottom: none;
+        }
+
+        .log-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .log-icon.create { background: #dcfce7; color: #166534; }
+        .log-icon.update { background: #dbeafe; color: #1e40af; }
+        .log-icon.transfer { background: #fef3c7; color: #92400e; }
+        .log-icon.complete { background: #f3e8ff; color: #7c3aed; }
+
+        .log-content {
+            flex: 1;
+        }
+
+        .log-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 2px;
+        }
+
+        .log-desc {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 2px;
+        }
+
+        .log-time {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .business-modal {
+            width: 720px;
+            height: 640px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .business-modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e5e7eb;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-subtitle {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 4px;
+            font-weight: 400;
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            background: #fafafa;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e5e7eb;
+            background: white;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .form-label .required {
+            color: #ef4444;
+            margin-left: 2px;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 13px;
+            transition: all 0.2s;
+            background: white;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08);
+        }
+
+        .form-textarea {
+            resize: none;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .info-card {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+        }
+
+        .info-card.warning {
+            background: #fef3c7;
+            border-color: #fcd34d;
+        }
+
+        .info-card.error {
+            background: #fee2e2;
+            border-color: #fecaca;
+        }
+
+        .info-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-card.warning .info-title { color: #92400e; }
+        .info-card.error .info-title { color: #991b1b; }
+
+        .company-select-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            border: 1px dashed #d1d5db;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .company-select-trigger:hover {
+            border-color: #3b82f6;
+            background: #fafafa;
+        }
+
+        .company-select-trigger.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #f9fafb;
+        }
+
+        .company-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .company-icon {
+            width: 40px;
+            height: 40px;
+            background: #eff6ff;
+            color: #3b82f6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .company-detail h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 2px;
+        }
+
+        .company-detail p {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .company-region-tag {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-left: 8px;
+            font-weight: 500;
+        }
+
+        .tag-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag-item {
+            padding: 6px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            color: #374151;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tag-item:hover {
+            border-color: #bfdbfe;
+            background: #f9fafb;
+        }
+
+        .tag-item.selected {
+            background: #eff6ff;
+            border-color: #3b82f6;
+            color: #1d4ed8;
+        }
+
+        .tag-item.locked {
+            background: #f0fdf4;
+            border-color: #86efac;
+            color: #166534;
+        }
+
+        .tag-item.poolable {
+            background: #fff;
+            border-color: #e5e7eb;
+            color: #374151;
+        }
+
+        .tag-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f9fafb;
+        }
+
+        .domain-owner {
+            font-size: 11px;
+            color: #64748b;
+            margin-left: 2px;
+        }
+
+        .domain-assignment-panel {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+
+        .domain-assignment-tip {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.6;
+            margin-top: 8px;
+        }
+
+        .domain-assignment-tip strong {
+            color: #334155;
+            font-weight: 600;
+        }
+
+        .domain-tree {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .domain-tree-root {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 14px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .domain-tree-children {
+            padding: 8px 0 8px 22px;
+        }
+
+        .domain-tree-node {
+            position: relative;
+            padding: 8px 14px 8px 18px;
+            border-left: 1px solid #cbd5e1;
+        }
+
+        .domain-tree-node::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20px;
+            width: 12px;
+            height: 1px;
+            background: #cbd5e1;
+        }
+
+        .domain-tree-node-main {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .domain-tree-node-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .domain-tree-node-meta {
+            margin-top: 6px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 6px 16px;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .domain-tree-check {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .domain-tree-check input {
+            margin-top: 2px;
+        }
+
+        .domain-form-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .domain-form-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #fff;
+            padding: 14px;
+        }
+
+        .domain-form-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .domain-form-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .domain-mini-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .domain-mini-grid .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .domain-detail-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .domain-detail-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #fff;
+            padding: 14px;
+        }
+
+        .domain-detail-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .domain-detail-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .domain-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px 20px;
+        }
+
+        .domain-detail-grid .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .inline-field {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .inline-field .form-input {
+            flex: 1;
+        }
+
+        .contact-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .contact-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            position: relative;
+        }
+
+        .contact-card:hover {
+            border-color: #bfdbfe;
+            background: #fafafa;
+        }
+
+        .contact-card.selected {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+
+        .contact-card.default::before {
+            content: '主联系人';
+            position: absolute;
+            top: -1px;
+            right: 8px;
+            background: #3b82f6;
+            color: white;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 0 0 4px 4px;
+            font-weight: 600;
+        }
+
+        .contact-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #fce7f3;
+            color: #be185d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .contact-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .contact-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 2px;
+        }
+
+        .contact-phone {
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        .contact-check {
+            color: #3b82f6;
+            display: none;
+        }
+
+        .contact-card.selected .contact-check {
+            display: block;
+        }
+
+        .company-list-modal {
+            width: 640px;
+            height: 520px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .search-box {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+        }
+
+        .search-input-wrapper i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 12px 10px 40px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08);
+        }
+
+        .company-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 24px;
+        }
+
+        .company-list-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .company-list-item:hover {
+            border-color: #3b82f6;
+            background: #fafafa;
+        }
+
+        .company-list-item.selected {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .company-list-icon {
+            width: 40px;
+            height: 40px;
+            background: #eff6ff;
+            color: #3b82f6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .company-list-info {
+            flex: 1;
+        }
+
+        .company-list-name {
+            font-weight: 600;
+            color: #111827;
+            font-size: 14px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+        }
+
+        .company-list-meta {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .company-list-check {
+            color: #3b82f6;
+            display: none;
+        }
+
+        .company-list-item.selected .company-list-check {
+            display: block;
+        }
+
+        .btn-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f3f4f6;
+            color: #6b7280;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-close:hover {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .confirm-modal {
+            width: 480px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+            padding: 32px;
+            text-align: center;
+        }
+
+        .confirm-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 28px;
+        }
+
+        .confirm-icon.warning { background: #fef3c7; color: #f59e0b; }
+        .confirm-icon.info { background: #dbeafe; color: #3b82f6; }
+        .confirm-icon.success { background: #dcfce7; color: #22c55e; }
+
+        .confirm-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .confirm-desc {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .confirm-btns {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .hidden { display: none !important; }
+
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+        /* 完结弹窗样式 */
+        .finish-options {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .finish-option {
+            flex: 1;
+            padding: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .finish-option:hover {
+            border-color: #bfdbfe;
+            background: #fafafa;
+        }
+
+        .finish-option.selected {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .finish-option-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 20px;
+        }
+
+        .finish-option-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .finish-option-desc {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        /* 合同列表样式 */
+        .contract-list-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .contract-list-item:hover {
+            border-color: #3b82f6;
+            background: #fafafa;
+        }
+
+        .contract-list-item.selected {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .contract-icon {
+            width: 40px;
+            height: 40px;
+            background: #eff6ff;
+            color: #3b82f6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .contract-info {
+            flex: 1;
+        }
+
+        .contract-name {
+            font-weight: 600;
+            color: #111827;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .contract-meta {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .contract-check {
+            color: #3b82f6;
+            display: none;
+        }
+
+        .contract-list-item.selected .contract-check {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部栏 -->
+    <div class="top-bar">
+        <div class="flex items-center gap-4">
+            <h1 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <i class="fas fa-briefcase text-blue-600"></i>
+                商机管理
+            </h1>
+
+            <div class="user-region-badge">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>当前区域：华北区域</span>
+            </div>
+
+            <div class="view-switcher">
+                <button class="view-tab active" onclick="switchView('following')" id="tab-following">
+                    <i class="fas fa-user-check"></i>
+                    我跟进的
+                    <span class="count" id="count-following">0</span>
+                </button>
+                <button class="view-tab" onclick="switchView('created')" id="tab-created">
+                    <i class="fas fa-edit"></i>
+                    我创建的
+                    <span class="count" id="count-created">0</span>
+                </button>
+                <button class="view-tab" onclick="switchView('pool')" id="tab-pool">
+                    <i class="fas fa-users"></i>
+                    公共商机
+                    <span class="count" id="count-pool">4</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3" id="top-actions">
+            <button class="btn btn-secondary btn-sm" onclick="toggleFilter()">
+                <i class="fas fa-filter"></i>
+                <span id="filter-text">收起筛选</span>
+                <i class="fas fa-chevron-up ml-1" id="filter-icon" style="transition: transform 0.3s;"></i>
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="exportData()">
+                <i class="fas fa-download"></i>
+                导出
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="openBusinessModal()">
+                <i class="fas fa-plus"></i>
+                登记商机
+            </button>
+        </div>
+    </div>
+
+    <!-- 筛选栏 -->
+    <div class="filter-bar">
+        <div class="quick-filters">
+            <div class="filter-item">
+                <label>商机编号</label>
+                <input type="text" id="filter-id" placeholder="输入编号" style="width: 130px;">
+            </div>
+            <div class="filter-item">
+                <label>客户名称</label>
+                <input type="text" id="filter-name" placeholder="输入名称" style="width: 150px;">
+            </div>
+            <div class="filter-item">
+                <label>业务类型</label>
+                <select id="filter-biz-type" style="width: 110px;">
+                    <option value="">全部</option>
+                    <option value="体系认证">体系认证</option>
+                    <option value="技术服务">技术服务</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <label>认证领域</label>
+                <select id="filter-cert" style="width: 120px;">
+                    <option value="">全部</option>
+                    <option>QMS</option>
+                    <option>EMS</option>
+                    <option>OHSMS</option>
+                    <option>FSMS</option>
+                    <option>ISMS</option>
+                    <option>ITSMS</option>
+                    <option>EnMS</option>
+                    <option>HACCP</option>
+                </select>
+            </div>
+            <div class="filter-item" id="filter-follower-wrapper">
+                <label>跟进人</label>
+                <select id="filter-follower" style="width: 90px;">
+                    <option value="">全部</option>
+                    <option>刘明</option>
+                    <option>王芳</option>
+                    <option>李明</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <label>商机状态</label>
+                <select id="filter-status" style="width: 110px;">
+                    <option value="">全部</option>
+                    <option value="following">跟进中</option>
+                    <option value="completed">已完结</option>
+                    <option value="pool">公共商机</option>
+                </select>
+            </div>
+            <div class="flex-1"></div>
+            <button class="btn btn-primary btn-sm" onclick="searchData()">
+                <i class="fas fa-search"></i>
+                查询
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="resetData()">
+                重置
+            </button>
+        </div>
+
+        <div class="filter-panel expanded" id="filterPanel">
+            <div class="advanced-filters">
+                <div class="filter-item">
+                    <label>客户类型</label>
+                    <select id="filter-cust-type" style="width: 110px;">
+                        <option value="">全部</option>
+                        <option>中央企业</option>
+                        <option>国有企业</option>
+                        <option>政府机构</option>
+                        <option>民营企业</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>预计金额</label>
+                    <select id="filter-amount" style="width: 120px;">
+                        <option value="">全部</option>
+                        <option value="0-50000">5万以下</option>
+                        <option value="50000-100000">5-10万</option>
+                        <option value="100000-500000">10-50万</option>
+                        <option value="500000+">50万以上</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>预计成交时间</label>
+                    <input type="month" id="filter-deal-time" style="width: 140px;">
+                </div>
+                <div class="filter-item">
+                    <label>商机来源</label>
+                    <select id="filter-source" style="width: 100px;">
+                        <option value="">全部</option>
+                        <option>主动登记</option>
+                        <option>区域分配</option>
+                        <option>转介绍</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>登记时间</label>
+                    <select id="filter-reg-time" style="width: 110px;">
+                        <option value="">全部</option>
+                        <option value="today">今天</option>
+                        <option value="week">本周</option>
+                        <option value="month">本月</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 表格区域 -->
+    <div class="table-container">
+        <div class="table-wrapper">
+            <table class="data-table" id="businessTable">
+                <thead>
+                    <tr>
+                        <th class="col-id col-sticky-left sortable" onclick="sortTable('id')">
+                            商机编号
+                            <span class="sort-icon"><i class="fas fa-sort"></i></span>
+                        </th>
+                        <th class="col-name col-sticky-left-2 sortable" onclick="sortTable('customerName')">
+                            客户名称
+                            <span class="sort-icon"><i class="fas fa-sort"></i></span>
+                        </th>
+                        <th class="col-type">客户类型</th>
+                        <th class="col-business-type">业务类型</th>
+                        <th class="col-cert-field">认证领域/服务内容</th>
+                        <th class="col-amount sortable" onclick="sortTable('amount')">
+                            预计金额
+                            <span class="sort-icon"><i class="fas fa-sort"></i></span>
+                        </th>
+                        <th class="col-deal-time sortable" onclick="sortTable('dealTime')">
+                            预计成交
+                            <span class="sort-icon"><i class="fas fa-sort"></i></span>
+                        </th>
+                        <th class="col-contact">联系人</th>
+                        <th class="col-follower" id="th-follower">跟进人</th>
+                        <th class="col-reg-time sortable" onclick="sortTable('regTime')">
+                            登记时间
+                            <span class="sort-icon"><i class="fas fa-sort"></i></span>
+                        </th>
+                        <th class="col-last-follow sortable" onclick="sortTable('lastFollow')">
+                            最后跟进
+                            <span class="sort-icon"><i class="fas fa-sort"></i></span>
+                        </th>
+                        <th class="col-source">商机来源</th>
+                        <th class="col-status col-sticky-right sortable" onclick="sortTable('status')">
+                            商机状态
+                            <span class="sort-icon"><i class="fas fa-sort"></i></span>
+                        </th>
+                        <th class="col-action col-sticky-right-2">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 分页 -->
+        <div class="p-4 border-t border-gray-200 flex items-center justify-between bg-white">
+            <div class="text-sm text-gray-600">
+                显示第 <span class="font-medium" id="page-start">1</span> 到 <span class="font-medium" id="page-end">15</span> 条，共 <span class="font-medium" id="total-count">42</span> 条
+            </div>
+            <div class="pagination" id="pagination">
+            </div>
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+                <span>每页</span>
+                <select class="border border-gray-300 rounded px-2 py-1 text-sm" onchange="changePageSize(this.value)">
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                </select>
+                <span>条</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div id="toast">
+        <i class="fas fa-check-circle text-green-400"></i>
+        <span id="toast-message">操作成功</span>
+    </div>
+
+    <!-- 侧边栏详情抽屉 -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeSideDrawer()"></div>
+    <div class="side-drawer" id="sideDrawer">
+        <div class="drawer-header">
+            <div>
+                <div class="drawer-title">
+                    <i class="fas fa-file-alt text-gray-700"></i>
+                    商机详情
+                </div>
+                <div class="text-sm text-gray-500 mt-1" id="drawerSubtitle">编号：B20260415001</div>
+            </div>
+            <button class="btn-close" onclick="closeSideDrawer()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="detail-tabs">
+            <div class="detail-tab active" onclick="switchDetailTab('basic')">基本信息</div>
+            <div class="detail-tab" onclick="switchDetailTab('records')">跟进记录</div>
+            <div class="detail-tab" onclick="switchDetailTab('logs')">操作日志</div>
+        </div>
+
+        <div class="drawer-body custom-scroll">
+            <!-- 基本信息 -->
+            <div class="detail-section active" id="tab-basic">
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <i class="fas fa-building text-blue-600"></i>
+                        客户信息
+                    </div>
+                    <div class="detail-card-body">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">客户名称</span>
+                                <span class="info-value" id="detail-customer-name">丰源新能源集团有限公司</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">客户类型</span>
+                                <span class="info-value" id="detail-customer-type">中央企业</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">所属区域</span>
+                                <span class="info-value" id="detail-customer-region">
+                                    <span class="region-tag region-local">华北区域</span>
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">所属行业</span>
+                                <span class="info-value" id="detail-industry">新能源</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">统一社会信用代码</span>
+                                <span class="info-value subtle" id="detail-credit-code">91110000123456789X</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">注册地址</span>
+                                <span class="info-value subtle" id="detail-address">北京市朝阳区建国路88号</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <i class="fas fa-briefcase text-blue-600"></i>
+                        业务信息
+                    </div>
+                    <div class="detail-card-body">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">商机来源</span>
+                                <span class="info-value" id="detail-source">主动登记</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">业务类型</span>
+                                <span class="info-value" id="detail-business-type">体系认证</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">认证领域</span>
+                                <span class="info-value" id="detail-cert-fields">QMS、EMS、OHSMS</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">预计金额</span>
+                                <span class="info-value" style="color: #059669;" id="detail-amount">¥85,000</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">预计成交时间</span>
+                                <span class="info-value" id="detail-deal-time">2026年6月</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">当前状态</span>
+                                <span class="info-value" id="detail-status">
+                                    <span class="status-badge status-following">跟进中</span>
+                                </span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">关联合同</span>
+                                <span class="info-value subtle" id="detail-contract">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <i class="fas fa-address-book text-blue-600"></i>
+                        领域明细
+                    </div>
+                    <div class="detail-card-body">
+                        <div class="domain-detail-list" id="detail-domain-breakdown"></div>
+                    </div>
+                </div>
+
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <i class="fas fa-user-edit text-blue-600"></i>
+                        登记信息
+                    </div>
+                    <div class="detail-card-body">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">登记时间</span>
+                                <span class="info-value subtle" id="detail-reg-time">2026-04-15 09:30</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">登记人</span>
+                                <span class="info-value subtle" id="detail-reg-by">刘明</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 跟进记录 -->
+            <div class="detail-section" id="tab-records">
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <i class="fas fa-history text-blue-600"></i>
+                        跟进记录时间线
+                    </div>
+                    <div class="detail-card-body">
+                        <div class="timeline" id="followup-records">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 操作日志 -->
+            <div class="detail-section" id="tab-logs">
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <i class="fas fa-list-alt text-blue-600"></i>
+                        操作日志
+                    </div>
+                    <div class="detail-card-body" id="operation-logs">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="drawer-footer" id="drawer-footer">
+            <button class="btn btn-secondary" onclick="closeSideDrawer()">关闭</button>
+        </div>
+    </div>
+
+    <!-- ========== 弹窗区域 ========== -->
+
+    <!-- 1. 商机登记弹窗 -->
+    <div class="modal-overlay" id="businessModal">
+        <div class="business-modal">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title">
+                        <i class="fas fa-plus-circle text-gray-700"></i>
+                        商机登记
+                    </div>
+                    <div class="modal-subtitle">录入新的业务线索</div>
+                </div>
+                <button class="btn-close" onclick="closeModal('businessModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body custom-scroll">
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-building text-gray-500"></i>
+                        企业信息 <span style="color: #ef4444;">*</span>
+                        <span class="text-xs text-gray-400 font-normal ml-2">（仅可选择本区域客户）</span>
+                    </div>
+
+                    <div id="company-unselected" class="company-select-trigger" onclick="openCompanySelector()">
+                        <div class="company-info">
+                            <div class="company-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="company-detail">
+                                <h4>从企业库选择客户</h4>
+                                <p>点击搜索并选择系统中已有的企业客户</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right" style="color: #9ca3af;"></i>
+                    </div>
+
+                    <div id="company-selected" class="hidden" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 48px; height: 48px; background: #dcfce7; color: #166534; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; color: #111827; font-size: 14px; margin-bottom: 2px;" id="selected-company-name">北京某科技有限公司</div>
+                                <div style="font-size: 12px; color: #059669;" id="selected-company-code">统一社会信用代码：91110108MA00XXXXXX</div>
+                                <div style="font-size: 11px; color: #6b7280; margin-top: 2px;" id="selected-company-region">
+                                    制造业 | 华北区域
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="changeCompany()" style="color: #059669; border: none; background: none; cursor: pointer; font-size: 13px;">
+                            <i class="fas fa-edit"></i> 更换
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-briefcase text-gray-500"></i>
+                        业务信息
+                    </div>
+
+                    <div class="form-grid" style="margin-bottom: 16px;">
+                        <div class="form-group">
+                            <label class="form-label">商机来源 <span class="required">*</span></label>
+                            <select class="form-input" id="business-source">
+                                <option value="">请选择商机来源...</option>
+                                <option value="主动登记" selected>主动登记</option>
+                                <option value="区域分配">区域分配</option>
+                                <option value="转介绍">转介绍</option>
+                                <option value="官网咨询">官网咨询</option>
+                                <option value="电话咨询">电话咨询</option>
+                                <option value="展会获取">展会获取</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 16px;">
+                        <label class="form-label" style="margin-bottom: 8px;">业务类型</label>
+                        <div style="display: flex; gap: 12px;">
+                            <label id="label-cert" style="flex: 1; display: flex; align-items: center; padding: 12px; border: 2px solid #3b82f6; border-radius: 8px; background: #eff6ff; cursor: pointer; transition: all 0.2s;" onclick="toggleBusinessType('cert')">
+                                <input type="radio" name="business-type" value="cert" checked style="margin-right: 8px;" onchange="toggleBusinessType('cert')">
+                                <div>
+                                    <div style="font-weight: 600; color: #1e40af; font-size: 13px;">体系认证</div>
+                                    <div style="font-size: 11px; color: #3b82f6; margin-top: 2px;">按认证领域建立商机</div>
+                                </div>
+                            </label>
+                            <label id="label-service" style="flex: 1; display: flex; align-items: center; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer; transition: all 0.2s;" onclick="toggleBusinessType('service')">
+                                <input type="radio" name="business-type" value="service" style="margin-right: 8px;" onchange="toggleBusinessType('service')">
+                                <div>
+                                    <div style="font-weight: 600; color: #374151; font-size: 13px;">技术服务</div>
+                                    <div style="font-size: 11px; color: #6b7280; margin-top: 2px;">培训、咨询等服务</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="cert-fields">
+                        <div style="margin-bottom: 16px;">
+                            <label class="form-label">认证领域 <span style="font-weight: normal; color: #6b7280;">（按客户领域归属建立商机）</span></label>
+                            <div class="tag-selector" id="domain-selector">
+                                <span class="text-gray-400" style="font-size: 12px;">请先选择本区域客户</span>
+                            </div>
+            <div class="domain-assignment-panel" id="domain-assignment-panel">
+                <div class="domain-assignment-tip" id="domain-assignment-tip">
+                    选中领域后会生成领域子节点。已有跟进人的领域自动归属原跟进人；无跟进人的领域可在子节点中分别分配，不分配则进入公共商机。
+                </div>
+            </div>
+                            <div class="domain-form-list" id="domain-form-list">
+                                <div style="font-size: 12px; color: #94a3b8; padding: 12px; border: 1px dashed #cbd5e1; border-radius: 8px; background: #f8fafc;">选择领域后，在这里填写每个领域的商机信息。</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="service-fields" class="hidden">
+                        <div class="form-group full-width" style="margin-bottom: 16px;">
+                            <label class="form-label">服务内容</label>
+                            <textarea class="form-textarea" id="service-content" rows="3" placeholder="请输入具体的服务内容，如培训、咨询、评估等项目..."></textarea>
+                        </div>
+                        <div class="domain-mini-grid">
+                            <div class="form-group">
+                                <label class="form-label">客户经理</label>
+                                <select class="form-input" id="service-manager">
+                                    <option value="">不选择，释放到公共商机</option>
+                                    <option value="刘明">刘明（华北区域）</option>
+                                    <option value="王芳">王芳（华北区域）</option>
+                                    <option value="李明">李明（华北区域）</option>
+                                    <option value="陈静">陈静（华北区域）</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">预计金额</label>
+                                <input type="text" id="service-amount" class="form-input" placeholder="输入金额（可选）">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">预计成交时间</label>
+                                <input type="month" id="service-deal-time" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">联系人</label>
+                                <select class="form-input" id="service-contact-select" onchange="fillServiceContact()"></select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">联系人姓名</label>
+                                <input type="text" id="service-contact-name" class="form-input" placeholder="选择或手动填写">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">联系人电话</label>
+                                <input type="text" id="service-contact-phone" class="form-input" placeholder="选择或手动填写">
+                            </div>
+                            <div class="form-group full-width">
+                                <label class="form-label">补充说明</label>
+                                <textarea class="form-textarea" id="service-remark" placeholder="补充客户需求背景、特殊要求或其他备注信息..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('businessModal')">取消</button>
+                <button class="btn btn-primary" onclick="submitBusiness()">
+                    <i class="fas fa-save"></i>
+                    保存商机
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 客户选择弹窗 -->
+    <div class="modal-overlay" id="companySelectorModal">
+        <div class="company-list-modal">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title">
+                        <i class="fas fa-building text-gray-700"></i>
+                        选择客户
+                    </div>
+                    <div class="modal-subtitle">
+                        仅显示本区域客户
+                    </div>
+                </div>
+                <button class="btn-close" onclick="closeModal('companySelectorModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-box">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="search-input" placeholder="搜索客户名称、统一社会信用代码..." id="company-search">
+                </div>
+            </div>
+            <div class="company-list custom-scroll" id="company-list">
+            </div>
+            <div class="modal-footer" style="justify-content: space-between;">
+                <div class="text-xs text-gray-500">
+                    <i class="fas fa-info-circle"></i>
+                    仅展示华北区域客户
+                </div>
+                <div>
+                    <button class="btn btn-secondary" onclick="closeModal('companySelectorModal')">取消</button>
+                    <button class="btn btn-primary" onclick="confirmCompanySelect()">
+                        <i class="fas fa-check"></i>
+                        确认选择
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 申请跟进确认弹窗 -->
+    <div class="modal-overlay" id="applyModal">
+        <div class="confirm-modal">
+            <div class="confirm-icon info">
+                <i class="fas fa-hand-paper"></i>
+            </div>
+            <div class="confirm-title">申请跟进此商机？</div>
+            <div class="confirm-desc" id="apply-desc">
+                您正在申请跟进公共商机<br>
+                申请通过后您将成为该商机的跟进人<br>
+                客户：<strong>华能电力发展有限公司</strong>
+            </div>
+            <div class="form-group" id="apply-domain-section" style="margin-bottom: 16px; text-align: left;">
+                <label class="form-label">选择跟进领域</label>
+                <div class="tag-selector" id="apply-domain-selector"></div>
+            </div>
+            <div class="form-group" style="margin-bottom: 24px; text-align: left;">
+                <label class="form-label">申请理由（选填）</label>
+                <textarea class="form-textarea" rows="3" placeholder="说明您跟进此商机的优势或计划..." id="apply-reason"></textarea>
+            </div>
+            <div class="confirm-btns">
+                <button class="btn btn-secondary" onclick="closeModal('applyModal')">取消</button>
+                <button class="btn btn-primary" onclick="submitApply()">
+                    <i class="fas fa-check"></i>
+                    确认申请
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. 完结弹窗 -->
+    <div class="modal-overlay" id="finishModal">
+        <div class="confirm-modal" style="width: 520px;">
+            <div class="confirm-icon info">
+                <i class="fas fa-flag-checkered"></i>
+            </div>
+            <div class="confirm-title">完结商机</div>
+            <div class="confirm-desc" id="finish-desc">
+                请选择该商机的完结方式
+            </div>
+
+            <div class="finish-options">
+                <div class="finish-option" id="option-won" onclick="selectFinishType('won')">
+                    <div class="finish-option-icon" style="background: #dcfce7; color: #166534;">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <div class="finish-option-title">成交</div>
+                    <div class="finish-option-desc">关联合同完成成交</div>
+                </div>
+                <div class="finish-option" id="option-lost" onclick="selectFinishType('lost')">
+                    <div class="finish-option-icon" style="background: #fee2e2; color: #991b1b;">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="finish-option-title">未成交</div>
+                    <div class="finish-option-desc">关闭商机并填写理由</div>
+                </div>
+            </div>
+
+            <div id="finish-won-panel" class="hidden" style="margin-bottom: 20px;">
+                <div class="form-group" style="text-align: left;">
+                    <label class="form-label">关联合同 <span class="required">*</span></label>
+                    <div id="contract-selected-display" class="hidden" style="padding: 12px; background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 600; font-size: 14px;" id="selected-contract-name"></div>
+                            <div style="font-size: 12px; color: #6b7280;" id="selected-contract-meta"></div>
+                        </div>
+                        <button onclick="changeContract()" style="color: #059669; border: none; background: none; cursor: pointer; font-size: 13px;">
+                            <i class="fas fa-edit"></i> 更换
+                        </button>
+                    </div>
+                    <button id="btn-select-contract" class="btn btn-secondary" style="width: 100%; justify-content: center;" onclick="openContractSelector()">
+                        <i class="fas fa-file-contract"></i>
+                        选择合同
+                    </button>
+                </div>
+            </div>
+
+            <div id="finish-lost-panel" class="hidden" style="margin-bottom: 20px;">
+                <div class="form-group" style="text-align: left;">
+                    <label class="form-label">未成交原因 <span class="required">*</span></label>
+                    <select class="form-input" id="lost-reason-select" style="margin-bottom: 8px;">
+                        <option value="">请选择原因...</option>
+                        <option value="价格原因">价格原因</option>
+                        <option value="客户选择竞品">客户选择竞品</option>
+                        <option value="客户需求变更">客户需求变更</option>
+                        <option value="客户预算不足">客户预算不足</option>
+                        <option value="客户暂停项目">客户暂停项目</option>
+                        <option value="其他">其他</option>
+                    </select>
+                    <textarea class="form-textarea" id="lost-remark" rows="3" placeholder="请补充说明未成交的具体原因..."></textarea>
+                </div>
+            </div>
+
+            <div class="confirm-btns">
+                <button class="btn btn-secondary" onclick="closeModal('finishModal')">取消</button>
+                <button class="btn btn-primary" id="btn-confirm-finish" onclick="confirmFinish()" disabled>
+                    <i class="fas fa-check"></i>
+                    确认完结
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. 合同选择弹窗 -->
+    <div class="modal-overlay" id="contractSelectorModal">
+        <div class="company-list-modal">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title">
+                        <i class="fas fa-file-contract text-gray-700"></i>
+                        选择关联合同
+                    </div>
+                    <div class="modal-subtitle">
+                        请选择要与该商机关联的合同
+                    </div>
+                </div>
+                <button class="btn-close" onclick="closeModal('contractSelectorModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-box">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="search-input" placeholder="搜索合同编号、合同名称..." id="contract-search">
+                </div>
+            </div>
+            <div class="company-list custom-scroll" id="contract-list">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('contractSelectorModal')">取消</button>
+                <button class="btn btn-primary" onclick="confirmContractSelect()">
+                    <i class="fas fa-check"></i>
+                    确认选择
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 当前用户区域
+        const CURRENT_USER_REGION = '华北区域';
+        const CURRENT_USER_NAME = '刘明';
+
+        // 当前视图
+        let currentView = 'following';
+
+        // 企业库数据（仅本区域）
+        const companyLibrary = [
+            { name: '北京某科技有限公司', code: '91110108MA00XXXXXX', industry: '制造业', region: '华北区域', type: '民营企业' },
+            { name: '丰源新能源集团有限公司', code: '91110000123456789X', industry: '新能源', region: '华北区域', type: '中央企业' },
+            { name: '华能电力发展有限公司', code: '9111000087654321X', industry: '电力', region: '华北区域', type: '国有企业' },
+            { name: '北京市朝阳区人民政府机关事务管理局', code: '111100005678901234', industry: '公共管理', region: '华北区域', type: '政府机构' },
+            { name: '京东世纪贸易有限公司', code: '911100002345678901', industry: '电子商务', region: '华北区域', type: '民营企业' },
+            { name: '中国建筑第八工程局有限公司', code: '911100008901234567', industry: '建筑工程', region: '华北区域', type: '中央企业' },
+            { name: '北京首钢股份有限公司', code: '911100003456789012', industry: '钢铁', region: '华北区域', type: '国有企业' },
+            { name: '北京字节跳动科技有限公司', code: '91110108MA00YYYYYY', industry: '互联网', region: '华北区域', type: '民营企业' }
+        ];
+
+        const certScopeNames = {
+            QMS: '质量管理体系',
+            EMS: '环境管理体系',
+            OHSMS: '职业健康安全',
+            FSMS: '食品安全管理',
+            HACCP: '危害分析控制点',
+            ISMS: '信息安全管理',
+            ITSMS: '信息技术服务',
+            EnMS: '能源管理体系'
+        };
+
+        const regionalManagers = ['刘明', '王芳', '李明', '陈静'];
+
+        const customerScopeProfiles = {
+            '91110108MA00XXXXXX': [
+                { code: 'QMS', owner: null },
+                { code: 'EMS', owner: null },
+                { code: 'OHSMS', owner: null },
+                { code: 'ISMS', owner: '陈静' },
+                { code: 'EnMS', owner: null }
+            ],
+            '91110000123456789X': [
+                { code: 'QMS', owner: '刘明' },
+                { code: 'EMS', owner: '刘明' },
+                { code: 'OHSMS', owner: '陈静' },
+                { code: 'EnMS', owner: null },
+                { code: 'FSMS', owner: null }
+            ],
+            '9111000087654321X': [
+                { code: 'QMS', owner: null },
+                { code: 'EMS', owner: '王芳' },
+                { code: 'FSMS', owner: null },
+                { code: 'EnMS', owner: null }
+            ],
+            '111100005678901234': [
+                { code: 'EnMS', owner: '李明' },
+                { code: 'QMS', owner: null },
+                { code: 'EMS', owner: null }
+            ],
+            '911100002345678901': [
+                { code: 'QMS', owner: null },
+                { code: 'ISMS', owner: null },
+                { code: 'ITSMS', owner: null }
+            ],
+            '911100008901234567': [
+                { code: 'QMS', owner: null },
+                { code: 'EMS', owner: null },
+                { code: 'OHSMS', owner: '王芳' }
+            ],
+            '911100003456789012': [
+                { code: 'QMS', owner: '王芳' },
+                { code: 'EMS', owner: '王芳' },
+                { code: 'OHSMS', owner: null },
+                { code: 'EnMS', owner: null }
+            ],
+            '91110108MA00YYYYYY': [
+                { code: 'ISMS', owner: '刘明' },
+                { code: 'ITSMS', owner: '刘明' },
+                { code: 'QMS', owner: null }
+            ]
+        };
+
+        function getCompanyScopes(comp) {
+            return customerScopeProfiles[comp?.code] || [
+                { code: 'QMS', owner: null },
+                { code: 'EMS', owner: null },
+                { code: 'OHSMS', owner: null }
+            ];
+        }
+
+        const defaultContacts = [
+            { name: '张伟', phone: '138****8888' },
+            { name: '李芳', phone: '139****9999' },
+            { name: '王建国', phone: '137****7777' }
+        ];
+
+        let domainFormState = {};
+
+        function getCompanyContacts() {
+            return defaultContacts;
+        }
+
+        function getCurrentRegionBusinesses(data) {
+            return data.filter(row => row.customerRegion === CURRENT_USER_REGION);
+        }
+
+        function getCurrentRegionCompanies() {
+            return companyLibrary.filter(comp => comp.region === CURRENT_USER_REGION);
+        }
+
+        function getBusinessCreator(row) {
+            if (row.createdBy) return row.createdBy;
+            const createLog = row.operationLogs?.find(log => log.action === 'create');
+            return createLog?.operator || '-';
+        }
+
+        function getFollowingBusinesses() {
+            return getCurrentRegionBusinesses(myBusinessData).filter(row => {
+                if (row.status === 'pool') return false;
+                const domainItems = getBusinessDomainItems(row);
+                if (domainItems.length) return domainItems.some(item => item.manager === CURRENT_USER_NAME);
+                return row.follower === CURRENT_USER_NAME;
+            });
+        }
+
+        function getCreatedBusinesses() {
+            return [...myBusinessData, ...poolBusinessData]
+                .filter(row => row.customerRegion === CURRENT_USER_REGION && getBusinessCreator(row) === CURRENT_USER_NAME);
+        }
+
+        function hasFollower(row) {
+            return Boolean(row.follower && !['待申请', '待确认', '-'].includes(row.follower));
+        }
+
+        function getBusinessDomainItems(row) {
+            if (row.domainDetails?.length) return row.domainDetails;
+            if (row.businessType === '体系认证' && row.certFields?.length) {
+                return row.certFields.map(code => ({
+                    code,
+                    name: certScopeNames[code] || code,
+                    manager: row.isPool ? '' : row.follower,
+                    contactName: row.contactName,
+                    contactPhone: row.contactPhone,
+                    amount: row.amount,
+                    dealTime: row.dealTime,
+                    remark: row.remark || '',
+                    status: row.status,
+                    statusText: row.statusText
+                }));
+            }
+            return [];
+        }
+
+        function getBusinessFollowerTextFromDomains(domainDetails) {
+            const managers = [...new Set((domainDetails || []).map(item => item.manager).filter(Boolean))];
+            if (managers.length === 0) return '待申请';
+            if (managers.length === 1) return managers[0];
+            return `${managers[0]}等${managers.length}人`;
+        }
+
+        // 合同数据（假数据）
+        const contractList = [
+            { id: 'C20260401001', name: 'ISO9001质量管理体系认证服务合同', customer: '丰源新能源集团有限公司', amount: '85000', signDate: '2026-04-01', status: '已生效' },
+            { id: 'C20260405002', name: '能源管理体系培训服务合同', customer: '北京市朝阳区人民政府机关事务管理局', amount: '28000', signDate: '2026-04-05', status: '已生效' },
+            { id: 'C20260410003', name: '三体系整合认证服务合同', customer: '北京某科技有限公司', amount: '120000', signDate: '2026-04-10', status: '已生效' },
+            { id: 'C20260412004', name: '信息安全管理体系认证合同', customer: '北京字节跳动科技有限公司', amount: '150000', signDate: '2026-04-12', status: '已生效' },
+            { id: 'C20260415005', name: '职业健康安全管理体系认证合同', customer: '中国建筑第八工程局有限公司', amount: '95000', signDate: '2026-04-15', status: '待生效' }
+        ];
+
+        // 我的商机数据（仅本区域）
+        let myBusinessData = [
+            {
+                id: 'B20260415001',
+                customerName: '丰源新能源集团有限公司',
+                customerType: '中央企业',
+                customerRegion: '华北区域',
+                businessType: '体系认证',
+                certFields: ['QMS', 'EMS', 'OHSMS'],
+                serviceContent: '',
+                amount: '¥85,000',
+                dealTime: '2026-06',
+                contactName: '张伟',
+                contactPhone: '138****8888',
+                follower: '刘明',
+                regTime: '2026-04-15 09:30',
+                lastFollow: '2026-04-15 09:30',
+                source: '主动登记',
+                status: 'following',
+                statusText: '跟进中',
+                creditCode: '91110000123456789X',
+                industry: '新能源',
+                isPool: false,
+                contractId: null,
+                contractName: null,
+                followupPlans: [
+                    {
+                        id: 'PL20260415001',
+                        title: 'ISO9001质量管理体系初次审核跟进',
+                        deadline: '2026-04-20',
+                        status: 'pending',
+                        statusText: '待执行',
+                        createType: 'manual',
+                        sceneName: '手动创建',
+                        purpose: '确认审核准备情况，协调审核时间',
+                        content: `1.联系客户确认审核准备情况
+2.确认审核组成员和时间安排
+3.提醒客户准备相关文件`,
+                        reminder: '提前3天',
+                        contacts: [
+                            { name: '张伟', title: '质量经理', phone: '138-1234-5678' }
+                        ]
+                    },
+                    {
+                        id: 'PL20260410002',
+                        title: '证书年审材料准备提醒',
+                        deadline: '2026-04-12',
+                        status: 'completed',
+                        statusText: '已完成',
+                        createType: 'auto',
+                        sceneName: '证书临期提醒',
+                        purpose: '系统自动触发：提醒准备年审材料',
+                        content: '系统自动创建的跟进计划',
+                        reminder: '提前15天',
+                        contacts: []
+                    }
+                ],
+                followupRecords: [
+                    {
+                        id: 'R001',
+                        type: 'phone',
+                        typeText: '电话沟通',
+                        time: '2026-04-14 15:30',
+                        content: '与张总电话沟通，确认审核时间定于4月25日，客户已准备好相关文件，审核组人员已确定。',
+                        operator: '刘明',
+                        location: '客户公司',
+                        contact: '张伟',
+                        stage: '审核准备',
+                        files: []
+                    },
+                    {
+                        id: 'R002',
+                        type: 'visit',
+                        typeText: '现场拜访',
+                        time: '2026-04-10 10:00',
+                        content: '上门拜访客户，实地查看生产现场，了解质量管理体系运行情况，客户配合度良好。',
+                        operator: '刘明',
+                        location: '丰源新能源集团总部',
+                        contact: '李芳',
+                        stage: '现场审核',
+                        files: ['现场照片.jpg', '审核计划.pdf']
+                    }
+                ],
+                operationLogs: [
+                    { action: 'create', title: '商机创建', desc: '刘明登记了新商机', time: '2026-04-15 09:30:00', operator: '刘明' },
+                    { action: 'update', title: '信息更新', desc: '更新了预计成交金额', time: '2026-04-14 16:20:00', operator: '刘明' },
+                    { action: 'follow', title: '添加跟进', desc: '添加了电话跟进记录', time: '2026-04-14 15:30:00', operator: '刘明' }
+                ]
+            },
+            {
+                id: 'B20260414002',
+                customerName: '华能电力发展有限公司',
+                customerType: '国有企业',
+                customerRegion: '华北区域',
+                businessType: '体系认证',
+                certFields: ['QMS', 'FSMS'],
+                serviceContent: '',
+                amount: '¥45,000',
+                dealTime: '2026-05',
+                contactName: '李芳',
+                contactPhone: '139****9999',
+                follower: '待确认',
+                regTime: '2026-04-14 16:45',
+                lastFollow: '2026-04-14 16:45',
+                source: '区域分配',
+                status: 'following',
+                statusText: '跟进中',
+                assignmentType: 'auto',
+                creditCode: '9111000087654321X',
+                industry: '电力',
+                isPool: false,
+                contractId: null,
+                contractName: null,
+                followupPlans: [],
+                followupRecords: [],
+                operationLogs: [
+                    { action: 'create', title: '商机创建', desc: '系统区域分配', time: '2026-04-14 16:45:00', operator: '系统' }
+                ]
+            },
+            {
+                id: 'B20260413003',
+                customerName: '北京市朝阳区人民政府机关事务管理局',
+                customerType: '政府机构',
+                customerRegion: '华北区域',
+                businessType: '技术服务',
+                certFields: [],
+                serviceContent: '能源管理体系培训、内审员培训',
+                amount: '¥28,000',
+                dealTime: '2026-05',
+                contactName: '王科长',
+                contactPhone: '137****7777',
+                follower: '李明',
+                regTime: '2026-04-13 11:20',
+                lastFollow: '2026-04-14 15:30',
+                source: '主动登记',
+                status: 'following',
+                statusText: '跟进中',
+                creditCode: '111100005678901234',
+                industry: '公共管理',
+                isPool: false,
+                contractId: null,
+                contractName: null,
+                followupPlans: [],
+                followupRecords: [
+                    {
+                        id: 'R001',
+                        type: 'email',
+                        typeText: '邮件往来',
+                        time: '2026-04-14 15:30',
+                        content: '发送培训方案和报价单给客户，等待客户反馈。',
+                        operator: '李明',
+                        location: '线上',
+                        contact: '王科长',
+                        stage: '报价阶段',
+                        files: ['培训方案.pdf']
+                    }
+                ],
+                operationLogs: [
+                    { action: 'create', title: '商机创建', desc: '李明登记了新商机', time: '2026-04-13 11:20:00', operator: '李明' }
+                ]
+            },
+            {
+                id: 'B20260412004',
+                customerName: '北京字节跳动科技有限公司',
+                customerType: '民营企业',
+                customerRegion: '华北区域',
+                businessType: '体系认证',
+                certFields: ['ISMS', 'ITSMS'],
+                serviceContent: '',
+                amount: '¥150,000',
+                dealTime: '2026-07',
+                contactName: '赵经理',
+                contactPhone: '136****6666',
+                follower: '刘明',
+                regTime: '2026-04-12 10:15',
+                lastFollow: '2026-04-14 09:20',
+                source: '转介绍',
+                status: 'following',
+                statusText: '跟进中',
+                creditCode: '91110108MA00YYYYYY',
+                industry: '互联网',
+                isPool: false,
+                contractId: null,
+                contractName: null,
+                followupPlans: [
+                    {
+                        id: 'PL20260412001',
+                        title: 'ISMS认证方案沟通',
+                        deadline: '2026-04-18',
+                        status: 'pending',
+                        statusText: '待执行',
+                        createType: 'manual',
+                        sceneName: '手动创建',
+                        purpose: '与客户确认信息安全管理体系认证范围',
+                        content: `1.确认认证范围
+2.确认组织架构
+3.确认审核时间安排`,
+                        reminder: '提前1天',
+                        contacts: [
+                            { name: '赵经理', title: '信息安全负责人', phone: '136-6666-8888' }
+                        ]
+                    }
+                ],
+                followupRecords: [
+                    {
+                        id: 'R001',
+                        type: 'phone',
+                        typeText: '电话沟通',
+                        time: '2026-04-14 09:20',
+                        content: '与赵经理电话沟通，客户对ISMS认证有明确需求，预计7月份启动项目。',
+                        operator: '刘明',
+                        location: '客户公司',
+                        contact: '赵经理',
+                        stage: '需求确认',
+                        files: []
+                    }
+                ],
+                operationLogs: [
+                    { action: 'create', title: '商机创建', desc: '转介绍登记', time: '2026-04-12 10:15:00', operator: '刘明' },
+                    { action: 'follow', title: '添加跟进', desc: '电话沟通确认需求', time: '2026-04-14 09:20:00', operator: '刘明' }
+                ]
+            },
+            {
+                id: 'B20260410005',
+                customerName: '北京首钢股份有限公司',
+                customerType: '国有企业',
+                customerRegion: '华北区域',
+                businessType: '体系认证',
+                certFields: ['QMS', 'EMS'],
+                serviceContent: '',
+                amount: '¥200,000',
+                dealTime: '2026-08',
+                contactName: '钱部长',
+                contactPhone: '135****5555',
+                follower: '王芳',
+                regTime: '2026-04-10 14:30',
+                lastFollow: '2026-04-13 16:00',
+                source: '主动登记',
+                status: 'completed',
+                statusText: '已完结',
+                creditCode: '911100003456789012',
+                industry: '钢铁',
+                isPool: false,
+                contractId: 'C20260410003',
+                contractName: '三体系整合认证服务合同',
+                followupPlans: [],
+                followupRecords: [
+                    {
+                        id: 'R001',
+                        type: 'visit',
+                        typeText: '现场拜访',
+                        time: '2026-04-13 16:00',
+                        content: '与客户签订合同，确认项目启动时间为5月初。',
+                        operator: '王芳',
+                        location: '首钢集团总部',
+                        contact: '钱部长',
+                        stage: '合同签订',
+                        files: ['合同扫描件.pdf']
+                    }
+                ],
+                operationLogs: [
+                    { action: 'create', title: '商机创建', desc: '王芳登记了新商机', time: '2026-04-10 14:30:00', operator: '王芳' },
+                    { action: 'complete', title: '商机完结', desc: '关联合同：三体系整合认证服务合同', time: '2026-04-13 16:00:00', operator: '王芳' }
+                ]
+            }
+        ];
+
+        // 公共商机数据（仅本区域）
+        let poolBusinessData = [
+            {
+                id: 'B20260409006',
+                customerName: '北京某科技有限公司',
+                customerType: '民营企业',
+                customerRegion: '华北区域',
+                businessType: '体系认证',
+                certFields: ['QMS', 'EMS', 'OHSMS'],
+                serviceContent: '',
+                amount: '¥68,000',
+                dealTime: '2026-06',
+                contactName: '孙主任',
+                contactPhone: '135****5555',
+                follower: '待申请',
+                regTime: '2026-04-09 09:00',
+                lastFollow: '2026-04-09 09:00',
+                source: '主动登记',
+                status: 'pool',
+                statusText: '公共商机',
+                creditCode: '91110108MA00XXXXXX',
+                industry: '制造业',
+                isPool: true,
+                contractId: null,
+                contractName: null,
+                followupPlans: [],
+                followupRecords: [],
+                operationLogs: [
+                    { action: 'create', title: '商机创建', desc: '刘明登记', time: '2026-04-09 09:00:00', operator: '刘明' },
+                    { action: 'pool', title: '进入公共商机', desc: '因区域分配进入公共商机', time: '2026-04-09 09:00:00', operator: '系统' }
+                ]
+            },
+            {
+                id: 'B20260408007',
+                customerName: '京东世纪贸易有限公司',
+                customerType: '民营企业',
+                customerRegion: '华北区域',
+                businessType: '技术服务',
+                certFields: [],
+                serviceContent: '供应链管理体系培训、内审员资格培训',
+                amount: '¥80,000',
+                dealTime: '2026-07',
+                contactName: '周总监',
+                contactPhone: '134****4444',
+                follower: '待申请',
+                regTime: '2026-04-08 16:30',
+                lastFollow: '2026-04-08 16:30',
+                source: '官网咨询',
+                status: 'pool',
+                statusText: '公共商机',
+                creditCode: '911100002345678901',
+                industry: '电子商务',
+                isPool: true,
+                contractId: null,
+                contractName: null,
+                followupPlans: [],
+                followupRecords: [],
+                operationLogs: [
+                    { action: 'create', title: '商机创建', desc: '官网咨询自动登记', time: '2026-04-08 16:30:00', operator: '系统' }
+                ]
+            },
+            {
+                id: 'B20260405008',
+                customerName: '中国建筑第八工程局有限公司',
+                customerType: '中央企业',
+                customerRegion: '华北区域',
+                businessType: '体系认证',
+                certFields: ['QMS', 'EMS', 'OHSMS'],
+                serviceContent: '',
+                amount: '¥350,000',
+                dealTime: '2026-08',
+                contactName: '冯处长',
+                contactPhone: '130****0000',
+                follower: '待申请',
+                regTime: '2026-04-05 09:30',
+                lastFollow: '2026-04-05 09:30',
+                source: '区域分配',
+                status: 'pool',
+                statusText: '公共商机',
+                creditCode: '911100008901234567',
+                industry: '建筑工程',
+                isPool: true,
+                contractId: null,
+                contractName: null,
+                followupPlans: [],
+                followupRecords: [],
+                operationLogs: [
+                    { action: 'create', title: '商机创建', desc: '系统自动分配', time: '2026-04-05 09:30:00', operator: '系统' }
+                ]
+            },
+            {
+                id: 'B20260403009',
+                customerName: '北京市朝阳区人民政府机关事务管理局',
+                customerType: '政府机构',
+                customerRegion: '华北区域',
+                businessType: '技术服务',
+                certFields: [],
+                serviceContent: '能源审计、节能评估',
+                amount: '¥45,000',
+                dealTime: '2026-06',
+                contactName: '吴主任',
+                contactPhone: '138****2222',
+                follower: '待申请',
+                regTime: '2026-04-03 11:00',
+                lastFollow: '2026-04-03 11:00',
+                source: '电话咨询',
+                status: 'pool',
+                statusText: '公共商机',
+                creditCode: '111100005678901234',
+                industry: '公共管理',
+                isPool: true,
+                contractId: null,
+                contractName: null,
+                followupPlans: [],
+                followupRecords: [],
+                operationLogs: [
+                    { action: 'create', title: '商机创建', desc: '电话咨询登记', time: '2026-04-03 11:00:00', operator: '李明' }
+                ]
+            }
+        ];
+
+        let currentSort = { field: null, order: null };
+        let filteredData = [];
+        let currentPage = 1;
+        let pageSize = 15;
+        let expandedBusinessRows = new Set();
+        let selectedCompany = null;
+        let currentBusinessId = null;
+        let currentDetailBusiness = null;
+        let finishType = null;
+        let selectedContract = null;
+        let domainDefaultSeeded = false;
+
+        // 切换视图
+        function switchView(view) {
+            currentView = view;
+            currentPage = 1;
+
+            document.getElementById('tab-following').classList.toggle('active', view === 'following');
+            document.getElementById('tab-created').classList.toggle('active', view === 'created');
+            document.getElementById('tab-pool').classList.toggle('active', view === 'pool');
+
+            const followerFilter = document.getElementById('filter-follower-wrapper');
+            const thFollower = document.getElementById('th-follower');
+
+            if (view === 'pool') {
+                followerFilter.style.display = 'none';
+                thFollower.textContent = '状态';
+            } else if (view === 'created') {
+                followerFilter.style.display = 'flex';
+                thFollower.textContent = '客户经理';
+            } else {
+                followerFilter.style.display = 'flex';
+                thFollower.textContent = '跟进人';
+            }
+
+            const topActions = document.getElementById('top-actions');
+            if (view === 'pool') {
+                topActions.innerHTML = `
+                    <button class="btn btn-secondary btn-sm" onclick="toggleFilter()">
+                        <i class="fas fa-filter"></i>
+                        <span id="filter-text">收起筛选</span>
+                        <i class="fas fa-chevron-up ml-1" id="filter-icon" style="transition: transform 0.3s;"></i>
+                    </button>
+                    <button class="btn btn-secondary btn-sm" onclick="exportData()">
+                        <i class="fas fa-download"></i>
+                        导出
+                    </button>
+                `;
+            } else {
+                topActions.innerHTML = `
+                    <button class="btn btn-secondary btn-sm" onclick="toggleFilter()">
+                        <i class="fas fa-filter"></i>
+                        <span id="filter-text">收起筛选</span>
+                        <i class="fas fa-chevron-up ml-1" id="filter-icon" style="transition: transform 0.3s;"></i>
+                    </button>
+                    <button class="btn btn-secondary btn-sm" onclick="exportData()">
+                        <i class="fas fa-download"></i>
+                        导出
+                    </button>
+                    <button class="btn btn-primary btn-sm" onclick="openBusinessModal()">
+                        <i class="fas fa-plus"></i>
+                        登记商机
+                    </button>
+                `;
+            }
+
+            resetData();
+        }
+
+        // Toast提示
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = toast.querySelector('i');
+            const msg = document.getElementById('toast-message');
+            msg.textContent = message;
+            if (type === 'error') icon.className = 'fas fa-times-circle text-red-400';
+            else if (type === 'warning') icon.className = 'fas fa-exclamation-circle text-yellow-400';
+            else icon.className = 'fas fa-check-circle text-green-400';
+            toast.style.display = 'flex';
+            setTimeout(() => toast.style.display = 'none', 3000);
+        }
+
+        // 获取当前数据源
+        function getCurrentData() {
+            if (currentView === 'following') return getFollowingBusinesses();
+            if (currentView === 'created') return getCreatedBusinesses();
+            return getCurrentRegionBusinesses(poolBusinessData);
+        }
+
+        function toggleBusinessRow(id) {
+            if (expandedBusinessRows.has(id)) {
+                expandedBusinessRows.delete(id);
+            } else {
+                expandedBusinessRows.add(id);
+            }
+            renderTable();
+        }
+
+        // 渲染表格
+        function renderTable(data = filteredData) {
+            const tbody = document.getElementById('tableBody');
+            let html = '';
+
+            const start = (currentPage - 1) * pageSize;
+            const end = Math.min(start + pageSize, data.length);
+            const pageData = data.slice(start, end);
+
+            document.getElementById('count-following').textContent = getFollowingBusinesses().length;
+            document.getElementById('count-created').textContent = getCreatedBusinesses().length;
+            document.getElementById('count-pool').textContent = getCurrentRegionBusinesses(poolBusinessData).length;
+            document.getElementById('page-start').textContent = data.length > 0 ? start + 1 : 0;
+            document.getElementById('page-end').textContent = end;
+            document.getElementById('total-count').textContent = data.length;
+
+            pageData.forEach((row) => {
+                const bizTypeClass = row.businessType === '体系认证' ? 'tag-cert' : 'tag-service';
+                const bizTypeIcon = row.businessType === '体系认证' ? 'fa-certificate' : 'fa-tools';
+
+                let certFieldsHtml = '';
+                if (row.businessType === '体系认证' && row.certFields?.length > 0) {
+                    certFieldsHtml = '<div class="cert-tags">';
+                    row.certFields.forEach(field => {
+                        let fieldClass = 'tag-qms';
+                        if (field === 'EMS') fieldClass = 'tag-ems';
+                        else if (field === 'OHSMS' || field === 'FSMS') fieldClass = 'tag-ohsms';
+                        certFieldsHtml += `<span class="tag ${fieldClass}">${field}</span>`;
+                    });
+                    certFieldsHtml += '</div>';
+                } else {
+                    certFieldsHtml = `<span class="text-gray-600" style="font-size: 12px;">${row.serviceContent || '-'}</span>`;
+                }
+
+                const statusClassMap = {
+                    'following': 'status-following',
+                    'completed': 'status-completed',
+                    'won': 'status-won',
+                    'lost': 'status-lost',
+                    'returned': 'status-returned',
+                    'pool': 'status-pool'
+                };
+                const statusClass = statusClassMap[row.status] || 'status-following';
+                const getRowStatusClass = status => statusClassMap[status] || 'status-following';
+
+                let followerHtml;
+                if (currentView === 'pool' || row.isPool) {
+                    followerHtml = '<span class="pool-badge"><i class="fas fa-users"></i> 待申请</span>';
+                } else if (row.follower === '待确认') {
+                    followerHtml = '<span class="text-orange-600 font-medium text-xs">待确认</span>';
+                } else {
+                    followerHtml = `<div class="follower-info"><div class="follower-avatar">${row.follower.charAt(0)}</div><span>${row.follower}</span></div>`;
+                }
+
+                const regionHtml = `<span class="region-tag region-local">${row.customerRegion}</span>`;
+                const hasDomainChildren = getBusinessDomainItems(row).length > 0;
+                const amountText = row.amount || (hasDomainChildren ? '见领域明细' : '-');
+                const dealTimeText = row.dealTime || (hasDomainChildren ? '见领域明细' : '-');
+                const contactNameText = row.contactName === '-' && hasDomainChildren ? '按领域填写' : row.contactName;
+                const contactPhoneText = row.contactPhone || (hasDomainChildren ? '见领域明细' : '');
+                const domainRows = getBusinessDomainItems(row);
+                const isExpanded = expandedBusinessRows.has(row.id);
+
+                let actionBtns = `<button class="action-btn" onclick="event.stopPropagation(); viewDetail('${row.id}')"><i class="fas fa-eye"></i> 详情</button>`;
+
+                if (currentView === 'pool') {
+                    actionBtns += `<button class="action-btn success" onclick="event.stopPropagation(); applyBusiness('${row.id}')"><i class="fas fa-hand-paper"></i> 选择领域跟进</button>`;
+                } else if (currentView === 'created') {
+                    if (!hasFollower(row)) {
+                        actionBtns += `<button class="action-btn danger" onclick="event.stopPropagation(); deleteBusiness('${row.id}')"><i class="fas fa-trash"></i> 删除</button>`;
+                    }
+                } else {
+                    if (row.isPool) {
+                        actionBtns += '';
+                    } else if (row.status === 'following') {
+                        actionBtns += `<button class="action-btn" onclick="event.stopPropagation(); addFollow('${row.id}')"><i class="fas fa-comment-dots"></i> 跟进</button>
+                                       <button class="action-btn purple" onclick="event.stopPropagation(); finishBusiness('${row.id}')"><i class="fas fa-flag-checkered"></i> 完结</button>`;
+                    }
+                }
+
+                html += `
+                    <tr class="business-parent-row ${isExpanded ? 'expanded' : ''}" onclick="${hasDomainChildren ? `toggleBusinessRow('${row.id}')` : `viewDetail('${row.id}')`}">
+                        <td class="col-id col-sticky-left font-mono text-gray-600">
+                            ${hasDomainChildren ? `<span class="tree-toggle ${isExpanded ? 'expanded' : ''}" title="${isExpanded ? '收起领域' : '展开领域'}"><i class="fas fa-chevron-right"></i></span>` : '<span class="tree-toggle-placeholder"></span>'}
+                            ${row.id}
+                        </td>
+                        <td class="col-name col-sticky-left-2">
+                            <div class="customer-name">
+                                ${row.customerName}
+                                ${row.customerType === '政府机构' || row.customerType === '中央企业' ? '<i class="fas fa-landmark" title="重点客户"></i>' : ''}
+                            </div>
+                        </td>
+                        <td class="col-type">${row.customerType}</td>
+                        <td class="col-business-type">
+                            <span class="tag ${bizTypeClass}"><i class="fas ${bizTypeIcon}" style="margin-right: 4px;"></i>${row.businessType}</span>
+                        </td>
+                        <td class="col-cert-field">${certFieldsHtml}</td>
+                        <td class="col-amount"><span class="amount">${amountText}</span></td>
+                        <td class="col-deal-time">${dealTimeText}</td>
+                        <td class="col-contact">
+                            <div style="font-weight: 500;">${contactNameText}</div>
+                            <div style="font-size: 11px; color: #6b7280;">${contactPhoneText}</div>
+                        </td>
+                        <td class="col-follower">${followerHtml}</td>
+                        <td class="col-reg-time" style="color: #64748b; font-size: 12px;">${row.regTime}</td>
+                        <td class="col-last-follow" style="color: #64748b; font-size: 12px;">${row.lastFollow}</td>
+                        <td class="col-source"><span class="tag" style="background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb;">${row.source}</span></td>
+                        <td class="col-status col-sticky-right"><span class="status-badge ${statusClass}">${row.statusText}</span></td>
+                        <td class="col-action col-sticky-right-2"><div class="action-btns">${actionBtns}</div></td>
+                    </tr>
+                    ${isExpanded ? domainRows.map(item => {
+                        const itemStatus = item.status || row.status;
+                        const itemStatusText = item.statusText || row.statusText;
+                        const itemManager = item.manager
+                            ? `<div class="follower-info"><div class="follower-avatar">${item.manager.charAt(0)}</div><span>${item.manager}</span></div>`
+                            : '<span class="pool-badge"><i class="fas fa-users"></i> 待申请</span>';
+                        const itemContact = [item.contactName, item.contactPhone].filter(Boolean).join(' ');
+                        return `
+                            <tr class="business-domain-row" onclick="viewDetail('${row.id}')">
+                                <td class="col-id col-sticky-left">
+                                    <span class="domain-row-id"><i class="fas fa-level-up-alt" style="transform: rotate(90deg);"></i> 领域</span>
+                                </td>
+                                <td class="col-name col-sticky-left-2">
+                                    <div class="domain-row-title">
+                                        <span class="tag tag-qms">${item.code}</span>
+                                        <span>${item.name || certScopeNames[item.code] || item.code}</span>
+                                    </div>
+                                    <div class="domain-row-summary">归属到当前商机，可按领域单独跟进</div>
+                                </td>
+                                <td class="col-type domain-row-muted">-</td>
+                                <td class="col-business-type domain-row-muted">子领域</td>
+                                <td class="col-cert-field">${item.owner ? `原跟进人：${item.owner}` : '无原跟进人'}</td>
+                                <td class="col-amount"><span class="amount">${item.amount || '-'}</span></td>
+                                <td class="col-deal-time">${item.dealTime || '-'}</td>
+                                <td class="col-contact">
+                                    <div style="font-weight: 500;">${itemContact || '-'}</div>
+                                </td>
+                                <td class="col-follower">${itemManager}</td>
+                                <td class="col-reg-time domain-row-muted">${row.regTime}</td>
+                                <td class="col-last-follow domain-row-muted">${row.lastFollow}</td>
+                                <td class="col-source domain-row-muted">${row.source}</td>
+                                <td class="col-status col-sticky-right"><span class="status-badge ${getRowStatusClass(itemStatus)}">${itemStatusText}</span></td>
+                                <td class="col-action col-sticky-right-2"></td>
+                            </tr>
+                        `;
+                    }).join('') : ''}
+                `;
+            });
+
+            tbody.innerHTML = html;
+            renderPagination(data.length);
+        }
+
+        function renderPagination(total) {
+            const totalPages = Math.ceil(total / pageSize);
+            let html = `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})"><i class="fas fa-chevron-left"></i></button>`;
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<button class="page-btn">...</button>`;
+                }
+            }
+
+            html += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})"><i class="fas fa-chevron-right"></i></button>`;
+            document.getElementById('pagination').innerHTML = html;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            expandedBusinessRows.clear();
+            renderTable();
+        }
+
+        function changePageSize(size) {
+            pageSize = parseInt(size);
+            currentPage = 1;
+            expandedBusinessRows.clear();
+            renderTable();
+        }
+
+        function sortTable(field) {
+            const data = getCurrentData();
+            if (currentSort.field === field) {
+                if (currentSort.order === 'asc') currentSort.order = 'desc';
+                else if (currentSort.order === 'desc') { currentSort.order = null; currentSort.field = null; }
+                else currentSort.order = 'asc';
+            } else {
+                currentSort.field = field;
+                currentSort.order = 'asc';
+            }
+
+            document.querySelectorAll('.sortable').forEach(th => {
+                th.classList.remove('asc', 'desc');
+                th.querySelector('.sort-icon i').className = 'fas fa-sort';
+            });
+
+            if (currentSort.field) {
+                const activeTh = document.querySelector(`th[onclick="sortTable('${field}')"]`);
+                if (activeTh) {
+                    activeTh.classList.add(currentSort.order);
+                    activeTh.querySelector('.sort-icon i').className = currentSort.order === 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down';
+                }
+            }
+
+            if (!currentSort.order) {
+                filteredData = [...data];
+                applyFilters();
+                return;
+            }
+
+            filteredData.sort((a, b) => {
+                let valA = a[field];
+                let valB = b[field];
+                if (field === 'amount') {
+                    valA = !valA || valA === '-' ? 0 : parseInt(valA.replace(/[¥,]/g, ''));
+                    valB = !valB || valB === '-' ? 0 : parseInt(valB.replace(/[¥,]/g, ''));
+                } else if (field === 'dealTime') {
+                    valA = valA ? new Date(valA + '-01').getTime() : 0;
+                    valB = valB ? new Date(valB + '-01').getTime() : 0;
+                } else if (field === 'regTime' || field === 'lastFollow') {
+                    valA = new Date(valA).getTime();
+                    valB = new Date(valB).getTime();
+                } else {
+                    valA = String(valA || '').toLowerCase();
+                    valB = String(valB || '').toLowerCase();
+                }
+                if (valA < valB) return currentSort.order === 'asc' ? -1 : 1;
+                if (valA > valB) return currentSort.order === 'asc' ? 1 : -1;
+                return 0;
+            });
+            renderTable();
+        }
+
+        function searchData() {
+            currentPage = 1;
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const data = getCurrentData();
+            const id = document.getElementById('filter-id').value.toLowerCase();
+            const name = document.getElementById('filter-name').value.toLowerCase();
+            const bizType = document.getElementById('filter-biz-type').value;
+            const cert = document.getElementById('filter-cert').value;
+            const follower = document.getElementById('filter-follower').value;
+            const status = document.getElementById('filter-status').value;
+            const custType = document.getElementById('filter-cust-type').value;
+            const source = document.getElementById('filter-source').value;
+
+            filteredData = data.filter(row => {
+                if (id && !row.id.toLowerCase().includes(id)) return false;
+                if (name && !row.customerName.toLowerCase().includes(name)) return false;
+                if (bizType && row.businessType !== bizType) return false;
+                if (cert && !row.certFields.includes(cert)) return false;
+                if (currentView !== 'pool' && follower) {
+                    const domainItems = getBusinessDomainItems(row);
+                    if (domainItems.length) {
+                        if (!domainItems.some(item => item.manager === follower)) return false;
+                    } else if (row.follower !== follower) {
+                        return false;
+                    }
+                }
+                if (status && row.status !== status) return false;
+                if (custType && row.customerType !== custType) return false;
+                if (source && row.source !== source) return false;
+                return true;
+            });
+            expandedBusinessRows.clear();
+            renderTable();
+        }
+
+        function resetData() {
+            document.querySelectorAll('.filter-item input, .filter-item select').forEach(el => el.value = '');
+            currentSort = { field: null, order: null };
+            document.querySelectorAll('.sortable').forEach(th => {
+                th.classList.remove('asc', 'desc');
+                th.querySelector('.sort-icon i').className = 'fas fa-sort';
+            });
+            filteredData = [...getCurrentData()];
+            currentPage = 1;
+            expandedBusinessRows.clear();
+            renderTable();
+        }
+
+        function toggleFilter() {
+            const panel = document.getElementById('filterPanel');
+            const icon = document.getElementById('filter-icon');
+            const text = document.getElementById('filter-text');
+            if (panel.classList.contains('expanded')) {
+                panel.classList.remove('expanded');
+                icon.style.transform = 'rotate(180deg)';
+                text.textContent = '展开筛选';
+            } else {
+                panel.classList.add('expanded');
+                icon.style.transform = 'rotate(0deg)';
+                text.textContent = '收起筛选';
+            }
+        }
+
+        function exportData() {
+            showToast('正在导出数据...', 'success');
+            setTimeout(() => showToast('导出成功！'), 1500);
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // 商机登记弹窗
+        function openBusinessModal() {
+            resetBusinessForm();
+            openModal('businessModal');
+        }
+
+        function resetBusinessForm() {
+            document.getElementById('company-unselected').classList.remove('hidden');
+            document.getElementById('company-selected').classList.add('hidden');
+            domainFormState = {};
+            domainDefaultSeeded = false;
+            document.getElementById('service-manager').value = '';
+            document.getElementById('service-amount').value = '';
+            document.getElementById('service-deal-time').value = '';
+            document.getElementById('service-contact-name').value = '';
+            document.getElementById('service-contact-phone').value = '';
+            document.getElementById('service-remark').value = '';
+            document.getElementById('service-content').value = '';
+            document.getElementById('business-source').value = '主动登记';
+            selectedCompany = null;
+            domainDefaultSeeded = false;
+            toggleBusinessType('cert');
+            renderDomainSelector();
+            renderDomainSubforms();
+        }
+
+        // 客户选择（仅本区域）
+        function openCompanySelector() {
+            renderCompanyList();
+            openModal('companySelectorModal');
+        }
+
+        function renderCompanyList(search = '') {
+            const list = document.getElementById('company-list');
+            let html = '';
+
+            companyLibrary.forEach((comp, idx) => {
+                if (comp.region !== CURRENT_USER_REGION) return;
+                if (search && !comp.name.includes(search) && !comp.code.includes(search)) return;
+
+                html += `
+                    <div class="company-list-item ${selectedCompany === idx ? 'selected' : ''}" 
+                         onclick="selectCompany(${idx})">
+                        <div class="company-list-icon"><i class="fas fa-building"></i></div>
+                        <div class="company-list-info">
+                            <div class="company-list-name">
+                                ${comp.name}
+                            </div>
+                            <div class="company-list-meta">${comp.code} | ${comp.industry} | ${comp.region}</div>
+                        </div>
+                        <i class="fas fa-check-circle company-list-check"></i>
+                    </div>
+                `;
+            });
+
+            list.innerHTML = html;
+        }
+
+        function selectCompany(idx) {
+            selectedCompany = idx;
+            renderCompanyList(document.getElementById('company-search').value);
+        }
+
+        function confirmCompanySelect() {
+            if (selectedCompany === null) {
+                showToast('请选择客户', 'error');
+                return;
+            }
+
+            const comp = companyLibrary[selectedCompany];
+            if (!comp || comp.region !== CURRENT_USER_REGION) {
+                showToast('只能选择当前区域客户', 'error');
+                return;
+            }
+
+            document.getElementById('selected-company-name').textContent = comp.name;
+            document.getElementById('selected-company-code').textContent = '统一社会信用代码：' + comp.code;
+            document.getElementById('selected-company-region').innerHTML = 
+                `${comp.industry} | ${comp.region} | 可建领域 ${getCompanyScopes(comp).length} 个`;
+
+            document.getElementById('company-unselected').classList.add('hidden');
+            document.getElementById('company-selected').classList.remove('hidden');
+            renderDomainSelector();
+            fillServiceContactOptions();
+
+            closeModal('companySelectorModal');
+        }
+
+        document.getElementById('company-search')?.addEventListener('input', function() {
+            renderCompanyList(this.value);
+        });
+
+        function changeCompany() {
+            document.getElementById('company-unselected').classList.remove('hidden');
+            document.getElementById('company-selected').classList.add('hidden');
+            selectedCompany = null;
+            domainFormState = {};
+            domainDefaultSeeded = false;
+            renderDomainSelector();
+            renderDomainSubforms();
+        }
+
+        function selectContact(card) {
+            document.querySelectorAll('.contact-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            const name = card.querySelector('.contact-name').textContent;
+            const phone = card.querySelector('.contact-phone').textContent;
+            document.getElementById('selected-contact-info').classList.remove('hidden');
+            document.getElementById('selected-contact-name').textContent = name;
+            document.getElementById('selected-contact-phone').textContent = phone;
+        }
+
+        function changeContact() {
+            document.getElementById('selected-contact-info').classList.add('hidden');
+            document.querySelectorAll('.contact-card').forEach(c => c.classList.remove('selected'));
+        }
+
+        function toggleBusinessType(type) {
+            const certFields = document.getElementById('cert-fields');
+            const serviceFields = document.getElementById('service-fields');
+            const labelCert = document.getElementById('label-cert');
+            const labelService = document.getElementById('label-service');
+
+            if (type === 'cert') {
+                certFields.classList.remove('hidden');
+                serviceFields.classList.add('hidden');
+                labelCert.style.border = '2px solid #3b82f6';
+                labelCert.style.background = '#eff6ff';
+                labelService.style.border = '1px solid #e5e7eb';
+                labelService.style.background = 'white';
+            } else {
+                certFields.classList.add('hidden');
+                serviceFields.classList.remove('hidden');
+                labelService.style.border = '2px solid #3b82f6';
+                labelService.style.background = '#eff6ff';
+                labelCert.style.border = '1px solid #e5e7eb';
+                labelCert.style.background = 'white';
+            }
+        }
+
+        function renderDomainSelector() {
+            const selector = document.getElementById('domain-selector');
+            if (selectedCompany === null || !companyLibrary[selectedCompany]) {
+                selector.innerHTML = '<span class="text-gray-400" style="font-size: 12px;">请先选择本区域客户</span>';
+                updateDomainAssignmentTip();
+                return;
+            }
+
+            const comp = companyLibrary[selectedCompany];
+            const scopes = getCompanyScopes(comp);
+            selector.innerHTML = scopes.map((scope, idx) => {
+                const ownerText = scope.owner ? `已有跟进人：${scope.owner}` : '暂无跟进人';
+                const stateClass = scope.owner ? 'locked' : 'poolable';
+                if (idx === 0 && !domainDefaultSeeded && Object.keys(domainFormState).length === 0 && !domainFormState[scope.code]) {
+                    domainFormState[scope.code] = createDefaultDomainForm(scope);
+                    domainDefaultSeeded = true;
+                }
+                const selected = Boolean(domainFormState[scope.code]);
+                const iconClass = selected ? 'fas fa-check' : 'fas fa-plus';
+                const selectedClass = selected ? ' selected' : '';
+                return `
+                    <span class="tag-item ${stateClass}${selectedClass}" data-code="${scope.code}" data-owner="${scope.owner || ''}" onclick="toggleTag(this)">
+                        <i class="${iconClass}" style="margin-right: 4px;"></i>
+                        ${scope.code}（${certScopeNames[scope.code] || scope.code}）
+                        <span class="domain-owner">${ownerText}</span>
+                    </span>
+                `;
+            }).join('');
+            renderDomainSubforms();
+            updateDomainAssignmentTip();
+        }
+
+        function getSelectedDomainScopes() {
+            if (selectedCompany === null || !companyLibrary[selectedCompany]) return [];
+            const selectedCodes = Object.keys(domainFormState);
+            return getCompanyScopes(companyLibrary[selectedCompany]).filter(scope => selectedCodes.includes(scope.code));
+        }
+
+        function createDefaultDomainForm(scope) {
+            const now = new Date();
+            const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            return {
+                code: scope.code,
+                owner: scope.owner || '',
+                manager: scope.owner || '',
+                amount: '',
+                dealTime: month,
+                contactName: '',
+                contactPhone: '',
+                remark: ''
+            };
+        }
+
+        function saveDomainFormValue(code, field, value) {
+            if (!domainFormState[code]) return;
+            domainFormState[code][field] = value;
+            updateDomainAssignmentTip();
+        }
+
+        function removeDomainForm(code) {
+            delete domainFormState[code];
+            renderDomainSelector();
+        }
+
+        function renderDomainSubforms() {
+            const list = document.getElementById('domain-form-list');
+            if (!list) return;
+            const scopes = getSelectedDomainScopes();
+            if (!scopes.length) {
+                list.innerHTML = '<div style="font-size: 12px; color: #94a3b8; padding: 12px; border: 1px dashed #cbd5e1; border-radius: 8px; background: #f8fafc;">选择领域后，在这里填写每个领域的商机信息。</div>';
+                return;
+            }
+
+            const domainNodes = scopes.map(scope => {
+                const form = domainFormState[scope.code] || createDefaultDomainForm(scope);
+                const managerDisabled = scope.owner ? 'disabled' : '';
+                const managerOptions = [
+                    `<option value="" ${!form.manager ? 'selected' : ''}>不选择，释放到公共商机</option>`,
+                    ...regionalManagers.map(name => `<option value="${name}" ${form.manager === name ? 'selected' : ''}>${name}（${CURRENT_USER_REGION}）</option>`)
+                ].join('');
+                return `
+                    <div class="domain-form-card" data-domain-form="${scope.code}">
+                        <div class="domain-form-card-header">
+                            <div class="domain-form-title">
+                                <span class="tag tag-qms">${scope.code}</span>
+                                <span>${certScopeNames[scope.code] || scope.code}</span>
+                                <span class="domain-owner">${scope.owner ? `已有跟进人：${scope.owner}` : '暂无跟进人'}</span>
+                            </div>
+                            <button class="action-btn danger" onclick="removeDomainForm('${scope.code}')">
+                                <i class="fas fa-trash"></i> 删除
+                            </button>
+                        </div>
+                        <div class="domain-mini-grid">
+                            <div class="form-group">
+                                <label class="form-label">领域客户经理</label>
+                                <select class="form-input" ${managerDisabled} onchange="saveDomainFormValue('${scope.code}', 'manager', this.value)">
+                                    ${managerOptions}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">预计金额</label>
+                                <input class="form-input" value="${form.amount || ''}" placeholder="输入金额（可选）" oninput="saveDomainFormValue('${scope.code}', 'amount', this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">预计成交时间</label>
+                                <input type="month" class="form-input" value="${form.dealTime || ''}" onchange="saveDomainFormValue('${scope.code}', 'dealTime', this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">联系人姓名</label>
+                                <input class="form-input" value="${form.contactName || ''}" placeholder="手动填写联系人姓名" oninput="saveDomainFormValue('${scope.code}', 'contactName', this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">联系人电话</label>
+                                <input class="form-input" value="${form.contactPhone || ''}" placeholder="手动填写联系人电话" oninput="saveDomainFormValue('${scope.code}', 'contactPhone', this.value)">
+                            </div>
+                            <div class="form-group full-width">
+                                <label class="form-label">补充说明</label>
+                                <textarea class="form-textarea" placeholder="补充该领域的客户需求背景、特殊要求或其他备注信息..." oninput="saveDomainFormValue('${scope.code}', 'remark', this.value)">${form.remark || ''}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            list.innerHTML = `
+                <div class="domain-tree">
+                    <div class="domain-tree-root">
+                        <span><i class="fas fa-sitemap text-blue-600"></i> 本次商机</span>
+                        <span>${scopes.length} 个领域</span>
+                    </div>
+                    <div class="domain-tree-children">
+                        ${domainNodes}
+                    </div>
+                </div>
+            `;
+        }
+
+        function fillServiceContactOptions() {
+            const select = document.getElementById('service-contact-select');
+            if (!select) return;
+            select.innerHTML = [
+                ...getCompanyContacts().map(contact => `<option value="${contact.name}">${contact.name} ${contact.phone}</option>`),
+                '<option value="manual">手动填写</option>'
+            ].join('');
+            fillServiceContact();
+        }
+
+        function fillServiceContact() {
+            const select = document.getElementById('service-contact-select');
+            const selectedName = select?.value;
+            const contact = getCompanyContacts().find(item => item.name === selectedName) || getCompanyContacts()[0];
+            if (contact) {
+                document.getElementById('service-contact-name').value = contact.name;
+                document.getElementById('service-contact-phone').value = contact.phone;
+            }
+        }
+
+        function updateDomainAssignmentTip() {
+            const tip = document.getElementById('domain-assignment-tip');
+            const selectedScopes = getSelectedDomainScopes();
+
+            if (!selectedScopes.length) {
+                tip.innerHTML = '请选择至少一个认证领域。已有跟进人的领域会自动归属原跟进人；无跟进人的领域可在子节点中分别分配，不分配则进入公共商机。';
+                return;
+            }
+
+            const owned = selectedScopes.filter(scope => scope.owner);
+            const unowned = selectedScopes.filter(scope => !scope.owner);
+            const ownedText = owned.length
+                ? `<strong>${owned.map(scope => `${scope.code}->${scope.owner}`).join('、')}</strong> 自动归属原跟进人。`
+                : '';
+            const unownedText = unowned.length
+                ? `<strong>${unowned.map(scope => {
+                    const manager = domainFormState[scope.code]?.manager;
+                    return `${scope.code}->${manager || '公共商机'}`;
+                }).join('、')}</strong>`
+                : '';
+            tip.innerHTML = [ownedText, unownedText].filter(Boolean).join('<br>');
+        }
+
+        function toggleTag(element) {
+            if (element.classList.contains('disabled')) return;
+            const code = element.dataset.code;
+            const owner = element.dataset.owner || null;
+            const scope = { code, owner };
+            if (domainFormState[code]) {
+                delete domainFormState[code];
+            } else {
+                domainFormState[code] = createDefaultDomainForm(scope);
+            }
+            renderDomainSelector();
+            updateDomainAssignmentTip();
+        }
+
+        function submitBusiness() {
+            if (document.getElementById('company-selected').classList.contains('hidden')) {
+                showToast('请先选择企业', 'error');
+                return;
+            }
+
+            if (!document.getElementById('business-source').value) {
+                showToast('请选择商机来源', 'error');
+                return;
+            }
+
+            const source = document.getElementById('business-source').value;
+            const comp = companyLibrary[selectedCompany];
+            if (!comp || comp.region !== CURRENT_USER_REGION) {
+                showToast('只能建立当前区域客户的商机', 'error');
+                return;
+            }
+
+            const businessTypeValue = document.querySelector('input[name="business-type"]:checked').value;
+            const businessType = businessTypeValue === 'cert' ? '体系认证' : '技术服务';
+            const selectedScopes = businessType === '体系认证' ? getSelectedDomainScopes() : [];
+
+            if (businessType === '体系认证' && selectedScopes.length === 0) {
+                showToast('请选择认证领域', 'error');
+                return;
+            }
+
+            closeModal('businessModal');
+
+            setTimeout(() => {
+                const nowText = new Date().toLocaleString('zh-CN');
+                let assignedCount = 0;
+                let poolCount = 0;
+
+                const createBusinessRecord = (scopes, idx) => {
+                    const isCertRecord = Array.isArray(scopes) && scopes.length > 0;
+                    const form = isCertRecord ? null : {
+                        manager: document.getElementById('service-manager').value,
+                        amount: document.getElementById('service-amount').value,
+                        dealTime: document.getElementById('service-deal-time').value,
+                        contactName: document.getElementById('service-contact-name').value,
+                        contactPhone: document.getElementById('service-contact-phone').value,
+                        remark: document.getElementById('service-remark').value
+                    };
+                    const domainDetails = isCertRecord ? scopes.map(scope => {
+                        const domainForm = domainFormState[scope.code] || createDefaultDomainForm(scope);
+                        const manager = scope.owner || domainForm.manager || '';
+                        return {
+                            code: scope.code,
+                            name: certScopeNames[scope.code] || scope.code,
+                            manager,
+                            owner: scope.owner || '',
+                            contactName: domainForm.contactName || '-',
+                            contactPhone: domainForm.contactPhone || '',
+                            amount: domainForm.amount ? '¥' + domainForm.amount : '',
+                            dealTime: domainForm.dealTime || '',
+                            remark: domainForm.remark || '',
+                            status: manager ? 'following' : 'pool',
+                            statusText: manager ? '跟进中' : '公共商机'
+                        };
+                    }) : [];
+                    const follower = isCertRecord ? getBusinessFollowerTextFromDomains(domainDetails) : (form.manager || '待申请');
+                    const toPool = isCertRecord ? domainDetails.every(item => !item.manager) : !form.manager;
+                    const certFields = isCertRecord ? scopes.map(scope => scope.code) : [];
+                    return {
+                        id: 'B' + new Date().toISOString().slice(0,10).replace(/-/g,'') + String(Math.random()).slice(2,5) + idx,
+                        customerName: comp.name,
+                        customerType: comp.type,
+                        customerRegion: comp.region,
+                        businessType: businessType,
+                        certFields: certFields,
+                        domainDetails: domainDetails,
+                        serviceContent: businessType === '技术服务' ? document.getElementById('service-content').value : '',
+                        amount: isCertRecord ? '' : (form.amount ? '¥' + form.amount : ''),
+                        dealTime: isCertRecord ? '' : (form.dealTime || ''),
+                        contactName: isCertRecord ? '-' : (form.contactName || '-'),
+                        contactPhone: isCertRecord ? '' : (form.contactPhone || ''),
+                        follower: follower,
+                        createdBy: CURRENT_USER_NAME,
+                        assignmentType: toPool ? 'pool' : 'domain-node',
+                        regTime: nowText,
+                        lastFollow: nowText,
+                        source: source,
+                        status: toPool ? 'pool' : 'following',
+                        statusText: toPool ? '公共商机' : '跟进中',
+                        creditCode: comp.code,
+                        industry: comp.industry,
+                        isPool: toPool,
+                        contractId: null,
+                        contractName: null,
+                        remark: isCertRecord ? '' : (form.remark || ''),
+                        followupRecords: [],
+                        operationLogs: [
+                            {
+                                action: 'create',
+                                title: '商机创建',
+                                desc: `${source}登记${certFields.length ? `，领域：${certFields.join('、')}` : ''}${toPool ? '，未选择客户经理进入公共商机' : `，按领域分配客户经理`}`,
+                                time: nowText,
+                                operator: CURRENT_USER_NAME
+                            }
+                        ]
+                    };
+                };
+
+                const records = businessType === '体系认证'
+                    ? (() => {
+                        const assignedScopes = selectedScopes.filter(scope => scope.owner || domainFormState[scope.code]?.manager);
+                        const poolScopes = selectedScopes.filter(scope => !scope.owner && !domainFormState[scope.code]?.manager);
+                        return [
+                            ...(assignedScopes.length ? [createBusinessRecord(assignedScopes, 0)] : []),
+                            ...(poolScopes.length ? [createBusinessRecord(poolScopes, assignedScopes.length ? 1 : 0)] : [])
+                        ];
+                    })()
+                    : [createBusinessRecord(null, 0)];
+
+                records.forEach(record => {
+                    if (record.isPool) {
+                        poolBusinessData.unshift(record);
+                        poolCount += record.certFields?.length || 1;
+                    } else {
+                        myBusinessData.unshift(record);
+                        assignedCount += record.certFields?.length || 1;
+                    }
+                });
+
+                const messageParts = [];
+                if (assignedCount) messageParts.push(`${assignedCount}个领域已生成商机`);
+                if (poolCount) messageParts.push(`${poolCount}个领域已释放到公共商机`);
+                showToast(messageParts.join('，') || '商机登记成功', 'success');
+
+                filteredData = getCurrentData();
+                renderTable();
+            }, 500);
+        }
+
+        // 申请跟进
+        function applyBusiness(id) {
+            currentBusinessId = id;
+            const data = getCurrentData();
+            const row = data.find(r => r.id === id);
+            if (!row || row.customerRegion !== CURRENT_USER_REGION) {
+                showToast('只能申请当前区域下的商机', 'error');
+                return;
+            }
+
+            document.getElementById('apply-desc').innerHTML = 
+                `您正在申请跟进公共商机<br>申请通过后您将成为所选领域的跟进人<br>客户：<strong>${row.customerName}</strong>`;
+            renderApplyDomainSelector(row);
+            document.getElementById('apply-reason').value = '';
+            document.querySelector('#applyModal .confirm-title').textContent = '选择领域并申请跟进？';
+            document.querySelector('#applyModal .confirm-icon').innerHTML = '<i class="fas fa-hand-paper"></i>';
+            document.querySelector('#applyModal .btn-primary').onclick = submitApply;
+
+            openModal('applyModal');
+        }
+
+        function renderApplyDomainSelector(row) {
+            const section = document.getElementById('apply-domain-section');
+            const selector = document.getElementById('apply-domain-selector');
+            const domainItems = getBusinessDomainItems(row).filter(item => !item.manager || item.status === 'pool');
+            if (!domainItems.length) {
+                section.style.display = 'none';
+                selector.innerHTML = '';
+                return;
+            }
+            section.style.display = 'block';
+            selector.innerHTML = `
+                <div class="domain-tree" style="width: 100%;">
+                    <div class="domain-tree-root">
+                        <span><i class="fas fa-sitemap text-blue-600"></i> ${row.customerName}</span>
+                        <span>可申请 ${domainItems.length} 个领域</span>
+                    </div>
+                    <div class="domain-tree-children">
+                        ${domainItems.map(item => `
+                            <label class="domain-tree-node domain-tree-check">
+                                <input type="checkbox" checked data-apply-domain="${item.code}">
+                                <span>
+                                    <span class="domain-tree-node-main">
+                                        <span class="domain-tree-node-title">
+                                            <span class="tag tag-qms">${item.code}</span>
+                                            <span>${item.name || certScopeNames[item.code] || item.code}</span>
+                                        </span>
+                                        <span class="status-badge status-pool">公共商机</span>
+                                    </span>
+                                    <span class="domain-tree-node-meta">
+                                        <span>联系人：${[item.contactName, item.contactPhone].filter(Boolean).join(' ') || '-'}</span>
+                                        <span>当前跟进人：待申请</span>
+                                    </span>
+                                </span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function submitApply() {
+            const idx = poolBusinessData.findIndex(r => r.id === currentBusinessId && r.customerRegion === CURRENT_USER_REGION);
+            if (idx > -1) {
+                const business = poolBusinessData[idx];
+                const selectedDomains = Array.from(document.querySelectorAll('#apply-domain-selector input[data-apply-domain]:checked'))
+                    .map(el => el.dataset.applyDomain);
+                const domainItems = getBusinessDomainItems(business);
+                if (domainItems.length && selectedDomains.length === 0) {
+                    showToast('请选择要跟进的领域', 'error');
+                    return;
+                }
+
+                if (domainItems.length) {
+                    const claimedDetails = domainItems
+                        .filter(item => selectedDomains.includes(item.code))
+                        .map(item => ({
+                            ...item,
+                            manager: CURRENT_USER_NAME,
+                            status: 'following',
+                            statusText: '跟进中'
+                        }));
+                    const remainingDetails = domainItems.filter(item => !selectedDomains.includes(item.code));
+                    const claimRecord = {
+                        ...business,
+                        id: `${business.id}-CLAIM-${Date.now()}`,
+                        certFields: claimedDetails.map(item => item.code),
+                        domainDetails: claimedDetails,
+                        follower: getBusinessFollowerTextFromDomains(claimedDetails),
+                        status: 'following',
+                        statusText: '跟进中',
+                        assignmentType: 'claim',
+                        isPool: false,
+                        lastFollow: new Date().toLocaleString('zh-CN'),
+                        operationLogs: [...(business.operationLogs || [])]
+                    };
+                    claimRecord.operationLogs.unshift({
+                        action: 'transfer',
+                        title: '权限申请',
+                        desc: `申请跟进公共商机，领域：${claimRecord.certFields.join('、')}并自动通过`,
+                        time: new Date().toLocaleString('zh-CN'),
+                        operator: CURRENT_USER_NAME
+                    });
+                    myBusinessData.unshift(claimRecord);
+
+                    if (remainingDetails.length > 0) {
+                        business.certFields = remainingDetails.map(item => item.code);
+                        business.domainDetails = remainingDetails;
+                        business.follower = '待申请';
+                        business.status = 'pool';
+                        business.statusText = '公共商机';
+                        business.isPool = true;
+                    } else {
+                        poolBusinessData.splice(idx, 1);
+                    }
+                } else {
+                    const claimRecord = { ...business, isPool: false, operationLogs: [...(business.operationLogs || [])] };
+                    claimRecord.follower = CURRENT_USER_NAME;
+                    claimRecord.status = 'following';
+                    claimRecord.statusText = '跟进中';
+                    claimRecord.assignmentType = 'claim';
+                    claimRecord.lastFollow = new Date().toLocaleString('zh-CN');
+                    claimRecord.operationLogs.unshift({
+                        action: 'transfer',
+                        title: '权限申请',
+                        desc: '申请跟进公共商机并自动通过',
+                        time: new Date().toLocaleString('zh-CN'),
+                        operator: CURRENT_USER_NAME
+                    });
+                    myBusinessData.unshift(claimRecord);
+                    poolBusinessData.splice(idx, 1);
+                }
+
+                showToast('申请成功！您已成为所选领域的跟进人', 'success');
+                closeModal('applyModal');
+
+                filteredData = getCurrentData();
+                renderTable();
+            }
+        }
+
+        // 完结商机
+        function finishBusiness(id) {
+            currentBusinessId = id;
+            finishType = null;
+            selectedContract = null;
+
+            const row = myBusinessData.find(r => r.id === id);
+            document.getElementById('finish-desc').textContent = `请选择商机「${row.customerName}」的完结方式`;
+
+            // 重置选项
+            document.querySelectorAll('.finish-option').forEach(el => el.classList.remove('selected'));
+            document.getElementById('finish-won-panel').classList.add('hidden');
+            document.getElementById('finish-lost-panel').classList.add('hidden');
+            document.getElementById('btn-confirm-finish').disabled = true;
+            document.getElementById('lost-reason-select').value = '';
+            document.getElementById('lost-remark').value = '';
+            document.getElementById('contract-selected-display').classList.add('hidden');
+            document.getElementById('btn-select-contract').classList.remove('hidden');
+
+            openModal('finishModal');
+        }
+
+        function selectFinishType(type) {
+            finishType = type;
+            document.querySelectorAll('.finish-option').forEach(el => el.classList.remove('selected'));
+            document.getElementById('option-' + type).classList.add('selected');
+
+            if (type === 'won') {
+                document.getElementById('finish-won-panel').classList.remove('hidden');
+                document.getElementById('finish-lost-panel').classList.add('hidden');
+                document.getElementById('btn-confirm-finish').disabled = selectedContract === null;
+            } else {
+                document.getElementById('finish-won-panel').classList.add('hidden');
+                document.getElementById('finish-lost-panel').classList.remove('hidden');
+                document.getElementById('btn-confirm-finish').disabled = false;
+            }
+        }
+
+        // 合同选择
+        function openContractSelector() {
+            renderContractList();
+            openModal('contractSelectorModal');
+        }
+
+        function renderContractList(search = '') {
+            const list = document.getElementById('contract-list');
+            let html = '';
+
+            contractList.forEach((contract, idx) => {
+                if (search && !contract.name.includes(search) && !contract.id.includes(search)) return;
+
+                html += `
+                    <div class="contract-list-item ${selectedContract === idx ? 'selected' : ''}" 
+                         onclick="selectContract(${idx})">
+                        <div class="contract-icon"><i class="fas fa-file-contract"></i></div>
+                        <div class="contract-info">
+                            <div class="contract-name">${contract.name}</div>
+                            <div class="contract-meta">${contract.id} | ${contract.customer} | ¥${contract.amount} | ${contract.signDate}</div>
+                        </div>
+                        <i class="fas fa-check-circle contract-check"></i>
+                    </div>
+                `;
+            });
+
+            list.innerHTML = html;
+        }
+
+        function selectContract(idx) {
+            selectedContract = idx;
+            renderContractList(document.getElementById('contract-search').value);
+        }
+
+        function confirmContractSelect() {
+            if (selectedContract === null) {
+                showToast('请选择合同', 'error');
+                return;
+            }
+
+            const contract = contractList[selectedContract];
+            document.getElementById('selected-contract-name').textContent = contract.name;
+            document.getElementById('selected-contract-meta').textContent = `${contract.id} | ¥${contract.amount} | ${contract.signDate}`;
+            document.getElementById('contract-selected-display').classList.remove('hidden');
+            document.getElementById('btn-select-contract').classList.add('hidden');
+
+            if (finishType === 'won') {
+                document.getElementById('btn-confirm-finish').disabled = false;
+            }
+
+            closeModal('contractSelectorModal');
+        }
+
+        function changeContract() {
+            document.getElementById('contract-selected-display').classList.add('hidden');
+            document.getElementById('btn-select-contract').classList.remove('hidden');
+            selectedContract = null;
+            if (finishType === 'won') {
+                document.getElementById('btn-confirm-finish').disabled = true;
+            }
+        }
+
+        document.getElementById('contract-search')?.addEventListener('input', function() {
+            renderContractList(this.value);
+        });
+
+        function confirmFinish() {
+            const idx = myBusinessData.findIndex(r => r.id === currentBusinessId);
+            if (idx > -1) {
+                const business = myBusinessData[idx];
+
+                if (finishType === 'won') {
+                    const contract = contractList[selectedContract];
+                    business.status = 'completed';
+                    business.statusText = '已完结';
+                    business.contractId = contract.id;
+                    business.contractName = contract.name;
+
+                    if (!business.operationLogs) business.operationLogs = [];
+                    business.operationLogs.unshift({
+                        action: 'complete',
+                        title: '商机完结',
+                        desc: `成交，关联合同：${contract.name}`,
+                        time: new Date().toLocaleString('zh-CN'),
+                        operator: CURRENT_USER_NAME
+                    });
+
+                    showToast('商机已标记为成交，合同关联成功', 'success');
+                } else {
+                    const reason = document.getElementById('lost-reason-select').value;
+                    const remark = document.getElementById('lost-remark').value;
+                    business.status = 'completed';
+                    business.statusText = '已完结';
+                    business.lostReason = reason;
+                    business.lostRemark = remark;
+
+                    if (!business.operationLogs) business.operationLogs = [];
+                    business.operationLogs.unshift({
+                        action: 'complete',
+                        title: '商机完结',
+                        desc: `未成交，原因：${reason}${remark ? ' - ' + remark : ''}`,
+                        time: new Date().toLocaleString('zh-CN'),
+                        operator: CURRENT_USER_NAME
+                    });
+
+                    showToast('商机已关闭', 'success');
+                }
+
+                closeModal('finishModal');
+                filteredData = getCurrentData();
+                renderTable();
+            }
+        }
+
+        function getDetailFollowerText(row) {
+            if (currentView === 'pool' || row.isPool) return '待申请（公共商机）';
+            if (row.follower === '待确认') return '待确认';
+            return `${row.follower}（${row.customerRegion}）`;
+        }
+
+        function renderDetailDomainBreakdown(row) {
+            const container = document.getElementById('detail-domain-breakdown');
+            if (!container) return;
+
+            const getStatusClass = (status) => ({
+                'following': 'status-following',
+                'completed': 'status-completed',
+                'won': 'status-won',
+                'lost': 'status-lost',
+                'returned': 'status-returned',
+                'pool': 'status-pool'
+            }[status] || 'status-following');
+            const domainItems = getBusinessDomainItems(row);
+
+            if (domainItems.length) {
+                container.innerHTML = `
+                    <div class="domain-tree">
+                        <div class="domain-tree-root">
+                            <span><i class="fas fa-sitemap text-blue-600"></i> ${row.customerName}</span>
+                            <span>${domainItems.length} 个领域</span>
+                        </div>
+                        <div class="domain-tree-children">
+                            ${domainItems.map(item => {
+                                const contact = [item.contactName, item.contactPhone].filter(Boolean).join(' ') || '-';
+                                const follower = item.manager ? `${item.manager}（${row.customerRegion}）` : '待申请（公共商机）';
+                                return `
+                                    <div class="domain-tree-node">
+                                        <div class="domain-tree-node-main">
+                                            <div class="domain-tree-node-title">
+                                                <span class="tag tag-qms">${item.code}</span>
+                                                <span>${item.name || certScopeNames[item.code] || item.code}</span>
+                                            </div>
+                                            <span class="status-badge ${getStatusClass(item.status || row.status)}">${item.statusText || row.statusText}</span>
+                                        </div>
+                                        <div class="domain-tree-node-meta">
+                                            <span>联系人：${contact}</span>
+                                            <span>跟进人：${follower}</span>
+                                            <span>预计金额：${item.amount || '-'}</span>
+                                            <span>预计成交时间：${item.dealTime || '-'}</span>
+                                            <span style="grid-column: 1 / -1;">补充说明：${item.remark || '-'}</span>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const contactText = [row.contactName, row.contactPhone].filter(Boolean).join(' ') || '-';
+            container.innerHTML = `
+                <div class="domain-tree">
+                    <div class="domain-tree-root">
+                        <span><i class="fas fa-tools text-blue-600"></i> 技术服务</span>
+                        <span class="status-badge ${getStatusClass(row.status)}">${row.statusText}</span>
+                    </div>
+                    <div class="domain-tree-children">
+                        <div class="domain-tree-node">
+                            <div class="domain-tree-node-main">
+                                <div class="domain-tree-node-title">${row.serviceContent || '技术服务'}</div>
+                            </div>
+                            <div class="domain-tree-node-meta">
+                                <span>联系人：${contactText}</span>
+                                <span>跟进人：${getDetailFollowerText(row)}</span>
+                                <span>预计金额：${row.amount || '-'}</span>
+                                <span>预计成交时间：${row.dealTime || '-'}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 侧边栏详情
+        function viewDetail(id) {
+            const data = getCurrentData();
+            const row = data.find(r => r.id === id);
+            if (!row) return;
+
+            currentDetailBusiness = row;
+
+            document.getElementById('drawerSubtitle').textContent = `编号：${row.id} | 状态：${row.statusText}`;
+
+            document.getElementById('detail-customer-name').textContent = row.customerName;
+            document.getElementById('detail-customer-type').textContent = row.customerType;
+            document.getElementById('detail-customer-region').innerHTML = 
+                `<span class="region-tag region-local">${row.customerRegion}</span>`;
+            document.getElementById('detail-industry').textContent = row.industry || '-';
+            document.getElementById('detail-credit-code').textContent = row.creditCode || '-';
+            document.getElementById('detail-address').textContent = '北京市朝阳区建国路88号（示例地址）';
+
+            document.getElementById('detail-source').textContent = row.source;
+            document.getElementById('detail-business-type').textContent = row.businessType;
+            document.getElementById('detail-cert-fields').textContent = 
+                row.businessType === '体系认证' ? row.certFields.join('、') : row.serviceContent;
+            document.getElementById('detail-amount').textContent = row.amount || (getBusinessDomainItems(row).length ? '见领域明细' : '-');
+            document.getElementById('detail-deal-time').textContent = row.dealTime || (getBusinessDomainItems(row).length ? '见领域明细' : '-');
+
+            const statusClass = {
+                'following': 'status-following',
+                'completed': 'status-completed',
+                'won': 'status-won',
+                'lost': 'status-lost',
+                'returned': 'status-returned',
+                'pool': 'status-pool'
+            }[row.status] || 'status-following';
+            document.getElementById('detail-status').innerHTML = 
+                `<span class="status-badge ${statusClass}">${row.statusText}</span>`;
+
+            renderDetailDomainBreakdown(row);
+            document.getElementById('detail-reg-time').textContent = row.regTime;
+            document.getElementById('detail-reg-by').textContent = getBusinessCreator(row);
+            document.getElementById('detail-contract').textContent = row.contractName ? `${row.contractName}${row.contractId ? `（${row.contractId}）` : ''}` : '-';
+
+            // 跟进记录
+            const recordsContainer = document.getElementById('followup-records');
+            if (row.followupRecords && row.followupRecords.length > 0) {
+                recordsContainer.innerHTML = row.followupRecords.map(record => `
+                    <div class="timeline-item ${record.type === 'visit' ? 'success' : ''}">
+                        <div class="timeline-time">${record.time}</div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <span class="timeline-type timeline-type-${record.type}">
+                                    <i class="fas ${record.type === 'phone' ? 'fa-phone' : record.type === 'visit' ? 'fa-walking' : 'fa-envelope'}"></i>
+                                    ${record.typeText}
+                                </span>
+                                <span style="font-size: 12px; color: #6b7280;">
+                                    <i class="fas fa-user"></i> ${record.operator}
+                                </span>
+                            </div>
+                            <div class="timeline-text">${record.content}</div>
+                            ${record.files && record.files.length > 0 ? `
+                                <div style="margin-top: 8px; display: flex; gap: 8px;">
+                                    ${record.files.map(f => `
+                                        <span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: #eff6ff; color: #1e40af; border-radius: 4px; font-size: 11px; cursor: pointer;">
+                                            <i class="fas fa-paperclip"></i> ${f}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                recordsContainer.innerHTML = '<div style="text-align: center; padding: 40px; color: #9ca3af;">暂无跟进记录</div>';
+            }
+
+            // 操作日志
+            const logsContainer = document.getElementById('operation-logs');
+            if (row.operationLogs && row.operationLogs.length > 0) {
+                logsContainer.innerHTML = row.operationLogs.map(log => `
+                    <div class="log-item">
+                        <div class="log-icon ${log.action}">
+                            <i class="fas ${log.action === 'create' ? 'fa-plus' : log.action === 'update' ? 'fa-edit' : log.action === 'transfer' ? 'fa-exchange-alt' : 'fa-check'}"></i>
+                        </div>
+                        <div class="log-content">
+                            <div class="log-title">${log.title}</div>
+                            <div class="log-desc">${log.desc}</div>
+                            <div class="log-time">
+                                <i class="fas fa-clock"></i> ${log.time} | 操作人：${log.operator}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                logsContainer.innerHTML = '<div style="text-align: center; padding: 40px; color: #9ca3af;">暂无操作日志</div>';
+            }
+
+            // 底部按钮
+            const footer = document.getElementById('drawer-footer');
+            if (currentView === 'pool') {
+                footer.innerHTML = `
+                    <button class="btn btn-secondary" onclick="closeSideDrawer()">关闭</button>
+                    <button class="btn btn-success" onclick="addFollowFromDrawer()">
+                        <i class="fas fa-hand-paper"></i>
+                        选择领域跟进
+                    </button>
+                `;
+            } else if (currentView === 'created') {
+                footer.innerHTML = `
+                    <button class="btn btn-secondary" onclick="closeSideDrawer()">关闭</button>
+                    ${!hasFollower(row) ? `
+                        <button class="btn btn-danger" onclick="deleteBusinessFromDrawer()">
+                            <i class="fas fa-trash"></i>
+                            删除
+                        </button>
+                    ` : ''}
+                `;
+            } else if (row.isPool) {
+                footer.innerHTML = `
+                    <button class="btn btn-secondary" onclick="closeSideDrawer()">关闭</button>
+                `;
+            } else if (row.status === 'following' && (row.follower === CURRENT_USER_NAME || getBusinessDomainItems(row).some(item => item.manager === CURRENT_USER_NAME))) {
+                footer.innerHTML = `
+                    <button class="btn btn-secondary" onclick="closeSideDrawer()">关闭</button>
+                    <button class="btn btn-purple" onclick="finishBusinessFromDrawer()">
+                        <i class="fas fa-flag-checkered"></i>
+                        完结商机
+                    </button>
+                `;
+            } else {
+                footer.innerHTML = `
+                    <button class="btn btn-secondary" onclick="closeSideDrawer()">关闭</button>
+                `;
+            }
+
+            document.getElementById('drawerOverlay').classList.add('active');
+            document.getElementById('sideDrawer').classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            switchDetailTab('basic');
+        }
+
+        function closeSideDrawer() {
+            document.getElementById('drawerOverlay').classList.remove('active');
+            document.getElementById('sideDrawer').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function switchDetailTab(tab) {
+            document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.detail-section').forEach(s => s.classList.remove('active'));
+
+            const clickedTab = event ? event.target : document.querySelector('.detail-tab');
+            if (clickedTab) clickedTab.classList.add('active');
+            document.getElementById('tab-' + tab).classList.add('active');
+        }
+
+        function addFollowFromDrawer() {
+            if (currentView === 'pool' && currentDetailBusiness) {
+                closeSideDrawer();
+                applyBusiness(currentDetailBusiness.id);
+            } else {
+                showToast('打开跟进登记页面');
+            }
+        }
+
+        function finishBusinessFromDrawer() {
+            if (currentDetailBusiness) {
+                closeSideDrawer();
+                finishBusiness(currentDetailBusiness.id);
+            }
+        }
+
+        function deleteBusiness(id) {
+            const myIdx = myBusinessData.findIndex(row => row.id === id);
+            const poolIdx = poolBusinessData.findIndex(row => row.id === id);
+            const business = myIdx > -1 ? myBusinessData[myIdx] : poolBusinessData[poolIdx];
+            if (!business) return;
+            if (hasFollower(business)) {
+                showToast('已有跟进人的商机不能删除', 'error');
+                return;
+            }
+            if (myIdx > -1) myBusinessData.splice(myIdx, 1);
+            if (poolIdx > -1) poolBusinessData.splice(poolIdx, 1);
+            filteredData = getCurrentData();
+            renderTable();
+            showToast('商机已删除', 'success');
+        }
+
+        function deleteBusinessFromDrawer() {
+            if (!currentDetailBusiness) return;
+            const id = currentDetailBusiness.id;
+            closeSideDrawer();
+            deleteBusiness(id);
+        }
+
+        function addFollow(id) {
+            showToast('打开跟进登记弹窗');
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            fillServiceContactOptions();
+            filteredData = getCurrentData();
+            renderTable();
+
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            document.getElementById('service-deal-time').value = `${year}-${month}`;
+        });
+
+        // 点击遮罩关闭弹窗
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
