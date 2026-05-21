@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -34,7 +35,8 @@
         }
 
         .conditional-field.active {
-            max-height: 2000px;
+            max-height: none;
+            overflow: visible;
             opacity: 1;
             margin-top: 0.75rem;
         }
@@ -894,7 +896,7 @@
                     </div>
                     <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 text-xs"></i>
                 </div>
-                <div class="p-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 transition-all duration-300" style="max-height: 2000px; overflow: visible;">
+                <div class="p-6 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 transition-all duration-300" style="max-height: none; overflow: visible;">
                     <div>
                         <label class="block text-xs font-medium text-slate-700 mb-1">认证申请编号</label>
                         <input type="text" id="appNo" readonly class="w-full px-3 py-2 text-sm bg-slate-100 border border-slate-300 rounded-lg text-slate-500 cursor-not-allowed">
@@ -926,7 +928,7 @@
                     </div>
                     <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 text-xs"></i>
                 </div>
-                <div class="p-6 transition-all duration-300" style="max-height: 3000px; overflow: visible;">
+                <div class="p-6 transition-all duration-300" style="max-height: none; overflow: visible;">
                     <!-- 客户选择 -->
                     <div class="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
                         <div class="flex items-center justify-between mb-2">
@@ -942,7 +944,7 @@
                     <div class="form-grid form-grid-4 mb-4">
                         <div class="form-field col-span-2">
                             <label>客户英文名称</label>
-                            <input type="text" id="customerNameEn" readonly title="" class="ellipsis-input">
+                            <input type="text" id="customerNameEn" title="" class="ellipsis-input">
                         </div>
                     </div>
 
@@ -954,31 +956,31 @@
                     <div class="form-grid form-grid-4">
                         <div class="form-field col-span-2">
                             <label class="required">注册地址</label>
-                            <input type="text" id="regAddress" readonly>
+                            <input type="text" id="regAddress">
                         </div>
                         <div class="form-field col-span-2">
                             <label>注册地址（英文）</label>
-                            <input type="text" id="regAddressEn" readonly title="" class="ellipsis-input">
+                            <input type="text" id="regAddressEn" title="" class="ellipsis-input">
                         </div>
                         <div class="form-field">
                             <label class="required">注册地邮编</label>
-                            <input type="text" id="regZip" readonly>
+                            <input type="text" id="regZip">
                         </div>
                         <div class="form-field">
                             <label>传真</label>
-                            <input type="text" id="fax" readonly>
+                            <input type="text" id="fax">
                         </div>
                         <div class="form-field col-span-2">
                             <label class="required">运营地址</label>
-                            <input type="text" id="opAddress" readonly>
+                            <input type="text" id="opAddress">
                         </div>
                         <div class="form-field col-span-2">
                             <label>运营地址（英文）</label>
-                            <input type="text" id="opAddressEn" readonly title="" class="ellipsis-input">
+                            <input type="text" id="opAddressEn" title="" class="ellipsis-input">
                         </div>
                         <div class="form-field">
                             <label class="required">运营地邮编</label>
-                            <input type="text" id="opZip" readonly>
+                            <input type="text" id="opZip">
                         </div>
                     </div>
 
@@ -990,9 +992,7 @@
                     <div class="form-grid form-grid-4">
                         <div class="form-field">
                             <label class="required">联系人</label>
-                            <select id="contactPerson" onchange="fillContactInfo(this.value)">
-                                <option value="">请先在认证领域中选择联系人</option>
-                            </select>
+                            <input type="text" id="contactPerson" placeholder="请输入联系人姓名">
                         </div>
                         <div class="form-field">
                             <label class="required">所在部门</label>
@@ -1052,6 +1052,14 @@
                         </label>
                         <input type="text" id="otherLanguage" placeholder="请输入语言" class="hidden px-3 py-1.5 text-sm border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 w-40">
                     </div>
+
+                    <!-- 客户备注信息 -->
+                    <div class="sub-section-title mt-6">
+                        <i class="fas fa-comment-dots"></i>
+                        客户备注信息
+                    </div>
+                    <textarea id="customerRemarks" rows="4" maxlength="1000" placeholder="请输入客户备注信息，如特殊审核安排、客户关注事项、补充说明等"
+                              class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-y"></textarea>
                 </div>
             </div>
 
@@ -1180,7 +1188,7 @@
                     </div>
                     <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 text-xs"></i>
                 </div>
-                <div class="p-6 space-y-4 transition-all duration-300" style="max-height: 2000px; overflow: visible;">
+                <div class="p-6 space-y-4 transition-all duration-300" style="max-height: none; overflow: visible;">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-medium text-slate-700 mb-1 required">整合程度（0-100%）</label>
@@ -1212,7 +1220,7 @@
                     </div>
                     <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 text-xs"></i>
                 </div>
-                <div class="p-6 space-y-6 transition-all duration-300" style="max-height: 4000px; overflow: visible;">
+                <div class="p-6 space-y-6 transition-all duration-300" style="max-height: none; overflow: visible;">
                     <!-- 人员数量 - 兼职改为手填 -->
                     <div class="bg-blue-50/80 rounded-lg p-4 border border-blue-100">
                         <h4 class="font-medium text-blue-900 mb-3 text-sm flex items-center gap-2">
@@ -1323,6 +1331,57 @@
                         </div>
                     </div>
 
+                    <!-- 其他认证机构历史 -->
+                    <div class="border-t border-slate-100 pt-4">
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="checkbox" id="hasHistory" class="rounded text-blue-600 focus:ring-blue-500 transition-all" onchange="toggleField('historyFields', this.checked)">
+                            <span class="text-sm font-medium text-slate-700 group-hover:text-blue-600 transition-colors">如客户曾获得过其他认证机构的管理体系认证，请说明</span>
+                        </label>
+                        <div id="historyFields" class="conditional-field space-y-3 pl-4 border-l-2 border-slate-200 mt-2">
+                            <div id="historyList" class="space-y-3">
+                                <div class="history-item bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                                        <div>
+                                            <label class="block text-xs font-medium text-slate-700 mb-1 required">认证机构的名称</label>
+                                            <input type="text" maxlength="100" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="认证机构名称">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-slate-700 mb-1 required">认证标准</label>
+                                            <input type="text" maxlength="100" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="请输入认证标准">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-slate-700 mb-1 required">证书有效期</label>
+                                            <input type="date" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-slate-700 mb-1 required">最近一次审核日期</label>
+                                            <input type="date" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-slate-700 mb-1 required">管理体系开始运行时间</label>
+                                            <input type="date" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-slate-700 mb-1 required">最近一次内审时间</label>
+                                            <input type="date" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all">
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-end gap-2">
+                                        <button onclick="copyHistory(this)" class="px-3 py-1.5 text-xs text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                                            <i class="fas fa-copy mr-1"></i>复制
+                                        </button>
+                                        <button onclick="this.closest('.history-item').remove()" class="px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 rounded transition-colors">
+                                            <i class="fas fa-trash-alt mr-1"></i>删除
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="addHistoryRow()" class="w-full py-2 border-2 border-dashed border-blue-300 rounded-lg text-blue-600 hover:bg-blue-50 transition-colors text-sm font-medium">
+                                <i class="fas fa-plus mr-2"></i>添加历史认证记录
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- IS/ITS专项信息 -->
                     <div id="infoTechOrgSection" class="border-t border-slate-100 pt-4 hidden">
                         <div class="sub-section-title" style="border-left-color: #06b6d4; background: linear-gradient(135deg, #ecfeff 0%, #e0f2fe 100%);">
@@ -1360,65 +1419,6 @@
                                     <textarea maxlength="500" rows="2" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white transition-all resize-none" placeholder="请详细说明，可另附页"></textarea>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- 其他认证机构历史 -->
-                    <div class="border-t border-slate-100 pt-4">
-                        <label class="flex items-center gap-2 cursor-pointer group">
-                            <input type="checkbox" id="hasHistory" class="rounded text-blue-600 focus:ring-blue-500 transition-all" onchange="toggleField('historyFields', this.checked)">
-                            <span class="text-sm font-medium text-slate-700 group-hover:text-blue-600 transition-colors">如客户曾获得过其他认证机构的管理体系认证，请说明</span>
-                        </label>
-                        <div id="historyFields" class="conditional-field space-y-3 pl-4 border-l-2 border-slate-200 mt-2">
-                            <div id="historyList" class="space-y-3">
-                                <div class="history-item bg-slate-50 p-3 rounded-lg border border-slate-200">
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-                                        <div>
-                                            <label class="block text-xs font-medium text-slate-700 mb-1 required">认证机构的名称</label>
-                                            <input type="text" maxlength="100" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="认证机构名称">
-                                        </div>
-                                        <div>
-                                            <label class="block text-xs font-medium text-slate-700 mb-1 required">认证标准</label>
-                                            <select class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all">
-                                                <option value="Q">Q</option>
-                                                <option value="E">E</option>
-                                                <option value="OHS">OHS</option>
-                                                <option value="IS">IS</option>
-                                                <option value="ITS">ITS</option>
-                                                <option value="F">F</option>
-                                                <option value="H">H</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label class="block text-xs font-medium text-slate-700 mb-1 required">证书有效期</label>
-                                            <input type="date" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all">
-                                        </div>
-                                        <div>
-                                            <label class="block text-xs font-medium text-slate-700 mb-1 required">最近一次审核日期</label>
-                                            <input type="date" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all">
-                                        </div>
-                                        <div>
-                                            <label class="block text-xs font-medium text-slate-700 mb-1 required">管理体系开始运行时间</label>
-                                            <input type="date" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all">
-                                        </div>
-                                        <div>
-                                            <label class="block text-xs font-medium text-slate-700 mb-1 required">最近一次内审时间</label>
-                                            <input type="date" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all">
-                                        </div>
-                                    </div>
-                                    <div class="flex justify-end gap-2">
-                                        <button onclick="copyHistory(this)" class="px-3 py-1.5 text-xs text-blue-600 hover:bg-blue-50 rounded transition-colors">
-                                            <i class="fas fa-copy mr-1"></i>复制
-                                        </button>
-                                        <button onclick="this.closest('.history-item').remove()" class="px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 rounded transition-colors">
-                                            <i class="fas fa-trash-alt mr-1"></i>删除
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <button onclick="addHistoryRow()" class="w-full py-2 border-2 border-dashed border-blue-300 rounded-lg text-blue-600 hover:bg-blue-50 transition-colors text-sm font-medium">
-                                <i class="fas fa-plus mr-2"></i>添加历史认证记录
-                            </button>
                         </div>
                     </div>
 
@@ -1535,44 +1535,6 @@
                         </div>
                     </div>
 
-                    <!-- 食品加工企业专项 - 移到生产线和作息时间之间 -->
-                    <div id="foodSpecialSection" class="border-t border-slate-100 pt-4 hidden">
-                        <div class="sub-section-title" style="border-left-color: #10b981; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);">
-                            <i class="fas fa-utensils text-green-600"></i>
-                            食品加工企业专项
-                        </div>
-
-                        <!-- 包装形式 -->
-                        <div class="food-special-item">
-                            <label class="flex items-start gap-3 cursor-pointer">
-                                <input type="checkbox" id="hasSpecialPackaging" class="rounded text-green-600 mt-1 w-4 h-4" onchange="toggleField('packagingDescFields', this.checked)">
-                                <div class="flex-1">
-                                    <span class="text-sm font-medium text-slate-700 block mb-1">是否采用影响食品安全的包装形式，如玻璃、真空包装、气调包装等</span>
-                                    <span class="text-xs text-slate-500">可选，默认不选择</span>
-                                </div>
-                            </label>
-                            <div id="packagingDescFields" class="conditional-field">
-                                <label class="block text-xs font-medium text-slate-700 mb-1">说明情况</label>
-                                <textarea maxlength="200" rows="2" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white transition-all resize-none" placeholder="请说明采用的包装形式及相关情况（200字以内）"></textarea>
-                            </div>
-                        </div>
-
-                        <!-- 加工场所外仓库 -->
-                        <div class="food-special-item">
-                            <label class="flex items-start gap-3 cursor-pointer">
-                                <input type="checkbox" id="hasExternalWarehouse" class="rounded text-green-600 mt-1 w-4 h-4" onchange="toggleField('warehouseDescFields', this.checked)">
-                                <div class="flex-1">
-                                    <span class="text-sm font-medium text-slate-700 block mb-1">加工场所之外是否包括仓库或其他加工步骤</span>
-                                    <span class="text-xs text-slate-500">可选，默认不选择</span>
-                                </div>
-                            </label>
-                            <div id="warehouseDescFields" class="conditional-field">
-                                <label class="block text-xs font-medium text-slate-700 mb-1">说明情况</label>
-                                <textarea maxlength="200" rows="2" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white transition-all resize-none" placeholder="请说明仓库位置或其他加工步骤情况（200字以内）"></textarea>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- 作息时间 -->
                     <div class="border-t border-slate-100 pt-4">
                         <div class="sub-section-title">
@@ -1675,7 +1637,7 @@
                     </div>
                     <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 text-xs"></i>
                 </div>
-                <div class="p-6 space-y-6 transition-all duration-300" id="attachmentsContainer" style="max-height: 3000px; overflow: visible;">
+                <div class="p-6 space-y-6 transition-all duration-300" id="attachmentsContainer" style="max-height: none; overflow: visible;">
                     <!-- 通用认证材料 -->
                     <div class="border-b border-slate-100 pb-4" id="commonAttachmentsSection">
                         <h4 class="font-medium text-slate-900 mb-3 flex items-center gap-2 text-sm">
@@ -1741,6 +1703,21 @@
                         <div class="space-y-2" id="emsAttachmentsList"></div>
                     </div>
 
+                    <!-- EnMS材料 -->
+                    <div id="enmsAttachments" class="hidden border-b border-slate-100 pb-4">
+                        <h4 class="font-medium text-slate-900 mb-3 flex items-center gap-2 text-sm">
+                            <i class="fas fa-folder text-lime-500"></i>
+                            EnMS能源管理体系认证材料
+                        </h4>
+                        <div class="bg-lime-50 p-3 rounded-lg border border-lime-100 mb-3">
+                            <p class="text-xs text-lime-700">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                选择能源管理体系（EnMS）后需补充能源专项认证材料
+                            </p>
+                        </div>
+                        <div class="space-y-2" id="enmsAttachmentsList"></div>
+                    </div>
+
                     <!-- ISMS材料 -->
                     <div id="ismsAttachments" class="hidden border-b border-slate-100 pb-4">
                         <h4 class="font-medium text-slate-900 mb-3 flex items-center gap-2 text-sm">
@@ -1782,7 +1759,7 @@
                     </div>
                     <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 text-xs"></i>
                 </div>
-                <div class="p-6 space-y-4 transition-all duration-300" style="max-height: 1000px; overflow: visible;">
+                <div class="p-6 space-y-4 transition-all duration-300" style="max-height: none; overflow: visible;">
                     <div class="prose prose-sm text-slate-600 bg-slate-50 p-4 rounded-lg text-xs leading-relaxed border border-slate-200">
                         <p>如您需更进一步了解以下信息，请查阅中国质量认证中心网址 <a href="http://www.cqc.com.cn" target="_blank" class="text-blue-600 hover:underline font-medium">http://www.cqc.com.cn</a> 的公开文件目录或向我中心相关人员索取：CQC简介及联络信息、CQC认证领域和认证业务、认证制度的说明、CQC获取财务支持方式和认证收费标准、认证申请方和获证方的权利义务、申请方和获证组织向CQC申诉、投诉和争议的渠道、获证方的公告方式、获证方向认证机构通报其管理体系变更情况的渠道和要求、获证方未遵守法律法规要求的处理程序、IQNet及认证合作简介。</p>
                     </div>
@@ -2120,7 +2097,7 @@
                     '<strong>客户名称：</strong>必须从客户库中选择，支持按名称和统一社会信用代码搜索',
                     '<strong>注册地址：</strong>系统自动带入客户备案信息，需与营业执照保持一致',
                     '<strong>运营地址：</strong>如与注册地址不同，需分别填写，支持多场所情况',
-                    '<strong>联系人信息：</strong>选择客户后可从备案联系人中选择，也可手动填写新联系人',
+                    '<strong>联系人信息：</strong>联系人为手动录入，部门、职务、电话和邮箱按实际情况填写',
                     '<strong>关联合同：</strong>非必填项，选择后可自动带入合同约定的认证范围'
                 ],
                 tip: '首次认证的客户需先在客户管理模块完成备案，确保信息准确完整'
@@ -2174,7 +2151,7 @@
                     '<strong>产品质量标准：</strong>仅QMS、FSMS、HACCP体系显示，需提供产品执行标准清单',
                     '<strong>整合体系信息：</strong>仅多体系显示，需说明文件、要素、职责的整合情况',
                     '<strong>认证转换材料：</strong>仅认证转换类型显示，需原证书和最近审核报告',
-                    '<strong>专项材料：</strong>EMS需环评报告，FSMS需厂区平面图和HACCP计划'
+                    '<strong>专项材料：</strong>EMS需环评报告，EnMS需能源专项认证材料，FSMS需厂区平面图和HACCP计划'
                 ],
                 tip: '材料不齐全可能导致申请退回或延误审核进度，建议提前准备完整后一次性上传'
             },
@@ -2467,22 +2444,7 @@
 
         // 检查是否显示食品专项
         function checkFoodSpecialSection() {
-            const hasFSMS = selectedSystems.some(s => s.key === 'FSMS');
-            const hasHACCP = selectedSystems.some(s => s.key === 'HACCP');
-            const foodSection = document.getElementById('foodSpecialSection');
-
-            if (foodSection) {
-                if (hasFSMS || hasHACCP) {
-                    foodSection.classList.remove('hidden');
-                } else {
-                    foodSection.classList.add('hidden');
-                    // 清空选择状态
-                    document.getElementById('hasSpecialPackaging').checked = false;
-                    document.getElementById('hasExternalWarehouse').checked = false;
-                    toggleField('packagingDescFields', false);
-                    toggleField('warehouseDescFields', false);
-                }
-            }
+            // 食品加工专项已移入 FSMS 领域卡片，随领域卡片新增/删除自动显示或移除。
         }
 
         // 修改后的addSystem函数
@@ -2498,55 +2460,6 @@
                 return;
             }
             confirmBatchAdd();
-        }
-
-        function getCustomerContactOptions() {
-            if (!selectedCustomer || !selectedCustomer.contacts || selectedCustomer.contacts.length === 0) {
-                return '';
-            }
-            return selectedCustomer.contacts.map((contact, idx) => 
-                `<option value="${idx}">${contact.name}（${contact.position || '未填写职务'}）</option>`
-            ).join('');
-        }
-
-        function renderSystemContactFields(uniqueId) {
-            const contactOptions = getCustomerContactOptions();
-            const disabledAttr = contactOptions ? '' : 'disabled';
-            const placeholder = contactOptions ? '请选择领域联系人' : '请先选择客户';
-
-            return `
-                    <div class="border-t border-slate-200 pt-4">
-                        <div class="flex items-center justify-between mb-3">
-                            <label class="block text-xs font-medium text-slate-700 required">领域联系人</label>
-                            <span class="text-[10px] text-slate-500">用于当前认证领域，区别于场所联系人</span>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
-                            <div>
-                                <label class="block text-[10px] font-medium text-slate-500 mb-1 required">联系人</label>
-                                <select id="systemContact_${uniqueId}" class="system-contact-select w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" onchange="fillSystemContactInfo('${uniqueId}', this.value)" ${disabledAttr}>
-                                    <option value="">${placeholder}</option>
-                                    ${contactOptions}
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-medium text-slate-500 mb-1">所在部门</label>
-                                <input type="text" id="systemContactDept_${uniqueId}" class="system-contact-field w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-50 text-slate-700" readonly>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-medium text-slate-500 mb-1">职务</label>
-                                <input type="text" id="systemContactPosition_${uniqueId}" class="system-contact-field w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-50 text-slate-700" readonly>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-medium text-slate-500 mb-1">电话</label>
-                                <input type="tel" id="systemContactPhone_${uniqueId}" class="system-contact-field w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-50 text-slate-700" readonly>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-medium text-slate-500 mb-1">Email</label>
-                                <input type="email" id="systemContactEmail_${uniqueId}" class="system-contact-field w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-50 text-slate-700" readonly>
-                            </div>
-                        </div>
-                    </div>
-            `;
         }
 
         function getDefaultHeadquartersLocation() {
@@ -2586,6 +2499,7 @@
 
             const isOHSMS = systemKey === 'OHSMS';
             const isFood = ['FSMS', 'HACCP'].includes(systemKey);
+            const isFSMS = systemKey === 'FSMS';
             const isQMS = systemKey === 'QMS';
             const isISMS = systemKey === 'ISMS';
             const isITSMS = systemKey === 'ITSMS';
@@ -2684,7 +2598,7 @@
 
                     ${isEnMS ? renderEnergyComplexityFields(uniqueId) : ''}
 
-                    ${renderSystemContactFields(uniqueId)}
+                    ${isFSMS ? renderFoodSpecialFields(uniqueId) : ''}
 
                     ${isISMS ? `
                     <div class="domain-special-group isms">
@@ -2814,6 +2728,45 @@
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 mb-1">能耗限额标准、能效标准（适用时）</label>
                                 <textarea name="energyQuotaStandard_${uniqueId}" maxlength="500" rows="2" placeholder="请填写应执行的能耗限额标准、能效标准，无则可填无。" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 bg-white transition-all resize-none"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderFoodSpecialFields(uniqueId) {
+            return `
+                <div class="domain-special-group fsms">
+                    <h5 class="font-medium text-green-900 mb-3 text-xs flex items-center gap-2">
+                        <i class="fas fa-utensils"></i>食品加工企业专项
+                    </h5>
+                    <div class="space-y-3">
+                        <div class="food-special-item">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" id="hasSpecialPackaging_${uniqueId}" class="rounded text-green-600 mt-1 w-4 h-4" onchange="toggleField('packagingDescFields_${uniqueId}', this.checked)">
+                                <div class="flex-1">
+                                    <span class="text-sm font-medium text-slate-700 block mb-1">是否采用影响食品安全的包装形式，如玻璃、真空包装、气调包装等</span>
+                                    <span class="text-xs text-slate-500">可选，默认不选择</span>
+                                </div>
+                            </label>
+                            <div id="packagingDescFields_${uniqueId}" class="conditional-field">
+                                <label class="block text-xs font-medium text-slate-700 mb-1">说明情况</label>
+                                <textarea maxlength="200" rows="2" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white transition-all resize-none" placeholder="请说明采用的包装形式及相关情况（200字以内）"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="food-special-item">
+                            <label class="flex items-start gap-3 cursor-pointer">
+                                <input type="checkbox" id="hasExternalWarehouse_${uniqueId}" class="rounded text-green-600 mt-1 w-4 h-4" onchange="toggleField('warehouseDescFields_${uniqueId}', this.checked)">
+                                <div class="flex-1">
+                                    <span class="text-sm font-medium text-slate-700 block mb-1">加工场所之外是否包括仓库或其他加工步骤</span>
+                                    <span class="text-xs text-slate-500">可选，默认不选择</span>
+                                </div>
+                            </label>
+                            <div id="warehouseDescFields_${uniqueId}" class="conditional-field">
+                                <label class="block text-xs font-medium text-slate-700 mb-1">说明情况</label>
+                                <textarea maxlength="200" rows="2" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white transition-all resize-none" placeholder="请说明仓库位置或其他加工步骤情况（200字以内）"></textarea>
                             </div>
                         </div>
                     </div>
@@ -3068,6 +3021,7 @@
             const hasHACCP = selectedSystems.some(s => s.key === 'HACCP');
             const hasISMS = selectedSystems.some(s => s.key === 'ISMS');
             const hasITSMS = selectedSystems.some(s => s.key === 'ITSMS');
+            const hasEnMS = selectedSystems.some(s => s.key === 'EnMS');
             const showQualityStd = hasQMS || hasFSMS || hasHACCP;
 
             // 产品质量标准清单
@@ -3102,6 +3056,11 @@
                 } else {
                     emsSection.classList.add('hidden');
                 }
+            }
+
+            const enmsSection = document.getElementById('enmsAttachments');
+            if (enmsSection) {
+                enmsSection.classList.toggle('hidden', !hasEnMS);
             }
 
             const ismsSection = document.getElementById('ismsAttachments');
@@ -3209,15 +3168,14 @@
                 nameEn.title = customer.enName || '';
             }
 
-            // 填充联系人下拉
-            const contactSelect = document.getElementById('contactPerson');
-            contactSelect.innerHTML = '<option value="">请先在认证领域中选择联系人</option>';
+            // 联系人为手动录入，切换客户时清空上一客户的填写内容
+            const contactInput = document.getElementById('contactPerson');
+            if (contactInput) contactInput.value = '';
             ['dept', 'position', 'phone', 'email'].forEach(id => {
                 const input = document.getElementById(id);
                 if (input) input.value = '';
             });
             refreshSystemContactSelects();
-            updateApplicationContactOptions();
 
             // 启用合同选择按钮
             const contractBtn = document.getElementById('contractSelectBtn');
@@ -3292,41 +3250,11 @@
         }
 
         function refreshSystemContactSelects() {
-            const options = getCustomerContactOptions();
-            document.querySelectorAll('.system-contact-select').forEach(select => {
-                const uniqueId = select.id.replace('systemContact_', '');
-                select.disabled = !options;
-                select.innerHTML = `<option value="">${options ? '请选择领域联系人' : '请先选择客户'}</option>${options}`;
-                fillSystemContactInfo(uniqueId, '');
-            });
+            // 该区域联系人字段已取消，无需刷新下拉。
         }
 
         function updateApplicationContactOptions() {
-            const contactSelect = document.getElementById('contactPerson');
-            if (!contactSelect) return;
-
-            const currentValue = contactSelect.value;
-            const selectedDomainContacts = selectedSystems
-                .filter(system => system.domainContact && system.domainContact.name)
-                .map(system => ({ system, config: systemConfig[system.key] || {}, contact: system.domainContact }));
-
-            if (selectedDomainContacts.length === 0) {
-                contactSelect.innerHTML = '<option value="">请先在认证领域中选择联系人</option>';
-            } else {
-                contactSelect.innerHTML = '<option value="">请选择联系人</option>' + selectedDomainContacts.map(item => 
-                    `<option value="${item.system.id}">${item.config.name || item.system.key}：${item.contact.name}（${item.contact.position || '未填写职务'}）</option>`
-                ).join('');
-            }
-
-            if (selectedDomainContacts.some(item => item.system.id === currentValue)) {
-                contactSelect.value = currentValue;
-            } else {
-                contactSelect.value = '';
-                ['dept', 'position', 'phone', 'email'].forEach(id => {
-                    const input = document.getElementById(id);
-                    if (input) input.value = '';
-                });
-            }
+            // 联系信息中的联系人改为手动录入，不再由认证领域联动。
         }
 
         // 合同选择相关
@@ -3493,6 +3421,7 @@
 
             const isOHSMS = systemKey === 'OHSMS';
             const isFood = ['FSMS', 'HACCP'].includes(systemKey);
+            const isFSMS = systemKey === 'FSMS';
             const isISMS = systemKey === 'ISMS';
             const isEnMS = systemKey === 'EnMS';
 
@@ -3591,7 +3520,7 @@
 
                     ${isEnMS ? renderEnergyComplexityFields(uniqueId) : ''}
 
-                    ${renderSystemContactFields(uniqueId)}
+                    ${isFSMS ? renderFoodSpecialFields(uniqueId) : ''}
 
                     ${isISMS ? `
                     <div class="domain-special-group isms">
@@ -3925,15 +3854,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-700 mb-1 required">认证标准</label>
-                        <select class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all">
-                            <option value="Q">Q</option>
-                            <option value="E">E</option>
-                            <option value="OHS">OHS</option>
-                            <option value="IS">IS</option>
-                            <option value="ITS">ITS</option>
-                            <option value="F">F</option>
-                            <option value="H">H</option>
-                        </select>
+                        <input type="text" maxlength="100" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="请输入认证标准">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-700 mb-1 required">证书有效期</label>
@@ -4085,6 +4006,7 @@ function initAttachments() {
             const integrationContainer = document.getElementById('integrationAttachmentsList');
             const transferContainer = document.getElementById('transferAttachmentsList');
             const emsContainer = document.getElementById('emsAttachmentsList');
+            const enmsContainer = document.getElementById('enmsAttachmentsList');
             const ismsContainer = document.getElementById('ismsAttachmentsList');
             const itsmsContainer = document.getElementById('itsmsAttachmentsList');
             const fsmsContainer = document.getElementById('fsmsAttachmentsList');
@@ -4093,23 +4015,24 @@ function initAttachments() {
             window.uploadedFiles = window.uploadedFiles || {};
 
             const commonFiles = [
-                { name: '法律地位证明文件的复印件（营业执照等）', required: true },
+                { name: '法律地位证明文件的复印件，多场所组织应附每个场所的法律地位证明文件（包括将不同场所连接起来的法律和合同安排）的复印件', required: true },
                 { name: '相关资质文件的复印件（适用时）', required: false },
-                { name: '认证场所清单（适用于多场所的情况）', required: false },
                 { name: '组织机构图（对多场所组织，需注明中心职能）', required: false },
-                { name: '认证范围内的所有生产/服务流程说明', required: false }
+                { name: '认证范围内的所有生产/服务流程，对多场所组织，需注明各生产/服务流程适用于哪个场所', required: false },
+                { name: '管理体系过程信息（如：过程清单、过程图、IT工作流、乌龟图），多场所组织应提供所有场所的过程信息', required: false },
+                { name: '有效版本的管理体系文件，多场所组织的体系文件构成信息', required: false }
             ];
 
             const processFiles = [
-                { name: '管理体系过程信息(如：过程清单、过程图、IT工作流、乌龟图）', required: false }
+                { name: '管理体系过程信息（如：过程清单、过程图、IT工作流、乌龟图），多场所组织应提供所有场所的过程信息', required: false }
             ];
 
             const qualityFiles = [
-                { name: '产品或服务质量标准清单', required: false }
+                { name: '产品或服务质量标准清单（QMS、FSMS、HACCP、乳制品HACCP、乳制品GMP适用）', required: false }
             ];
 
             const integrationFiles = [
-                { name: '文件、管理体系要素和职责整合的信息', required: false }
+                { name: '文件、管理体系要素和职责整合的信息（适用于整合管理体系）', required: false }
             ];
 
             const transferFiles = [
@@ -4126,6 +4049,15 @@ function initAttachments() {
                 { name: '消防法规符合性证明文件（如：设计审查意见、验收意见等）（适用于OHSMS）', required: false },
                 { name: '需要应对的风险和机遇（OHSAS 18001认证无需提供）', required: false },
                 { name: '合规义务（适用法律法规及其他要求）清单', required: false }
+            ];
+
+            const enmsFiles = [
+                { name: '能源管理组织机构图', required: false },
+                { name: '适用的能源管理法律法规清单', required: false },
+                { name: '主要能源使用清单', required: false },
+                { name: '能源目标、指标、方案', required: false },
+                { name: '主要用能设备清单', required: false },
+                { name: '与当地政府主管部门签订的节能目标、节能量责任书（必要时）', required: false }
             ];
 
             const ismsFiles = [
@@ -4208,6 +4140,9 @@ function initAttachments() {
             }
             if (emsContainer) {
                 emsContainer.innerHTML = emsFiles.map((f, i) => renderFileCard(f, i, 'ems')).join('');
+            }
+            if (enmsContainer) {
+                enmsContainer.innerHTML = enmsFiles.map((f, i) => renderFileCard(f, i, 'enms')).join('');
             }
             if (ismsContainer) {
                 ismsContainer.innerHTML = ismsFiles.map((f, i) => renderFileCard(f, i, 'isms')).join('');
@@ -4517,7 +4452,7 @@ function initAttachments() {
             const isCollapsed = content.style.maxHeight === '0px';
 
             if (isCollapsed) {
-                content.style.maxHeight = '4000px';
+                content.style.maxHeight = 'none';
                 content.style.overflow = 'visible';
                 content.style.paddingTop = '';
                 content.style.paddingBottom = '';
@@ -4770,6 +4705,10 @@ function initAttachments() {
                             <div class="min-w-0">
                                 <p class="font-medium text-slate-900 text-sm truncate">${loc.name} <span class="text-[10px] ${typeClass} px-1.5 py-0.5 rounded">${typeLabel}</span> ${loc.center ? '<span class="text-[10px] bg-cyan-100 text-cyan-700 px-1.5 py-0.5 rounded">中心职能</span>' : ''}</p>
                                 <p class="text-xs text-slate-500 truncate">${loc.address}</p>
+                                <label class="inline-flex items-center gap-1 mt-1 text-[11px] text-slate-600" onclick="event.stopPropagation()">
+                                    <input type="checkbox" class="location-center-toggle rounded text-cyan-600" data-loc-id="${loc.id}" ${loc.center ? 'checked' : ''} ${alreadyAdded ? 'disabled' : ''}>
+                                    <span>设为中心职能</span>
+                                </label>
                             </div>
                         </div>
                         ${alreadyAdded ? '<span class="text-[11px] text-slate-400 ml-3 shrink-0">已添加</span>' : '<i class="fas fa-plus text-slate-300 ml-3 shrink-0"></i>'}
@@ -4789,13 +4728,15 @@ function initAttachments() {
             }
 
             checkedOptions.forEach(input => {
+                const centerInput = Array.from(modal.querySelectorAll('.location-center-toggle'))
+                    .find(item => item.dataset.locId === input.dataset.locId);
                 addLocationCard(
                     uniqueId,
                     input.dataset.locId,
                     input.dataset.locName,
                     input.dataset.locAddress,
                     input.dataset.locType,
-                    input.dataset.locCenter === 'true'
+                    centerInput ? centerInput.checked : input.dataset.locCenter === 'true'
                 );
             });
 
@@ -4944,6 +4885,7 @@ function initAttachments() {
             div.dataset.locName = name;
             div.dataset.locAddress = address;
             div.dataset.locType = type;
+            div.dataset.locCenter = isKeyLocation ? 'true' : 'false';
             div.className = 'location-card bg-white border border-slate-200 rounded-xl p-4 shadow-sm';
             const typeLabel = type === 'service' ? '服务点' : (type === 'temp' ? '临时场所' : '固定场所');
             const typeClass = type === 'service' ? 'bg-violet-100 text-violet-700' : (type === 'temp' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700');
@@ -4955,7 +4897,7 @@ function initAttachments() {
                             <i class="fas ${typeIcon}"></i>
                         </div>
                         <div>
-                            <p class="font-semibold text-slate-900 text-sm"><span class="location-name">${name}</span> <span class="text-xs ${typeClass} px-2 py-0.5 rounded ml-1">${typeLabel}</span> ${isKeyLocation ? '<span class="text-xs bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded ml-1">中心职能</span>' : ''}</p>
+                            <p class="font-semibold text-slate-900 text-sm"><span class="location-name">${name}</span> <span class="text-xs ${typeClass} px-2 py-0.5 rounded ml-1">${typeLabel}</span> <span class="location-center-badge text-xs bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded ml-1 ${isKeyLocation ? '' : 'hidden'}">中心职能</span></p>
                             <p class="location-address text-xs text-slate-500">${address}</p>
                         </div>
                     </div>
@@ -4970,13 +4912,20 @@ function initAttachments() {
                         <label class="block text-[10px] font-medium text-slate-500 mb-1 required">涉及的产品、过程、活动/工程项目进展情况</label>
                         <input type="text" placeholder="500字以内" maxlength="500" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
                     </div>
-                    <div class="col-span-4">
+                    <div class="col-span-3">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">班次时间</label>
                         <input type="text" placeholder="如：08:00-17:00" maxlength="500" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
                     </div>
-                    <div class="col-span-2">
+                    <div class="col-span-1">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">人数</label>
                         <input type="number" placeholder="0" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-[10px] font-medium text-slate-500 mb-1">中心职能</label>
+                        <select class="location-center-select w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white" onchange="toggleLocationCenter(this)" ${options.locked ? 'disabled' : ''}>
+                            <option value="no" ${isKeyLocation ? '' : 'selected'}>否</option>
+                            <option value="yes" ${isKeyLocation ? 'selected' : ''}>是</option>
+                        </select>
                     </div>
                     <div class="col-span-3">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">联系人</label>
@@ -5025,6 +4974,15 @@ function initAttachments() {
                 input.value = '';
                 select.classList.remove('max-w-[45%]');
             }
+        }
+
+        function toggleLocationCenter(select) {
+            const card = select.closest('.location-card');
+            if (!card) return;
+            const isCenter = select.value === 'yes';
+            card.dataset.locCenter = isCenter ? 'true' : 'false';
+            const badge = card.querySelector('.location-center-badge');
+            if (badge) badge.classList.toggle('hidden', !isCenter);
         }
 
         function removeLocationCard(cardId, uniqueId) {
