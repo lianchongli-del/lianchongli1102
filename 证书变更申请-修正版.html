@@ -179,117 +179,6 @@
             font-weight: 600;
         }
 
-        .inner-attachment-card {
-            background: #ffffff;
-            border: 2px solid #fecaca;
-            border-radius: 8px;
-            padding: 16px;
-            margin-top: 12px;
-            transition: all 0.2s ease;
-        }
-
-        .inner-attachment-card.has-files {
-            border-color: #10b981;
-            background: #f0fdf4;
-        }
-
-        .inner-attachment-card .attachment-main {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .inner-attachment-card .attachment-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            flex-shrink: 0;
-        }
-
-        .inner-attachment-card .attachment-icon.pdf-icon {
-            background: #fef2f2;
-            color: #dc2626;
-        }
-
-        .inner-attachment-card .attachment-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .inner-attachment-card .attachment-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 4px;
-        }
-
-        .inner-attachment-card .attachment-title .title-text {
-            font-size: 14px;
-            font-weight: 600;
-            color: #111827;
-        }
-
-        .inner-attachment-card .required-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 2px 8px;
-            background: #dc2626;
-            color: white;
-            font-size: 11px;
-            font-weight: 600;
-            border-radius: 4px;
-        }
-
-        .inner-attachment-card .attachment-meta {
-            font-size: 12px;
-            color: #6b7280;
-        }
-
-        .inner-attachment-card .upload-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            background: #ffffff;
-            border: 1px solid #dc2626;
-            border-radius: 6px;
-            color: #dc2626;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            flex-shrink: 0;
-        }
-
-        .inner-attachment-card .upload-btn:hover {
-            background: #fef2f2;
-            border-color: #b91c1c;
-            color: #b91c1c;
-        }
-
-        .inner-attachment-card .upload-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background: #f3f4f6;
-            border-color: #d1d5db;
-            color: #9ca3af;
-        }
-
-        .inner-attachment-card .attachment-files {
-            margin-top: 12px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .inner-attachment-card .attachment-files:empty {
-            display: none;
-        }
-
         .attachment-card {
             background: #ffffff;
             border: 1px solid #e5e7eb;
@@ -370,17 +259,6 @@
             border: 1px solid #fecaca;
         }
 
-        .optional-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 2px 8px;
-            background: #f3f4f6;
-            color: #6b7280;
-            font-size: 11px;
-            font-weight: 500;
-            border-radius: 4px;
-        }
-
         .change-no {
             color: #0369a1;
             font-weight: 700;
@@ -395,12 +273,6 @@
             padding: 10px 12px;
             font-size: 12px;
             margin-bottom: 16px;
-        }
-
-        .attachment-card.required-active .optional-badge {
-            background: #fef2f2;
-            color: #dc2626;
-            border: 1px solid #fecaca;
         }
 
         .attachment-card.domain-hidden {
@@ -941,7 +813,7 @@
                         </div>
                     </div>
 
-                    <!-- 2. 认证标准变更 - 包含管理体系文件上传 -->
+                    <!-- 2. 认证标准变更 -->
                     <div class="change-item-card">
                         <label class="flex items-center gap-3 cursor-pointer mb-2">
                             <input type="checkbox" class="change-item-check rounded text-blue-600 w-4 h-4" data-target="change-standard" onchange="toggleChangeItem(this)">
@@ -957,30 +829,6 @@
                                 <input type="text" maxlength="100" placeholder="请输入新标准">
                             </div>
 
-                            <!-- 有效版本的管理体系文件上传（认证标准变更时必须） -->
-                            <div class="inner-attachment-card" id="card_management_system">
-                                <div class="attachment-main">
-                                    <div class="attachment-icon pdf-icon">
-                                        <i class="fas fa-file-pdf"></i>
-                                    </div>
-                                    <div class="attachment-info">
-                                        <div class="attachment-title">
-                                            <span class="title-text">有效版本的管理体系文件</span>
-                                            <span class="optional-badge">按需上传</span>
-                                        </div>
-                                        <div class="attachment-meta">
-                                            <span class="file-count" id="meta_management_system">0 个文件</span>
-                                            <span class="text-slate-400 ml-2">请上传最新版质量手册、程序文件等</span>
-                                        </div>
-                                    </div>
-                                    <button class="upload-btn" onclick="document.getElementById('file_management_system').click()" id="btn_management_system">
-                                        <i class="fas fa-cloud-upload-alt"></i>
-                                        <span>上传</span>
-                                    </button>
-                                </div>
-                                <div class="attachment-files" id="files_management_system"></div>
-                                <input type="file" id="file_management_system" multiple class="hidden" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleChangeItemFileUpload(this, 'management_system')">
-                            </div>
                         </div>
                     </div>
 
@@ -991,54 +839,60 @@
                             <span class="text-sm font-medium text-slate-700">地址变更（请附相关机构的证明文件）</span>
                         </label>
                         <div id="change-address" class="conditional-field space-y-3 pl-7">
-                            <div class="flex gap-6 mb-2 p-3 bg-blue-50 rounded-lg border border-blue-100">
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="addressChangeType" value="move" class="text-blue-600" onchange="updateAttachmentRequirementState()">
-                                    <span class="text-sm font-medium text-slate-700">组织搬迁<span class="change-no">⑤</span></span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="addressChangeType" value="rename" class="text-blue-600" onchange="updateAttachmentRequirementState()">
-                                    <span class="text-sm font-medium text-slate-700">地址名称变更<span class="change-no">⑥</span></span>
-                                </label>
-                            </div>
-                            
-                            <div class="ref-info-box">
-                                <div class="ref-label"><i class="fas fa-map-marker-alt mr-1"></i>原注册地址（参考）</div>
-                                <div class="ref-content" id="ref-regaddr">中国江苏省昆山综合保税区第三大道77号</div>
-                            </div>
-                            <div class="ref-info-box">
-                                <div class="ref-label"><i class="fas fa-building mr-1"></i>原运营地址（参考）</div>
-                                <div class="ref-content" id="ref-opaddr">中国江苏省昆山综合保税区第三大道77号</div>
-                            </div>
-
-                            <div class="form-field">
-                                <label class="text-xs font-medium text-slate-700 mb-1 block required">拟变为</label>
-                                <input type="text" maxlength="200" placeholder="请输入新地址">
-                            </div>
-
-                            <!-- 地址变更证明文件上传 -->
-                            <div class="inner-attachment-card" id="card_address_proof">
-                                <div class="attachment-main">
-                                    <div class="attachment-icon pdf-icon">
-                                        <i class="fas fa-file-alt"></i>
-                                    </div>
-                                    <div class="attachment-info">
-                                        <div class="attachment-title">
-                                            <span class="title-text">地址变更证明文件</span>
-                                            <span class="optional-badge">按需上传</span>
+                            <div class="space-y-4">
+                                <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-3">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox" id="regAddressChangeCheck" class="rounded text-blue-600 w-4 h-4" onchange="toggleAddressSection('reg', this.checked)">
+                                        <span class="text-sm font-semibold text-slate-700">注册地址变更</span>
+                                    </label>
+                                    <div id="regAddressChangeSection" class="sub-conditional-field hidden space-y-3 pt-3 border-t border-slate-200">
+                                        <div class="ref-info-box">
+                                            <div class="ref-label"><i class="fas fa-map-marker-alt mr-1"></i>原注册地址（参考）</div>
+                                            <div class="ref-content" id="ref-regaddr">中国江苏省昆山综合保税区第三大道77号</div>
                                         </div>
-                                        <div class="attachment-meta">
-                                            <span class="file-count" id="meta_address_proof">0 个文件</span>
-                                            <span class="text-slate-400 ml-2">请上传工商部门出具的变更证明等</span>
+                                        <div class="flex gap-6 flex-wrap">
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="radio" name="regAddressChangeType" value="move" class="text-blue-600" onchange="updateAttachmentRequirementState()">
+                                                <span class="text-sm font-medium text-slate-700">组织搬迁<span class="change-no">⑤</span></span>
+                                            </label>
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="radio" name="regAddressChangeType" value="rename" class="text-blue-600" onchange="updateAttachmentRequirementState()">
+                                                <span class="text-sm font-medium text-slate-700">地址名称变更<span class="change-no">⑥</span></span>
+                                            </label>
+                                        </div>
+                                        <div class="form-field">
+                                            <label class="text-xs font-medium text-slate-700 mb-1 block">注册地址拟变为</label>
+                                            <input type="text" id="newRegAddress" maxlength="200" placeholder="请输入新的注册地址">
                                         </div>
                                     </div>
-                                    <button class="upload-btn" onclick="document.getElementById('file_address_proof').click()" id="btn_address_proof">
-                                        <i class="fas fa-cloud-upload-alt"></i>
-                                        <span>上传</span>
-                                    </button>
                                 </div>
-                                <div class="attachment-files" id="files_address_proof"></div>
-                                <input type="file" id="file_address_proof" multiple class="hidden" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleChangeItemFileUpload(this, 'address_proof')">
+
+                                <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-3">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox" id="opAddressChangeCheck" class="rounded text-blue-600 w-4 h-4" onchange="toggleAddressSection('op', this.checked)">
+                                        <span class="text-sm font-semibold text-slate-700">运营地址变更</span>
+                                    </label>
+                                    <div id="opAddressChangeSection" class="sub-conditional-field hidden space-y-3 pt-3 border-t border-slate-200">
+                                        <div class="ref-info-box">
+                                            <div class="ref-label"><i class="fas fa-building mr-1"></i>原运营地址（参考）</div>
+                                            <div class="ref-content" id="ref-opaddr">中国江苏省昆山综合保税区第三大道77号</div>
+                                        </div>
+                                        <div class="flex gap-6 flex-wrap">
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="radio" name="opAddressChangeType" value="move" class="text-blue-600" onchange="updateAttachmentRequirementState()">
+                                                <span class="text-sm font-medium text-slate-700">组织搬迁<span class="change-no">⑤</span></span>
+                                            </label>
+                                            <label class="flex items-center gap-2 cursor-pointer">
+                                                <input type="radio" name="opAddressChangeType" value="rename" class="text-blue-600" onchange="updateAttachmentRequirementState()">
+                                                <span class="text-sm font-medium text-slate-700">地址名称变更<span class="change-no">⑥</span></span>
+                                            </label>
+                                        </div>
+                                        <div class="form-field">
+                                            <label class="text-xs font-medium text-slate-700 mb-1 block">运营地址拟变为</label>
+                                            <input type="text" id="newOpAddress" maxlength="200" placeholder="请输入新的运营地址">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1086,30 +940,6 @@
                                 </div>
                             </div>
 
-                            <!-- 营业执照（副本）复印件或机构成立批文复印件（组织名称变更时必须） -->
-                            <div class="inner-attachment-card" id="card_business_license">
-                                <div class="attachment-main">
-                                    <div class="attachment-icon pdf-icon">
-                                        <i class="fas fa-file-contract"></i>
-                                    </div>
-                                    <div class="attachment-info">
-                                        <div class="attachment-title">
-                                            <span class="title-text">营业执照（副本）复印件或机构成立批文复印件</span>
-                                            <span class="required-badge">变更此项必须上传</span>
-                                        </div>
-                                        <div class="attachment-meta">
-                                            <span class="file-count" id="meta_business_license">0 个文件</span>
-                                            <span class="text-slate-400 ml-2">请上传最新的营业执照副本或批文</span>
-                                        </div>
-                                    </div>
-                                    <button class="upload-btn" onclick="document.getElementById('file_business_license').click()" id="btn_business_license">
-                                        <i class="fas fa-cloud-upload-alt"></i>
-                                        <span>上传</span>
-                                    </button>
-                                </div>
-                                <div class="attachment-files" id="files_business_license"></div>
-                                <input type="file" id="file_business_license" multiple class="hidden" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleChangeItemFileUpload(this, 'business_license')">
-                            </div>
                         </div>
                     </div>
 
@@ -1287,9 +1117,12 @@
 
             <div class="p-6">
                 <div id="attachmentRequirementNote" class="attachment-requirement-note">
-                    勾选变更原因①、④、⑤、⑨、⑩时，以下附件清单均需上传；未勾选这些编号时，附件清单为按实际变化选填。
+                    以下附件清单按实际变化选填；系统会根据当前认证领域显示适用的附件类型。
                 </div>
-                <p class="text-xs text-slate-500 mb-2">如下列文件发生变化，请提供（每个类型可上传多个文件）：</p>
+                <p class="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-2">
+                    <i class="fas fa-circle-info text-blue-500"></i>
+                    <span>如下列文件发生变化，请提供（每个类型可上传多个文件）：</span>
+                </p>
                 <div id="domainFilterNote" class="domain-filter-note"></div>
 
                 <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
@@ -1302,7 +1135,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">1. 有效版本的管理体系文件：如方针、目标、体系范围等（QES）</span>
-                                    <span class="optional-badge" data-attachment-badge="management_system_list">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_management_system_list">0 个文件</span>
@@ -1326,7 +1158,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">2. 过程清单（QES）</span>
-                                    <span class="optional-badge" data-attachment-badge="process_list">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_process_list">0 个文件</span>
@@ -1350,7 +1181,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">3. 重要环境因素清单（E）、主要危险源和OHS风险（S）</span>
-                                    <span class="optional-badge" data-attachment-badge="env_risk_list">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_env_risk_list">0 个文件</span>
@@ -1374,7 +1204,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">4. 需要应对的风险和机遇（E/S）</span>
-                                    <span class="optional-badge" data-attachment-badge="risk_opportunity">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_risk_opportunity">0 个文件</span>
@@ -1398,7 +1227,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">5. 重要环境因素/风险的确定准则（ES）</span>
-                                    <span class="optional-badge" data-attachment-badge="criteria">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_criteria">0 个文件</span>
@@ -1422,7 +1250,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">6. 合规义务文件化信息：如客户适用的法律法规及其他要求清单</span>
-                                    <span class="optional-badge" data-attachment-badge="compliance_obligation">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_compliance_obligation">0 个文件</span>
@@ -1446,7 +1273,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">7. 营业执照（副本）复印件或机构成立批文复印件</span>
-                                    <span class="optional-badge" data-attachment-badge="business_license_list">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_business_license_list">0 个文件</span>
@@ -1470,7 +1296,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">8. 相关资质文件复印件（法律法规有要求时）</span>
-                                    <span class="optional-badge" data-attachment-badge="qualification">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_qualification">0 个文件</span>
@@ -1494,7 +1319,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">9. 地理位置示意图和厂区平面布置图（除Q以外）</span>
-                                    <span class="optional-badge" data-attachment-badge="location_map">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_location_map">0 个文件</span>
@@ -1518,7 +1342,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">10. 生产工艺流程图</span>
-                                    <span class="optional-badge" data-attachment-badge="process_flow">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_process_flow">0 个文件</span>
@@ -1542,7 +1365,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">11. 组织机构图</span>
-                                    <span class="optional-badge" data-attachment-badge="org_chart">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_org_chart">0 个文件</span>
@@ -1566,7 +1388,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">12. 认证场所清单（仅适用于固定多场所组织及建筑类组织）</span>
-                                    <span class="optional-badge" data-attachment-badge="site_list">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_site_list">0 个文件</span>
@@ -1590,7 +1411,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">13. 环境批复/安全批复/职业病危害预评价批复复印件（适用时）（E/S）</span>
-                                    <span class="optional-badge" data-attachment-badge="env_safety_approval">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_env_safety_approval">0 个文件</span>
@@ -1614,7 +1434,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">14. “三同时”验收报告（环境、安全及职业健康）复印件（适用时）（E/S）</span>
-                                    <span class="optional-badge" data-attachment-badge="acceptance_report">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_acceptance_report">0 个文件</span>
@@ -1638,7 +1457,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">15. 消防法规符合性证明文件（适用时）（S）</span>
-                                    <span class="optional-badge" data-attachment-badge="fire_compliance">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_fire_compliance">0 个文件</span>
@@ -1662,7 +1480,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">16. 食品添加剂使用清单（CQC提供）（Q食品生产企业F/H/DH）</span>
-                                    <span class="optional-badge" data-attachment-badge="food_additive_list">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_food_additive_list">0 个文件</span>
@@ -1686,7 +1503,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">17. 食品安全管理体系/HACCP体系文件（F/H）</span>
-                                    <span class="optional-badge" data-attachment-badge="fsms_haccp_docs">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_fsms_haccp_docs">0 个文件</span>
@@ -1710,7 +1526,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">18. 产品执行的企业标准（适用时F/H/DG）</span>
-                                    <span class="optional-badge" data-attachment-badge="enterprise_standard">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_enterprise_standard">0 个文件</span>
@@ -1734,7 +1549,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">19. ISMS范围和边界的描述（IS）</span>
-                                    <span class="optional-badge" data-attachment-badge="isms_scope">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_isms_scope">0 个文件</span>
@@ -1758,7 +1572,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">20. 风险评估报告（IS）</span>
-                                    <span class="optional-badge" data-attachment-badge="risk_assessment_report">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_risk_assessment_report">0 个文件</span>
@@ -1782,7 +1595,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">21. 风险处置计划（IS）</span>
-                                    <span class="optional-badge" data-attachment-badge="risk_treatment_plan">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_risk_treatment_plan">0 个文件</span>
@@ -1806,7 +1618,6 @@
                             <div class="attachment-info">
                                 <div class="attachment-title">
                                     <span class="title-text">22. 适用性声明（IS）</span>
-                                    <span class="optional-badge" data-attachment-badge="applicability_statement">选填</span>
                                 </div>
                                 <div class="attachment-meta">
                                     <span class="file-count" id="meta_applicability_statement">0 个文件</span>
@@ -1854,12 +1665,6 @@
         };
         
         // 文件存储对象
-        const changeItemFiles = {
-            management_system: [],
-            address_proof: [],
-            business_license: []
-        };
-        
         const attachmentFiles = {
             management_system_list: [],
             process_list: [],
@@ -2190,7 +1995,44 @@
                     document.getElementById('orgNameZhSection').classList.add('hidden');
                     document.getElementById('orgNameEnSection').classList.add('hidden');
                 }
+                if (targetId === 'change-address') {
+                    document.getElementById('regAddressChangeCheck').checked = false;
+                    document.getElementById('opAddressChangeCheck').checked = false;
+                    toggleAddressSection('reg', false);
+                    toggleAddressSection('op', false);
+                }
             }
+            updateAttachmentRequirementState();
+        }
+
+        function toggleAddressSection(type, isChecked) {
+            const config = {
+                reg: {
+                    sectionId: 'regAddressChangeSection',
+                    radioName: 'regAddressChangeType',
+                    inputId: 'newRegAddress'
+                },
+                op: {
+                    sectionId: 'opAddressChangeSection',
+                    radioName: 'opAddressChangeType',
+                    inputId: 'newOpAddress'
+                }
+            }[type];
+            if (!config) return;
+
+            const section = document.getElementById(config.sectionId);
+            if (section) {
+                section.classList.toggle('hidden', !isChecked);
+            }
+
+            if (!isChecked) {
+                document.querySelectorAll(`input[name="${config.radioName}"]`).forEach(radio => {
+                    radio.checked = false;
+                });
+                const input = document.getElementById(config.inputId);
+                if (input) input.value = '';
+            }
+
             updateAttachmentRequirementState();
         }
 
@@ -2245,26 +2087,10 @@
                 .filter(fileType => isAttachmentApplicable(fileType));
         }
 
-        // 附件清单是否必传：①、④、⑤、⑨、⑩
-        function shouldRequireAllAttachments() {
-            const productExpand = document.querySelector('[data-target="change-product"]')?.checked
-                && document.querySelector('input[name="productChangeType"][value="expand"]')?.checked;
-            const standard = document.querySelector('[data-target="change-standard"]')?.checked;
-            const addressMove = document.querySelector('[data-target="change-address"]')?.checked
-                && document.querySelector('input[name="addressChangeType"][value="move"]')?.checked;
-            const removeLocation = document.querySelector('[data-target="change-location"]')?.checked
-                && document.getElementById('removeLocationCheck')?.checked;
-            const staff = document.querySelector('[data-target="change-staff"]')?.checked;
-            return Boolean(productExpand || standard || addressMove || removeLocation || staff);
-        }
-
         function updateAttachmentRequirementState() {
-            const required = shouldRequireAllAttachments();
             const note = document.getElementById('attachmentRequirementNote');
             if (note) {
-                note.textContent = required
-                    ? '已触发附件必传：当前选择包含①、④、⑤、⑨、⑩中的项目，以下附件清单均需上传。'
-                    : '勾选变更原因①、④、⑤、⑨、⑩时，以下附件清单均需上传；未勾选这些编号时，附件清单为按实际变化选填。';
+                note.textContent = '以下附件清单按实际变化选填；系统会根据当前认证领域显示适用的附件类型。';
             }
 
             const currentField = getCurrentCertificationField();
@@ -2272,63 +2098,28 @@
             const applicableKeys = getApplicableAttachmentKeys();
             const domainNote = document.getElementById('domainFilterNote');
             if (domainNote) {
-                domainNote.innerHTML = `当前认证领域：<strong>${fieldName}</strong>，可上传附件 ${applicableKeys.length} 类；无领域标识的通用附件在所有领域均可上传，带领域标识的附件仅在对应领域显示。`;
+                domainNote.innerHTML = `当前认证领域：<strong>${fieldName}</strong>，可上传附件 ${applicableKeys.length} 类`;
             }
 
             Object.keys(attachmentDomainRules).forEach(fileType => {
                 const applicable = isAttachmentApplicable(fileType);
                 const card = document.getElementById(`card_${fileType}`);
-                const badge = document.querySelector(`[data-attachment-badge="${fileType}"]`);
                 const button = document.getElementById(`btn_${fileType}`);
                 const input = document.getElementById(`file_${fileType}`);
                 if (card) {
                     card.classList.toggle('domain-hidden', !applicable);
-                    card.classList.toggle('required-active', required && applicable);
                 }
-                if (badge) badge.textContent = required && applicable ? '必填' : '选填';
                 if (button) button.disabled = !applicable;
                 if (input) input.disabled = !applicable;
             });
         }
 
         function getMissingRequiredAttachments() {
-            if (!shouldRequireAllAttachments()) return [];
-            const typeNames = {
-                'management_system_list': '有效版本的管理体系文件：如方针、目标、体系范围等（QES）',
-                'process_list': '过程清单（QES）',
-                'env_risk_list': '重要环境因素清单（E）、主要危险源和OHS风险（S）',
-                'risk_opportunity': '需要应对的风险和机遇（E/S）',
-                'criteria': '重要环境因素/风险的确定准则（ES）',
-                'compliance_obligation': '合规义务文件化信息：如客户适用的法律法规及其他要求清单',
-                'business_license_list': '营业执照（副本）复印件或机构成立批文复印件',
-                'qualification': '相关资质文件复印件（法律法规有要求时）',
-                'location_map': '地理位置示意图和厂区平面布置图（除Q以外）',
-                'process_flow': '生产工艺流程图',
-                'org_chart': '组织机构图',
-                'site_list': '认证场所清单（仅适用于固定多场所组织及建筑类组织）',
-                'env_safety_approval': '环境批复/安全批复/职业病危害预评价批复复印件（适用时）（E/S）',
-                'acceptance_report': '“三同时”验收报告（环境、安全及职业健康）复印件（适用时）（E/S）',
-                'fire_compliance': '消防法规符合性证明文件（适用时）（S）',
-                'food_additive_list': '食品添加剂使用清单（CQC提供）（Q食品生产企业F/H/DH）',
-                'fsms_haccp_docs': '食品安全管理体系/HACCP体系文件（F/H）',
-                'enterprise_standard': '产品执行的企业标准（适用时F/H/DG）',
-                'isms_scope': 'ISMS范围和边界的描述（IS）',
-                'risk_assessment_report': '风险评估报告（IS）',
-                'risk_treatment_plan': '风险处置计划（IS）',
-                'applicability_statement': '适用性声明（IS）'
-            };
-            return getApplicableAttachmentKeys()
-                .filter(fileType => (attachmentFiles[fileType] || []).length === 0)
-                .map(fileType => typeNames[fileType]);
+            return [];
         }
 
         function getMissingChangeItemAttachments() {
-            const checks = [
-                { checkbox: document.querySelector('[data-target="change-orgname"]'), fileType: 'business_license', name: '组织名称变更' }
-            ];
-            return checks
-                .filter(check => check.checkbox && check.checkbox.checked && changeItemFiles[check.fileType].length === 0)
-                .map(check => check.name);
+            return [];
         }
 
         // 切换人员数量变化
@@ -2366,62 +2157,10 @@
             if (e.target.name === 'removeLocation') {
                 updateRemoveLocationSelection();
             }
-            if (['productChangeType', 'addressChangeType'].includes(e.target.name)) {
+            if (['productChangeType', 'regAddressChangeType', 'opAddressChangeType'].includes(e.target.name)) {
                 updateAttachmentRequirementState();
             }
         });
-
-        // 处理变更项内的文件上传
-        function handleChangeItemFileUpload(input, fileType) {
-            const files = Array.from(input.files);
-            if (files.length === 0) return;
-
-            changeItemFiles[fileType] = changeItemFiles[fileType].concat(files);
-            updateChangeItemFileUI(fileType);
-
-            const typeNames = {
-                'management_system': '有效版本的管理体系文件',
-                'business_license': '营业执照（副本）复印件或机构成立批文复印件',
-                'address_proof': '地址变更证明文件'
-            };
-            
-            showToast(`已添加 ${files.length} 个文件到「${typeNames[fileType]}」`);
-        }
-
-        // 更新变更项内文件UI
-        function updateChangeItemFileUI(fileType) {
-            const filesContainer = document.getElementById(`files_${fileType}`);
-            const countSpan = document.getElementById(`meta_${fileType}`);
-            const card = document.getElementById(`card_${fileType}`);
-            const files = changeItemFiles[fileType];
-
-            if (files.length > 0) {
-                countSpan.textContent = `${files.length} 个文件`;
-                countSpan.classList.add('has-files');
-                if (card) card.classList.add('has-files');
-            } else {
-                countSpan.textContent = '0 个文件';
-                countSpan.classList.remove('has-files');
-                if (card) card.classList.remove('has-files');
-            }
-
-            filesContainer.innerHTML = files.map((file, index) => `
-                <div class="file-tag">
-                    <span class="file-tag-name" title="${file.name}">${file.name}</span>
-                    <span class="file-tag-size">${formatFileSize(file.size)}</span>
-                    <span class="file-tag-remove" onclick="removeChangeItemFile('${fileType}', ${index})" title="删除">
-                        <i class="fas fa-times"></i>
-                    </span>
-                </div>
-            `).join('');
-        }
-
-        // 删除变更项内文件
-        function removeChangeItemFile(fileType, index) {
-            changeItemFiles[fileType].splice(index, 1);
-            updateChangeItemFileUI(fileType);
-            showToast('已删除文件');
-        }
 
         // 处理附件清单文件上传
         function handleAttachmentFileUpload(input, fileType) {
@@ -2502,14 +2241,7 @@
                 return;
             }
             
-            const missingAttachments = getMissingRequiredAttachments();
-            const missingChangeItems = getMissingChangeItemAttachments();
-            
-            if (missingAttachments.length > 0 || missingChangeItems.length > 0) {
-                showToast('存在未上传的必填附件，请补充完整后保存', 'warning');
-            } else {
-                showToast('草稿已保存');
-            }
+            showToast('草稿已保存');
         }
 
         // 提交表单
@@ -2519,15 +2251,7 @@
                 return;
             }
             
-            const missingAttachments = getMissingRequiredAttachments();
-            const missingChangeItems = getMissingChangeItemAttachments();
-            const missingFiles = missingChangeItems.concat(missingAttachments);
-            
-            if (missingFiles.length > 0) {
-                showToast(`提交失败：仍有 ${missingFiles.length} 类必填附件未上传`, 'error');
-            } else {
-                showToast('申请已提交成功！');
-            }
+            showToast('申请已提交成功！');
         }
 
         // 切换场所变更区域显示（支持同时显示新增和减少）
