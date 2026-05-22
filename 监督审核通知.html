@@ -620,13 +620,13 @@
             <nav class="flex space-x-1 px-6 overflow-x-auto" aria-label="Tabs">
                 <button onclick="switchTab('survey')" id="tab-survey" class="tab-active py-4 px-4 inline-flex items-center text-sm font-medium whitespace-nowrap transition-colors hover:text-blue-600">
                     <i class="fas fa-clipboard-list mr-2"></i>
-                    获证方情况调查表
-                    <span id="surveyBadge" class="ml-2 px-2 py-0.5 bg-red-500 text-white text-xs rounded-full">待填写</span>
+                    获证方情况调查和变更申请表
+                    <span id="surveyBadge" class="ml-2 px-2 py-0.5 bg-red-500 text-white text-xs rounded-full" style="display:none">待填写</span>
                 </button>
                 <button onclick="switchTab('notice')" id="tab-notice" class="text-slate-500 hover:text-slate-700 py-4 px-4 inline-flex items-center text-sm font-medium whitespace-nowrap transition-colors border-b-2 border-transparent hover:border-slate-300">
                     <i class="fas fa-bell mr-2"></i>
                     监督审核通知
-                    <span class="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">已发送</span>
+                    <span class="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full" style="display:none">已发送</span>
                 </button>
             </nav>
         </div>
@@ -636,7 +636,7 @@
 
             <!-- 1. 获证方情况调查表（按 MSF11-23 文档转换） -->
             <div id="content-survey" class="tab-content">
-                <div class="flex justify-between items-start mb-6">
+                <div class="hidden flex justify-between items-start mb-6">
                     <div>
                         <h3 class="text-lg font-semibold text-slate-900">获证方情况调查和变更申请表</h3>
                         <p class="text-sm text-slate-500 mt-1">请确认自上次审核以来是否发生变化；勾选“有变化”后填写变更信息并上传相关证据。</p>
@@ -771,7 +771,7 @@
 
             <!-- 2. 监督审核通知（仿公文样式） -->
             <div id="content-notice" class="tab-content hidden">
-                <div class="flex justify-between items-start mb-6">
+                <div class="hidden flex justify-between items-start mb-6">
                     <div>
                         <h3 class="text-lg font-semibold text-slate-900">监督审核通知</h3>
                         <p class="text-sm text-slate-500">依据MSF11-22标准生成的正式通知文书</p>
