@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -400,6 +401,21 @@
         .status-valid { background: #dbeafe; color: #1e40af; }
         .status-invalid { background: #fee2e2; color: #991b1b; }
         .status-warning { background: #fef3c7; color: #92400e; }
+        .file-action-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 500; transition: all 0.2s; }
+        .file-action-btn.preview { color: #2563eb; background: #eff6ff; border: 1px solid #bfdbfe; }
+        .file-action-btn.preview:hover { background: #dbeafe; }
+        .file-action-btn.download { color: #047857; background: #ecfdf5; border: 1px solid #a7f3d0; }
+        .file-action-btn.download:hover { background: #d1fae5; }
+        .person-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid transparent; }
+        .person-tag.fulltime { background: #dbeafe; color: #1d4ed8; border-color: #bfdbfe; }
+        .person-tag.parttime { background: #f3e8ff; color: #7e22ce; border-color: #e9d5ff; }
+        .person-tag.days { background: #fff7ed; color: #c2410c; border-color: #fed7aa; }
+        .person-card { border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; transition: all .2s; cursor: pointer; background: #fff; }
+        .person-card:hover { border-color: #93c5fd; background: #eff6ff; }
+        .person-card.selected { border-color: #2563eb; background: #eff6ff; box-shadow: 0 0 0 2px rgba(37,99,235,.12); }
+        .side-modal { position: fixed; inset: 0; z-index: 90; background: rgba(15,23,42,.55); display: flex; justify-content: flex-end; }
+        .side-modal.hidden { display: none; }
+        .side-panel { width: min(860px, 100vw); background: #fff; height: 100vh; display: flex; flex-direction: column; box-shadow: -16px 0 36px rgba(15,23,42,.22); }
         
         @media (max-width: 1024px) { 
             .sidebar { display: none; } 
@@ -451,7 +467,7 @@
                 <nav class="py-2">
                     <a href="#section-basic" class="nav-item active block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent hover:bg-slate-50" onclick="switchTab('basic')">
                         <div class="flex items-center justify-between">
-                            <span class="flex items-center gap-2"><i class="fas fa-building w-5 text-center"></i>客户基本信息</span>
+                            <span class="flex items-center gap-2"><i class="fas fa-file-alt w-5 text-center"></i>认证申请信息</span>
                         </div>
                     </a>
                     <a href="#section-current-cert" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent hover:bg-slate-50" onclick="switchTab('current-cert')">
@@ -464,7 +480,7 @@
                             <span class="flex items-center gap-2"><i class="fas fa-file-alt w-5 text-center"></i>文件评审</span>
                         </div>
                     </a>
-                    <a href="#section-site-visit" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent hover:bg-slate-50" onclick="switchTab('site-visit')">
+                    <a href="#section-site-visit" class="nav-item hidden px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent hover:bg-slate-50" onclick="switchTab('site-visit')">
                         <div class="flex items-center justify-between">
                             <span class="flex items-center gap-2"><i class="fas fa-walking w-5 text-center"></i>现场访问</span>
                             <span class="text-xs bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">适用时</span>
@@ -491,7 +507,7 @@
             <div class="bg-blue-50 rounded-xl border border-blue-200 p-4 flex flex-wrap gap-4 items-center justify-between">
                 <div class="flex gap-6 text-sm">
                     <div><span class="text-slate-500">转换评审编号：</span><span class="font-mono font-semibold text-slate-900" id="reviewNo">ZH202603250001</span></div>
-                    <div><span class="text-slate-500">认证领域：</span><span class="font-semibold text-slate-900">QMS</span></div>
+                    <div><span class="text-slate-500">认证领域：</span><span class="font-semibold text-slate-900">OHSMS</span></div>
                     <div><span class="text-slate-500">原证书数量：</span><span class="font-semibold text-slate-900">3份</span></div>
                     <div><span class="text-slate-500">客户名称：</span><span class="font-semibold text-slate-900">示例制造有限公司</span></div>
                     <div><span class="text-slate-500">原认证机构：</span><span class="font-semibold text-slate-900">XX认证中心有限公司</span></div>
@@ -499,30 +515,77 @@
                 <div class="flex items-center gap-2 text-xs text-slate-500"><i class="fas fa-clock"></i><span>申请日期：2026-03-25</span></div>
             </div>
 
-            <!-- 1. 客户基本信息 -->
+            <!-- 1. 认证申请信息 -->
             <div id="section-basic" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-                    <div class="flex items-center gap-2"><i class="fas fa-building text-blue-600"></i><h3 class="font-semibold text-slate-900">客户基本信息</h3></div>
-                    <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">申请转换机构填报</span>
+                    <div class="flex items-center gap-2"><i class="fas fa-file-alt text-blue-600"></i><h3 class="font-semibold text-slate-900">认证申请信息</h3></div>
+                    <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">认证转换申请已提交，完整带入，只读查看</span>
                 </div>
-                <div class="p-6 space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="block text-xs font-medium text-slate-700 mb-1">客户名称</label><div class="readonly-field">示例制造有限公司</div></div>
-                        <div><label class="block text-xs font-medium text-slate-700 mb-1">统一社会信用代码</label><div class="readonly-field">91110105XXXXXXXXXX</div></div>
-                        <div><label class="block text-xs font-medium text-slate-700 mb-1">注册地址</label><div class="readonly-field">北京市朝阳区xxx路xxx号</div></div>
-                        <div><label class="block text-xs font-medium text-slate-700 mb-1">注册地址邮编</label><div class="readonly-field">100020</div></div>
-                        <div><label class="block text-xs font-medium text-slate-700 mb-1">运营地址</label><div class="readonly-field">北京市海淀区xxx路xxx号</div></div>
-                        <div><label class="block text-xs font-medium text-slate-700 mb-1">运营地址邮编</label><div class="readonly-field">100080</div></div>
+                <div class="p-6 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1">认证申请编号</label><div class="readonly-field">TR202603250001</div></div>
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1">申请类型</label><div class="readonly-field">认证转换</div></div>
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1">申请日期</label><div class="readonly-field">2026-03-25 09:30</div></div>
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1">申请人</label><div class="readonly-field">当前登录用户</div></div>
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1">CQC受理机构</label><div class="readonly-field">北京评审中心</div></div>
+                        <div><label class="block text-xs font-medium text-slate-700 mb-1">当前状态</label><div class="readonly-field">已提交</div></div>
                     </div>
                     
                     <div class="border-t border-slate-100 pt-4">
-                        <h4 class="section-title"><i class="fas fa-user text-blue-500"></i>联系人信息</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div><label class="block text-xs font-medium text-slate-700 mb-1">联系人姓名</label><div class="readonly-field">张三</div></div>
-                            <div><label class="block text-xs font-medium text-slate-700 mb-1">所在部门/职务</label><div class="readonly-field">质量管理部/经理</div></div>
-                            <div><label class="block text-xs font-medium text-slate-700 mb-1">联系电话</label><div class="readonly-field">010-12345678</div></div>
-                            <div><label class="block text-xs font-medium text-slate-700 mb-1">E-mail</label><div class="readonly-field">zhangsan@example.com</div></div>
-                            <div><label class="block text-xs font-medium text-slate-700 mb-1">传真</label><div class="readonly-field">010-87654321</div></div>
+                        <h4 class="section-title"><i class="fas fa-building text-blue-500"></i>客户及联系人信息</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">客户名称</label><div class="readonly-field">示例制造有限公司</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">统一社会信用代码</label><div class="readonly-field">91110105XXXXXXXXXX</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">注册地址</label><div class="readonly-field">北京市朝阳区xxx路xxx号</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">注册地址邮编</label><div class="readonly-field">100020</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">运营地址</label><div class="readonly-field">北京市海淀区xxx路xxx号</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">运营地址邮编</label><div class="readonly-field">100080</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">联系人 / 部门 / 职务</label><div class="readonly-field">张三 / 质量管理部 / 经理</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">电话 / 邮箱 / 传真</label><div class="readonly-field">010-12345678 / zhangsan@example.com / 010-87654321</div></div>
+                            <div class="md:col-span-2"><label class="block text-xs font-medium text-slate-700 mb-1">客户备注信息</label><div class="readonly-field">客户因集团认证机构统一管理要求申请认证转换，原证书仍在有效期内，申请按OHSMS范围进行转换前评审。</div></div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4">
+                        <h4 class="section-title"><i class="fas fa-certificate text-blue-500"></i>认证需求信息（OHSMS）</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm border border-slate-200 rounded-lg overflow-hidden">
+                                <thead class="bg-slate-50 text-slate-600"><tr><th class="text-left p-3">认证领域</th><th class="text-left p-3">认证标准</th><th class="text-left p-3">认证范围</th><th class="text-left p-3">认可机构</th><th class="text-left p-3">证书要求</th></tr></thead>
+                                <tbody><tr class="border-t border-slate-200"><td class="p-3">OHSMS（职业健康安全管理体系）</td><td class="p-3">GB/T 45001-2020 / ISO 45001:2018</td><td class="p-3">机械加工、装配、仓储及相关职业健康安全管理活动</td><td class="p-3">CNAS</td><td class="p-3">电子证书+纸质证书</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4">
+                        <h4 class="section-title"><i class="fas fa-exchange-alt text-blue-500"></i>转换申请信息</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">原认证机构</label><div class="readonly-field">XX认证中心有限公司</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">申请认证转换的理由</label><div class="readonly-field">集团统一认证机构管理，需将原OHSMS证书转换至CQC。</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">原证书编号</label><div class="readonly-field">00123S4567R0M；00123S4567R0S-01；00123S4567R0S-02</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">原证书有效期至</label><div class="readonly-field">2026-01-13</div></div>
+                            <div class="md:col-span-2"><label class="block text-xs font-medium text-slate-700 mb-1">转换补充说明</label><div class="readonly-field">原机构证书覆盖总部、天津生产基地和上海研发中心；申请方承诺已提交最近一次审核报告、不符合关闭证据、投诉处理记录及法律法规符合性证据。</div></div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-100 pt-4">
+                        <h4 class="section-title"><i class="fas fa-paperclip text-blue-500"></i>认证申请附件</h4>
+                        <div class="space-y-3">
+                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0"><i class="fas fa-file-pdf"></i></div><div><div class="text-sm font-medium text-slate-900">认证转换申请书.pdf</div><div class="text-xs text-slate-500 mt-1">1.1 MB · 上传人：张三 · 2026-03-25 09:42 · 材料项：认证转换申请</div></div></div>
+                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewApplicationAttachment('认证转换申请书.pdf', 'PDF', '包含认证转换理由、原认证机构信息、原证书清单、转换申请承诺和联系方式。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadApplicationAttachment('认证转换申请书.pdf', '认证转换申请书示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0"><i class="fas fa-file-pdf"></i></div><div><div class="text-sm font-medium text-slate-900">原认证证书及附件.pdf</div><div class="text-xs text-slate-500 mt-1">3.4 MB · 上传人：张三 · 2026-03-25 09:45 · 材料项：原证书及证书附件</div></div></div>
+                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewApplicationAttachment('原认证证书及附件.pdf', 'PDF', '包含主证书及天津生产基地、上海研发中心子证书复印件，证书状态为有效/暂停组合。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadApplicationAttachment('原认证证书及附件.pdf', '原认证证书及附件示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0"><i class="fas fa-file-excel"></i></div><div><div class="text-sm font-medium text-slate-900">认证场所清单.xlsx</div><div class="text-xs text-slate-500 mt-1">168 KB · 上传人：李四 · 2026-03-25 09:50 · 材料项：认证场所清单</div></div></div>
+                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewApplicationAttachment('认证场所清单.xlsx', 'Excel', '包含总部、天津生产基地、上海研发中心的地址、活动、人数、联系人和证书关系。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadApplicationAttachment('认证场所清单.xlsx', '认证场所清单示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0"><i class="fas fa-file-word"></i></div><div><div class="text-sm font-medium text-slate-900">最近一次审核报告及不符合关闭证据.docx</div><div class="text-xs text-slate-500 mt-1">2.8 MB · 上传人：王五 · 2026-03-25 10:05 · 材料项：审核报告、不符合和纠正措施证据</div></div></div>
+                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewApplicationAttachment('最近一次审核报告及不符合关闭证据.docx', 'Word', '上一周期审核发现轻微不符合2项，均已提交纠正措施和关闭证据；无严重不符合未关闭。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadApplicationAttachment('最近一次审核报告及不符合关闭证据.docx', '最近一次审核报告及不符合关闭证据示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -531,7 +594,7 @@
             <!-- 2. 客户目前持有证书的情况 -->
             <div id="section-current-cert" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-                    <div class="flex items-center gap-2"><i class="fas fa-certificate text-blue-600"></i><h3 class="font-semibold text-slate-900">客户目前持有证书的情况（QMS）</h3></div>
+                    <div class="flex items-center gap-2"><i class="fas fa-certificate text-blue-600"></i><h3 class="font-semibold text-slate-900">客户目前持有证书的情况（OHSMS）</h3></div>
                     <button onclick="verifyOriginalCert()" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition-colors">
                         <i class="fas fa-search mr-1"></i>批量验证原证书
                     </button>
@@ -549,7 +612,7 @@
                         <div class="cert-card" data-cert-row>
                             <div class="cert-card-header">
                                 <div>
-                                    <div class="font-medium text-slate-900">00123Q4567R0M</div>
+                                    <div class="font-medium text-slate-900">00123S4567R0M</div>
                                     <div class="text-xs text-slate-500 mt-1">主证书 · XX认证中心有限公司</div>
                                 </div>
                                 <span class="cert-status-pill cert-status-valid"><i class="fas fa-check-circle"></i>有效</span>
@@ -557,9 +620,9 @@
                             <div class="p-4 space-y-4">
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                                     <div><span class="text-slate-500 block text-xs mb-1">认证机构的名称</span><span class="font-medium text-slate-900">XX认证中心有限公司</span></div>
-                                    <div><span class="text-slate-500 block text-xs mb-1">被认证的领域</span><span class="font-medium text-slate-900">QMS（质量管理体系）</span></div>
+                                    <div><span class="text-slate-500 block text-xs mb-1">被认证的领域</span><span class="font-medium text-slate-900">OHSMS（职业健康安全管理体系）</span></div>
                                     <div><span class="text-slate-500 block text-xs mb-1">证书有效期至</span><span class="font-medium text-slate-900">2026-01-13</span></div>
-                                    <div class="md:col-span-3"><span class="text-slate-500 block text-xs mb-1">认证证书的范围</span><span class="font-medium text-slate-900">机械加工、装配及相关质量管理活动</span></div>
+                                    <div class="md:col-span-3"><span class="text-slate-500 block text-xs mb-1">认证证书的范围</span><span class="font-medium text-slate-900">机械加工、装配及相关职业健康安全管理活动</span></div>
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                                     <div>
@@ -596,7 +659,7 @@
                         <div class="cert-card" data-cert-row>
                             <div class="cert-card-header">
                                 <div>
-                                    <div class="font-medium text-slate-900">00123Q4567R0S-01</div>
+                                    <div class="font-medium text-slate-900">00123S4567R0S-01</div>
                                     <div class="text-xs text-slate-500 mt-1">子证书 · 天津生产基地</div>
                                 </div>
                                 <span class="cert-status-pill cert-status-valid"><i class="fas fa-check-circle"></i>有效</span>
@@ -604,9 +667,9 @@
                             <div class="p-4 space-y-4">
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                                     <div><span class="text-slate-500 block text-xs mb-1">认证机构的名称</span><span class="font-medium text-slate-900">XX认证中心有限公司</span></div>
-                                    <div><span class="text-slate-500 block text-xs mb-1">被认证的领域</span><span class="font-medium text-slate-900">QMS（质量管理体系）</span></div>
+                                    <div><span class="text-slate-500 block text-xs mb-1">被认证的领域</span><span class="font-medium text-slate-900">OHSMS（职业健康安全管理体系）</span></div>
                                     <div><span class="text-slate-500 block text-xs mb-1">证书有效期至</span><span class="font-medium text-slate-900">2026-01-13</span></div>
-                                    <div class="md:col-span-3"><span class="text-slate-500 block text-xs mb-1">认证证书的范围</span><span class="font-medium text-slate-900">天津生产基地机械零部件加工及质量管理活动</span></div>
+                                    <div class="md:col-span-3"><span class="text-slate-500 block text-xs mb-1">认证证书的范围</span><span class="font-medium text-slate-900">天津生产基地机械零部件加工及职业健康安全管理活动</span></div>
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                                     <div>
@@ -643,7 +706,7 @@
                         <div class="cert-card" data-cert-row>
                             <div class="cert-card-header">
                                 <div>
-                                    <div class="font-medium text-slate-900">00123Q4567R0S-02</div>
+                                    <div class="font-medium text-slate-900">00123S4567R0S-02</div>
                                     <div class="text-xs text-slate-500 mt-1">子证书 · 上海研发中心</div>
                                 </div>
                                 <span class="cert-status-pill cert-status-suspended"><i class="fas fa-pause-circle"></i>暂停</span>
@@ -651,9 +714,9 @@
                             <div class="p-4 space-y-4">
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                                     <div><span class="text-slate-500 block text-xs mb-1">认证机构的名称</span><span class="font-medium text-slate-900">XX认证中心有限公司</span></div>
-                                    <div><span class="text-slate-500 block text-xs mb-1">被认证的领域</span><span class="font-medium text-slate-900">QMS（质量管理体系）</span></div>
+                                    <div><span class="text-slate-500 block text-xs mb-1">被认证的领域</span><span class="font-medium text-slate-900">OHSMS（职业健康安全管理体系）</span></div>
                                     <div><span class="text-slate-500 block text-xs mb-1">证书有效期至</span><span class="font-medium text-slate-900">2026-01-13</span></div>
-                                    <div class="md:col-span-3"><span class="text-slate-500 block text-xs mb-1">认证证书的范围</span><span class="font-medium text-slate-900">上海研发中心产品设计开发及质量管理活动</span></div>
+                                    <div class="md:col-span-3"><span class="text-slate-500 block text-xs mb-1">认证证书的范围</span><span class="font-medium text-slate-900">上海研发中心产品设计开发及职业健康安全管理活动</span></div>
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                                     <div>
@@ -1013,11 +1076,29 @@
                 <div class="p-6 space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div><label class="block text-xs font-medium text-slate-700 mb-1">现场访问时间</label><input type="date" class="editable-field"></div>
-                        <div><label class="block text-xs font-medium text-slate-700 mb-1">现场访问人员</label><input type="text" class="editable-field" placeholder="注明专业代码"></div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">现场访问人员</label>
+                            <button type="button" onclick="openPersonModal()" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-sm flex items-center justify-center gap-2">
+                                <i class="fas fa-user-plus"></i>选择现场访问人员
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="rounded-lg border border-blue-100 bg-blue-50/60 p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="text-sm font-medium text-blue-900">已选择人员</div>
+                            <span class="text-xs text-blue-700">支持多选，人员标签保留专职、兼职、180天信息</span>
+                        </div>
+                        <div id="selectedVisitPersons" class="space-y-2">
+                            <div class="text-sm text-slate-500">暂无已选择人员</div>
+                        </div>
                     </div>
                     
                     <div>
-                        <label class="block text-xs font-medium text-slate-700 mb-1">现场访问情况描述</label>
+                        <div class="flex items-center gap-2 mb-1">
+                            <label class="block text-xs font-medium text-slate-700">现场访问情况描述</label>
+                            <span id="siteVisitDescStatus" class="hidden px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700 border border-amber-200">待填写</span>
+                        </div>
                         <div class="p-2 bg-slate-50 rounded border border-slate-200 text-xs text-slate-600 mb-2">
                             请描述与什么人员交流、查阅了什么记录及现场观察了什么，及对需评审内容的相应评审结论
                         </div>
@@ -1030,7 +1111,7 @@
                                 <button onclick="formatText('insertUnorderedList')"><i class="fas fa-list-ul"></i></button>
                                 <button onclick="formatText('insertOrderedList')"><i class="fas fa-list-ol"></i></button>
                             </div>
-                            <div class="rich-editor-content" contenteditable="true" data-placeholder="上述提示文字保留，在此处详细描述现场访问情况..."></div>
+                            <div class="rich-editor-content" id="siteVisitDescription" contenteditable="true" data-placeholder="上述提示文字保留，在此处详细描述现场访问情况..." oninput="updateSiteVisitDescStatus()"></div>
                         </div>
                     </div>
                 </div>
@@ -1432,6 +1513,51 @@
         </div>
     </div>
 
+    <!-- 现场访问人员选择弹窗 -->
+    <div id="personSelectModal" class="side-modal hidden">
+        <div class="side-panel">
+            <div class="px-6 py-5 border-b border-slate-200 flex items-start justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900">选择现场访问人员</h3>
+                    <p class="text-sm text-slate-500 mt-1">从人员资质系统选择，支持多选</p>
+                </div>
+                <button onclick="closePersonModal()" class="w-9 h-9 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800"><i class="fas fa-times text-lg"></i></button>
+            </div>
+            <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 space-y-3">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="personSearchInput" oninput="renderPersonOptions()" class="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="搜索姓名、CQC编号、专业代码...">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <select id="personCompanyFilter" onchange="renderPersonOptions()" class="editable-field bg-white">
+                        <option value="">全部公司</option>
+                        <option value="东北区域">东北区域</option>
+                        <option value="华北区域">华北区域</option>
+                        <option value="华东区域">华东区域</option>
+                    </select>
+                    <select id="personTypeFilter" onchange="renderPersonOptions()" class="editable-field bg-white">
+                        <option value="">全部类型</option>
+                        <option value="专职">专职</option>
+                        <option value="兼职">兼职</option>
+                    </select>
+                    <select id="personDaysFilter" onchange="renderPersonOptions()" class="editable-field bg-white">
+                        <option value="">180天状态</option>
+                        <option value="ok">180天内可用</option>
+                        <option value="warning">接近180天</option>
+                    </select>
+                </div>
+            </div>
+            <div id="personOptionsList" class="flex-1 overflow-y-auto p-6 space-y-3"></div>
+            <div class="px-6 py-4 border-t border-slate-200 bg-white flex items-center justify-between">
+                <div class="text-sm text-slate-600">已选择 <span id="personSelectedCount" class="font-bold text-blue-600">0</span> 人</div>
+                <div class="flex gap-3">
+                    <button onclick="closePersonModal()" class="px-5 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700">取消</button>
+                    <button onclick="confirmPersonSelection()" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-sm">确认添加</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 签字模态框 -->
     <div id="signatureModal" class="signature-modal hidden">
         <div class="signature-container">
@@ -1541,6 +1667,128 @@
 
         function scrollToBottom() {
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        const visitPersonOptions = [
+            { id: 'p1', name: '张爱兵', code: 'CQC11045', company: '东北区域', type: '兼职', days: 155, role: '组员', qualifications: 'OHSMS-4012345', tags: ['OHSMS'] },
+            { id: 'p2', name: '黄起超', code: 'CQC10634', company: '东北区域', type: '专职', days: 134, role: '组员', qualifications: 'OHSMS-6015922', tags: ['OHSMS'] },
+            { id: 'p3', name: '娄杰', code: 'CQC10601', company: '东北区域', type: '专职', days: 167, role: '组员', qualifications: 'OHSMS-4014327', tags: ['OHSMS'] },
+            { id: 'p4', name: '沈书华', code: 'CQC10228', company: '华北区域', type: '兼职', days: 78, role: '组员', qualifications: 'OHSMS-4011889', tags: ['OHSMS'] },
+            { id: 'p5', name: '周明', code: 'CQC10888', company: '华东区域', type: '专职', days: 42, role: '组长', qualifications: 'OHSMS-4012001', tags: ['OHSMS'] }
+        ];
+        let selectedVisitPersonIds = [];
+        let pendingVisitPersonIds = [];
+
+        function openPersonModal() {
+            pendingVisitPersonIds = [...selectedVisitPersonIds];
+            document.getElementById('personSelectModal').classList.remove('hidden');
+            renderPersonOptions();
+        }
+
+        function closePersonModal() {
+            document.getElementById('personSelectModal').classList.add('hidden');
+        }
+
+        function renderPersonOptions() {
+            const keyword = (document.getElementById('personSearchInput')?.value || '').trim().toLowerCase();
+            const company = document.getElementById('personCompanyFilter')?.value || '';
+            const type = document.getElementById('personTypeFilter')?.value || '';
+            const daysFilter = document.getElementById('personDaysFilter')?.value || '';
+            const list = document.getElementById('personOptionsList');
+            const filtered = visitPersonOptions.filter(person => {
+                const text = `${person.name} ${person.code} ${person.qualifications} ${person.tags.join(' ')}`.toLowerCase();
+                const matchKeyword = !keyword || text.includes(keyword);
+                const matchCompany = !company || person.company === company;
+                const matchType = !type || person.type === type;
+                const matchDays = !daysFilter || (daysFilter === 'ok' ? person.days < 150 : person.days >= 150);
+                return matchKeyword && matchCompany && matchType && matchDays;
+            });
+
+            list.innerHTML = filtered.map(person => {
+                const selected = pendingVisitPersonIds.includes(person.id);
+                const typeClass = person.type === '专职' ? 'fulltime' : 'parttime';
+                return `
+                    <div class="person-card ${selected ? 'selected' : ''}" onclick="togglePendingPerson('${person.id}')">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="font-semibold text-slate-900">${person.name}</span>
+                                    <span class="person-tag days">${person.days}天/180天</span>
+                                    <span class="person-tag ${typeClass}">${person.type}</span>
+                                </div>
+                                <div class="text-xs text-slate-500 mt-2">CQC编号：${person.code}</div>
+                                <div class="text-xs text-slate-500 mt-1">资格：${person.qualifications}</div>
+                                <div class="text-xs text-slate-500 mt-1">工作单位：${person.company}</div>
+                            </div>
+                            <div class="w-5 h-5 rounded-full border-2 ${selected ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-300'} flex items-center justify-center shrink-0 mt-1">
+                                ${selected ? '<i class="fas fa-check text-[10px]"></i>' : ''}
+                            </div>
+                        </div>
+                    </div>`;
+            }).join('') || '<div class="text-center py-12 text-slate-400 text-sm">暂无匹配人员</div>';
+            document.getElementById('personSelectedCount').textContent = pendingVisitPersonIds.length;
+        }
+
+        function togglePendingPerson(id) {
+            if (pendingVisitPersonIds.includes(id)) {
+                pendingVisitPersonIds = pendingVisitPersonIds.filter(item => item !== id);
+            } else {
+                pendingVisitPersonIds.push(id);
+            }
+            renderPersonOptions();
+        }
+
+        function confirmPersonSelection() {
+            selectedVisitPersonIds = [...pendingVisitPersonIds];
+            renderSelectedVisitPersons();
+            closePersonModal();
+            showToast(`已选择 ${selectedVisitPersonIds.length} 名现场访问人员`);
+        }
+
+        function renderSelectedVisitPersons() {
+            const container = document.getElementById('selectedVisitPersons');
+            const selected = visitPersonOptions.filter(person => selectedVisitPersonIds.includes(person.id));
+            if (selected.length === 0) {
+                container.innerHTML = '<div class="text-sm text-slate-500">暂无已选择人员</div>';
+                return;
+            }
+            container.innerHTML = selected.map(person => {
+                const typeClass = person.type === '专职' ? 'fulltime' : 'parttime';
+                return `
+                    <div class="bg-white border border-blue-100 rounded-lg p-3 flex items-start justify-between gap-3">
+                        <div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="font-medium text-slate-900">${person.name}</span>
+                                <span class="person-tag days">${person.days}天/180天</span>
+                                <span class="person-tag ${typeClass}">${person.type}</span>
+                            </div>
+                            <div class="text-xs text-slate-500 mt-1">CQC编号：${person.code} · 资格：${person.qualifications} · 默认角色：${person.role}</div>
+                        </div>
+                        <button type="button" onclick="removeSelectedVisitPerson('${person.id}')" class="text-slate-400 hover:text-red-600"><i class="fas fa-times"></i></button>
+                    </div>`;
+            }).join('');
+        }
+
+        function removeSelectedVisitPerson(id) {
+            selectedVisitPersonIds = selectedVisitPersonIds.filter(item => item !== id);
+            renderSelectedVisitPersons();
+        }
+
+        function previewApplicationAttachment(fileName, fileType, content) {
+            alert(`${fileName}\n\n${fileType} 预览\n${content}`);
+        }
+
+        function downloadApplicationAttachment(fileName, content) {
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+            showToast(`已开始下载：${fileName}`);
         }
 
         // 签字功能
@@ -1836,11 +2084,40 @@
                 setTimeout(() => {
                     section.classList.remove('hidden');
                     nav.classList.remove('hidden');
+                    updateSiteVisitDescStatus();
                 }, 300);
             } else {
                 reason.classList.add('hidden');
                 section.classList.add('hidden');
                 nav.classList.add('hidden');
+                const status = document.getElementById('siteVisitDescStatus');
+                if (status) status.classList.add('hidden');
+            }
+        }
+
+        function isSiteVisitRequired() {
+            return document.querySelector('input[name="siteVisit"][value="Y"]')?.checked === true;
+        }
+
+        function getSiteVisitDescriptionText() {
+            const desc = document.getElementById('siteVisitDescription');
+            return (desc?.innerText || '').replace(/\u00a0/g, ' ').trim();
+        }
+
+        function updateSiteVisitDescStatus() {
+            const status = document.getElementById('siteVisitDescStatus');
+            if (!status) return;
+            if (!isSiteVisitRequired()) {
+                status.classList.add('hidden');
+                return;
+            }
+            status.classList.remove('hidden');
+            if (getSiteVisitDescriptionText()) {
+                status.textContent = '已填写';
+                status.className = 'px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 border border-green-200';
+            } else {
+                status.textContent = '待填写';
+                status.className = 'px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700 border border-amber-200';
             }
         }
 
@@ -1902,6 +2179,12 @@
         }
 
         function submitFinalReview() {
+            updateSiteVisitDescStatus();
+            if (isSiteVisitRequired() && !getSiteVisitDescriptionText()) {
+                document.getElementById('section-site-visit')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                showToast('需要现场访问时，请先填写现场访问情况描述');
+                return;
+            }
             document.getElementById('submitModal').classList.remove('hidden');
         }
 
