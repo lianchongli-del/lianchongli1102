@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -429,7 +430,7 @@
                         <i class="fas fa-save mr-2"></i>暂存
                     </button>
                     <button onclick="submitReview()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md shadow-blue-200 transition-all">
-                        <i class="fas fa-check-circle mr-2"></i>通过评审
+                        <i class="fas fa-paper-plane mr-2"></i>提交
                     </button>
                 </div>
             </div>
@@ -500,35 +501,59 @@
             <div id="section-history" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <i class="fas fa-history text-blue-600"></i>
-                        <h3 class="font-semibold text-slate-900">历史证书核查</h3>
+                        <span class="w-7 h-7 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-sm font-bold">2</span>
+                        <h3 class="font-semibold text-slate-900">原证书信息</h3>
+                        <span class="px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700 border border-green-200">已查询到证书</span>
                     </div>
-                    <button type="button" id="historyRefreshBtn" onclick="refreshHistoryCertificate()" class="px-3 py-1.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 text-xs font-medium transition-colors inline-flex items-center gap-2">
-                        <i class="fas fa-rotate"></i>
-                        <span>查看历史证书</span>
+                    <button type="button" id="historyRefreshBtn" onclick="previewFile('original_certificate')" class="px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 text-sm font-medium transition-colors inline-flex items-center gap-2">
+                        <i class="fas fa-eye"></i>
+                        <span>预览证书</span>
                     </button>
                 </div>
-                <div class="p-6 space-y-4">
-                    <div class="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                        <div class="flex items-start justify-between gap-3 mb-4">
-                            <div>
-                                <div class="text-sm font-semibold text-slate-900">当前变更证书</div>
-                                <div class="text-xs text-slate-500 mt-1">证书变更评审仅针对本张证书进行核查</div>
-                            </div>
-                            <span class="cert-status-pill cert-status-valid"><i class="fas fa-check-circle"></i>有效</span>
+                <div class="p-6 space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-16 gap-y-7 text-sm">
+                        <div>
+                            <span class="text-slate-500 block text-xs mb-2">证书编号</span>
+                            <span class="font-bold text-slate-900 text-base">00126E301110R7O1</span>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                            <div><span class="text-slate-500 block text-xs mb-1">原认证机构</span><span class="font-medium text-slate-900">中检华南认证有限公司</span></div>
-                            <div><span class="text-slate-500 block text-xs mb-1">证书编号</span><span class="font-medium text-slate-900">00126E301110R70</span></div>
-                            <div><span class="text-slate-500 block text-xs mb-1">认证标准</span><span class="font-medium text-slate-900">GB/T 24001-2016 / ISO 14001:2015</span></div>
-                            <div><span class="text-slate-500 block text-xs mb-1">首次发证日期</span><span class="font-medium text-slate-900">2020-04-18</span></div>
-                            <div><span class="text-slate-500 block text-xs mb-1">本周期发证日期</span><span class="font-medium text-slate-900">2023-04-18</span></div>
-                            <div><span class="text-slate-500 block text-xs mb-1">有效期至</span><span class="font-medium text-slate-900">2026-04-17</span></div>
-                            <div class="md:col-span-3"><span class="text-slate-500 block text-xs mb-1">核查结论</span><span class="font-medium text-green-700">证书处于有效状态，可继续进行本次证书变更评审。</span></div>
+                        <div>
+                            <span class="text-slate-500 block text-xs mb-2">认证标准</span>
+                            <span class="font-bold text-slate-900 text-base">GB/T 24001-2016/ISO 14001:2015</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 block text-xs mb-2">企业名称</span>
+                            <span class="font-bold text-slate-900 text-base">彩晶光电科技(昆山)有限公司</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 block text-xs mb-2">有效期</span>
+                            <span class="font-bold text-slate-900 text-base">2026年04月09日 至 2029年04月08日</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 block text-xs mb-2">统一社会信用代码</span>
+                            <span class="font-bold text-slate-900 text-base">9132058372933702XR</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 block text-xs mb-2">首次发证日期</span>
+                            <span class="font-bold text-slate-900 text-base">2005年12月30日</span>
                         </div>
                     </div>
-                    <div class="p-3 rounded-lg bg-blue-50 border border-blue-100 text-xs text-blue-700 leading-relaxed">
-                        <i class="fas fa-info-circle mr-1"></i>若原证书被暂停/撤销/注销，需从处置日期起满1年禁止期后方可受理。
+                    <div class="pt-5 border-t border-slate-100 space-y-5 text-sm">
+                        <div>
+                            <span class="text-slate-500 block text-xs mb-2">认证范围</span>
+                            <div class="rounded-lg bg-slate-50 border border-slate-100 px-4 py-3 text-slate-800 leading-relaxed">
+                                数码相机的制造，摄像模组的制造（用于便携式电脑、手机），印刷电路板零组件的制造，医疗血糖仪的制造，车用用于辅助驾驶系统的摄像头制造，数码相机塑料件制造及相关成型配件的制造及相关管理活动
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <span class="text-slate-500 block text-xs mb-2">注册地址</span>
+                                <span class="font-medium text-slate-900">中国江苏省昆山综合保税区第三大道77号</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500 block text-xs mb-2">运营地址</span>
+                                <span class="font-medium text-slate-900">中国江苏省昆山综合保税区第三大道77号</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -611,24 +636,11 @@
                         </div>
                     </div>
 
-                    <!-- 变更项3：组织名称变更（未勾选展示） -->
-                    <div class="change-compare-card opacity-50">
-                        <div class="change-compare-header">
-                            <span class="change-badge deleted">未变更</span>
-                            <span class="font-medium text-slate-500">组织名称变更</span>
-                            <span class="text-xs text-slate-400 ml-auto">申请人未勾选此项</span>
-                        </div>
-                        <div class="p-4 text-center text-slate-400 text-sm">
-                            保持原名称：彩晶光电科技(昆山)有限公司
-                        </div>
-                    </div>
-
-                    <!-- 变更项4：认证标准变更 -->
+                    <!-- 变更项3：认证标准变更 -->
                     <div class="change-compare-card">
                         <div class="change-compare-header">
                             <span class="change-badge modified">修改</span>
                             <span class="font-medium text-slate-900">认证标准变更</span>
-                            <span class="text-xs text-amber-600 ml-auto font-medium"><i class="fas fa-exclamation-triangle mr-1"></i>需上传新版体系文件</span>
                         </div>
                         <div class="change-compare-body">
                             <div class="compare-section before">
@@ -650,107 +662,13 @@
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <i class="fas fa-paperclip text-blue-600"></i>
-                        <h3 class="font-semibold text-slate-900">申请附件清单</h3>
+                        <h3 class="font-semibold text-slate-900">附件信息</h3>
                     </div>
-                    <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">共 4 个文件</span>
+                    <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">共 14 类附件</span>
                 </div>
                 
                 <div class="p-6">
-                    <div class="mb-6">
-                        <h4 class="text-sm font-medium text-slate-800 mb-3 flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                            变更项目相关附件（必填）
-                        </h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="attachment-preview-card" onclick="previewFile('management_system')">
-                                <div class="file-icon-lg pdf">
-                                    <i class="fas fa-file-pdf"></i>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-center gap-2 mb-1">
-                                        <span class="text-sm font-medium text-slate-900 truncate">有效版本的管理体系文件.pdf</span>
-                                        <span class="px-1.5 py-0.5 bg-red-100 text-red-700 text-[10px] rounded">必填</span>
-                                    </div>
-                                    <div class="text-xs text-slate-500 mb-2">质量手册、程序文件（标准变更必须）</div>
-                                    <div class="flex items-center gap-3">
-                                        <span class="text-xs text-slate-400">2.4 MB</span>
-                                        <button class="text-xs text-blue-600 hover:text-blue-800 font-medium" onclick="event.stopPropagation(); downloadFile('management_system')">
-                                            <i class="fas fa-download mr-1"></i>下载
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                    <i class="fas fa-eye"></i>
-                                </div>
-                            </div>
-
-                            <div class="attachment-preview-card" onclick="previewFile('address_proof')">
-                                <div class="file-icon-lg pdf">
-                                    <i class="fas fa-file-alt"></i>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-center gap-2 mb-1">
-                                        <span class="text-sm font-medium text-slate-900 truncate">地址变更证明文件.pdf</span>
-                                        <span class="px-1.5 py-0.5 bg-red-100 text-red-700 text-[10px] rounded">必填</span>
-                                    </div>
-                                    <div class="text-xs text-slate-500 mb-2">工商部门出具的变更证明</div>
-                                    <div class="flex items-center gap-3">
-                                        <span class="text-xs text-slate-400">856 KB</span>
-                                        <button class="text-xs text-blue-600 hover:text-blue-800 font-medium" onclick="event.stopPropagation(); downloadFile('address_proof')">
-                                            <i class="fas fa-download mr-1"></i>下载
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                    <i class="fas fa-eye"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h4 class="text-sm font-medium text-slate-800 mb-3 flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                            常规申请材料
-                        </h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="attachment-preview-card" onclick="previewFile('process_list')">
-                                <div class="file-icon-lg word">
-                                    <i class="fas fa-file-word"></i>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="text-sm font-medium text-slate-900 truncate mb-1">过程清单（QES）.docx</div>
-                                    <div class="flex items-center gap-3">
-                                        <span class="text-xs text-slate-400">156 KB</span>
-                                        <button class="text-xs text-blue-600 hover:text-blue-800 font-medium" onclick="event.stopPropagation(); downloadFile('process_list')">
-                                            <i class="fas fa-download mr-1"></i>下载
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                    <i class="fas fa-eye"></i>
-                                </div>
-                            </div>
-
-                            <div class="attachment-preview-card" onclick="previewImage('location_map')">
-                                <div class="file-icon-lg img">
-                                    <i class="fas fa-image"></i>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="text-sm font-medium text-slate-900 truncate mb-1">地理位置示意图.jpg</div>
-                                    <div class="flex items-center gap-3">
-                                        <span class="text-xs text-slate-400">3.2 MB</span>
-                                        <button class="text-xs text-blue-600 hover:text-blue-800 font-medium" onclick="event.stopPropagation(); downloadFile('location_map')">
-                                            <i class="fas fa-download mr-1"></i>下载
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                    <i class="fas fa-eye"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <div id="attachmentGrid" class="grid grid-cols-1 xl:grid-cols-2 gap-4"></div>
                 </div>
             </div>
 
@@ -891,6 +809,26 @@
                 
                 <div class="p-6 space-y-4">
                     <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-2">评审结论</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <label class="radio-card selected" id="approveConclusionCard" onclick="selectConclusion('approve')">
+                                <input type="radio" name="reviewConclusion" value="approve" class="text-blue-600 mt-1" checked>
+                                <div class="flex-1">
+                                    <div class="font-medium text-slate-900">通过</div>
+                                    <div class="text-xs text-slate-500 mt-1">资料满足变更评审要求，提交后进入后续流程</div>
+                                </div>
+                            </label>
+                            <label class="radio-card" id="rejectConclusionCard" onclick="selectConclusion('reject')">
+                                <input type="radio" name="reviewConclusion" value="reject" class="text-blue-600 mt-1">
+                                <div class="flex-1">
+                                    <div class="font-medium text-slate-900">驳回</div>
+                                    <div class="text-xs text-slate-500 mt-1">资料或变更内容不满足要求，退回申请人补正</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
                         <label class="block text-xs font-medium text-slate-700 mb-2">评审意见</label>
                         <textarea class="editable-field w-full" rows="3" placeholder="请输入评审意见...">经评审，该企业变更申请资料齐全，扩大范围涉及的产品与原有产品工艺相似，地址变更提供了有效的工商证明，建议批准变更。</textarea>
                     </div>
@@ -898,11 +836,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-medium text-slate-700 mb-2">评审人员</label>
-                            <input type="text" class="editable-field" value="张评审" readonly>
+                            <input type="text" id="reviewerName" class="editable-field" value="" readonly>
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-slate-700 mb-2">评审日期</label>
-                            <input type="date" class="editable-field" value="2026-04-11">
+                            <input type="date" id="reviewDate" class="editable-field" value="" readonly>
                         </div>
                     </div>
 
@@ -1000,6 +938,33 @@
         </div>
     </div>
 
+    <!-- 文件预览模态框 -->
+    <div id="filePreviewModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="p-5 border-b border-slate-100 bg-slate-50 rounded-t-2xl flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div id="filePreviewIcon" class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div>
+                        <h3 id="filePreviewTitle" class="text-base font-bold text-slate-900">文件预览</h3>
+                        <p id="filePreviewMeta" class="text-xs text-slate-500 mt-1"></p>
+                    </div>
+                </div>
+                <button onclick="closeFilePreview()" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="filePreviewBody" class="p-6 overflow-auto bg-white flex-1"></div>
+            <div class="p-5 border-t border-slate-100 flex justify-end gap-3 bg-slate-50 rounded-b-2xl">
+                <button onclick="closeFilePreview()" class="px-4 py-2 border border-slate-300 rounded-lg hover:bg-white text-sm font-medium text-slate-700 transition-colors">关闭</button>
+                <button id="filePreviewDownloadBtn" onclick="" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors">
+                    <i class="fas fa-download mr-2"></i>下载
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- 提示消息 -->
     <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2 opacity-0 transition-opacity pointer-events-none">
         <i class="fas fa-check-circle text-green-400"></i>
@@ -1014,6 +979,36 @@
         let selectedSiteType = null;
         let selectedAuditStage = null;
         let hasStage1 = false;
+        let selectedConclusion = 'approve';
+        const currentLoginUser = {
+            name: localStorage.getItem('currentUserName') || '张评审'
+        };
+
+        const filePreviewData = {
+            original_certificate: {
+                title: '原证书-00126E301110R7O1.pdf',
+                type: 'pdf',
+                size: '1.8 MB',
+                summary: '原证书编号 00126E301110R7O1，有效期 2026年04月09日 至 2029年04月08日。'
+            }
+        };
+
+        const attachmentCategories = [
+            {id: 'system_file', title: '1. 有效版本的管理体系文件：如方针、目标、体系范围等（QES）', type: 'word', fileName: '有效版本的管理体系文件（QES）.docx', size: '2.4 MB'},
+            {id: 'process_list', title: '2. 过程清单（QES）', type: 'word', fileName: '过程清单（QES）.docx', size: '156 KB'},
+            {id: 'risk_source', title: '3. 重要环境因素清单（E）、主要危险源和OHS风险（S）', type: 'word', fileName: '重要环境因素及OHS风险清单.xlsx', size: '318 KB'},
+            {id: 'risk_opportunity', title: '4. 需要应对的风险和机遇（E/S）', type: 'word', fileName: '风险和机遇应对清单.xlsx', size: '246 KB'},
+            {id: 'risk_rules', title: '5. 重要环境因素/风险的确定准则（ES）', type: 'word', fileName: '环境因素与风险确定准则.docx', size: '188 KB'},
+            {id: 'compliance_obligation', title: '6. 合规义务文件化信息：如客户适用的法律法规及其他要求清单', type: 'word', fileName: '合规义务及法律法规清单.xlsx', size: '292 KB'},
+            {id: 'license', title: '7. 营业执照（副本）复印件或机构成立批文复印件', type: 'pdf', fileName: '营业执照副本复印件.pdf', size: '856 KB'},
+            {id: 'qualification', title: '8. 相关资质文件复印件（法律法规有要求时）', type: 'pdf', fileName: '相关资质文件复印件.pdf', size: '1.1 MB'},
+            {id: 'location_layout', title: '9. 地理位置示意图和厂区平面布置图（除Q以外）', type: 'img', fileName: '地理位置示意图和厂区平面布置图.jpg', size: '3.2 MB'},
+            {id: 'process_flow', title: '10. 生产工艺流程图', type: 'img', fileName: '生产工艺流程图.png', size: '728 KB'},
+            {id: 'org_chart', title: '11. 组织机构图', type: 'word', fileName: '组织机构图.pdf', size: '436 KB'},
+            {id: 'site_list', title: '12. 认证场所清单（仅适用于固定多场所组织及建筑类组织）', type: 'word', fileName: '认证场所清单.xlsx', size: '164 KB'},
+            {id: 'approval_docs', title: '13. 环境批复/安全批复/职业病危害预评价批复复印件（适用时）（E/S）', type: 'pdf', fileName: '环境安全职业健康批复复印件.pdf', size: '1.6 MB'},
+            {id: 'three_same', title: '14. “三同时”验收报告（环境、安全及职业健康）复印件（适用时）（E/S）', type: 'pdf', fileName: '三同时验收报告复印件.pdf', size: '2.0 MB'}
+        ];
 
         // 专业代码数据
         const professionalCodeData = [
@@ -1031,6 +1026,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             initScrollSpy();
             renderMainProfCodeDisplay();
+            renderAttachmentGrid();
+            fillReviewerInfo();
             // 初始状态：所有审核选项都不选中，隐藏所有条件区域
             resetAuditSections();
         });
@@ -1059,7 +1056,7 @@
             btn.disabled = true;
             setTimeout(() => {
                 icon.classList.remove('fa-spin');
-                label.textContent = '查看历史证书';
+                label.textContent = '预览证书';
                 btn.disabled = false;
                 showToast('历史证书信息已刷新');
             }, 800);
@@ -1462,9 +1459,115 @@
             }
         }
 
+        function fillReviewerInfo() {
+            const reviewerName = document.getElementById('reviewerName');
+            const reviewDate = document.getElementById('reviewDate');
+            const now = new Date();
+            const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            if (reviewerName) reviewerName.value = currentLoginUser.name;
+            if (reviewDate) reviewDate.value = localDate;
+        }
+
+        function selectConclusion(value) {
+            selectedConclusion = value;
+            document.querySelectorAll('input[name="reviewConclusion"]').forEach(radio => {
+                radio.closest('.radio-card').classList.remove('selected');
+                radio.checked = false;
+            });
+            const card = document.getElementById(value === 'approve' ? 'approveConclusionCard' : 'rejectConclusionCard');
+            if (card) {
+                card.classList.add('selected');
+                card.querySelector('input').checked = true;
+            }
+        }
+
+        function getAttachmentIcon(type) {
+            if (type === 'pdf') return {icon: 'fa-file-pdf', className: 'pdf'};
+            if (type === 'img') return {icon: 'fa-image', className: 'img'};
+            return {icon: 'fa-file-lines', className: 'word'};
+        }
+
+        function renderAttachmentGrid() {
+            const grid = document.getElementById('attachmentGrid');
+            if (!grid) return;
+            grid.innerHTML = attachmentCategories.map(item => {
+                filePreviewData[item.id] = {
+                    title: item.fileName,
+                    type: item.type,
+                    size: item.size,
+                    summary: item.title
+                };
+                const icon = getAttachmentIcon(item.type);
+                return `
+                    <div class="attachment-preview-card cursor-default" onclick="previewFile('${item.id}')">
+                        <div class="file-icon-lg ${icon.className}">
+                            <i class="fas ${icon.icon}"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-sm font-bold text-slate-900 leading-snug mb-2">${item.title}</div>
+                            <div class="text-xs text-slate-500 mb-2">1 个文件</div>
+                            <div class="flex items-center gap-3 text-xs">
+                                <span class="text-slate-400 truncate">${item.fileName}</span>
+                                <span class="text-slate-300">|</span>
+                                <span class="text-slate-400">${item.size}</span>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="button" title="预览" onclick="event.stopPropagation(); previewFile('${item.id}')" class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button type="button" title="下载" onclick="event.stopPropagation(); downloadFile('${item.id}')" class="w-9 h-9 rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-100 transition-colors">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
         // 附件预览功能
         function previewFile(fileId) {
-            showToast(`正在打开文件预览: ${fileId}`);
+            const file = filePreviewData[fileId];
+            if (!file) {
+                showToast('未找到可预览文件', 'error');
+                return;
+            }
+            const modal = document.getElementById('filePreviewModal');
+            const title = document.getElementById('filePreviewTitle');
+            const meta = document.getElementById('filePreviewMeta');
+            const body = document.getElementById('filePreviewBody');
+            const iconWrap = document.getElementById('filePreviewIcon');
+            const downloadBtn = document.getElementById('filePreviewDownloadBtn');
+            const icon = getAttachmentIcon(file.type);
+            title.textContent = file.title;
+            meta.textContent = `${file.size} · 预览件`;
+            iconWrap.className = `w-10 h-10 rounded-lg flex items-center justify-center file-icon-lg ${icon.className}`;
+            iconWrap.innerHTML = `<i class="fas ${icon.icon}"></i>`;
+            downloadBtn.setAttribute('onclick', `downloadFile('${fileId}')`);
+            body.innerHTML = `
+                <div class="mx-auto max-w-3xl border border-slate-200 rounded-lg bg-slate-50 p-6">
+                    <div class="bg-white rounded-lg border border-slate-200 p-8 min-h-[420px] shadow-sm">
+                        <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-6">
+                            <div>
+                                <div class="text-lg font-bold text-slate-900">${file.title}</div>
+                                <div class="text-xs text-slate-500 mt-1">${file.summary}</div>
+                            </div>
+                            <span class="px-2 py-1 rounded text-xs bg-green-100 text-green-700 border border-green-200">已上传</span>
+                        </div>
+                        <div class="space-y-4 text-sm text-slate-700">
+                            <div class="h-3 bg-slate-200 rounded w-3/4"></div>
+                            <div class="h-3 bg-slate-200 rounded w-full"></div>
+                            <div class="h-3 bg-slate-200 rounded w-11/12"></div>
+                            <div class="h-28 bg-blue-50 border border-blue-100 rounded-lg flex items-center justify-center text-blue-500">
+                                <i class="fas ${icon.icon} mr-2"></i>文件内容预览
+                            </div>
+                            <div class="h-3 bg-slate-200 rounded w-full"></div>
+                            <div class="h-3 bg-slate-200 rounded w-2/3"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            modal.classList.add('active');
         }
 
         function previewImage(fileId) {
@@ -1478,8 +1581,26 @@
             document.getElementById('imagePreviewModal').classList.remove('active');
         }
 
+        function closeFilePreview() {
+            document.getElementById('filePreviewModal').classList.remove('active');
+        }
+
         function downloadFile(fileId) {
-            showToast(`开始下载文件: ${fileId}`);
+            const file = filePreviewData[fileId];
+            if (!file) {
+                showToast('未找到可下载文件', 'error');
+                return;
+            }
+            const blob = new Blob([`${file.title}\n${file.summary}\n此文件为页面原型中的下载示例。`], {type: 'text/plain;charset=utf-8'});
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = file.title.replace(/\.(pdf|docx|xlsx|jpg|png)$/i, '.txt');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast(`已开始下载：${file.title}`);
         }
 
         // 通用功能
@@ -1513,7 +1634,7 @@
                 return;
             }
             
-            showToast('变更评审已通过');
+            showToast(selectedConclusion === 'approve' ? '变更评审已提交：通过' : '变更评审已提交：驳回');
         }
 
         function showToast(message, type = 'success') {
