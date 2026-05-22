@@ -90,6 +90,10 @@
         .field-group { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 16px; transition: all 0.2s; }
         .field-group:hover { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border-color: #cbd5e1; }
 
+        .application-body > :not(.application-preview-panel):not(.application-signature-preserved):not(.application-notice-preserved) {
+            display: none;
+        }
+
         .credit-check-card { transition: all 0.3s ease; border-left: 4px solid #e2e8f0; }
         .credit-check-card.success { border-left-color: #22c55e; background: #f0fdf4; }
 
@@ -195,12 +199,6 @@
                             <span class="text-xs bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full" id="siteCount">4</span>
                         </div>
                     </a>
-                    <a href="#section-survey" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent hover:bg-slate-50 hidden" id="nav-survey" onclick="switchTab('survey'); return false;">
-                        <div class="flex items-center justify-between">
-                            <span class="flex items-center gap-2"><i class="fas fa-clipboard-check w-5 text-center"></i>获证方情况调查</span>
-                        </div>
-                    </a>
-                    <div class="border-t border-slate-200 my-2"></div>
                     <a href="#section-credit" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent hover:bg-slate-50" onclick="switchTab('credit'); return false;">
                         <div class="flex items-center justify-between">
                             <span class="flex items-center gap-2"><i class="fas fa-shield-alt w-5 text-center"></i>客户信用核查</span>
@@ -265,7 +263,206 @@
                     <div class="flex items-center gap-2"><i class="fas fa-file-alt text-blue-600"></i><h3 class="font-semibold text-slate-900">认证申请信息</h3></div>
                     <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">当前评审体系：OHSMS</span>
                 </div>
-                <div class="p-6 space-y-6">
+                <div class="p-6 space-y-6 application-body">
+                    <div class="application-preview-panel">
+                        <div id="initialApplicationPanel" data-review-app-panel="initial" class="space-y-5">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div><label class="block text-xs font-medium text-slate-700 mb-1">认证申请编号</label><div class="readonly-field">SQ202603250001</div></div>
+                                        <div><label class="block text-xs font-medium text-slate-700 mb-1">认证类型</label><div class="readonly-field">初次认证</div></div>
+                                        <div><label class="block text-xs font-medium text-slate-700 mb-1">申请时间</label><div class="readonly-field">2026-03-25 09:30</div></div>
+                                        <div><label class="block text-xs font-medium text-slate-700 mb-1">申请人</label><div class="readonly-field">当前登录用户</div></div>
+                                        <div><label class="block text-xs font-medium text-slate-700 mb-1">CQC受理机构</label><div class="readonly-field">北京评审中心</div></div>
+                                        <div><label class="block text-xs font-medium text-slate-700 mb-1">当前状态</label><div class="readonly-field">已提交</div></div>
+                                    </div>
+
+                                    <div class="border-t border-slate-100 pt-4">
+                                        <h4 class="section-title"><i class="fas fa-building text-blue-500"></i>客户基本信息</h4>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">客户名称</label><div class="readonly-field">示例制造有限公司</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">客户英文名称</label><div class="readonly-field">Sample Manufacturing Co., Ltd.</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">注册地址</label><div class="readonly-field">北京市朝阳区示例路88号</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">注册地址（英文）</label><div class="readonly-field">No. 88 Sample Road, Chaoyang District, Beijing</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">运营地址</label><div class="readonly-field">北京市海淀区创新园A座3层</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">运营地址（英文）</label><div class="readonly-field">3F, Tower A, Innovation Park, Haidian District, Beijing</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">注册地址邮编 / 运营地址邮编</label><div class="readonly-field">100020 / 100089</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">传真</label><div class="readonly-field">010-62885678</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">联系人 / 部门 / 职务</label><div class="readonly-field">张三 / 质量管理部 / 管理者代表</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">电话 / 邮箱</label><div class="readonly-field">13800138000 / zhangsan@example.com</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">关联合同</label><div class="readonly-field">HT-CQC-2026-0128 管理体系认证合同</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">工作语言</label><div class="readonly-field">汉语</div></div>
+                                            <div class="md:col-span-2"><label class="block text-xs font-medium text-slate-700 mb-1">客户备注信息</label><div class="readonly-field">客户已完成体系文件发布和运行，现场审核优先安排在工作日；生产现场涉及焊接、机械加工和装配活动。</div></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="border-t border-slate-100 pt-4">
+                                        <h4 class="section-title"><i class="fas fa-sitemap text-blue-500"></i>组织信息</h4>
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">统一社会信用代码</label><div class="readonly-field">91110108MA01CQC888</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">组织人数</label><div class="readonly-field">128人（全职108人，兼职20人）</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">生产班次</label><div class="readonly-field">2班制</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">体系覆盖人数</label><div class="readonly-field">118人</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">外包/分包人员</label><div class="readonly-field">保洁、安保及设备维护共20人</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">是否多场所</label><div class="readonly-field">是，包含总部及天津分公司</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">组织成立时间</label><div class="readonly-field">2018-05-18</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">管理体系开始运行时间</label><div class="readonly-field">2025-09-01</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">最近一次内审/管理评审</label><div class="readonly-field">2026-03-10 / 2026-03-18</div></div>
+                                            <div class="md:col-span-3"><label class="block text-xs font-medium text-slate-700 mb-1">主要过程、产品和服务</label><div class="readonly-field">机械零部件加工、焊接、装配、检验、仓储及售后服务；主要产品为工业设备配套结构件和精密零部件。</div></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="border-t border-slate-100 pt-4">
+                                        <h4 class="section-title"><i class="fas fa-certificate text-blue-500"></i>认证需求信息（OHSMS）</h4>
+                                        <div class="overflow-x-auto">
+                                            <table class="process-table">
+                                                <thead><tr><th>认证领域</th><th>认证标准</th><th>认证范围</th><th>认可机构</th><th>证书要求</th></tr></thead>
+                                                <tbody>
+                                                    <tr><td>OHSMS（职业健康安全管理体系）</td><td>GB/T 45001-2020 / ISO 45001:2018</td><td>机械加工、焊接、装配及相关职业健康安全管理活动</td><td>CNAS</td><td>电子证书+纸质证书</td></tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div class="border-t border-slate-100 pt-4">
+                                        <h4 class="section-title"><i class="fas fa-object-group text-blue-500"></i>整合管理体系信息</h4>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">管理体系文件整合程度</label><div class="readonly-field">QMS、EMS、OHSMS共用管理手册和程序文件，专业条款由专项作业文件补充。</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">内审和管理评审整合情况</label><div class="readonly-field">已按一体化计划实施，2026-03-10完成内部审核，2026-03-18完成管理评审。</div></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="border-t border-slate-100 pt-4">
+                                        <h4 class="section-title"><i class="fas fa-paperclip text-blue-500"></i>应附文件和材料</h4>
+                                        <div class="space-y-3">
+                                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0"><i class="fas fa-file-pdf"></i></div><div><div class="text-sm font-medium text-slate-900">法律地位证明文件.pdf</div><div class="text-xs text-slate-500 mt-1">2.1 MB · 上传人：张三 · 2026-03-25 09:20 · 材料项：法律地位证明文件的复印件</div></div></div>
+                                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewAttachment('法律地位证明文件.pdf', 'PDF', '统一社会信用代码：91110108MA01CQC888；经营范围覆盖机械零部件加工、设备制造、技术服务等内容。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadAttachment('法律地位证明文件.pdf', '法律地位证明文件示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                                            </div>
+                                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0"><i class="fas fa-file-word"></i></div><div><div class="text-sm font-medium text-slate-900">管理体系文件目录.docx</div><div class="text-xs text-slate-500 mt-1">860 KB · 上传人：张三 · 2026-03-25 09:25 · 材料项：管理手册、程序文件及作业文件清单</div></div></div>
+                                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewAttachment('管理体系文件目录.docx', 'Word', '包含OHSMS管理手册、危险源辨识程序、运行控制程序、应急准备与响应程序、事件调查与改进程序等文件目录。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadAttachment('管理体系文件目录.docx', '管理体系文件目录示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                                            </div>
+                                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0"><i class="fas fa-file-excel"></i></div><div><div class="text-sm font-medium text-slate-900">认证场所清单.xlsx</div><div class="text-xs text-slate-500 mt-1">128 KB · 上传人：李四 · 2026-03-25 09:32 · 材料项：多场所组织认证场所清单</div></div></div>
+                                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewAttachment('认证场所清单.xlsx', 'Excel', '包含总部、生产场所、天津分公司等场所的地址、活动、人数、联系人及是否发子证书信息。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadAttachment('认证场所清单.xlsx', '认证场所清单示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                                            </div>
+                                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0"><i class="fas fa-file-excel"></i></div><div><div class="text-sm font-medium text-slate-900">管理体系过程清单.xlsx</div><div class="text-xs text-slate-500 mt-1">214 KB · 上传人：李四 · 2026-03-25 09:35 · 材料项：与组织过程有关的过程清单</div></div></div>
+                                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewAttachment('管理体系过程清单.xlsx', 'Excel', '覆盖危险源辨识与风险评价、法律法规识别、运行控制、应急准备、监视测量、事件调查、内审和管理评审等过程。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadAttachment('管理体系过程清单.xlsx', '管理体系过程清单示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                                            </div>
+                                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0"><i class="fas fa-file-pdf"></i></div><div><div class="text-sm font-medium text-slate-900">安评职评及三同时证明文件.pdf</div><div class="text-xs text-slate-500 mt-1">3.2 MB · 上传人：王五 · 2026-03-25 09:48 · 材料项：安评、职评及三同时证明文件</div></div></div>
+                                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewAttachment('安评职评及三同时证明文件.pdf', 'PDF', '已提交安全评价批复、职业病危害预评价备案、建设项目职业卫生三同时验收记录。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadAttachment('安评职评及三同时证明文件.pdf', '安评职评及三同时证明文件示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                                            </div>
+                                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0"><i class="fas fa-file-excel"></i></div><div><div class="text-sm font-medium text-slate-900">主要危险源及OHS风险清单.xlsx</div><div class="text-xs text-slate-500 mt-1">1.8 MB · 上传人：张三 · 2026-03-25 09:52 · 材料项：主要危险源和OHS风险</div></div></div>
+                                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewAttachment('主要危险源及OHS风险清单.xlsx', 'Excel', '包含机械伤害、焊接烟尘、噪声、高处作业、叉车作业、有限空间等危险源及风险等级和控制措施。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadAttachment('主要危险源及OHS风险清单.xlsx', '主要危险源及OHS风险清单示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                                            </div>
+                                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0"><i class="fas fa-file-excel"></i></div><div><div class="text-sm font-medium text-slate-900">适用法律法规及合规义务清单.xlsx</div><div class="text-xs text-slate-500 mt-1">956 KB · 上传人：王五 · 2026-03-25 10:05 · 材料项：适用法律法规、合规义务、风险和机遇清单</div></div></div>
+                                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewAttachment('适用法律法规及合规义务清单.xlsx', 'Excel', '包含安全生产法、职业病防治法、消防法及地方安全生产条例等适用要求和合规评价结果。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadAttachment('适用法律法规及合规义务清单.xlsx', '适用法律法规及合规义务清单示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                                            </div>
+                                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0"><i class="fas fa-file-pdf"></i></div><div><div class="text-sm font-medium text-slate-900">消防法规符合性证明文件.pdf</div><div class="text-xs text-slate-500 mt-1">1.4 MB · 上传人：赵六 · 2026-03-25 10:18 · 材料项：消防法规符合性证明文件（适用于OHSMS）</div></div></div>
+                                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewAttachment('消防法规符合性证明文件.pdf', 'PDF', '包含建设工程消防设计审查意见、消防验收意见及日常消防检查记录摘要。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadAttachment('消防法规符合性证明文件.pdf', '消防法规符合性证明文件示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                                            </div>
+                                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0"><i class="fas fa-file-word"></i></div><div><div class="text-sm font-medium text-slate-900">认证申请表附件.docx</div><div class="text-xs text-slate-500 mt-1">740 KB · 上传人：张三 · 2026-03-25 10:22 · 材料项：认证申请表补充说明及承诺</div></div></div>
+                                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewAttachment('认证申请表附件.docx', 'Word', '包含申请组织承诺、体系运行说明、审核安排偏好和补充说明。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadAttachment('认证申请表附件.docx', '认证申请表附件示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                        </div>
+
+                        <div id="recertificationApplicationPanel" data-review-app-panel="recertification" class="hidden space-y-5">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div><label class="block text-xs font-medium text-slate-700 mb-1">认证申请编号</label><div class="readonly-field">RCA-2026-00038</div></div>
+                                        <div><label class="block text-xs font-medium text-slate-700 mb-1">认证类型</label><div class="readonly-field">再认证</div></div>
+                                        <div><label class="block text-xs font-medium text-slate-700 mb-1">申请时间</label><div class="readonly-field">2026-03-30 09:30</div></div>
+                                        <div><label class="block text-xs font-medium text-slate-700 mb-1">项目编号</label><div class="readonly-field">JD202403001</div></div>
+                                        <div><label class="block text-xs font-medium text-slate-700 mb-1">关联合同</label><div class="readonly-field">HT-CQC-2024-0398 管理体系再认证合同</div></div>
+                                        <div><label class="block text-xs font-medium text-slate-700 mb-1">当前状态</label><div class="readonly-field">已提交</div></div>
+                                    </div>
+
+                                    <div class="border-t border-slate-100 pt-4">
+                                        <h4 class="section-title"><i class="fas fa-building text-emerald-500"></i>客户基本信息</h4>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">客户名称</label><div class="readonly-field">北京某某科技有限公司</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">客户英文名称</label><div class="readonly-field">Beijing Moumou Technology Co., Ltd.</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">注册地址</label><div class="readonly-field">北京市海淀区中关村软件园8号楼</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">运营地址</label><div class="readonly-field">北京市海淀区中关村软件园8号楼A座3层</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">注册地址邮编 / 运营地址邮编</label><div class="readonly-field">100085 / 100085</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">传真</label><div class="readonly-field">010-62885678</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">联系人 / 部门 / 职务</label><div class="readonly-field">李明 / 质量管理部 / 管理者代表</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">电话 / 邮箱</label><div class="readonly-field">13800138000 / liming@example.com</div></div>
+                                            <div class="md:col-span-2"><label class="block text-xs font-medium text-slate-700 mb-1">客户备注信息</label><div class="readonly-field">客户已完成上一周期内审和管理评审，申请按原OHSMS认证范围实施再认证，现场审核优先安排在工作日。</div></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="border-t border-slate-100 pt-4">
+                                        <h4 class="section-title"><i class="fas fa-certificate text-emerald-500"></i>认证需求信息（OHSMS）</h4>
+                                        <div class="overflow-x-auto">
+                                            <table class="process-table">
+                                                <thead><tr><th>认证领域</th><th>原证书编号</th><th>认证标准</th><th>有效期至</th><th>再认证范围</th><th>认可机构</th><th>证书要求</th></tr></thead>
+                                                <tbody>
+                                                    <tr><td>OHSMS（职业健康安全管理体系）</td><td>00123S34571R0S/37000</td><td>GB/T 45001-2020 / ISO 45001:2018</td><td>2026-04-17</td><td>软件研发、系统集成项目实施、办公运营及相关职业健康安全管理活动</td><td>CNAS</td><td>电子证书+纸质证书</td></tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div class="border-t border-slate-100 pt-4">
+                                        <h4 class="section-title"><i class="fas fa-users text-emerald-500"></i>组织及人员信息</h4>
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">组织总人数</label><div class="readonly-field">128人</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">体系覆盖人数</label><div class="readonly-field">126人</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">工作班次</label><div class="readonly-field">常白班，9:00-18:00</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">在其他组织场所提供服务人员</label><div class="readonly-field">15人，系统集成项目实施和运维支持</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">承包商/分包方人员</label><div class="readonly-field">共8人，保洁和设备维保</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">主要危险源</label><div class="readonly-field">办公用电、机房作业、差旅交通、客户现场设备安装调试</div></div>
+                                            <div class="md:col-span-3"><label class="block text-xs font-medium text-slate-700 mb-1">上一周期变化说明</label><div class="readonly-field">注册地址和主要业务范围未发生重大变化；新增云平台运维服务过程，已纳入一体化管理体系。</div></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="border-t border-slate-100 pt-4">
+                                        <h4 class="section-title"><i class="fas fa-paperclip text-emerald-500"></i>再认证应附文件和材料</h4>
+                                        <div class="space-y-3">
+                                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0"><i class="fas fa-file-pdf"></i></div><div><div class="text-sm font-medium text-slate-900">上一周期OHSMS认证证书.pdf</div><div class="text-xs text-slate-500 mt-1">1.2 MB · 上传人：李明 · 2026-03-30 09:40 · 材料项：原认证证书</div></div></div>
+                                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewAttachment('上一周期OHSMS认证证书.pdf', 'PDF', '证书编号：00123S34571R0S/37000；标准：GB/T 45001-2020 / ISO 45001:2018；有效期至2026-04-17。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadAttachment('上一周期OHSMS认证证书.pdf', '上一周期OHSMS认证证书示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                                            </div>
+                                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0"><i class="fas fa-file-pdf"></i></div><div><div class="text-sm font-medium text-slate-900">营业执照.pdf</div><div class="text-xs text-slate-500 mt-1">1.9 MB · 上传人：李明 · 2026-03-30 09:42 · 材料项：法律地位证明文件</div></div></div>
+                                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewAttachment('营业执照.pdf', 'PDF', '统一社会信用代码：91110108MA01CQC888；经营范围覆盖软件开发、系统集成、技术服务等。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadAttachment('营业执照.pdf', '营业执照示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                                            </div>
+                                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0"><i class="fas fa-file-word"></i></div><div><div class="text-sm font-medium text-slate-900">OHSMS管理体系文件目录.docx</div><div class="text-xs text-slate-500 mt-1">780 KB · 上传人：李明 · 2026-03-30 09:45 · 材料项：管理体系文件</div></div></div>
+                                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewAttachment('OHSMS管理体系文件目录.docx', 'Word', '包含职业健康安全方针、目标指标、危险源辨识、运行控制、应急响应、绩效评价和改进等文件目录。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadAttachment('OHSMS管理体系文件目录.docx', 'OHSMS管理体系文件目录示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                                            </div>
+                                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0"><i class="fas fa-file-pdf"></i></div><div><div class="text-sm font-medium text-slate-900">内部审核报告.pdf</div><div class="text-xs text-slate-500 mt-1">2.6 MB · 上传人：王芳 · 2026-03-30 09:50 · 材料项：最近一次内部审核报告</div></div></div>
+                                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewAttachment('内部审核报告.pdf', 'PDF', '2026-03-10完成内部审核，覆盖OHSMS全部适用条款、总部和客户现场服务过程，发现一般不符合2项，均已完成纠正。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadAttachment('内部审核报告.pdf', '内部审核报告示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                                            </div>
+                                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0"><i class="fas fa-file-pdf"></i></div><div><div class="text-sm font-medium text-slate-900">管理评审报告.pdf</div><div class="text-xs text-slate-500 mt-1">1.7 MB · 上传人：王芳 · 2026-03-30 09:54 · 材料项：最近一次管理评审报告</div></div></div>
+                                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewAttachment('管理评审报告.pdf', 'PDF', '2026-03-18完成管理评审，评审输入包含目标达成、事故事件、合规评价、资源需求、相关方反馈和改进机会。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadAttachment('管理评审报告.pdf', '管理评审报告示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                                            </div>
+                                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0"><i class="fas fa-file-excel"></i></div><div><div class="text-sm font-medium text-slate-900">认证场所清单.xlsx</div><div class="text-xs text-slate-500 mt-1">146 KB · 上传人：李明 · 2026-03-30 09:58 · 材料项：认证场所清单</div></div></div>
+                                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewAttachment('认证场所清单.xlsx', 'Excel', '包含总部办公场所、项目实施现场类型、人数、活动、联系人等认证场所信息。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadAttachment('认证场所清单.xlsx', '认证场所清单示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                                            </div>
+                                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0"><i class="fas fa-file-excel"></i></div><div><div class="text-sm font-medium text-slate-900">主要危险源及OHS风险清单.xlsx</div><div class="text-xs text-slate-500 mt-1">920 KB · 上传人：赵强 · 2026-03-30 10:02 · 材料项：主要危险源和OHS风险</div></div></div>
+                                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewAttachment('主要危险源及OHS风险清单.xlsx', 'Excel', '覆盖办公用电、机房作业、客户现场安装调试、差旅交通、消防疏散等主要危险源。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadAttachment('主要危险源及OHS风险清单.xlsx', '主要危险源及OHS风险清单示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                                            </div>
+                                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                                                <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0"><i class="fas fa-file-excel"></i></div><div><div class="text-sm font-medium text-slate-900">适用法律法规及合规义务清单.xlsx</div><div class="text-xs text-slate-500 mt-1">640 KB · 上传人：赵强 · 2026-03-30 10:05 · 材料项：合规义务清单</div></div></div>
+                                                <div class="flex items-center gap-2"><button type="button" class="file-action-btn preview" onclick="previewAttachment('适用法律法规及合规义务清单.xlsx', 'Excel', '包含安全生产、消防、职业健康、劳动保护、客户现场作业等适用法规和合规评价结果。')"><i class="fas fa-eye"></i>预览</button><button type="button" class="file-action-btn download" onclick="downloadAttachment('适用法律法规及合规义务清单.xlsx', '适用法律法规及合规义务清单示例内容')"><i class="fas fa-download"></i>下载</button></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div><label class="block text-xs font-medium text-slate-700 mb-1">认证申请编号</label><div class="readonly-field">SQ202603250001</div></div>
                         <div><label class="block text-xs font-medium text-slate-700 mb-1">CQC受理机构</label><div class="readonly-field">北京评审中心</div></div>
@@ -294,19 +491,6 @@
                     </div>
 
                     <div class="border-t border-slate-100 pt-4">
-                        <h4 class="section-title"><i class="fas fa-map-marker-alt text-blue-500"></i>OHSMS认证场所</h4>
-                        <div class="readonly-field" style="min-height: 80px;">
-                            <div class="mb-2"><strong>总部（中心职能）</strong> - 北京市海淀区xxx路xxx号</div>
-                            <div class="text-xs text-slate-600">
-                                涉及的产品、过程、活动：机械零部件加工、焊接、装配<br>
-                                班次：2班制（08:00-16:00, 16:00-24:00）<br>
-                                人数：80人（含承包方20人）<br>
-                                联系人：张三，电话：010-12345678
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="border-t border-slate-100 pt-4">
                         <h4 class="section-title"><i class="fas fa-users text-blue-500"></i>组织/人员信息（OHSMS）</h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div><label class="block text-xs font-medium text-slate-700 mb-1">公司社保总人数</label><div class="readonly-field">100人（全职80人，兼职20人）</div></div>
@@ -317,52 +501,7 @@
                         </div>
                     </div>
 
-                    <div class="border-t border-slate-100 pt-4">
-                        <h4 class="section-title"><i class="fas fa-paperclip text-blue-500"></i>应附文件和材料（OHSMS）</h4>
-                        <div class="space-y-3" id="attachmentList">
-                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                                <div class="flex items-start gap-3">
-                                    <div class="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0"><i class="fas fa-file-pdf"></i></div>
-                                    <div>
-                                        <div class="text-sm font-medium text-slate-900">主要危险源及OHS风险清单.pdf</div>
-                                        <div class="text-xs text-slate-500 mt-1">1.8 MB · 上传人：张三 · 2026-03-25 09:42 · 材料项：与组织过程有关的主要危险源和OHS风险</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <button type="button" class="file-action-btn preview" onclick="previewAttachment('主要危险源及OHS风险清单.pdf', 'PDF', '模拟预览：本文件包含机械伤害、焊接烟尘、噪声、高空作业等主要危险源，以及对应风险等级和控制措施。')"><i class="fas fa-eye"></i>预览</button>
-                                    <button type="button" class="file-action-btn download" onclick="downloadAttachment('主要危险源及OHS风险清单.pdf', '主要危险源及OHS风险清单示例内容')"><i class="fas fa-download"></i>下载</button>
-                                </div>
-                            </div>
-                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                                <div class="flex items-start gap-3">
-                                    <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center shrink-0"><i class="fas fa-file-word"></i></div>
-                                    <div>
-                                        <div class="text-sm font-medium text-slate-900">安评职评及三同时证明文件.docx</div>
-                                        <div class="text-xs text-slate-500 mt-1">3.2 MB · 上传人：李四 · 2026-03-25 09:48 · 材料项：安评、职评及三同时证明文件</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <button type="button" class="file-action-btn preview" onclick="previewAttachment('安评职评及三同时证明文件.docx', 'Word', '模拟预览：已提交安全评价批复、职业病危害预评价备案、建设项目三同时验收记录。')"><i class="fas fa-eye"></i>预览</button>
-                                    <button type="button" class="file-action-btn download" onclick="downloadAttachment('安评职评及三同时证明文件.docx', '安评职评及三同时证明文件示例内容')"><i class="fas fa-download"></i>下载</button>
-                                </div>
-                            </div>
-                            <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                                <div class="flex items-start gap-3">
-                                    <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0"><i class="fas fa-file-excel"></i></div>
-                                    <div>
-                                        <div class="text-sm font-medium text-slate-900">合规义务及风险机遇清单.xlsx</div>
-                                        <div class="text-xs text-slate-500 mt-1">956 KB · 上传人：王五 · 2026-03-25 10:05 · 材料项：合规义务、风险和机遇清单</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <button type="button" class="file-action-btn preview" onclick="previewAttachment('合规义务及风险机遇清单.xlsx', 'Excel', '模拟预览：包含适用法律法规、合规义务识别结果、风险和机遇应对措施。')"><i class="fas fa-eye"></i>预览</button>
-                                    <button type="button" class="file-action-btn download" onclick="downloadAttachment('合规义务及风险机遇清单.xlsx', '合规义务及风险机遇清单示例内容')"><i class="fas fa-download"></i>下载</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="border-t border-slate-100 pt-4">
+                    <div class="border-t border-slate-100 pt-4 application-signature-preserved">
                         <h4 class="section-title"><i class="fas fa-signature text-blue-500"></i>签章信息</h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -388,7 +527,7 @@
                         </div>
                     </div>
 
-                    <div class="border-t border-slate-100 pt-4">
+                    <div class="border-t border-slate-100 pt-4 application-notice-preserved">
                         <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 leading-relaxed">
                             <p>如您需更进一步了解以下信息，请查阅中国质量认证中心网址http://www.cqc.com.cn的公开文件目录或向我中心相关人员索取：CQC简介及联络信息、CQC认证领域和认证业务、认证制度的说明、CQC获取财务支持方式和认证收费标准、认证申请方和获证方的权利义务、申请方和获证组织向CQC申诉、投诉和争议的渠道、获证方的公告方式、获证方向认证机构通报其管理体系变更情况的渠道和要求、获证方未遵守法律法规要求的处理程序、IQNet及认证合作简介。</p>
                         </div>
@@ -582,74 +721,6 @@
                         <p>注：</p>
                         <p>1.本表"场所"是指包含中心职能在内的认证范围内的所有场所；如果该场所有倒班生产和服务情况，请详细说明生产和服务活动、班次、时间和人员等信息；</p>
                         <p>2.临时多场所推荐使用本表，其中工程施工（28大类）、工程监理（34.01.01）、开采业（02）组织的在建项目场所应填写本表，并写明项目名称、开工和完工时间、工程当前进展情况等信息；</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 4. 获证方情况调查表（仅再认证显示，监督审核已删除） -->
-            <div id="section-survey" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden">
-                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-                    <div class="flex items-center gap-2"><i class="fas fa-clipboard-check text-blue-600"></i><h3 class="font-semibold text-slate-900">获证方情况调查（OHSMS）</h3></div>
-                    <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">已填报内容</span>
-                </div>
-                <div class="p-6 space-y-6">
-                    <div class="alert-box warning"><i class="fas fa-info-circle mt-0.5"></i><div><p class="font-medium">变更确认</p><p class="mt-1">以下信息自上次审核以来的变更情况（客户已填报）</p></div></div>
-
-                    <div class="space-y-3">
-                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                            <div class="flex items-center justify-between mb-2"><span class="text-sm font-medium text-slate-700">组织人数或体系覆盖人数</span><span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">无变更</span></div>
-                            <div class="readonly-field">120人（与上次审核一致）</div>
-                        </div>
-                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                            <div class="flex items-center justify-between mb-2"><span class="text-sm font-medium text-slate-700">注册地址或运营地址</span><span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded">有变更</span></div>
-                            <div class="grid grid-cols-2 gap-2 text-sm">
-                                <div><span class="text-xs text-slate-500">原地址：</span><div class="text-slate-700">北京市朝阳区xxx路xxx号</div></div>
-                                <div><span class="text-xs text-slate-500">变更后：</span><div class="text-slate-700">北京市海淀区xxx路xxx号（因业务扩展搬迁）</div></div>
-                            </div>
-                        </div>
-                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                            <div class="flex items-center justify-between mb-2"><span class="text-sm font-medium text-slate-700">主要生产设施设备</span><span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded">有变更</span></div>
-                            <div class="text-sm text-slate-700">新增数控加工中心2台，停用旧车床3台</div>
-                        </div>
-                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                            <div class="flex items-center justify-between mb-2"><span class="text-sm font-medium text-slate-700">临时服务现场信息</span><span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">无变更</span></div>
-                            <div class="readonly-field">无临时服务现场</div>
-                        </div>
-                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                            <div class="flex items-center justify-between mb-2"><span class="text-sm font-medium text-slate-700">是否发生过不良信息事件（如重大事故/行政检查等）</span><span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">无</span></div>
-                            <div class="readonly-field">自上次审核以来未发生职业健康安全事故，未受到安全生产行政处罚</div>
-                        </div>
-                    </div>
-
-                    <div class="border-t border-slate-100 pt-4">
-                        <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-100">
-                            <span class="text-sm font-medium text-blue-900">是否同意《监督/再认证通知书》中的审核日期</span>
-                            <span class="text-sm font-bold text-blue-700">是</span>
-                        </div>
-                    </div>
-
-                    <div class="border-t border-slate-100 pt-4 hidden" id="businessReviewSwitch">
-                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
-                            <span class="text-sm font-medium text-slate-700">是否需要业务评审</span>
-                            <span class="text-sm text-slate-600">否（直接流转至方案策划）</span>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-100 pt-4">
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700 mb-1">客户代表签名</label>
-                            <div class="readonly-field h-16 flex items-center justify-center bg-slate-50">
-                                <div class="text-center"><i class="fas fa-signature text-green-600 mb-1"></i><div class="text-xs text-slate-600">张三（已签署）</div></div>
-                            </div>
-                        </div>
-                        <div><label class="block text-xs font-medium text-slate-700 mb-1">提交日期</label><div class="readonly-field">2026-03-25</div></div>
-                    </div>
-
-                    <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 leading-relaxed space-y-1">
-                        <p>注1：若根据变更信息需要变更认证证书的，则还应请客户提交《证书变更申请书》；</p>
-                        <p>注2：若客户属于多场所组织且场所发生了变更，则还应请客户提交最新的《认证场所清单》；</p>
-                        <p>注3：列明除建筑施工（28大类）、建筑监理（34.01.01）、开采业（02）之外的、正在实施以及已经签订合同，拟在半年内实施的服务项目；</p>
-                        <p>注4：再认证项目人天数调整信息应传递给申请评审岗位并记录。</p>
                     </div>
                 </div>
             </div>
@@ -1461,6 +1532,8 @@
             badge.className = `review-type-badge ${typeClasses[type]}`;
             badge.textContent = typeLabels[type];
 
+            updateApplicationPreviewByType(type);
+
             // 同步更新导航可见性
             updateNavVisibility();
 
@@ -1472,8 +1545,8 @@
             const stage1Apply = document.getElementById('stage1Apply');
             const historyRefreshBtn = document.getElementById('historyRefreshBtn');
 
-            surveySection.classList.add('hidden');
-            navSurvey.classList.add('hidden');
+            if (surveySection) surveySection.classList.add('hidden');
+            if (navSurvey) navSurvey.classList.add('hidden');
             historyContent.classList.add('hidden');
             historyEmpty.classList.remove('hidden');
             runningTimeField.classList.remove('hidden');
@@ -1489,8 +1562,6 @@
                     if (stage1Apply) stage1Apply.classList.remove('hidden');
                     break;
                 case 'recertification':
-                    surveySection.classList.remove('hidden');
-                    navSurvey.classList.remove('hidden');
                     historyContent.classList.remove('hidden');
                     historyEmpty.classList.add('hidden');
                     if (historyRefreshBtn) {
@@ -1501,6 +1572,12 @@
                     runningTimeField.classList.add('hidden');
                     break;
             }
+        }
+
+        function updateApplicationPreviewByType(type) {
+            document.querySelectorAll('[data-review-app-panel]').forEach(panel => {
+                panel.classList.toggle('hidden', panel.dataset.reviewAppPanel !== type);
+            });
         }
 
         function refreshHistoryCertificates() {
@@ -1536,8 +1613,6 @@
                     break;
 
                 case 'recertification':
-                    if (navSurvey) navSurvey.classList.remove('hidden');
-                    if (sectionSurvey) sectionSurvey.classList.remove('hidden');
                     break;
             }
         }
