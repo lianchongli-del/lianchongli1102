@@ -2525,14 +2525,6 @@
                 </div>
 
                 <div class="space-y-4">
-                    <!-- 认证转换固定标识 -->
-                    <div class="bg-amber-50 p-3 rounded-lg border border-amber-200">
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm font-medium text-amber-700"><i class="fas fa-exchange-alt mr-2"></i>认证类型：认证转换</span>
-                            <span class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">转换申请</span>
-                        </div>
-                    </div>
-
                     ${renderTransferCertificateFields(uniqueId, systemKey)}
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2745,7 +2737,6 @@
                             <h5 class="font-medium text-amber-900 text-xs flex items-center gap-2">
                                 <i class="fas fa-certificate"></i>原认证证书信息
                             </h5>
-                            <p class="text-[10px] text-amber-700 mt-1">输入证书编号后，可通过AI能力底座检索并回填证书信息；除证书编号外，其余信息只读。</p>
                         </div>
                         <button type="button" onclick="addTransferCertificateRow('${uniqueId}', '${systemKey}')" class="px-3 py-1.5 bg-amber-600 text-white rounded-lg text-xs font-medium hover:bg-amber-700 transition-colors shadow-sm flex items-center gap-1">
                             <i class="fas fa-plus"></i>添加证书信息
@@ -2789,35 +2780,35 @@
                     </div>
                     <div>
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">认证机构</label>
-                        <input type="text" id="certOrg_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-100 text-slate-600">
+                        <input type="text" id="certOrg_${rowId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white transition-all">
                     </div>
                     <div>
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">认证领域</label>
-                        <input type="text" id="certDomain_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-100 text-slate-600">
+                        <input type="text" id="certDomain_${rowId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white transition-all">
                     </div>
                     <div>
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">认证标准</label>
-                        <input type="text" id="certStandard_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-100 text-slate-600">
+                        <input type="text" id="certStandard_${rowId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white transition-all">
                     </div>
                     <div>
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">首次发证日期</label>
-                        <input type="date" id="firstIssueDate_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-100 text-slate-600">
+                        <input type="date" id="firstIssueDate_${rowId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white transition-all">
                     </div>
                     <div>
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">本周期发证日期</label>
-                        <input type="date" id="cycleIssueDate_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-100 text-slate-600">
+                        <input type="date" id="cycleIssueDate_${rowId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white transition-all">
                     </div>
                     <div>
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">有效期至</label>
-                        <input type="date" id="validUntil_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-100 text-slate-600">
+                        <input type="date" id="validUntil_${rowId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white transition-all">
                     </div>
                     <div>
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">最近一次现场审核开始时间</label>
-                        <input type="date" id="lastAuditStart_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-100 text-slate-600">
+                        <input type="date" id="lastAuditStart_${rowId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white transition-all">
                     </div>
                     <div>
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">最近一次现场审核结束时间</label>
-                        <input type="date" id="lastAuditEnd_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-100 text-slate-600">
+                        <input type="date" id="lastAuditEnd_${rowId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white transition-all">
                     </div>
                 </div>
             `;
@@ -3610,13 +3601,6 @@
                 </div>
 
                 <div class="space-y-4">
-                    <div class="bg-amber-50 p-3 rounded-lg border border-amber-200">
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm font-medium text-amber-700"><i class="fas fa-exchange-alt mr-2"></i>认证类型：认证转换</span>
-                            <span class="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">转换申请</span>
-                        </div>
-                    </div>
-
                     ${renderTransferCertificateFields(uniqueId, systemKey)}
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
