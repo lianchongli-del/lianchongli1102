@@ -448,14 +448,14 @@
                     <p class="text-xs text-slate-500 mt-1">证书变更评审流程</p>
                 </div>
                 <nav class="py-2">
-                    <a href="#section-basic" class="nav-item active block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent" onclick="switchTab('basic')">
+                    <a href="#section-history" class="nav-item active block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent" onclick="switchTab('history')">
                         <div class="flex items-center justify-between">
-                            <span class="flex items-center gap-2"><i class="fas fa-certificate w-5 text-center"></i>变更内容对比</span>
+                            <span class="flex items-center gap-2"><i class="fas fa-certificate w-5 text-center"></i>原证书信息</span>
                         </div>
                     </a>
-                    <a href="#section-history" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent" onclick="switchTab('history')">
+                    <a href="#section-basic" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent" onclick="switchTab('basic')">
                         <div class="flex items-center justify-between">
-                            <span class="flex items-center gap-2"><i class="fas fa-history w-5 text-center"></i>历史证书核查</span>
+                            <span class="flex items-center gap-2"><i class="fas fa-exchange-alt w-5 text-center"></i>变更内容对比</span>
                         </div>
                     </a>
                     <a href="#section-attachments" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent" onclick="switchTab('attachments')">
@@ -486,22 +486,10 @@
         <!-- 主内容区 -->
         <div class="flex-1 space-y-6" id="mainContent">
 
-            <!-- 业务信息栏 -->
-            <div class="bg-blue-50 rounded-xl border border-blue-200 p-4 flex flex-wrap gap-4 items-center justify-between">
-                <div class="flex gap-6 text-sm">
-                    <div><span class="text-slate-500">变更申请号：</span><span class="font-mono font-semibold text-slate-900">BG202604110001</span></div>
-                    <div><span class="text-slate-500">原证书号：</span><span class="font-semibold text-slate-900">00126E301110R70</span></div>
-                    <div><span class="text-slate-500">企业名称：</span><span class="font-semibold text-slate-900">彩晶光电科技(昆山)有限公司</span></div>
-                    <div><span class="text-slate-500">当前阶段：</span><span class="status-badge status-surveillance2">待监督2阶段</span></div>
-                </div>
-                <div class="flex items-center gap-2 text-xs text-slate-500"><i class="fas fa-clock"></i><span>申请日期：2026-04-11</span></div>
-            </div>
-
-            <!-- 历史证书核查 -->
+            <!-- 原证书信息 -->
             <div id="section-history" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <span class="w-7 h-7 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-sm font-bold">2</span>
                         <h3 class="font-semibold text-slate-900">原证书信息</h3>
                         <span class="px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700 border border-green-200">已查询到证书</span>
                     </div>
@@ -556,6 +544,17 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- 业务信息栏 -->
+            <div class="bg-blue-50 rounded-xl border border-blue-200 p-4 flex flex-wrap gap-4 items-center justify-between">
+                <div class="flex gap-6 text-sm">
+                    <div><span class="text-slate-500">变更申请号：</span><span class="font-mono font-semibold text-slate-900">BG202604110001</span></div>
+                    <div><span class="text-slate-500">原证书号：</span><span class="font-semibold text-slate-900">00126E301110R70</span></div>
+                    <div><span class="text-slate-500">企业名称：</span><span class="font-semibold text-slate-900">彩晶光电科技(昆山)有限公司</span></div>
+                    <div><span class="text-slate-500">当前阶段：</span><span class="status-badge status-surveillance2">待监督2阶段</span></div>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-slate-500"><i class="fas fa-clock"></i><span>申请日期：2026-04-11</span></div>
             </div>
 
             <!-- 1. 变更内容对比 -->
