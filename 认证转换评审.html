@@ -1664,13 +1664,20 @@
                 const titleText = (titleEl?.childNodes[0]?.textContent || titleEl?.textContent || `附件${index + 1}`).trim();
                 const sourceFileName = sourceFileNames[index] || `${titleText}.pdf`;
                 const existingUpload = card.querySelector('.upload-btn');
+                const countDiv = meta?.querySelector('.file-count');
                 card.querySelectorAll('.badge').forEach(badge => badge.remove());
                 card.classList.add('has-files');
-                if (meta && !meta.querySelector('.attachment-source')) {
-                    const source = document.createElement('div');
-                    source.className = 'attachment-source file-tag mt-2';
-                    source.innerHTML = `<i class="fas fa-file-circle-check"></i><span>已带入文件：${sourceFileName}</span>`;
-                    meta.appendChild(source);
+                if (countDiv) countDiv.textContent = '1个文件';
+                if (meta && !meta.querySelector('.uploaded-files')) {
+                    const fileList = document.createElement('div');
+                    fileList.className = 'uploaded-files';
+                    fileList.innerHTML = `
+                        <div class="file-tag">
+                            <i class="fas fa-file-circle-check"></i>
+                            <span>${sourceFileName}</span>
+                        </div>
+                    `;
+                    meta.appendChild(fileList);
                 }
                 const actions = document.createElement('div');
                 actions.className = 'flex items-center gap-2 shrink-0';
