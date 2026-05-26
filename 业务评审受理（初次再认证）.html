@@ -164,6 +164,9 @@
                     <button onclick="saveReview()" class="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-all">
                         <i class="fas fa-save mr-2"></i>暂存
                     </button>
+                    <button id="holderChangeTopBtn" onclick="openCertificateHolderChangeModal()" class="hidden px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-medium shadow-md shadow-emerald-100 transition-all">
+                        <i class="fas fa-clipboard-list mr-2"></i>获证方情况和变更申请表
+                    </button>
                     <button onclick="submitFinalReview()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md shadow-blue-200 transition-all">
                         <i class="fas fa-check-circle mr-2"></i>提交评审
                     </button>
@@ -382,7 +385,6 @@
                                         <div><label class="block text-xs font-medium text-slate-700 mb-1">关联合同</label><div class="readonly-field">HT-CQC-2024-0398 管理体系再认证合同</div></div>
                                         <div><label class="block text-xs font-medium text-slate-700 mb-1">当前状态</label><div class="readonly-field">已提交</div></div>
                                     </div>
-
                                     <div class="border-t border-slate-100 pt-4">
                                         <h4 class="section-title"><i class="fas fa-building text-emerald-500"></i>客户基本信息</h4>
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1471,6 +1473,143 @@
         </div>
     </div>
 
+    <!-- 获证方情况和变更申请表弹窗（仅再认证入口打开） -->
+    <div id="certificateHolderChangeModal" class="hidden fixed inset-0 bg-black/50 z-50 items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[88vh] flex flex-col overflow-hidden">
+            <div class="p-5 border-b border-slate-100 bg-slate-50 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">获证方情况和变更申请表</h3>
+                        <p class="text-xs text-slate-500 mt-1">只读查看，展示再认证申请带入的获证方情况及变更前后内容</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeCertificateHolderChangeModal()" class="w-8 h-8 rounded-lg hover:bg-white text-slate-500 hover:text-slate-800 transition-colors"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto space-y-4 bg-slate-50">
+                <div class="bg-white border border-slate-200 rounded-xl p-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs"><i class="fas fa-building"></i></span>
+                        <h4 class="font-semibold text-slate-900">获证方情况</h4>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                        <div class="readonly-field"><span class="text-slate-500">获证组织：</span>北京某某科技有限公司</div>
+                        <div class="readonly-field"><span class="text-slate-500">现有证书覆盖：</span>OHSMS 职业健康安全管理体系认证</div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-emerald-100 rounded-xl p-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs"><i class="fas fa-check"></i></span>
+                        <h4 class="font-semibold text-slate-900">认证范围变更</h4>
+                        <span class="text-xs text-slate-500">适用证书：00123S34571R0S/37000</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                            <div class="mb-2"><div class="font-semibold text-slate-900">00123S34571R0S/37000</div><div class="text-xs text-slate-500">职业健康安全管理体系</div></div>
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 text-sm">
+                                <div class="bg-white rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>变更前内容</div><div class="text-slate-800">软件研发、系统集成项目实施及办公运营相关职业健康安全管理活动。</div></div>
+                                <div class="bg-white rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>变更后内容</div><div class="text-slate-800">软件研发、系统集成项目实施、云平台运维服务、办公运营及相关职业健康安全管理活动。</div></div>
+                                <div class="bg-white rounded-lg border border-slate-200 p-3"><div class="text-xs text-slate-500 mb-1">变更情况和原因</div><div class="text-slate-800">新增云平台运维服务过程，纳入一体化管理体系控制。</div></div>
+                            </div>
+                        </div>
+                        <div class="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                            <div class="mb-2"><div class="font-semibold text-slate-900">00123Q34567R0S/37000</div><div class="text-xs text-slate-500">质量管理体系</div></div>
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 text-sm">
+                                <div class="bg-white rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>变更前内容</div><div class="text-slate-800">计算机软件开发、系统集成服务及相关管理活动。</div></div>
+                                <div class="bg-white rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>变更后内容</div><div class="text-slate-800">计算机软件开发、系统集成服务、信息技术运维服务及相关管理活动。</div></div>
+                                <div class="bg-white rounded-lg border border-slate-200 p-3"><div class="text-xs text-slate-500 mb-1">变更情况和原因</div><div class="text-slate-800">根据业务发展情况，补充运维服务相关范围。</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-blue-100 rounded-xl p-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs"><i class="fas fa-map-marker-alt"></i></span>
+                        <h4 class="font-semibold text-slate-900">分支机构/常设多场所变更</h4>
+                    </div>
+                    <div class="bg-slate-50 rounded-lg border border-slate-200 p-3 text-sm mb-3">
+                        <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold mb-3"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>变更前内容：认证覆盖场所</div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                            <div class="rounded border border-slate-100 bg-white p-2"><div class="font-medium text-slate-800">1. 北京总部</div><div class="text-xs text-slate-500 mt-1">北京市海淀区中关村软件园8号楼</div></div>
+                            <div class="rounded border border-slate-100 bg-white p-2"><div class="font-medium text-slate-800">2. 项目实施现场</div><div class="text-xs text-slate-500 mt-1">客户现场短期实施和运维支持</div></div>
+                            <div class="rounded border border-slate-100 bg-white p-2"><div class="font-medium text-slate-800">3. 成都交付办公室</div><div class="text-xs text-slate-500 mt-1">成都市高新区天府三街99号</div></div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 text-sm">
+                        <div class="bg-slate-50 rounded-lg border border-green-100 p-3">
+                            <div class="font-medium text-green-700 mb-2"><i class="fas fa-plus-circle mr-1"></i>新增场所</div>
+                            <div class="text-slate-800">杭州服务中心</div>
+                            <div class="text-xs text-slate-500 mt-1">杭州市滨江区江南大道3888号</div>
+                        </div>
+                        <div class="bg-slate-50 rounded-lg border border-red-100 p-3">
+                            <div class="font-medium text-red-700 mb-2"><i class="fas fa-minus-circle mr-1"></i>减少场所</div>
+                            <div class="text-slate-800">成都交付办公室</div>
+                            <div class="text-xs text-slate-500 mt-1">成都市高新区天府三街99号</div>
+                        </div>
+                    </div>
+                    <div class="mt-3 bg-slate-50 rounded-lg border border-slate-200 p-3 text-sm">
+                        <div class="text-xs text-slate-500 mb-1">变更情况和原因</div>
+                        <div class="text-slate-800">服务网络调整，新增杭州服务中心承接区域客户服务，成都办公室不再承担认证范围内活动。</div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-amber-100 rounded-xl p-4">
+                    <div class="flex items-center gap-2 mb-3"><span class="w-5 h-5 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-xs"><i class="fas fa-user"></i></span><h4 class="font-semibold text-slate-900">联系人/联系方式变更</h4></div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 text-sm">
+                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>变更前内容</div><div class="text-slate-800">管理者代表：王强；电话：13900139000；邮箱：wangqiang@example.com。</div></div>
+                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>变更后内容</div><div class="text-slate-800">管理者代表：李明；电话：13800138000；邮箱：liming@example.com。</div></div>
+                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="text-xs text-slate-500 mb-1">变更情况和原因</div><div class="text-slate-800">管理者代表岗位调整，联系方式同步更新。</div></div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-cyan-100 rounded-xl p-4">
+                    <div class="flex items-center gap-2 mb-3"><span class="w-5 h-5 rounded-full bg-cyan-100 text-cyan-600 flex items-center justify-center text-xs"><i class="fas fa-users"></i></span><h4 class="font-semibold text-slate-900">组织人数和体系覆盖人数变更</h4></div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 text-sm">
+                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>变更前内容</div><div class="text-slate-800">组织总人数 128 人；OHSMS 覆盖 126 人。</div></div>
+                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>变更后内容</div><div class="text-slate-800">组织总人数 156 人；OHSMS 覆盖 156 人。</div></div>
+                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="text-xs text-slate-500 mb-1">变更情况和原因</div><div class="text-slate-800">研发和交付团队扩编，部分外包岗位转为正式人员。</div></div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-rose-100 rounded-xl p-4">
+                    <div class="flex items-center gap-2 mb-3"><span class="w-5 h-5 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-xs"><i class="fas fa-file-alt"></i></span><h4 class="font-semibold text-slate-900">管理体系文件和主要过程变更</h4></div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 text-sm">
+                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>变更前内容</div><div class="text-slate-800">管理手册 V3.1，过程文件未单列云平台运维和远程服务要求。</div></div>
+                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>变更后内容</div><div class="text-slate-800">管理手册升级至 V3.2，新增《云平台运维控制程序》《远程运维服务控制规范》。</div></div>
+                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="text-xs text-slate-500 mb-1">变更情况和原因</div><div class="text-slate-800">为覆盖新增服务活动，对过程识别、职责接口和记录要求进行修订。</div></div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-orange-100 rounded-xl p-4">
+                    <div class="flex items-center gap-2 mb-3"><span class="w-5 h-5 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xs"><i class="fas fa-network-wired"></i></span><h4 class="font-semibold text-slate-900">外包过程和外部服务场所变更</h4></div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 text-sm">
+                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>变更前内容</div><div class="text-slate-800">外包过程仅包括保洁、设备维保和办公网络支持。</div></div>
+                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>变更后内容</div><div class="text-slate-800">新增云资源监控外包服务，供应商纳入年度评价和 SLA 监控。</div></div>
+                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="text-xs text-slate-500 mb-1">变更情况和原因</div><div class="text-slate-800">部分运维人员在客户现场提供短期支持服务，按项目台账实施管理。</div></div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-sky-100 rounded-xl p-4">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-5 h-5 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center text-xs"><i class="fas fa-calendar-alt"></i></span>
+                        <h4 class="font-semibold text-slate-900">审核日期确认</h4>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 text-sm">
+                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="text-xs text-slate-500 mb-1">期望审核日期</div><div class="text-slate-800">2026-04-15 至 2026-04-18</div></div>
+                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="text-xs text-slate-500 mb-1">不能安排实施的日期和原因</div><div class="text-slate-800">2026-04-04 至 2026-04-06 为节假日，客户现场无法接待审核。</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-100 bg-white flex justify-end">
+                <button type="button" onclick="closeCertificateHolderChangeModal()" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors">关闭</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ==================== 全局状态变量 ====================
         let currentReviewType = 'initial';
@@ -1544,6 +1683,7 @@
             const runningTimeField = document.getElementById('runningTimeField');
             const stage1Apply = document.getElementById('stage1Apply');
             const historyRefreshBtn = document.getElementById('historyRefreshBtn');
+            const holderChangeTopBtn = document.getElementById('holderChangeTopBtn');
 
             if (surveySection) surveySection.classList.add('hidden');
             if (navSurvey) navSurvey.classList.add('hidden');
@@ -1551,6 +1691,7 @@
             historyEmpty.classList.remove('hidden');
             runningTimeField.classList.remove('hidden');
             if (stage1Apply) stage1Apply.classList.add('hidden');
+            if (holderChangeTopBtn) holderChangeTopBtn.classList.add('hidden');
             if (historyRefreshBtn) {
                 historyRefreshBtn.classList.add('hidden');
                 historyRefreshBtn.classList.remove('inline-flex');
@@ -1562,6 +1703,7 @@
                     if (stage1Apply) stage1Apply.classList.remove('hidden');
                     break;
                 case 'recertification':
+                    if (holderChangeTopBtn) holderChangeTopBtn.classList.remove('hidden');
                     historyContent.classList.remove('hidden');
                     historyEmpty.classList.add('hidden');
                     if (historyRefreshBtn) {
@@ -1980,6 +2122,20 @@
                 select.style.borderColor = '';
                 select.style.backgroundColor = '';
             }
+        }
+
+        function openCertificateHolderChangeModal() {
+            const modal = document.getElementById('certificateHolderChangeModal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeCertificateHolderChangeModal() {
+            const modal = document.getElementById('certificateHolderChangeModal');
+            if (!modal) return;
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }
 
         // ==================== 专业代码选择功能（弹窗版） ====================
