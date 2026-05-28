@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>证书变更评审 - 中检华南认证业务管理系统</title>
+    <title>证书变更评审（申请表变更内容版-重建） - 中检华南认证业务管理系统</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -448,19 +448,9 @@
                     <p class="text-xs text-slate-500 mt-1">证书变更评审流程</p>
                 </div>
                 <nav class="py-2">
-                    <a href="#section-history" class="nav-item active block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent" onclick="switchTab('history')">
+                    <a href="#section-basic" class="nav-item active block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent" onclick="switchTab('basic')">
                         <div class="flex items-center justify-between">
-                            <span class="flex items-center gap-2"><i class="fas fa-certificate w-5 text-center"></i>原证书信息</span>
-                        </div>
-                    </a>
-                    <a href="#section-basic" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent" onclick="switchTab('basic')">
-                        <div class="flex items-center justify-between">
-                            <span class="flex items-center gap-2"><i class="fas fa-exchange-alt w-5 text-center"></i>变更内容对比</span>
-                        </div>
-                    </a>
-                    <a href="#section-attachments" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent" onclick="switchTab('attachments')">
-                        <div class="flex items-center justify-between">
-                            <span class="flex items-center gap-2"><i class="fas fa-paperclip w-5 text-center"></i>申请附件</span>
+                            <span class="flex items-center gap-2"><i class="fas fa-file-signature w-5 text-center"></i>变更内容信息</span>
                         </div>
                     </a>
                     <a href="#section-profcode" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent" onclick="switchTab('profcode')">
@@ -486,188 +476,29 @@
         <!-- 主内容区 -->
         <div class="flex-1 space-y-6" id="mainContent">
 
-            <!-- 原证书信息 -->
-            <div id="section-history" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <h3 class="font-semibold text-slate-900">原证书信息</h3>
-                        <span class="px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700 border border-green-200">已查询到证书</span>
-                    </div>
-                    <button type="button" id="historyRefreshBtn" onclick="previewFile('original_certificate')" class="px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100 text-sm font-medium transition-colors inline-flex items-center gap-2">
-                        <i class="fas fa-eye"></i>
-                        <span>预览证书</span>
-                    </button>
-                </div>
-                <div class="p-6 space-y-5">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-x-16 gap-y-7 text-sm">
-                        <div>
-                            <span class="text-slate-500 block text-xs mb-2">证书编号</span>
-                            <span class="font-bold text-slate-900 text-base">00126E301110R7O1</span>
-                        </div>
-                        <div>
-                            <span class="text-slate-500 block text-xs mb-2">认证标准</span>
-                            <span class="font-bold text-slate-900 text-base">GB/T 24001-2016/ISO 14001:2015</span>
-                        </div>
-                        <div>
-                            <span class="text-slate-500 block text-xs mb-2">企业名称</span>
-                            <span class="font-bold text-slate-900 text-base">彩晶光电科技(昆山)有限公司</span>
-                        </div>
-                        <div>
-                            <span class="text-slate-500 block text-xs mb-2">有效期</span>
-                            <span class="font-bold text-slate-900 text-base">2026年04月09日 至 2029年04月08日</span>
-                        </div>
-                        <div>
-                            <span class="text-slate-500 block text-xs mb-2">统一社会信用代码</span>
-                            <span class="font-bold text-slate-900 text-base">9132058372933702XR</span>
-                        </div>
-                        <div>
-                            <span class="text-slate-500 block text-xs mb-2">首次发证日期</span>
-                            <span class="font-bold text-slate-900 text-base">2005年12月30日</span>
-                        </div>
-                    </div>
-                    <div class="pt-5 border-t border-slate-100 space-y-5 text-sm">
-                        <div>
-                            <span class="text-slate-500 block text-xs mb-2">认证范围</span>
-                            <div class="rounded-lg bg-slate-50 border border-slate-100 px-4 py-3 text-slate-800 leading-relaxed">
-                                数码相机的制造，摄像模组的制造（用于便携式电脑、手机），印刷电路板零组件的制造，医疗血糖仪的制造，车用用于辅助驾驶系统的摄像头制造，数码相机塑料件制造及相关成型配件的制造及相关管理活动
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <span class="text-slate-500 block text-xs mb-2">注册地址</span>
-                                <span class="font-medium text-slate-900">中国江苏省昆山综合保税区第三大道77号</span>
-                            </div>
-                            <div>
-                                <span class="text-slate-500 block text-xs mb-2">运营地址</span>
-                                <span class="font-medium text-slate-900">中国江苏省昆山综合保税区第三大道77号</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- 业务信息栏 -->
             <div class="bg-blue-50 rounded-xl border border-blue-200 p-4 flex flex-wrap gap-4 items-center justify-between">
                 <div class="flex gap-6 text-sm">
                     <div><span class="text-slate-500">变更申请号：</span><span class="font-mono font-semibold text-slate-900">BG202604110001</span></div>
-                    <div><span class="text-slate-500">原证书号：</span><span class="font-semibold text-slate-900">00126E301110R70</span></div>
+                    <div><span class="text-slate-500">涉及证书：</span><span class="font-semibold text-slate-900">环境管理体系 / 3份证书</span></div>
                     <div><span class="text-slate-500">企业名称：</span><span class="font-semibold text-slate-900">彩晶光电科技(昆山)有限公司</span></div>
-                    <div><span class="text-slate-500">当前阶段：</span><span class="status-badge status-surveillance2">待监督2阶段</span></div>
+                    <div><span class="text-slate-500">签发类型：</span><span class="font-semibold text-slate-900">自动签发</span></div>
+                    <div><span class="text-slate-500">是否加急：</span><span class="font-semibold text-slate-900">否</span></div>
                 </div>
                 <div class="flex items-center gap-2 text-xs text-slate-500"><i class="fas fa-clock"></i><span>申请日期：2026-04-11</span></div>
             </div>
 
-            <!-- 1. 变更内容对比 -->
+            <!-- 1. 变更内容信息 -->
             <div id="section-basic" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <i class="fas fa-exchange-alt text-blue-600"></i>
-                        <h3 class="font-semibold text-slate-900">变更内容对比</h3>
-                    </div>
-                    <div class="flex gap-2">
-                        <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded border border-green-200">扩大范围</span>
-                        <span class="px-2 py-1 bg-amber-100 text-amber-700 text-xs rounded border border-amber-200">地址变更</span>
+                        <i class="fas fa-file-signature text-blue-600"></i>
+                        <h3 class="font-semibold text-slate-900">变更内容信息</h3>
                     </div>
                 </div>
                 
                 <div class="p-6 space-y-6">
-                    
-                    <!-- 变更项1：认证范围扩大 -->
-                    <div class="change-compare-card">
-                        <div class="change-compare-header">
-                            <span class="change-badge modified">修改</span>
-                            <span class="font-medium text-slate-900">产品和过程变更 - 扩大范围</span>
-                            <span class="text-xs text-slate-500 ml-auto">涉及人员变化：新增 50 人</span>
-                        </div>
-                        <div class="change-compare-body">
-                            <div class="compare-section before">
-                                <div class="compare-label">
-                                    <i class="fas fa-history text-slate-400"></i>
-                                    变更前（原认证范围）
-                                </div>
-                                <div class="compare-content before-text">
-                                    数码相机的制造，摄像模组的制造（用于便携式电脑、手机），印刷电路板零组件的制造，医疗血糖仪的制造，车用用于辅助驾驶系统的摄像头制造，数码相机塑料件制造及相关成型配件的制造及相关管理活动
-                                </div>
-                            </div>
-                            <div class="compare-section after">
-                                <div class="compare-label">
-                                    <i class="fas fa-arrow-right text-green-500"></i>
-                                    变更后（拟变更范围）
-                                </div>
-                                <div class="compare-content after-text">
-                                    数码相机的制造，摄像模组的制造（用于便携式电脑、手机），印刷电路板零组件的制造，医疗血糖仪的制造，车用用于辅助驾驶系统的摄像头制造，数码相机塑料件制造及相关成型配件的制造，<span class="bg-yellow-200 px-1 rounded">智能家居监控设备的制造</span>，及相关管理活动
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 变更项2：地址变更 -->
-                    <div class="change-compare-card">
-                        <div class="change-compare-header">
-                            <span class="change-badge modified">修改</span>
-                            <span class="font-medium text-slate-900">地址变更 - 组织搬迁</span>
-                        </div>
-                        <div class="change-compare-body">
-                            <div class="compare-section before">
-                                <div class="grid grid-cols-1 gap-4">
-                                    <div>
-                                        <div class="compare-label">注册地址</div>
-                                        <div class="compare-content before-text">中国江苏省昆山综合保税区第三大道77号</div>
-                                    </div>
-                                    <div>
-                                        <div class="compare-label">运营地址</div>
-                                        <div class="compare-content before-text">中国江苏省昆山综合保税区第三大道77号</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="compare-section after">
-                                <div class="grid grid-cols-1 gap-4">
-                                    <div>
-                                        <div class="compare-label">注册地址（变更后）</div>
-                                        <div class="compare-content after-text">中国江苏省苏州市昆山市玉山镇南淞路299号</div>
-                                    </div>
-                                    <div>
-                                        <div class="compare-label">运营地址（变更后）</div>
-                                        <div class="compare-content after-text">中国江苏省苏州市昆山市玉山镇南淞路299号（新厂区）</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 变更项3：认证标准变更 -->
-                    <div class="change-compare-card">
-                        <div class="change-compare-header">
-                            <span class="change-badge modified">修改</span>
-                            <span class="font-medium text-slate-900">认证标准变更</span>
-                        </div>
-                        <div class="change-compare-body">
-                            <div class="compare-section before">
-                                <div class="compare-label">原认证标准</div>
-                                <div class="compare-content before-text">GB/T 24001-2016 / ISO 14001:2015</div>
-                            </div>
-                            <div class="compare-section after">
-                                <div class="compare-label">拟变更标准</div>
-                                <div class="compare-content after-text">GB/T 24001-2024 / ISO 14001:2025（新版标准）</div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- 2. 申请附件清单 -->
-            <div id="section-attachments" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <i class="fas fa-paperclip text-blue-600"></i>
-                        <h3 class="font-semibold text-slate-900">附件信息</h3>
-                    </div>
-                    <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">共 14 类附件</span>
-                </div>
-                
-                <div class="p-6">
-                    <div id="attachmentGrid" class="grid grid-cols-1 xl:grid-cols-2 gap-4"></div>
+                    <div id="applicationChangeInfo" class="space-y-5"></div>
                 </div>
             </div>
 
@@ -685,20 +516,9 @@
                     <div class="mb-4">
                         <label class="block text-xs font-medium text-slate-700 mb-2">
                             专业代码 <span class="text-red-500">*</span>
-                            <span class="text-slate-400 font-normal ml-1">（随专业代码自动带入认可机构）</span>
+                            <span class="text-slate-400 font-normal ml-1">（按证书分别填写，每份证书单独选择专业代码并自动带入认可机构）</span>
                         </label>
-                        
-                        <div id="selectedProfCodesDisplay" class="mb-3">
-                            <div class="text-sm text-slate-400 py-8 px-4 bg-slate-50 rounded-lg border border-slate-200 border-dashed text-center">
-                                <i class="fas fa-list-check text-2xl mb-2 text-slate-300"></i>
-                                <p>暂未选择专业代码，请点击下方按钮选择</p>
-                            </div>
-                        </div>
-
-                        <button onclick="openProfCodeModal()" class="w-full py-2.5 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
-                            <i class="fas fa-list-check"></i>
-                            <span>选择专业代码</span>
-                        </button>
+                        <div id="certificateProfCodeDisplay" class="space-y-4"></div>
                     </div>
                 </div>
             </div>
@@ -710,7 +530,6 @@
                         <i class="fas fa-tasks text-blue-600"></i>
                         <h3 class="font-semibold text-slate-900">审核方式选择</h3>
                     </div>
-                    <span class="status-badge status-surveillance2" id="currentStageBadge">当前：待监督2阶段</span>
                 </div>
                 
                 <div class="p-6 space-y-6">
@@ -829,7 +648,7 @@
 
                     <div>
                         <label class="block text-xs font-medium text-slate-700 mb-2">评审意见</label>
-                        <textarea class="editable-field w-full" rows="3" placeholder="请输入评审意见...">经评审，该企业变更申请资料齐全，扩大范围涉及的产品与原有产品工艺相似，地址变更提供了有效的工商证明，建议批准变更。</textarea>
+                        <textarea class="editable-field w-full" rows="3" placeholder="请输入评审意见...">经评审，该企业变更申请资料齐全，相关证书变更内容、证明材料和专业代码信息满足评审要求，建议批准变更。</textarea>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -972,8 +791,100 @@
 
     <script>
         // 全局状态 - 初始全部为 null，不预设任何选择
-        let currentCertStage = 'surveillance2';
         let selectedProfCodes = [];
+        let activeProfCertId = null;
+        const reviewCertificates = [
+            {
+                id: 'e_cert_1',
+                certNo: '00126E301110R701',
+                domain: '环境管理体系',
+                standard: 'GB/T 24001-2016 / ISO 14001:2015',
+                scopeBefore: '数码相机的制造，摄像模组的制造，印刷电路板零组件的制造及相关管理活动',
+                scopeAfter: '数码相机的制造，摄像模组的制造，印刷电路板零组件的制造，智能家居监控设备的制造及相关管理活动'
+            },
+            {
+                id: 'e_cert_2',
+                certNo: '00123E34569R0S/37000',
+                domain: '环境管理体系',
+                standard: 'GB/T 24001-2016 / ISO 14001:2015',
+                scopeBefore: '软件研发、系统集成项目实施现场及相关环境管理活动',
+                scopeAfter: '软件研发、系统集成项目实施现场、驻场运维服务及相关环境管理活动'
+            },
+            {
+                id: 'e_cert_3',
+                certNo: '00123E34570R0S/37000',
+                domain: '环境管理体系',
+                standard: 'GB/T 24001-2016 / ISO 14001:2015',
+                scopeBefore: '软件研发、系统集成项目实施现场及相关环境管理活动',
+                scopeAfter: '软件研发、系统集成项目实施现场及相关环境管理活动'
+            }
+        ];
+        const certificateProfCodes = {
+            e_cert_1: [],
+            e_cert_2: [],
+            e_cert_3: []
+        };
+        const applicationChangeItems = [
+            {
+                item: '组织名称',
+                type: '修改',
+                groups: [
+                    {
+                        certIds: ['e_cert_1', 'e_cert_2', 'e_cert_3'],
+                        before: '彩晶光电科技(昆山)有限公司',
+                        after: '彩晶智能光电科技(昆山)有限公司',
+                        reason: '企业完成工商名称变更，统一社会信用代码不变。',
+                        attachments: ['营业执照副本复印件.pdf', '名称变更核准通知书.pdf']
+                    }
+                ]
+            },
+            {
+                item: '认证范围（产品/服务或业务）',
+                type: '修改',
+                groups: [
+                    {
+                        certIds: ['e_cert_1'],
+                        before: '数码相机的制造，摄像模组的制造，印刷电路板零组件的制造及相关管理活动',
+                        after: '数码相机的制造，摄像模组的制造，印刷电路板零组件的制造，智能家居监控设备的制造及相关管理活动',
+                        reason: '新增智能家居监控设备生产线，产品和过程已纳入环境管理体系控制。',
+                        attachments: ['管理体系范围说明.docx', '生产工艺流程图.png']
+                    },
+                    {
+                        certIds: ['e_cert_2', 'e_cert_3'],
+                        before: '软件研发、系统集成项目实施现场及相关环境管理活动',
+                        after: '软件研发、系统集成项目实施现场、驻场运维服务及相关环境管理活动',
+                        reason: '两份证书覆盖的项目现场新增驻场运维服务过程，变更内容一致。',
+                        attachments: ['过程清单（EMS）.docx']
+                    }
+                ]
+            },
+            {
+                item: '运营地址',
+                type: '修改',
+                groups: [
+                    {
+                        certIds: ['e_cert_1', 'e_cert_3'],
+                        before: '中国江苏省昆山综合保税区第三大道77号',
+                        after: '中国江苏省苏州市昆山市玉山镇南淞路299号',
+                        reason: '制造及仓储运营场所整体搬迁，相关环境因素和应急设施已重新识别。',
+                        attachments: ['场所平面布置图.jpg', '环境因素清单.xlsx']
+                    }
+                ]
+            },
+            {
+                item: '分支机构/常设多场所',
+                type: '修改',
+                groups: [
+                    {
+                        certIds: ['e_cert_2'],
+                        before: '关联场所：北京总部、广州研发中心',
+                        after: '新增：苏州项目实施中心；减少：广州研发中心',
+                        reason: '项目交付重心迁移，广州研发中心不再纳入本证书认证范围。',
+                        attachments: ['认证场所清单.xlsx']
+                    }
+                ]
+            }
+        ];
         let selectedAuditMode = null;
         let selectedSiteType = null;
         let selectedAuditStage = null;
@@ -1024,8 +935,8 @@
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
             initScrollSpy();
+            renderApplicationChangeInfo();
             renderMainProfCodeDisplay();
-            renderAttachmentGrid();
             fillReviewerInfo();
             // 初始状态：所有审核选项都不选中，隐藏所有条件区域
             resetAuditSections();
@@ -1043,6 +954,88 @@
             siteAuditTypeSection.classList.remove('show');
             auditStageSection.classList.add('hidden');
             auditStageSection.classList.remove('show');
+        }
+
+        function getReviewCertificate(certId) {
+            return reviewCertificates.find(cert => cert.id === certId) || {certNo: certId, domain: '-', standard: '-'};
+        }
+
+        function getAttachmentFileId(itemIndex, groupIndex, fileIndex) {
+            return `change_attachment_${itemIndex}_${groupIndex}_${fileIndex}`;
+        }
+
+        function getFileTypeByName(fileName) {
+            if (/\.pdf$/i.test(fileName)) return 'pdf';
+            if (/\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(fileName)) return 'img';
+            return 'word';
+        }
+
+        function renderApplicationChangeInfo() {
+            const container = document.getElementById('applicationChangeInfo');
+            if (!container) return;
+            container.innerHTML = applicationChangeItems.map((item, itemIndex) => {
+                const groups = item.groups.map((group, groupIndex) => {
+                    const certBadges = group.certIds.map(certId => {
+                        const cert = getReviewCertificate(certId);
+                        return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white border border-blue-200 text-blue-700 text-xs font-medium">
+                            <i class="fas fa-certificate text-blue-400"></i>${cert.certNo}
+                        </span>`;
+                    }).join('');
+                    const attachmentHtml = group.attachments.map((file, fileIndex) => {
+                        const fileId = getAttachmentFileId(itemIndex, groupIndex, fileIndex);
+                        const type = getFileTypeByName(file);
+                        filePreviewData[fileId] = {
+                            title: file,
+                            type: type,
+                            size: type === 'img' ? '728 KB' : type === 'pdf' ? '856 KB' : '246 KB',
+                            summary: `${item.item} - 第 ${groupIndex + 1} 组变更附件`
+                        };
+                        return `<div class="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-700">
+                            <i class="fas fa-paperclip text-slate-400"></i>
+                            <span class="max-w-[220px] truncate">${file}</span>
+                            <button type="button" title="预览" onclick="event.stopPropagation(); previewFile('${fileId}')" class="w-7 h-7 rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button type="button" title="下载" onclick="event.stopPropagation(); downloadFile('${fileId}')" class="w-7 h-7 rounded-md bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition-colors">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>`;
+                    }).join('');
+                    return `<div class="change-compare-card">
+                        <div class="change-compare-header">
+                            <span class="change-badge modified">第 ${groupIndex + 1} 组</span>
+                            <span class="font-medium text-slate-900">适用证书</span>
+                            <div class="flex flex-wrap gap-2 ml-2">${certBadges}</div>
+                        </div>
+                        <div class="change-compare-body">
+                            <div class="compare-section before">
+                                <div class="compare-label"><i class="fas fa-history text-slate-400"></i>变更前</div>
+                                <div class="compare-content before-text">${group.before}</div>
+                            </div>
+                            <div class="compare-section after">
+                                <div class="compare-label"><i class="fas fa-arrow-right text-green-500"></i>拟变更为</div>
+                                <div class="compare-content after-text">${group.after}</div>
+                            </div>
+                        </div>
+                        <div class="px-4 py-3 border-t border-slate-200 bg-white grid grid-cols-1 xl:grid-cols-[1fr_auto] gap-3">
+                            <div>
+                                <div class="compare-label mb-1"><i class="fas fa-message text-slate-400"></i>变更情况和原因描述</div>
+                                <div class="text-sm text-slate-700 leading-relaxed">${group.reason}</div>
+                            </div>
+                            <div class="flex flex-wrap gap-2 items-start xl:justify-end">${attachmentHtml}</div>
+                        </div>
+                    </div>`;
+                }).join('');
+                return `<section class="border border-slate-200 rounded-xl overflow-hidden bg-white">
+                    <div class="bg-slate-50 px-5 py-4 border-b border-slate-200 flex flex-wrap items-center gap-3">
+                        <span class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 inline-flex items-center justify-center text-xs font-bold">${itemIndex + 1}</span>
+                        <div class="font-semibold text-slate-900">${item.item}</div>
+                        <span class="change-badge modified">${item.type}</span>
+                        <span class="text-xs text-slate-500 ml-auto">${item.groups.length} 组变更内容</span>
+                    </div>
+                    <div class="p-4 space-y-4">${groups}</div>
+                </section>`;
+            }).join('');
         }
 
         function refreshHistoryCertificate() {
@@ -1216,7 +1209,9 @@
         }
 
         // 专业代码选择器功能
-        function openProfCodeModal() {
+        function openProfCodeModal(certId) {
+            activeProfCertId = certId || reviewCertificates[0].id;
+            selectedProfCodes = (certificateProfCodes[activeProfCertId] || []).map(item => ({...item}));
             document.getElementById('profCodeModal').classList.add('active');
             document.body.style.overflow = 'hidden';
             renderModalProfCodeList();
@@ -1407,55 +1402,97 @@
         }
 
         function confirmProfCodeSelection() {
+            if (activeProfCertId) {
+                certificateProfCodes[activeProfCertId] = selectedProfCodes.map(item => ({...item}));
+            }
             renderMainProfCodeDisplay();
             closeProfCodeModal();
-            showToast(`已选择 ${selectedProfCodes.length} 个专业代码`);
+            const cert = reviewCertificates.find(item => item.id === activeProfCertId);
+            showToast(`${cert ? cert.certNo : '当前证书'} 已选择 ${selectedProfCodes.length} 个专业代码`);
         }
 
         function renderMainProfCodeDisplay() {
-            const container = document.getElementById('selectedProfCodesDisplay');
+            const container = document.getElementById('certificateProfCodeDisplay');
             const badge = document.getElementById('profCountBadge');
-            
-            badge.textContent = selectedProfCodes.length;
+            if (!container) return;
+            const totalCount = Object.values(certificateProfCodes).reduce((sum, list) => sum + list.length, 0);
+            if (badge) badge.textContent = totalCount;
 
-            if (selectedProfCodes.length === 0) {
-                container.innerHTML = `<div class="text-sm text-slate-400 py-8 px-4 bg-slate-50 rounded-lg border border-slate-200 border-dashed text-center">
-                    <i class="fas fa-list-check text-2xl mb-2 text-slate-300"></i>
-                    <p>暂未选择专业代码，请点击下方按钮选择</p>
-                </div>`;
-            } else {
-                container.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-3">${selectedProfCodes.map(item => {
-                    const accBadges = item.accreditation.map(acc => {
-                        const colorClass = acc === 'CNAS' ? 'bg-blue-100 text-blue-700 border-blue-200' : 
-                                          acc === 'DAKKS' ? 'bg-pink-100 text-pink-700 border-pink-200' : 
-                                          'bg-green-100 text-green-700 border-green-200';
-                        return `<span class="${colorClass} text-[10px] px-2 py-0.5 rounded border font-medium">${acc}</span>`;
-                    }).join('');
-
-                    return `<div class="group flex items-start gap-3 p-3 bg-white border border-slate-200 rounded-lg shadow-sm hover:border-blue-300 hover:shadow-md transition-all">
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="font-mono font-bold text-slate-800 text-sm">${item.code}</span>
-                                <span class="text-slate-300">|</span>
-                                <span class="text-sm text-slate-700 font-medium truncate">${item.category}</span>
+            container.innerHTML = reviewCertificates.map(cert => {
+                const codes = certificateProfCodes[cert.id] || [];
+                const scopeChanged = cert.scopeBefore !== cert.scopeAfter;
+                const scopeHtml = scopeChanged
+                    ? `<div class="mt-3 grid grid-cols-1 xl:grid-cols-2 gap-3 text-sm">
+                            <div class="rounded-lg border border-slate-200 bg-white p-3">
+                                <div class="text-[11px] text-slate-500 mb-1 flex items-center gap-1"><i class="fas fa-history"></i>变更前认证范围</div>
+                                <div class="text-slate-500 leading-relaxed line-through decoration-slate-300">${cert.scopeBefore}</div>
                             </div>
-                            <div class="flex flex-wrap gap-1">${accBadges || '<span class="text-slate-400 text-xs">无认可机构</span>'}</div>
+                            <div class="rounded-lg border border-green-200 bg-green-50 p-3">
+                                <div class="text-[11px] text-green-700 mb-1 flex items-center gap-1"><i class="fas fa-arrow-right"></i>变更后认证范围</div>
+                                <div class="text-green-800 font-medium leading-relaxed">${cert.scopeAfter}</div>
+                            </div>
+                        </div>`
+                    : `<div class="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">
+                            <div class="text-[11px] text-slate-500 mb-1 flex items-center gap-1"><i class="fas fa-equals"></i>认证范围</div>
+                            <div class="text-slate-700 leading-relaxed">${cert.scopeAfter}</div>
+                        </div>`;
+                const codeHtml = codes.length === 0
+                    ? `<div class="text-sm text-slate-400 py-5 px-4 bg-slate-50 rounded-lg border border-slate-200 border-dashed text-center">
+                            <i class="fas fa-list-check text-xl mb-2 text-slate-300"></i>
+                            <p>暂未为本证书选择专业代码</p>
+                        </div>`
+                    : `<div class="grid grid-cols-1 md:grid-cols-2 gap-3">${codes.map(item => {
+                        const accBadges = item.accreditation.map(acc => {
+                            const colorClass = acc === 'CNAS' ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                                              acc === 'DAKKS' ? 'bg-pink-100 text-pink-700 border-pink-200' :
+                                              'bg-green-100 text-green-700 border-green-200';
+                            return `<span class="${colorClass} text-[10px] px-2 py-0.5 rounded border font-medium">${acc}</span>`;
+                        }).join('');
+                        return `<div class="group flex items-start gap-3 p-3 bg-white border border-slate-200 rounded-lg shadow-sm hover:border-blue-300 hover:shadow-md transition-all">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="font-mono font-bold text-slate-800 text-sm">${item.code}</span>
+                                    <span class="text-slate-300">|</span>
+                                    <span class="text-sm text-slate-700 font-medium truncate">${item.category}</span>
+                                </div>
+                                <div class="flex flex-wrap gap-1">${accBadges || '<span class="text-slate-400 text-xs">无认可机构</span>'}</div>
+                            </div>
+                            <button onclick="removeMainProfCode('${item.code}', '${cert.id}')" class="mt-0.5 w-7 h-7 flex items-center justify-center rounded-full hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100" title="删除">
+                                <i class="fas fa-trash-alt text-xs"></i>
+                            </button>
+                        </div>`;
+                    }).join('')}</div>`;
+
+                return `<div class="border border-slate-200 rounded-lg overflow-hidden">
+                    <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <div class="font-semibold text-slate-900">${cert.certNo}</div>
+                                <span class="px-2 py-0.5 rounded-full text-xs border ${scopeChanged ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-slate-100 text-slate-600 border-slate-200'}">${scopeChanged ? '认证范围已变更' : '认证范围不变'}</span>
+                            </div>
+                            <div class="text-xs text-slate-500 mt-1">${cert.domain} · ${cert.standard}</div>
                         </div>
-                        <button onclick="removeMainProfCode('${item.code}')" class="mt-0.5 w-7 h-7 flex items-center justify-center rounded-full hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100" title="删除">
-                            <i class="fas fa-trash-alt text-xs"></i>
+                        <button onclick="openProfCodeModal('${cert.id}')" class="px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-lg text-sm font-medium transition-colors inline-flex items-center gap-2">
+                            <i class="fas fa-list-check"></i>
+                            <span>选择专业代码</span>
                         </button>
-                    </div>`;
-                }).join('')}</div>`;
-            }
+                    </div>
+                    <div class="p-4">
+                        ${scopeHtml}
+                        <div class="mt-4">${codeHtml}</div>
+                    </div>
+                </div>`;
+            }).join('');
         }
 
-        function removeMainProfCode(code) {
-            const index = selectedProfCodes.findIndex(s => s.code === code);
-            if (index >= 0) {
-                selectedProfCodes.splice(index, 1);
-                renderMainProfCodeDisplay();
-                showToast('已删除');
+        function removeMainProfCode(code, certId) {
+            const targetCertId = certId || activeProfCertId;
+            certificateProfCodes[targetCertId] = (certificateProfCodes[targetCertId] || []).filter(item => item.code !== code);
+            if (targetCertId === activeProfCertId) {
+                selectedProfCodes = (certificateProfCodes[targetCertId] || []).map(item => ({...item}));
             }
+            renderMainProfCodeDisplay();
+            showToast('已删除');
         }
 
         function fillReviewerInfo() {
@@ -1627,8 +1664,9 @@
                 return;
             }
             
-            if (selectedProfCodes.length === 0) {
-                showToast('请至少选择一个专业代码', 'error');
+            const missingProfCert = reviewCertificates.find(cert => (certificateProfCodes[cert.id] || []).length === 0);
+            if (missingProfCert) {
+                showToast(`请为证书 ${missingProfCert.certNo} 选择专业代码`, 'error');
                 document.getElementById('section-profcode').scrollIntoView({ behavior: 'smooth' });
                 return;
             }
