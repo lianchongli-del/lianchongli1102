@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>证书签发模块</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #16a34a;
+            --warning: #f59e0b;
+            --danger: #dc2626;
+            --info: #0891b2;
+            --text: #1e293b;
+            --muted: #64748b;
+            --weak: #94a3b8;
+            --border: #e2e8f0;
+            --line: #f1f5f9;
+            --page: #f8fafc;
+            --surface: #ffffff;
+            --radius: 6px;
+            --radius-card: 8px;
+            --shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+            --shadow-floating: 0 8px 24px rgba(15, 23, 42, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-width: 1180px;
+            background: var(--page);
+            color: var(--text);
+            font-family: "Inter", "Noto Sans SC", "Microsoft YaHei", Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        button, input, select, textarea {
+            font: inherit;
+        }
+
+        .page {
+            padding: 20px 24px 32px;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .title-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #0f172a;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .page-title i {
+            color: var(--primary);
+        }
+
+        .page-desc {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-width: 72px;
+            height: 34px;
+            padding: 0 14px;
+            border: 1px solid transparent;
+            border-radius: var(--radius);
+            background: #fff;
+            color: #334155;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background: #f8fafc;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-default {
+            border-color: #cbd5e1;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: #fff;
+        }
+
+        .btn-success:hover {
+            background: #15803d;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .btn-warning {
+            background: #fef3c7;
+            border-color: #fcd34d;
+            color: #92400e;
+        }
+
+        .btn-warning:hover {
+            background: #fde68a;
+        }
+
+        .btn-text {
+            min-width: auto;
+            height: 28px;
+            padding: 0 4px;
+            border: 0;
+            background: transparent;
+            color: var(--primary);
+        }
+
+        .btn-text:hover {
+            background: transparent;
+            color: var(--primary-hover);
+            text-decoration: underline;
+        }
+
+        .btn-sm {
+            min-width: auto;
+            height: 28px;
+            padding: 0 10px;
+            font-size: 12px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 86px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            background: var(--surface);
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .stat-card:hover {
+            border-color: #bfdbfe;
+            transform: translateY(-1px);
+        }
+
+        .stat-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            flex: 0 0 auto;
+        }
+
+        .stat-blue .stat-icon { background: #dbeafe; color: var(--primary); }
+        .stat-orange .stat-icon { background: #fef3c7; color: #d97706; }
+        .stat-green .stat-icon { background: #dcfce7; color: var(--success); }
+        .stat-red .stat-icon { background: #fee2e2; color: var(--danger); }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .stat-value {
+            margin-top: 2px;
+            color: #0f172a;
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .stat-note {
+            margin-top: 2px;
+            color: var(--weak);
+            font-size: 12px;
+        }
+
+        .panel {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            background: var(--surface);
+            box-shadow: var(--shadow);
+            margin-bottom: 14px;
+        }
+
+        .filter-panel {
+            padding: 16px;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 1.2fr repeat(3, 1fr);
+            gap: 12px;
+            align-items: end;
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .filter-item label {
+            color: #475569;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: var(--radius);
+            background: #fff;
+            color: var(--text);
+            outline: none;
+            transition: all 0.15s ease;
+        }
+
+        input, select {
+            height: 34px;
+            padding: 0 10px;
+        }
+
+        textarea {
+            min-height: 82px;
+            padding: 8px 10px;
+            resize: vertical;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        input:disabled {
+            background: #f8fafc;
+            color: #64748b;
+            cursor: not-allowed;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .tabs {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            height: 32px;
+            padding: 0 12px;
+            border: 1px solid transparent;
+            border-radius: var(--radius);
+            color: #475569;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.15s ease;
+        }
+
+        .tab:hover {
+            background: #f1f5f9;
+        }
+
+        .tab.active {
+            border-color: #bfdbfe;
+            background: #eff6ff;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .table-scroll-container {
+            overflow-x: auto;
+            position: relative;
+            width: 100%;
+        }
+
+        .tbl {
+            width: max-content;
+            min-width: 1580px;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 12px;
+        }
+
+        .tbl th {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            background: #f9fafb;
+            color: #374151;
+            font-weight: 600;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .tbl td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f3f4f6;
+            color: #374151;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .tbl tr:hover td {
+            background: #fafafa;
+        }
+
+        .col-frozen-left {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            background: #fff;
+        }
+
+        .col-frozen-company {
+            position: sticky;
+            left: 36px;
+            z-index: 2;
+            background: #fff;
+        }
+
+        thead .col-frozen-left {
+            z-index: 3;
+            background: #f9fafb;
+        }
+
+        thead .col-frozen-company {
+            z-index: 3;
+            background: #f9fafb;
+        }
+
+        .col-frozen-status {
+            position: sticky;
+            right: 96px;
+            z-index: 2;
+            background: #fff;
+            text-align: center;
+        }
+
+        thead .col-frozen-status {
+            z-index: 3;
+            background: #f9fafb;
+        }
+
+        .col-frozen-right {
+            position: sticky;
+            right: 0;
+            z-index: 2;
+            background: #fff;
+            text-align: center;
+        }
+
+        thead .col-frozen-right {
+            z-index: 3;
+            background: #f9fafb;
+            text-align: center;
+        }
+
+        .company-name {
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        .sub-text {
+            display: block;
+            color: var(--weak);
+            font-size: 12px;
+        }
+
+        .cert-no {
+            color: #0f172a;
+            font-family: Consolas, "Roboto Mono", monospace;
+            font-weight: 600;
+        }
+
+        .check-cell {
+            text-align: center;
+            padding-left: 6px !important;
+            padding-right: 6px !important;
+        }
+
+        .check-cell input {
+            width: 15px;
+            height: 15px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            height: 24px;
+            padding: 0 8px;
+            border: 1px solid transparent;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .b-blue { border-color: #bfdbfe; background: #eff6ff; color: #1d4ed8; }
+        .b-green { border-color: #bbf7d0; background: #f0fdf4; color: #15803d; }
+        .b-orange { border-color: #fed7aa; background: #fff7ed; color: #c2410c; }
+        .b-red { border-color: #fecaca; background: #fef2f2; color: #b91c1c; }
+        .b-gray { border-color: #e2e8f0; background: #f8fafc; color: #475569; }
+        .b-cyan { border-color: #a5f3fc; background: #ecfeff; color: #0e7490; }
+
+        .rule-cell {
+            max-width: 260px;
+            white-space: normal;
+        }
+
+        .rule-title {
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        .rule-desc {
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .empty-state {
+            padding: 36px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .summary-strip {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .summary-item {
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            background: #fff;
+        }
+
+        .summary-item-title {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .summary-item-value {
+            margin-top: 4px;
+            color: #0f172a;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .drawer-mask {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: none;
+            justify-content: flex-end;
+            background: rgba(15, 23, 42, 0.36);
+            backdrop-filter: blur(2px);
+        }
+
+        .drawer-mask.show {
+            display: flex;
+        }
+
+        .drawer {
+            display: flex;
+            flex-direction: column;
+            width: 860px;
+            max-width: calc(100vw - 96px);
+            height: 100vh;
+            background: #fff;
+            box-shadow: var(--shadow-floating);
+            animation: slideIn 0.2s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(32px); opacity: 0.6; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .drawer-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .drawer-title {
+            color: #0f172a;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .drawer-subtitle {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .drawer-close {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border: 0;
+            border-radius: var(--radius);
+            background: #fff;
+            color: #64748b;
+            cursor: pointer;
+        }
+
+        .drawer-close:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .drawer-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px 20px;
+            background: #f8fafc;
+        }
+
+        .drawer-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+            background: #fff;
+        }
+
+        .section {
+            margin-bottom: 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            background: #fff;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #0f172a;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .section-body {
+            padding: 14px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px 16px;
+        }
+
+        .info-label {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .info-value {
+            margin-top: 2px;
+            color: #0f172a;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .timeline {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .timeline-step {
+            position: relative;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: #fff;
+        }
+
+        .timeline-step.active {
+            border-color: #bfdbfe;
+            background: #eff6ff;
+        }
+
+        .timeline-step.done {
+            border-color: #bbf7d0;
+            background: #f0fdf4;
+        }
+
+        .timeline-step.blocked {
+            border-color: #fecaca;
+            background: #fef2f2;
+        }
+
+        .timeline-step-title {
+            color: #0f172a;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .timeline-step-desc {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .rule-cards {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .rule-card {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: #fff;
+        }
+
+        .rule-card.selected {
+            border-color: #bfdbfe;
+            background: #eff6ff;
+        }
+
+        .rule-card-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .rule-card-desc {
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 16px;
+        }
+
+        .form-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-item.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-item label {
+            color: #475569;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .required {
+            color: var(--danger);
+        }
+
+        .notice {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border: 1px solid #bfdbfe;
+            border-radius: var(--radius);
+            background: #eff6ff;
+            color: #1e40af;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .notice i {
+            display: inline-flex;
+            align-items: center;
+            height: 20px;
+            line-height: 1;
+        }
+
+        .mini-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .mini-table th {
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--border);
+            background: #f8fafc;
+            color: #475569;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .mini-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+            white-space: nowrap;
+        }
+
+        .notice.warn {
+            border-color: #fed7aa;
+            background: #fff7ed;
+            color: #9a3412;
+        }
+
+        .toast {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            z-index: 2000;
+            display: none;
+            min-width: 260px;
+            padding: 12px 14px;
+            border: 1px solid #bbf7d0;
+            border-radius: var(--radius);
+            background: #f0fdf4;
+            color: #166534;
+            box-shadow: var(--shadow-floating);
+            font-size: 13px;
+        }
+
+        .toast.show {
+            display: block;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 12px 16px;
+            border-top: 1px solid var(--line);
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .pagination select {
+            width: 90px;
+            height: 30px;
+        }
+
+        .pager-btn {
+            min-width: 30px;
+            height: 30px;
+            padding: 0 8px;
+        }
+
+        @media (max-width: 1280px) {
+            .filter-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .filter-actions {
+                grid-column: 1 / -1;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="page-header">
+            <div class="title-wrap">
+                <div class="page-title"><i class="fa-solid fa-certificate"></i> 证书签发模块</div>
+            </div>
+        </div>
+
+        <div class="panel filter-panel">
+            <div class="filter-grid">
+                <div class="filter-item">
+                    <label>企业名称 / 原证书编号</label>
+                    <input id="keyword" type="text" placeholder="支持企业名称、原证书编号模糊搜索">
+                </div>
+                <div class="filter-item">
+                    <label>认证类型</label>
+                    <select id="certType">
+                        <option value="">全部</option>
+                        <option value="初次认证">初次认证</option>
+                        <option value="再认证">再认证</option>
+                        <option value="监督">监督</option>
+                        <option value="变更">变更</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>认证领域</label>
+                    <select id="certField">
+                        <option value="">全部</option>
+                        <option value="QMS">QMS（质量管理体系）</option>
+                        <option value="EMS">EMS（环境管理体系）</option>
+                        <option value="OHSMS">OHSMS（职业健康安全管理体系）</option>
+                        <option value="FSMS">FSMS（食品安全管理体系）</option>
+                        <option value="HACCP">HACCP（危害分析与关键控制点）</option>
+                        <option value="ISMS">ISMS（信息安全管理体系）</option>
+                        <option value="ITSMS">ITSMS（信息技术服务管理体系）</option>
+                        <option value="EnMS">EnMS（能源管理体系）</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>认证决定</label>
+                    <select id="decision">
+                        <option value="">全部</option>
+                        <option value="准予发证">准予发证</option>
+                        <option value="不予发证">不予发证</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>发证方式</label>
+                    <select id="issueMode">
+                        <option value="">全部</option>
+                        <option value="自动">自动</option>
+                        <option value="手动">手动</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>是否加急</label>
+                    <select id="urgent">
+                        <option value="">全部</option>
+                        <option value="是">是</option>
+                        <option value="否">否</option>
+                    </select>
+                </div>
+                <div class="filter-actions">
+                    <button class="btn btn-default" onclick="resetFilters()"><i class="fa-solid fa-rotate-left"></i> 重置</button>
+                    <button class="btn btn-primary" onclick="applyFilters()"><i class="fa-solid fa-magnifying-glass"></i> 查询</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="toolbar">
+                <div class="tabs">
+                    <div class="tab" data-tab="all" onclick="setTab('all')"><i class="fa-solid fa-list"></i> 全部</div>
+                    <div class="tab active" data-tab="pending" onclick="setTab('pending')"><i class="fa-solid fa-list-check"></i> 待签发</div>
+                    <div class="tab" data-tab="director" onclick="setTab('director')"><i class="fa-solid fa-user-pen"></i> 待主任处理</div>
+                    <div class="tab" data-tab="issued" onclick="setTab('issued')"><i class="fa-solid fa-circle-check"></i> 已签发</div>
+                    <div class="tab" data-tab="rejected" onclick="setTab('rejected')"><i class="fa-solid fa-ban"></i> 拒绝签发</div>
+                </div>
+                <div class="toolbar-right">
+                    <span>当前列表 <strong id="visibleCount">0</strong> 条</span>
+                    <span>已选择 <strong id="selectedCount">0</strong> 条</span>
+                    <button class="btn btn-primary btn-sm" onclick="batchProcess()"><i class="fa-solid fa-layer-group"></i> 批量处理</button>
+                </div>
+            </div>
+            <div class="table-scroll-container">
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th class="check-cell col-frozen-left" width="36"><input type="checkbox" id="checkAll" onchange="toggleCheckAll(this)"></th>
+                            <th class="col-frozen-company" width="190">企业名称</th>
+                            <th width="100">受理机构</th>
+                            <th width="170">原证书编号</th>
+                            <th width="80">是否加急</th>
+                            <th width="90">认证类型</th>
+                            <th width="90">认证领域</th>
+                            <th width="180">认证标准</th>
+                            <th width="100">认证决定</th>
+                            <th width="150">认证决定提交时间</th>
+                            <th width="90">发证方式</th>
+                            <th width="120">原证书有效期</th>
+                            <th width="150">签发时间</th>
+                            <th class="col-frozen-status" width="96">处理状态</th>
+                            <th class="col-frozen-right" width="96">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+                <div class="empty-state" id="emptyState" style="display:none;">暂无符合条件的待签发证书</div>
+            </div>
+            <div class="pagination">
+                <span>共 <strong id="totalCount">0</strong> 条</span>
+                <span>每页</span>
+                <select id="pageSize" onchange="changePageSize()">
+                    <option value="5">5 行</option>
+                    <option value="10" selected>10 行</option>
+                    <option value="20">20 行</option>
+                </select>
+                <button class="btn btn-default pager-btn" onclick="changePage(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                <span id="pageInfo">1 / 1</span>
+                <button class="btn btn-default pager-btn" onclick="changePage(1)"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="drawer-mask" id="issueDrawer">
+        <div class="drawer" role="dialog" aria-modal="true">
+            <div class="drawer-header">
+                <div>
+                    <div class="drawer-title">签发处理</div>
+                    <div class="drawer-subtitle" id="drawerSubtitle">-</div>
+                </div>
+                <button class="drawer-close" onclick="closeDrawer()" aria-label="关闭"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="drawer-body">
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title"><i class="fa-solid fa-building"></i> 基本信息</div>
+                        <span class="badge b-blue" id="drawerStatus">待签发</span>
+                    </div>
+                    <div class="section-body">
+                        <div class="info-grid" id="singleInfoGrid">
+                            <div><div class="info-label">企业名称</div><div class="info-value" id="drawerCompany">-</div></div>
+                            <div><div class="info-label">原证书编号</div><div class="info-value cert-no" id="drawerCertNo">-</div></div>
+                            <div><div class="info-label">认证领域</div><div class="info-value" id="drawerScope">-</div></div>
+                            <div><div class="info-label">认证类型</div><div class="info-value" id="drawerType">-</div></div>
+                            <div><div class="info-label">认证决定</div><div class="info-value" id="drawerDecision">-</div></div>
+                            <div><div class="info-label">客户发证方式</div><div class="info-value" id="drawerMode">-</div></div>
+                            <div><div class="info-label">原证书有效期</div><div class="info-value" id="drawerOldExpiry">-</div></div>
+                            <div><div class="info-label">认证决定提交时间</div><div class="info-value" id="drawerDecisionSubmitTime">-</div></div>
+                            <div id="rejectReasonItem" style="display:none;"><div class="info-label">原因说明</div><div class="info-value" id="drawerRejectReason">-</div></div>
+                        </div>
+                        <div id="batchInfoTableWrap" style="display:none; overflow-x:auto;">
+                            <table class="mini-table">
+                                <thead>
+                                    <tr>
+                                        <th>企业名称</th>
+                                        <th>原证书编号</th>
+                                        <th>认证类型</th>
+                                        <th>认证领域</th>
+                                        <th>认证决定</th>
+                                        <th>发证方式</th>
+                                        <th>原证书有效期</th>
+                                        <th>原因说明</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="batchInfoTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title"><i class="fa-solid fa-calendar-days"></i> 签发规则核验</div>
+                    </div>
+                    <div class="section-body">
+                        <div class="rule-cards">
+                            <div class="rule-card" data-rule-card="A">
+                                <div class="rule-card-title">方式 A <span class="badge b-gray">失效前</span><span class="badge b-blue current-rule-mark" style="display:none;">当前选择</span></div>
+                                <div class="rule-card-desc">进入待签发后，原证书失效前 2 天 20:00-23:00 自动签发；新有效期 = 签发日期 + 3 年 - 1 天。</div>
+                            </div>
+                            <div class="rule-card" data-rule-card="B">
+                                <div class="rule-card-title">方式 B <span class="badge b-gray">失效后</span><span class="badge b-blue current-rule-mark" style="display:none;">当前选择</span></div>
+                                <div class="rule-card-desc">进入待签发后，原证书失效后一日 01:00-03:00 自动签发；新有效期 = 原证书有效日期 + 3 年。</div>
+                            </div>
+                            <div class="rule-card" data-rule-card="C">
+                                <div class="rule-card-title">方式 C <span class="badge b-gray">决定当日</span><span class="badge b-blue current-rule-mark" style="display:none;">当前选择</span></div>
+                                <div class="rule-card-desc">认证决定后当日自动签发；人工手动选择签发时也按此规则计算，新有效期 = 签发日期 + 3 年 - 1 天。</div>
+                            </div>
+                        </div>
+                        <div class="notice" id="drawerRuleNotice" style="margin-top:12px;">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <div>初次认证准予发证后由系统定时自动签发，也允许人工处理。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title"><i class="fa-solid fa-user-shield"></i> 签发处理</div>
+                    </div>
+                    <div class="section-body">
+                        <div class="form-grid">
+                            <div class="form-item">
+                                <label>处理结论 <span class="required">*</span></label>
+                                <select id="handleResult" onchange="syncFooterButtons()">
+                                    <option value="签发">签发</option>
+                                    <option value="不予签发">不予签发</option>
+                                </select>
+                            </div>
+                            <div class="form-item">
+                                <label>签发日期</label>
+                                <input id="issueDate" type="date" disabled>
+                            </div>
+                            <div class="form-item full">
+                                <label>处理说明</label>
+                                <textarea id="handleRemark" placeholder="请输入签发或不予签发说明，系统将记录操作人、操作时间与规则计算结果。"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="drawer-footer">
+                <button class="btn btn-default" onclick="closeDrawer()">取消</button>
+                <button class="btn btn-danger" id="rejectBtn" onclick="submitHandle('不予签发')"><i class="fa-solid fa-ban"></i> 不予签发</button>
+                <button class="btn btn-primary" id="issueBtn" onclick="submitHandle('签发')"><i class="fa-solid fa-signature"></i> 签发</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const issueRows = [
+            {
+                id: 'ISS-20260528-001',
+                company: '深圳市神州线缆有限公司',
+                business: '广州中心',
+                certNo: '00126Q300285R701',
+                field: 'QMS',
+                scope: 'QMS（质量管理体系）',
+                standard: 'GB/T 19001-2016 / ISO 9001:2015',
+                type: '初次认证',
+                urgent: '是',
+                decision: '准予发证',
+                decisionSubmitTime: '2026-05-28 09:36',
+                mode: '自动',
+                rule: '初次自动',
+                planTime: '2026-05-28 20:30-23:00',
+                oldExpiry: '2029-05-27',
+                newValidity: '2026-05-28 至 2029-05-27',
+                issueTime: '-',
+                status: '待签发',
+                directorRequired: '可处理',
+                state: 'pending'
+            },
+            {
+                id: 'ISS-20260528-002',
+                company: '广东金禾面粉有限公司',
+                business: '广州中心',
+                certNo: 'CQC26FS0200R4M/4400',
+                field: 'FSMS',
+                scope: 'FSMS（食品安全管理体系）',
+                standard: 'FSSC 22000 V6.0',
+                type: '再认证',
+                urgent: '否',
+                decision: '准予发证',
+                decisionSubmitTime: '2026-05-28 10:12',
+                mode: '自动',
+                rule: 'A',
+                planTime: '2026-02-14 20:00-23:00',
+                oldExpiry: '2026-02-16',
+                newValidity: '2026-02-14 至 2029-02-13',
+                issueTime: '-',
+                status: '待签发',
+                directorRequired: '可处理',
+                state: 'pending'
+            },
+            {
+                id: 'ISS-20260528-003',
+                company: '上海精密机械制造有限公司',
+                business: '上海中心',
+                certNo: '00126Q310001R2M',
+                field: 'QMS',
+                scope: 'QMS（质量管理体系）',
+                standard: 'GB/T 19001-2016 / ISO 9001:2015',
+                type: '再认证',
+                urgent: '否',
+                decision: '准予发证',
+                decisionSubmitTime: '2026-05-28 10:25',
+                mode: '自动',
+                rule: 'B',
+                planTime: '2026-03-01 01:00-03:00',
+                oldExpiry: '2026-02-28',
+                newValidity: '2026-03-01 至 2029-02-28',
+                issueTime: '-',
+                status: '待签发',
+                directorRequired: '可处理',
+                state: 'pending'
+            },
+            {
+                id: 'ISS-20260528-004',
+                company: '苏州鼎新电子有限公司',
+                business: '苏州公司',
+                certNo: '00126IS310086R1M',
+                field: 'ISMS',
+                scope: 'ISMS（信息安全管理体系）',
+                standard: 'ISO/IEC 27001:2022',
+                type: '再认证',
+                urgent: '是',
+                decision: '准予发证',
+                decisionSubmitTime: '2026-05-28 11:04',
+                mode: '手动',
+                rule: 'C',
+                planTime: '2026-05-28 当日',
+                oldExpiry: '2026-06-08',
+                newValidity: '手动签发日 至 签发日+3年-1天',
+                issueTime: '-',
+                status: '待签发',
+                directorRequired: '必须',
+                state: 'pending'
+            },
+            {
+                id: 'ISS-20260528-005',
+                company: '南京云扬信息技术有限公司',
+                business: '南京公司',
+                certNo: '00126ITS220077R2M',
+                field: 'ITSMS',
+                scope: 'ITSMS（信息技术服务管理体系）',
+                standard: 'ISO/IEC 20000-1:2018',
+                type: '再认证',
+                urgent: '否',
+                decision: '不予发证',
+                rejectReason: '关键审核证据不足，整改材料未在规定期限内补齐。',
+                decisionSubmitTime: '2026-05-28 11:18',
+                mode: '手动',
+                rule: 'C',
+                planTime: '待主任处理',
+                oldExpiry: '2026-06-02',
+                newValidity: '-',
+                issueTime: '-',
+                status: '待主任处理',
+                directorRequired: '必须',
+                state: 'director'
+            },
+            {
+                id: 'ISS-20260528-006',
+                company: '杭州百川医疗器械有限公司',
+                business: '杭州公司',
+                certNo: '00126MD110018R1M',
+                field: 'QMS',
+                scope: 'QMS（质量管理体系）',
+                standard: 'YY/T 0287-2017 / ISO 13485:2016',
+                type: '初次认证',
+                urgent: '是',
+                decision: '不予发证',
+                rejectReason: '审核结论存在重大不符合，认证决定建议不予发证。',
+                decisionSubmitTime: '2026-05-28 11:46',
+                mode: '手动',
+                rule: 'C',
+                planTime: '待主任处理',
+                oldExpiry: '2029-05-27',
+                newValidity: '-',
+                issueTime: '-',
+                status: '待主任处理',
+                directorRequired: '必须',
+                state: 'director'
+            },
+            {
+                id: 'ISS-20260528-007',
+                company: '深圳市神州线缆有限公司',
+                business: '广州中心',
+                certNo: '00126E300619R1M',
+                field: 'EMS',
+                scope: 'EMS（环境管理体系）',
+                standard: 'GB/T 24001-2016 / ISO 14001:2015',
+                type: '监督',
+                urgent: '否',
+                decision: '准予发证',
+                decisionSubmitTime: '2026-05-28 13:08',
+                mode: '自动',
+                rule: 'A',
+                planTime: '2029-03-29 20:00-23:00',
+                oldExpiry: '2029-03-31',
+                newValidity: '2026-05-28 至 2029-05-27',
+                issueTime: '-',
+                status: '待签发',
+                directorRequired: '可处理',
+                state: 'pending'
+            },
+            {
+                id: 'ISS-20260528-008',
+                company: '无锡明远装备有限公司',
+                business: '无锡公司',
+                certNo: '00126OHS190216R3M',
+                field: 'OHSMS',
+                scope: 'OHSMS（职业健康安全管理体系）',
+                standard: 'GB/T 45001-2020 / ISO 45001:2018',
+                type: '变更',
+                urgent: '否',
+                decision: '准予发证',
+                decisionSubmitTime: '2026-05-28 13:27',
+                mode: '手动',
+                rule: 'C',
+                planTime: '2026-05-28 当日',
+                oldExpiry: '2028-10-19',
+                newValidity: '沿用原证书有效期',
+                issueTime: '2026-05-28 15:20',
+                status: '已签发',
+                directorRequired: '必须',
+                state: 'issued'
+            },
+            {
+                id: 'ISS-20260528-009',
+                company: '合肥安成新能源有限公司',
+                business: '合肥公司',
+                certNo: '00126E300722R2M',
+                field: 'EMS',
+                scope: 'EMS（环境管理体系）',
+                standard: 'GB/T 24001-2016 / ISO 14001:2015',
+                type: '变更',
+                urgent: '是',
+                decision: '准予发证',
+                decisionSubmitTime: '2026-05-28 14:05',
+                mode: '手动',
+                rule: 'C',
+                planTime: '2026-05-28 当日',
+                oldExpiry: '2028-12-03',
+                newValidity: '沿用原证书有效期',
+                issueTime: '2026-05-28 15:36',
+                status: '已签发',
+                directorRequired: '必须',
+                state: 'issued'
+            },
+            {
+                id: 'ISS-20260528-010',
+                company: '厦门海晟食品有限公司',
+                business: '厦门中心',
+                certNo: 'CQC26FS1507R2M/3500',
+                field: 'FSMS',
+                scope: 'FSMS（食品安全管理体系）',
+                standard: 'ISO 22000:2018',
+                type: '变更',
+                urgent: '否',
+                decision: '不予发证',
+                rejectReason: '变更后地址现场条件不满足认证范围保持要求。',
+                decisionSubmitTime: '2026-05-28 14:42',
+                mode: '手动',
+                rule: 'C',
+                planTime: '待主任处理',
+                oldExpiry: '2028-09-11',
+                newValidity: '-',
+                issueTime: '-',
+                status: '拒绝签发',
+                directorRequired: '必须',
+                state: 'rejected'
+            }
+        ];
+
+        let currentTab = 'pending';
+        let currentRow = null;
+        let currentBatchIds = [];
+        let currentPage = 1;
+        let pageSize = 10;
+        const selectedIds = new Set();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().slice(0, 10);
+            document.getElementById('issueDate').value = today;
+            updateStats();
+            renderTable();
+        });
+
+        function updateStats() {}
+
+        function setTab(tab) {
+            currentTab = tab;
+            currentPage = 1;
+            document.querySelectorAll('.tab').forEach(item => {
+                item.classList.toggle('active', item.dataset.tab === tab);
+            });
+            renderTable();
+        }
+
+        function getFilteredRows() {
+            const keyword = document.getElementById('keyword').value.trim().toLowerCase();
+            const certType = document.getElementById('certType').value;
+            const certField = document.getElementById('certField').value;
+            const decision = document.getElementById('decision').value;
+            const issueMode = document.getElementById('issueMode').value;
+            const urgent = document.getElementById('urgent').value;
+
+            return issueRows.filter(row => {
+                const tabMatched =
+                    currentTab === 'all' ? true :
+                    currentTab === 'pending' ? row.state === 'pending' :
+                    currentTab === 'director' ? row.state === 'director' :
+                    currentTab === 'issued' ? row.state === 'issued' :
+                    row.state === 'rejected';
+                const keywordMatched = !keyword || row.company.toLowerCase().includes(keyword) || row.certNo.toLowerCase().includes(keyword);
+                return tabMatched
+                    && keywordMatched
+                    && (!certType || row.type === certType)
+                    && (!certField || row.field === certField)
+                    && (!decision || row.decision === decision)
+                    && (!issueMode || row.mode === issueMode)
+                    && (!urgent || row.urgent === urgent);
+            }).sort((a, b) => {
+                const companyOrder = a.company.localeCompare(b.company, 'zh-CN');
+                if (companyOrder !== 0) return companyOrder;
+                return a.decisionSubmitTime.localeCompare(b.decisionSubmitTime);
+            });
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            const rows = getFilteredRows();
+            const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+            if (currentPage > totalPages) currentPage = totalPages;
+            const pageRows = rows.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+            document.getElementById('visibleCount').textContent = rows.length;
+            document.getElementById('totalCount').textContent = rows.length;
+            document.getElementById('pageInfo').textContent = `${currentPage} / ${totalPages}`;
+            document.getElementById('emptyState').style.display = rows.length ? 'none' : 'block';
+            tbody.innerHTML = pageRows.map(row => `
+                <tr>
+                    <td class="check-cell col-frozen-left">
+                        <input type="checkbox" value="${row.id}" ${selectedIds.has(row.id) ? 'checked' : ''} onchange="toggleRowSelection(this)">
+                    </td>
+                    <td class="col-frozen-company">
+                        <div class="company-name">${row.company}</div>
+                        <span class="sub-text">${row.id}</span>
+                    </td>
+                    <td>${row.business}</td>
+                    <td><span class="cert-no">${row.certNo}</span></td>
+                    <td>${tag(row.urgent, row.urgent === '是' ? 'b-red' : 'b-gray')}</td>
+                    <td>${tag(row.type, row.type === '初次认证' ? 'b-cyan' : 'b-orange')}</td>
+                    <td>${fieldText(row.field)}</td>
+                    <td>${row.standard}</td>
+                    <td>${tag(row.decision, row.decision === '准予发证' ? 'b-green' : 'b-red')}</td>
+                    <td>${row.decisionSubmitTime}</td>
+                    <td>${tag(row.mode, row.mode === '自动' ? 'b-blue' : 'b-orange')}</td>
+                    <td>${row.oldExpiry}</td>
+                    <td>${row.issueTime}</td>
+                    <td class="col-frozen-status">${statusTag(row)}</td>
+                    <td class="col-frozen-right">${actions(row)}</td>
+                </tr>
+            `).join('');
+            syncSelectionState(pageRows);
+        }
+
+        function tag(text, cls) {
+            return `<span class="badge ${cls}">${text}</span>`;
+        }
+
+        function fieldText(field) {
+            const map = {
+                QMS: 'QMS（质量管理体系）',
+                EMS: 'EMS（环境管理体系）',
+                OHSMS: 'OHSMS（职业健康安全管理体系）',
+                FSMS: 'FSMS（食品安全管理体系）',
+                HACCP: 'HACCP（危害分析与关键控制点）',
+                ISMS: 'ISMS（信息安全管理体系）',
+                ITSMS: 'ITSMS（信息技术服务管理体系）',
+                EnMS: 'EnMS（能源管理体系）'
+            };
+            return map[field] || field;
+        }
+
+        function statusTag(row) {
+            const cls = row.state === 'issued' ? 'b-green' : row.state === 'rejected' ? 'b-red' : row.state === 'director' ? 'b-orange' : 'b-blue';
+            return tag(row.status, cls);
+        }
+
+        function ruleTitle(row) {
+            if (row.rule === '初次自动') return '初次认证自动签发';
+            return `再认证方式 ${row.rule}`;
+        }
+
+        function ruleDesc(row) {
+            const map = {
+                '初次自动': '认证决定准予发证后，系统定时自动签发；允许人工处理。',
+                A: '原证书失效前 2 天 20:00-23:00 自动签发；有效期 = 签发日期 +3年 -1天。',
+                B: '原证书失效后一日 01:00-03:00 自动签发；有效期 = 原证书有效日期 +3年。',
+                C: '认证决定当日签发；人工手动签发也按该规则计算有效期。'
+            };
+            return map[row.rule] || '-';
+        }
+
+        function actions(row) {
+            if (row.state === 'issued' || row.state === 'rejected') {
+                return `<button class="btn btn-text" onclick="openDrawer('${row.id}')"><i class="fa-solid fa-eye"></i> 查看</button>`;
+            }
+            return `<button class="btn btn-text" onclick="openDrawer('${row.id}')"><i class="fa-solid fa-pen-to-square"></i> 处理</button>`;
+        }
+
+        function toggleRowSelection(checkbox) {
+            if (checkbox.checked) {
+                selectedIds.add(checkbox.value);
+            } else {
+                selectedIds.delete(checkbox.value);
+            }
+            syncSelectionState(getFilteredRows());
+        }
+
+        function toggleCheckAll(checkbox) {
+            const pageRows = getFilteredRows().slice((currentPage - 1) * pageSize, currentPage * pageSize);
+            pageRows.forEach(row => {
+                if (checkbox.checked) {
+                    selectedIds.add(row.id);
+                } else {
+                    selectedIds.delete(row.id);
+                }
+            });
+            renderTable();
+        }
+
+        function syncSelectionState(rows) {
+            const visibleSelectedCount = rows.filter(row => selectedIds.has(row.id)).length;
+            document.getElementById('selectedCount').textContent = selectedIds.size;
+            const checkAll = document.getElementById('checkAll');
+            checkAll.checked = rows.length > 0 && visibleSelectedCount === rows.length;
+            checkAll.indeterminate = visibleSelectedCount > 0 && visibleSelectedCount < rows.length;
+        }
+
+        function batchProcess() {
+            const selectedRows = issueRows.filter(row => selectedIds.has(row.id));
+            if (!selectedRows.length) {
+                showToast('请先选择需要处理的证书');
+                return;
+            }
+            const processableRows = selectedRows.filter(row => row.state === 'pending' || row.state === 'director');
+            if (!processableRows.length) {
+                showToast('请选择待签发或待主任处理状态的证书进行批量处理');
+                return;
+            }
+            const companies = new Set(processableRows.map(row => row.company));
+            if (companies.size > 1) {
+                showToast('批量签发仅支持同一客户，请重新选择');
+                return;
+            }
+            currentBatchIds = processableRows.map(row => row.id);
+            openDrawer(processableRows[0].id);
+            document.getElementById('handleRemark').value = `批量处理 ${processableRows.length} 条证书，提交后系统按所选记录批量执行。`;
+        }
+
+        function applyFilters() {
+            currentPage = 1;
+            renderTable();
+            showToast('筛选条件已应用');
+        }
+
+        function resetFilters() {
+            ['keyword', 'certType', 'certField', 'decision', 'issueMode', 'urgent'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            currentPage = 1;
+            renderTable();
+        }
+
+        function changePageSize() {
+            pageSize = Number(document.getElementById('pageSize').value);
+            currentPage = 1;
+            renderTable();
+        }
+
+        function changePage(delta) {
+            const totalPages = Math.max(1, Math.ceil(getFilteredRows().length / pageSize));
+            currentPage = Math.min(totalPages, Math.max(1, currentPage + delta));
+            renderTable();
+        }
+
+        function openDrawer(id, preset) {
+            currentRow = issueRows.find(row => row.id === id);
+            if (!currentRow) return;
+            if (!currentBatchIds.includes(id)) {
+                currentBatchIds = [id];
+            }
+            document.getElementById('drawerSubtitle').textContent = `${currentRow.company} / ${currentRow.certNo}`;
+            document.getElementById('drawerCompany').textContent = currentRow.company;
+            document.getElementById('drawerCertNo').textContent = currentRow.certNo;
+            document.getElementById('drawerScope').textContent = currentRow.scope;
+            document.getElementById('drawerType').textContent = currentRow.type;
+            document.getElementById('drawerDecision').innerHTML = tag(currentRow.decision, currentRow.decision === '准予发证' ? 'b-green' : 'b-red');
+            document.getElementById('drawerMode').innerHTML = tag(currentRow.mode, currentRow.mode === '自动' ? 'b-blue' : 'b-orange');
+            document.getElementById('drawerOldExpiry').textContent = currentRow.oldExpiry;
+            document.getElementById('drawerDecisionSubmitTime').textContent = currentRow.decisionSubmitTime;
+            document.getElementById('rejectReasonItem').style.display = currentRow.decision === '不予发证' ? 'block' : 'none';
+            document.getElementById('drawerRejectReason').textContent = currentRow.rejectReason || '-';
+            document.getElementById('drawerStatus').textContent = currentRow.status;
+            document.getElementById('drawerStatus').className = `badge ${currentRow.state === 'issued' ? 'b-green' : currentRow.state === 'rejected' ? 'b-red' : currentRow.state === 'director' ? 'b-orange' : 'b-blue'}`;
+            document.getElementById('handleResult').value = preset === 'reject' || currentRow.decision === '不予发证' ? '不予签发' : '签发';
+            document.getElementById('handleRemark').value = defaultRemark(currentRow);
+            renderDrawerBasicInfo();
+            renderRuleCards(currentRow);
+            syncFooterButtons();
+            document.getElementById('issueDrawer').classList.add('show');
+        }
+
+        function renderDrawerBasicInfo() {
+            const rows = issueRows.filter(row => currentBatchIds.includes(row.id));
+            const isBatch = rows.length > 1;
+            document.getElementById('singleInfoGrid').style.display = isBatch ? 'none' : 'grid';
+            document.getElementById('batchInfoTableWrap').style.display = isBatch ? 'block' : 'none';
+            if (!isBatch) return;
+            document.getElementById('batchInfoTableBody').innerHTML = rows.map(row => `
+                <tr>
+                    <td>${row.company}</td>
+                    <td><span class="cert-no">${row.certNo}</span></td>
+                    <td>${row.type}</td>
+                    <td>${fieldText(row.field)}</td>
+                    <td>${row.decision}</td>
+                    <td>${row.mode}</td>
+                    <td>${row.oldExpiry}</td>
+                    <td>${row.decision === '不予发证' ? (row.rejectReason || '-') : '-'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function defaultRemark(row) {
+            if (row.decision === '不予发证') {
+                return '认证决定不通过，已进入待签发处理，请确认签发或不予签发。';
+            }
+            if (row.mode === '自动') {
+                return '该证书已生成自动签发计划，可等待后台按计划签发，也可手动处理。';
+            }
+            return '客户选择手动发证，确认后执行签发或不予签发。';
+        }
+
+        function renderRuleCards(row) {
+            document.querySelectorAll('[data-rule-card]').forEach(card => {
+                const isSelected = card.dataset.ruleCard === row.rule || (row.rule === '初次自动' && card.dataset.ruleCard === 'C');
+                card.classList.toggle('selected', isSelected);
+                const mark = card.querySelector('.current-rule-mark');
+                if (mark) mark.style.display = isSelected ? 'inline-flex' : 'none';
+            });
+            const notice = document.getElementById('drawerRuleNotice');
+            if (row.type === '初次认证' && row.decision === '准予发证') {
+                notice.className = 'notice';
+                notice.innerHTML = '<i class="fa-solid fa-circle-info"></i><div>初次认证准予发证后，系统定时自动签发；工作人员也可以人工处理，签发后有效期按签发日期 + 3 年 - 1 天计算。</div>';
+            } else if (row.decision === '不予发证') {
+                notice.className = 'notice warn';
+                notice.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i><div>认证决定不通过的记录进入待签发后需手动处理，不再自动签发。</div>';
+            } else {
+                notice.className = 'notice';
+                notice.innerHTML = `<i class="fa-solid fa-circle-info"></i><div>当前客户选择再认证方式 ${row.rule}。如手动处理，系统按方式 C 计算证书有效期。</div>`;
+            }
+        }
+
+        function closeDrawer() {
+            document.getElementById('issueDrawer').classList.remove('show');
+            currentBatchIds = [];
+        }
+
+        function syncFooterButtons() {
+            const isReadonly = currentRow && !['pending', 'director'].includes(currentRow.state);
+            if (isReadonly) {
+                document.getElementById('issueBtn').style.display = 'none';
+                document.getElementById('rejectBtn').style.display = 'none';
+                return;
+            }
+            const result = document.getElementById('handleResult').value;
+            document.getElementById('issueBtn').style.display = result === '签发' ? 'inline-flex' : 'none';
+            document.getElementById('rejectBtn').style.display = result === '不予签发' ? 'inline-flex' : 'none';
+        }
+
+        function submitHandle(result) {
+            if (!currentRow) return;
+            if (!['pending', 'director'].includes(currentRow.state)) {
+                showToast('该证书已处理，无需重复处理');
+                return;
+            }
+            const targetIds = currentBatchIds.length ? currentBatchIds : [currentRow.id];
+            const targetRows = issueRows.filter(row => targetIds.includes(row.id) && ['pending', 'director'].includes(row.state));
+            targetRows.forEach(row => {
+                row.status = result === '签发' ? '已签发' : '拒绝签发';
+                row.state = result === '签发' ? 'issued' : 'rejected';
+                row.directorRequired = '已完成';
+                if (result === '签发') {
+                    row.newValidity = calcManualValidity(document.getElementById('issueDate').value);
+                    row.issueTime = `${document.getElementById('issueDate').value} 人工处理`;
+                } else {
+                    row.issueTime = `${document.getElementById('issueDate').value} 拒绝签发`;
+                }
+                selectedIds.delete(row.id);
+            });
+            updateStats();
+            renderTable();
+            closeDrawer();
+            showToast(targetRows.length > 1 ? `已批量${result} ${targetRows.length} 条证书` : `${currentRow.certNo} 已${result}`);
+        }
+
+        function calcManualValidity(dateText) {
+            if (!dateText) return '按签发日期计算';
+            const start = new Date(`${dateText}T00:00:00`);
+            const end = new Date(start);
+            end.setFullYear(end.getFullYear() + 3);
+            end.setDate(end.getDate() - 1);
+            return `${formatDate(start)} 至 ${formatDate(end)}`;
+        }
+
+        function formatDate(date) {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            window.clearTimeout(showToast.timer);
+            showToast.timer = window.setTimeout(() => toast.classList.remove('show'), 2200);
+        }
+    </script>
+</body>
+</html>
