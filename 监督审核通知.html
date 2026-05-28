@@ -830,6 +830,30 @@
                         </div>
                     </div>
 
+                    <div id="issueInfoSection" class="hidden border rounded-lg p-5 border-slate-200">
+                        <div class="sub-section-title mb-4">
+                            <i class="fas fa-file-signature"></i>
+                            签发信息
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-[220px_180px] gap-4 items-end">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2 required">签发类型</label>
+                                <select id="issueType" name="issueType" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all">
+                                    <option value="">请选择</option>
+                                    <option value="auto">自动</option>
+                                    <option value="manual">手动</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">是否加急</label>
+                                <label class="h-9 px-3 flex items-center gap-2 border border-slate-300 rounded-lg bg-white cursor-pointer hover:bg-slate-50 transition-all">
+                                    <input type="checkbox" id="isUrgent" name="isUrgent" class="rounded text-blue-600 focus:ring-blue-500">
+                                    <span class="text-sm text-slate-700">加急处理</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="border rounded-lg p-5 border-slate-200 bg-slate-50">
                         <div class="sub-section-title mb-4">
                             <i class="fas fa-pen-nib"></i>
@@ -1192,23 +1216,23 @@ const certificateItems = [
 ];
 
 const changeItems = [
-    {id: 'topManager', label: '最高管理者'},
-    {id: 'contact', label: '联系人/联系方式'},
-    {id: 'businessScope', label: '营业执照的经营范围、资质许可的有效性和范围'},
-    {id: 'systemDocument', label: '管理体系文件的修订'},
-    {id: 'orgStructure', label: '组织结构'},
-    {id: 'staffCount', label: '组织人数和体系覆盖人数'},
-    {id: 'mainProcess', label: '管理体系的主要过程'},
-    {id: 'facilities', label: '主要生产（服务）设施设备'},
-    {id: 'outsourcing', label: '外部提供的职能或过程（外包）'},
-    {id: 'externalService', label: '在本组织之外其他场所提供的服务'},
-    {id: 'tempSite', label: '临时服务场所信息'},
-    {id: 'ims', label: '整合管理体系（IMS）的整合程度'},
-    {id: 'serviceCatalog', label: '服务目录和级别（ITS适用）'},
-    {id: 'exerciseDate', label: '应急或业务连续性演练活动的日期安排情况（BCMS适用）'},
-    {id: 'incident', label: '是否发生过不良信息事件（如重大事故/行政检查和抽查发现的问题或不合格）'},
-    {id: 'blacklist', label: '是否被市场监管部门列入异常经营名录、严重违法失信名单'},
-    {id: 'other', label: '其他事项'}
+    {id: 'topManager', label: '最高管理者', current: '李明，总经理，全面负责管理体系运行'},
+    {id: 'contact', label: '联系人/联系方式', current: '张经理，010-12345678，zhang@example.com'},
+    {id: 'businessScope', label: '营业执照的经营范围、资质许可的有效性和范围', current: '技术开发、技术服务、软件开发、系统集成服务；营业执照和相关资质均在有效期内'},
+    {id: 'systemDocument', label: '管理体系文件的修订', current: '现行管理手册 A/2 版，程序文件清单 2025 版'},
+    {id: 'orgStructure', label: '组织结构', current: '总经理办公室、研发部、项目交付部、运维服务部、质量管理部、行政人事部'},
+    {id: 'staffCount', label: '组织人数和体系覆盖人数', current: '组织总人数 204 人，体系覆盖人数 204 人'},
+    {id: 'mainProcess', label: '管理体系的主要过程', current: '市场与合同评审、软件研发、项目实施、运维服务、采购管理、客户满意度管理'},
+    {id: 'facilities', label: '主要生产（服务）设施设备', current: '研发测试服务器、办公终端、网络交换设备、项目管理平台、运维监控平台'},
+    {id: 'outsourcing', label: '外部提供的职能或过程（外包）', current: '办公网络维护、保洁服务、部分云资源运维支持'},
+    {id: 'externalService', label: '在本组织之外其他场所提供的服务', current: '客户现场实施、驻场运维和远程技术支持服务'},
+    {id: 'tempSite', label: '临时服务场所信息', current: '按项目需要设置客户现场临时服务点，当前无固定临时场所'},
+    {id: 'ims', label: '整合管理体系（IMS）的整合程度', current: '质量、环境、职业健康安全管理体系共用管理手册、内审、管理评审和纠正措施流程'},
+    {id: 'serviceCatalog', label: '服务目录和级别（ITS适用）', current: '软件开发服务、系统集成服务、信息技术运维服务；服务级别按客户合同约定执行'},
+    {id: 'exerciseDate', label: '应急或业务连续性演练活动的日期安排情况（BCMS适用）', current: '最近一次业务连续性演练日期为 2025年11月15日，计划每年至少开展一次'},
+    {id: 'incident', label: '是否发生过不良信息事件（如重大事故/行政检查和抽查发现的问题或不合格）', current: '未发生重大事故、重大投诉、行政检查重大问题或严重不合格'},
+    {id: 'blacklist', label: '是否被市场监管部门列入异常经营名录、严重违法失信名单', current: '未被列入经营异常名录或严重违法失信名单'},
+    {id: 'other', label: '其他事项', current: '无其他需特别说明事项'}
 ];
 
 // ===== 初始化 =====
@@ -1322,6 +1346,7 @@ function switchTab(tabName) {
 function renderSurveyTables() {
     renderCertificateRows();
     renderChangeRows();
+    updateIssueInfoVisibility();
 }
 
 function renderChangeChecklist() {
@@ -1356,6 +1381,7 @@ function renderChangeRows() {
             '<span class="change-card-title">' + escapeHtml(item.label) + '</span>' +
             '</label>' +
             '<div id="body_' + item.id + '" class="change-card-body hidden">' +
+            '<div class="reference-box mb-4"><i class="fas fa-info-circle mr-1"></i><span class="font-semibold">原' + escapeHtml(item.label) + '：</span>' + escapeHtml(item.current || '暂无原信息') + '</div>' +
             '<label class="block text-sm font-medium text-slate-700 mb-2">变更情况和原因描述 <span class="text-red-500">*</span></label>' +
             '<textarea id="desc_' + item.id + '" maxlength="500" placeholder="请描述变更情况和原因" disabled></textarea>' +
             '<div class="mt-4">' + renderEvidenceCell(item.id) + '</div>' +
@@ -1635,6 +1661,7 @@ function toggleCertificateItem(itemId, show) {
 
     if(itemId === 'multiSite') {
         renderMultiSiteCertificateChanges();
+        updateIssueInfoVisibility();
         return;
     }
 
@@ -1645,6 +1672,27 @@ function toggleCertificateItem(itemId, show) {
         }];
     }
     renderCertificateGroups(itemId);
+    updateIssueInfoVisibility();
+}
+
+function hasCertificateInfoChangeSelection() {
+    return certificateItems.some(function(item) {
+        const checkbox = document.getElementById('change_' + item.id);
+        return checkbox && checkbox.checked;
+    });
+}
+
+function updateIssueInfoVisibility() {
+    const section = document.getElementById('issueInfoSection');
+    if(!section) return;
+    const shouldShow = hasCertificateInfoChangeSelection();
+    section.classList.toggle('hidden', !shouldShow);
+    if(!shouldShow) {
+        const issueType = document.getElementById('issueType');
+        const isUrgent = document.getElementById('isUrgent');
+        if(issueType) issueType.value = '';
+        if(isUrgent) isUrgent.checked = false;
+    }
 }
 
 function renderCertificateGroups(itemId) {
@@ -1814,6 +1862,13 @@ function toggleAgentMode() {
 }
 
 function saveSurvey() {
+    const requiresIssueInfo = hasCertificateInfoChangeSelection();
+    const issueType = document.getElementById('issueType').value;
+    if(requiresIssueInfo && !issueType) {
+        showNotification('请选择签发类型', 'error');
+        return;
+    }
+
     const representative = document.getElementById('customerRepresentative').value.trim();
     const declarationDate = document.getElementById('declarationDate').value;
 
