@@ -388,6 +388,51 @@
             line-height: 1.6;
         }
 
+        .email-editor-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            background: #f8fafc;
+        }
+
+        .email-editor-toolbar button {
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            color: #475569;
+            background: #ffffff;
+            transition: all 0.15s;
+        }
+
+        .email-editor-toolbar button:hover {
+            color: #2563eb;
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .email-editor-body {
+            min-height: 360px;
+            outline: none;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .email-editor-body:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .email-empty-item {
+            min-height: 24px;
+        }
+
         /* 响应式优化 */
         @media (max-width: 768px) {
             .full-width-container {
@@ -1089,20 +1134,29 @@
                 </div>
             </div>
 
-            <div class="border rounded-lg p-6 bg-white space-y-4 max-h-96 overflow-y-auto border-slate-200">
+            <div class="email-editor-toolbar" aria-label="邮件正文富文本工具栏">
+                <button type="button" onclick="formatEmailBody('bold')" title="加粗"><i class="fas fa-bold"></i></button>
+                <button type="button" onclick="formatEmailBody('italic')" title="斜体"><i class="fas fa-italic"></i></button>
+                <button type="button" onclick="formatEmailBody('underline')" title="下划线"><i class="fas fa-underline"></i></button>
+                <button type="button" onclick="formatEmailBody('foreColor', '#dc2626')" title="红色文字"><i class="fas fa-font text-red-600"></i></button>
+                <button type="button" onclick="formatEmailBody('insertUnorderedList')" title="项目符号"><i class="fas fa-list-ul"></i></button>
+                <button type="button" onclick="formatEmailBody('insertOrderedList')" title="编号列表"><i class="fas fa-list-ol"></i></button>
+                <button type="button" onclick="formatEmailBody('createLink', prompt('请输入链接地址'))" title="插入链接"><i class="fas fa-link"></i></button>
+            </div>
+            <div id="emailBody" contenteditable="true" class="email-editor-body border p-6 bg-white space-y-4 max-h-96 overflow-y-auto border-slate-200">
                 <p class="text-slate-800">尊敬的北京某某科技有限公司：</p>
-                <p class="text-slate-700 leading-relaxed">贵公司的质量管理体系（QMS）、环境管理体系（EMS）认证证书即将到期，根据认证规则要求，需实施监督审核。</p>
+                <p class="text-slate-700 leading-relaxed">根据认证规则要求，需对贵公司的质量管理体系（QMS）、环境管理体系（EMS）实施监督审核。</p>
 
                 <div class="bg-blue-50 border-l-4 border-blue-500 p-4 my-4 rounded-r-lg">
                     <p class="font-semibold text-blue-900 mb-2">审核安排：</p>
                     <ul class="list-disc list-inside mt-2 text-blue-800 space-y-1 text-sm">
-                        <li>审核时间：2026年4月15日-17日</li>
+                        <li>计划审核时间：2026年4月</li>
                         <li>QMS（质量管理体系）：00123Q34567R0S/37000、00123Q34568R0S/37000</li>
                         <li>EMS（环境管理体系）：00123E34569R0S/37000、00123E34570R0S/37000</li>
                     </ul>
                 </div>
 
-                <p class="text-slate-700">请贵公司于 <strong class="text-red-600">2026年4月5日前</strong> 完成以下工作：</p>
+                <p class="text-slate-700">请贵公司于 <strong class="text-red-600">2026年4月&nbsp;&nbsp;日前</strong> 完成以下工作：</p>
                 <ol class="list-decimal list-inside space-y-2 ml-4 text-slate-700 text-sm">
                     <li>填写《获证方情况调查表》
                         <div class="mt-2 ml-6 space-y-1">
@@ -1114,6 +1168,8 @@
                     </li>
                     <li>如有变更事项，请填写《证书变更申请表》</li>
                     <li>准备相关审核资料</li>
+                    <li>确认现场审核联系人及审核安排</li>
+                    <li class="email-empty-item"><br></li>
                 </ol>
 
                 <p class="mt-4 text-slate-700 font-semibold">附件清单：</p>
@@ -1239,6 +1295,7 @@ const changeItems = [
 document.addEventListener('DOMContentLoaded', function() {
     renderSurveyTables();
     updateStatusDisplay();
+    initEmailEditorSelection();
 
     // 日期默认值
     const today = new Date().toISOString().split('T')[0];
@@ -2097,6 +2154,39 @@ function openEmailModal() {
 
 function closeEmailModal() {
     document.getElementById('emailModal').classList.add('hidden');
+}
+
+let emailBodySelection = null;
+
+function initEmailEditorSelection() {
+    const emailBody = document.getElementById('emailBody');
+    if(!emailBody) return;
+    ['keyup', 'mouseup', 'input'].forEach(function(eventName) {
+        emailBody.addEventListener(eventName, saveEmailBodySelection);
+    });
+}
+
+function saveEmailBodySelection() {
+    const selection = window.getSelection();
+    if(selection && selection.rangeCount > 0) {
+        emailBodySelection = selection.getRangeAt(0);
+    }
+}
+
+function restoreEmailBodySelection() {
+    if(!emailBodySelection) return;
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(emailBodySelection);
+}
+
+function formatEmailBody(command, value = null) {
+    const emailBody = document.getElementById('emailBody');
+    emailBody.focus();
+    restoreEmailBodySelection();
+    if(command === 'createLink' && !value) return;
+    document.execCommand(command, false, value);
+    saveEmailBodySelection();
 }
 
 function resendEmail() {
