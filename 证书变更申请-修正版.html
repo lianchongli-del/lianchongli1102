@@ -975,7 +975,7 @@
                         </div>
                     </div>
 
-                    <div class="border rounded-lg p-4 border-slate-200">
+                    <div id="issueInfoSection" class="hidden border rounded-lg p-4 border-slate-200">
                         <div class="sub-section-title">
                             <i class="fas fa-file-signature"></i>
                             签发信息
@@ -1685,6 +1685,7 @@ function renderSurveyTables() {
     syncCertificatesFromRecords();
     renderCertificateRows();
     renderChangeRows();
+    updateIssueInfoVisibility();
 }
 
 function renderChangeChecklist() {
@@ -2225,6 +2226,7 @@ function toggleCertificateItem(itemId, show) {
     const body = document.getElementById('body_' + itemId);
     if(card) card.classList.toggle('is-open', show);
     if(body) body.classList.toggle('hidden', !show);
+    updateIssueInfoVisibility();
 
     if(itemId === 'multiSite') {
         renderMultiSiteCertificateChanges();
@@ -2238,6 +2240,27 @@ function toggleCertificateItem(itemId, show) {
         }];
     }
     renderCertificateGroups(itemId);
+}
+
+function hasSelectedCertificateChangeInfo() {
+    return certificateItems.some(function(item) {
+        const checkbox = document.getElementById('change_' + item.id);
+        return checkbox && checkbox.checked;
+    });
+}
+
+function updateIssueInfoVisibility() {
+    const section = document.getElementById('issueInfoSection');
+    if(!section) return;
+    const show = hasSelectedCertificateChangeInfo();
+    const issueType = document.getElementById('issueType');
+    section.classList.toggle('hidden', !show);
+    if(issueType) issueType.required = show;
+    if(!show) {
+        const isUrgent = document.getElementById('isUrgent');
+        if(issueType) issueType.value = '';
+        if(isUrgent) isUrgent.checked = false;
+    }
 }
 
 function renderCertificateGroups(itemId) {
@@ -2426,8 +2449,9 @@ function saveSurvey() {
         return;
     }
 
+    const needsIssueInfo = hasSelectedCertificateChangeInfo();
     const issueType = document.getElementById('issueType').value;
-    if(!issueType) {
+    if(needsIssueInfo && !issueType) {
         showNotification('请选择签发类型', 'error');
         return;
     }
