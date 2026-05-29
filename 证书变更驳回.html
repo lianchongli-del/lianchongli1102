@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -853,6 +854,52 @@
             background: #fef2f2;
         }
 
+        .review-readonly-card {
+            border: 1px solid #fecaca;
+            background: #fff7f7;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .review-opinion-display {
+            color: #7f1d1d;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+
+        .review-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .review-meta-inline {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            color: #991b1b;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .review-meta-inline span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .review-meta-inline strong {
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .review-hidden-fields {
+            display: none;
+        }
+
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
@@ -911,26 +958,25 @@
 
                 <div id="onlineForm" class="space-y-4">
                     <div class="border rounded-lg p-4 border-red-200 bg-red-50">
-                        <div class="sub-section-title text-red-900">
-                            <i class="fas fa-clipboard-list"></i>
-                            驳回评审信息
-                            <span class="text-xs font-normal text-red-700 ml-2">以下信息用于说明本次驳回原因。</span>
+                        <div class="sub-section-title text-red-900 review-title-row">
+                            <span class="inline-flex items-center gap-2">
+                                <i class="fas fa-clipboard-list"></i>
+                                驳回评审信息
+                                <span class="text-xs font-normal text-red-700 ml-2">以下信息用于说明本次驳回原因。</span>
+                            </span>
+                            <span class="review-meta-inline">
+                                <span>评审人：<strong>王丽</strong></span>
+                                <span>评审日期：<strong>2026-05-27</strong></span>
+                            </span>
                         </div>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-2 required">评审意见</label>
-                                <textarea id="reviewOpinion" rows="4" maxlength="1000" readonly>申请材料中组织名称变更证明不够完整，认证范围变更后的表述需与营业执照经营范围保持一致；请补充市场监管部门核准变更材料，并重新说明变更原因后再次提交。</textarea>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-2 required">评审人</label>
-                                    <input type="text" id="reviewerName" value="王丽" maxlength="50" readonly>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-2 required">评审日期</label>
-                                    <input type="date" id="reviewDate" value="2026-05-27" readonly>
-                                </div>
-                            </div>
+                        <div class="review-readonly-card">
+                            <div class="text-xs font-semibold text-red-800 mb-2">评审意见</div>
+                            <div class="review-opinion-display">申请材料中组织名称变更证明不够完整，认证范围变更后的表述需与营业执照经营范围保持一致；请补充市场监管部门核准变更材料，并重新说明变更原因后再次提交。</div>
+                        </div>
+                        <div class="review-hidden-fields" aria-hidden="true">
+                            <textarea id="reviewOpinion" readonly>申请材料中组织名称变更证明不够完整，认证范围变更后的表述需与营业执照经营范围保持一致；请补充市场监管部门核准变更材料，并重新说明变更原因后再次提交。</textarea>
+                            <input type="text" id="reviewerName" value="王丽" readonly>
+                            <input type="date" id="reviewDate" value="2026-05-27" readonly>
                         </div>
                     </div>
 
