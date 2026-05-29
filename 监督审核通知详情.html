@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -302,53 +303,35 @@
 <body>
     <div class="fixed top-0 left-0 right-0 z-40 bg-white border-b border-slate-200 shadow-sm">
         <div class="max-w-[1600px] mx-auto px-6">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center gap-4 min-w-0">
-                    <button type="button" onclick="history.back()" class="text-slate-600 hover:text-slate-900 flex items-center gap-2 text-sm transition-colors">
-                        <i class="fas fa-arrow-left"></i>
-                        <span>返回列表</span>
-                    </button>
-                    <div class="h-6 w-px bg-slate-300"></div>
-                    <div class="flex items-center gap-3 flex-wrap">
-                        <h1 class="text-lg font-bold text-slate-900">监督审核通知详情</h1>
-                        <span class="tag bg-green-100 text-green-700 border-green-200">
-                            <i class="fas fa-check-circle"></i>已提交
-                        </span>
-                        <span class="tag bg-blue-100 text-blue-700 border-blue-200">QMS</span>
-                        <span class="tag bg-emerald-100 text-emerald-700 border-emerald-200">EMS</span>
+            <div class="flex items-start justify-between py-4 gap-4">
+                <div class="flex items-start gap-4 min-w-0">
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <h1 class="text-lg font-bold text-slate-900">监督审核通知详情 - JD202403001</h1>
+                            <span class="tag bg-green-100 text-green-700 border-green-200">
+                                <i class="fas fa-check-circle"></i>已提交
+                            </span>
+                        </div>
+                        <div class="mt-1 text-sm text-slate-600 flex flex-wrap items-center gap-2">
+                            <span>北京某某科技有限公司</span>
+                            <span class="text-slate-300">|</span>
+                            <span>QMS/EMS体系监督</span>
+                            <span class="text-slate-300">|</span>
+                            <span>审核时间：2026年4月15日-17日</span>
+                            <span class="text-slate-300">|</span>
+                            <span>通知发送日期：2026年3月30日</span>
+                            <span class="text-slate-300">|</span>
+                            <span>调查表填写人：李明</span>
+                            <span class="text-slate-300">|</span>
+                            <span>调查表填写日期：2026-04-02</span>
+                        </div>
                     </div>
                 </div>
-                <div class="text-sm text-slate-500">项目编号：JD202403001</div>
             </div>
         </div>
     </div>
 
-    <main class="max-w-[1600px] mx-auto px-6 pt-24 pb-10 space-y-6">
-        <section class="bg-blue-50 rounded-xl border border-blue-200 p-5">
-            <div class="flex flex-wrap gap-x-10 gap-y-4">
-                <div class="min-w-[220px]">
-                    <div class="info-label">企业名称</div>
-                    <div class="info-value">北京某某科技有限公司</div>
-                </div>
-                <div class="min-w-[220px]">
-                    <div class="info-label">审核类型</div>
-                    <div class="info-value">监督审核</div>
-                </div>
-                <div class="min-w-[220px]">
-                    <div class="info-label">通知发送日期</div>
-                    <div class="info-value">2026年3月30日</div>
-                </div>
-                <div class="min-w-[220px]">
-                    <div class="info-label">调查表填写人</div>
-                    <div class="info-value">李明</div>
-                </div>
-                <div class="min-w-[220px]">
-                    <div class="info-label">调查表填写日期</div>
-                    <div class="info-value">2026-04-02</div>
-                </div>
-            </div>
-        </section>
-
+    <main class="max-w-[1600px] mx-auto px-6 pt-32 pb-10 space-y-6">
         <section class="section-card">
             <nav class="flex px-6 overflow-x-auto border-b border-slate-200 bg-white">
                 <button id="tab-notice" class="tab-button active py-4 px-4 inline-flex items-center text-sm whitespace-nowrap transition-colors" onclick="switchTab('notice')">
