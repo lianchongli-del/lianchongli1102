@@ -829,7 +829,7 @@
                         <div class="sub-section-title mb-4">
                             <i class="fas fa-certificate"></i>
                             一、证书变更信息
-                            <span class="text-xs font-normal text-slate-500 ml-2">组织名称、注册地址、认证标准或技术规范、适用性声明统一作用于全部证书。</span>
+                            <span class="text-xs font-normal text-slate-500 ml-2">组织名称、注册地址、适用性声明统一作用于全部证书；认证标准或技术规范按认证领域填写，领域下证书统一修改。</span>
                         </div>
                         <div id="certificateRows" class="space-y-3"></div>
                     </div>
@@ -1235,8 +1235,7 @@ const allCertificates = [
     {certId: 'q1', domain: 'Q', domainName: '质量管理体系', certNo: '00123Q34567R0S/37000'},
     {certId: 'q2', domain: 'Q', domainName: '质量管理体系', certNo: '00123Q34568R0S/37000'},
     {certId: 'e1', domain: 'E', domainName: '环境管理体系', certNo: '00123E34569R0S/37000'},
-    {certId: 'e2', domain: 'E', domainName: '环境管理体系', certNo: '00123E34570R0S/37000'},
-    {certId: 's1', domain: 'S', domainName: '职业健康安全管理体系', certNo: '00123S34571R0S/37000'}
+    {certId: 'e2', domain: 'E', domainName: '环境管理体系', certNo: '00123E34570R0S/37000'}
 ];
 
 const certificateItems = [
@@ -1277,7 +1276,7 @@ const certificateItems = [
     }
 ];
 
-const unifiedCertificateItemIds = ['orgName', 'registeredAddress', 'certStandard', 'soa'];
+const unifiedCertificateItemIds = ['orgName', 'registeredAddress', 'soa'];
 
 const changeItems = [
     {id: 'topManager', label: '最高管理者', current: '李明，总经理，全面负责管理体系运行'},
@@ -1423,6 +1422,34 @@ function isUnifiedCertificateItem(itemId) {
     return unifiedCertificateItemIds.includes(itemId);
 }
 
+function isDomainCertificateItem(itemId) {
+    return itemId === 'certStandard';
+}
+
+function getCertificateDomains() {
+    const domainMap = {};
+    allCertificates.forEach(function(cert) {
+        if(!domainMap[cert.domain]) {
+            domainMap[cert.domain] = {
+                domain: cert.domain,
+                domainName: cert.domainName,
+                certs: []
+            };
+        }
+        domainMap[cert.domain].certs.push(cert);
+    });
+    return Object.keys(domainMap).map(function(domain) { return domainMap[domain]; });
+}
+
+function getDomainStandard(domain) {
+    const standardMap = {
+        Q: 'GB/T 19001-2016 / ISO 9001:2015',
+        E: 'GB/T 24001-2016 / ISO 14001:2015',
+        S: 'GB/T 45001-2020 / ISO 45001:2018'
+    };
+    return standardMap[domain] || '按证书所属认证领域自动带入';
+}
+
 function renderCertificateNo(record) {
     return escapeHtml(record.certNo || '-') + (record.isSubCertificate ? '（子）' : '');
 }
@@ -1441,7 +1468,7 @@ function renderCertificateRows() {
             '<label class="change-card-header">' +
             '<input type="checkbox" id="change_' + item.id + '" class="change-check" onchange="toggleCertificateItem(\'' + item.id + '\', this.checked)">' +
             '<span class="change-card-title">' + escapeHtml(item.label) + '</span>' +
-            '<span class="ml-auto text-xs text-slate-500">' + (unified ? '全部证书统一修改' : certCount + '本证书') + '</span>' +
+            '<span class="ml-auto text-xs text-slate-500">' + (item.id === 'certStandard' ? '按领域统一修改' : (unified ? '全部证书统一修改' : certCount + '本证书')) + '</span>' +
             '</label>' +
             '<div id="body_' + item.id + '" class="change-card-body hidden">' +
             (item.id === 'multiSite' ? '' : '<div class="reference-box"><i class="fas fa-info-circle mr-1"></i>原认证信息：' + escapeHtml(getCertificateSummary(item)) + '</div>') +
@@ -1474,6 +1501,11 @@ function getCertificateSummary(item) {
     if(isUnifiedCertificateItem(item.id)) {
         return item.current || '暂无原信息';
     }
+    if(isDomainCertificateItem(item.id)) {
+        return getCertificateDomains().map(function(domain) {
+            return domain.domainName + '：' + getDomainStandard(domain.domain) + '（适用证书：' + domain.certs.map(getCertificateNoText).join('、') + '）';
+        }).join('；');
+    }
     return allCertificates.map(function(cert) {
         return getCertificateNoText(cert) + '：' + getCertificateCurrentText(item, cert);
     }).join('；');
@@ -1481,12 +1513,7 @@ function getCertificateSummary(item) {
 
 function getCertificateCurrentText(item, cert) {
     if(item.id === 'certStandard') {
-        const standardMap = {
-            Q: 'GB/T 19001-2016 / ISO 9001:2015',
-            E: 'GB/T 24001-2016 / ISO 14001:2015',
-            S: 'GB/T 45001-2020 / ISO 45001:2018'
-        };
-        return standardMap[cert.domain] || item.current;
+        return getDomainStandard(cert.domain) || item.current;
     }
     return item.current;
 }
@@ -1769,7 +1796,8 @@ function toggleCertificateItem(itemId, show) {
     if(show && !certificateChangeGroups[itemId]) {
         certificateChangeGroups[itemId] = [{
             id: itemId + '_grp_' + Date.now(),
-            certIds: isUnifiedCertificateItem(itemId) ? [] : allCertificates.map(function(cert) { return cert.certId; })
+            certIds: isUnifiedCertificateItem(itemId) || isDomainCertificateItem(itemId) ? [] : allCertificates.map(function(cert) { return cert.certId; }),
+            domainCodes: isDomainCertificateItem(itemId) ? [] : undefined
         }];
     }
     renderCertificateGroups(itemId);
@@ -1808,6 +1836,21 @@ function renderCertificateGroups(itemId) {
         updateEvidenceUI(group.id);
         return;
     }
+    if(isDomainCertificateItem(itemId)) {
+        const addButton = areAllDomainsSelected(itemId)
+            ? ''
+            : '<button type="button" class="mt-2 px-4 py-2 bg-white border border-blue-500 text-blue-600 rounded-lg text-sm hover:bg-blue-50 transition inline-flex items-center gap-2" onclick="addCertificateChangeGroup(\'' + itemId + '\')">' +
+              '<i class="fas fa-plus"></i>新增一组领域变更内容</button>';
+        container.innerHTML = '<div class="text-xs text-slate-500 mb-3">请逐个选择需要变更认证标准或技术规范的认证领域；每组只能选择一个领域，不能全选或批量选择；同一领域下的证书将统一应用同一变更内容。</div>' +
+            groups.map(function(group, index) {
+                return renderDomainCertificateChangeGroup(item, group, index);
+            }).join('') + addButton;
+        groups.forEach(function(group) {
+            enableEvidenceUpload(group.id);
+            updateEvidenceUI(group.id);
+        });
+        return;
+    }
     const addButton = areAllCertificatesSelected(itemId)
         ? ''
         : '<button type="button" class="mt-2 px-4 py-2 bg-white border border-blue-500 text-blue-600 rounded-lg text-sm hover:bg-blue-50 transition inline-flex items-center gap-2" onclick="addCertificateChangeGroup(\'' + itemId + '\')">' +
@@ -1834,6 +1877,35 @@ function renderUnifiedCertificateChangeGroup(item, group) {
         '<textarea id="after_' + group.id + '" maxlength="500" placeholder="请输入统一变更后的' + escapeHtml(item.label) + '"></textarea></div>' +
         '<div><label class="block text-sm font-medium text-slate-700 mb-2">变更情况和原因描述 <span class="text-red-500">*</span></label>' +
         '<textarea id="desc_' + group.id + '" maxlength="500" placeholder="请描述本项统一变更的情况和原因"></textarea></div>' +
+        '</div>' +
+        '<div class="mt-4">' + renderEvidenceCell(group.id) + '</div>' +
+        '</div>';
+}
+
+function renderDomainCertificateChangeGroup(item, group, index) {
+    const domains = getCertificateDomains();
+    return '<div class="certificate-change-panel" id="row_' + group.id + '">' +
+        '<div class="change-group-header">' +
+        '<div class="text-sm font-semibold text-slate-800">领域变更内容组 ' + (index + 1) + '</div>' +
+        (index > 0 ? '<button type="button" class="text-xs text-red-600 hover:text-red-700" onclick="removeCertificateChangeGroup(\'' + item.id + '\', \'' + group.id + '\')"><i class="fas fa-trash-alt mr-1"></i>删除本组</button>' : '') +
+        '</div>' +
+        '<div class="text-sm font-medium text-slate-700 mb-2">选择变更领域 <span class="text-red-500">*</span></div>' +
+        '<div class="certificate-selector">' +
+        domains.map(function(domain) {
+            const checked = group.domainCodes && group.domainCodes.includes(domain.domain);
+            const disabled = !checked && isDomainSelectedInOtherGroup(item.id, group.id, domain.domain);
+            const certText = domain.certs.map(getCertificateNoText).join('、');
+            return '<label class="certificate-option ' + (disabled ? 'opacity-50 cursor-not-allowed bg-slate-100' : '') + '">' +
+                '<input type="checkbox" class="group-domain-' + group.id + '" value="' + domain.domain + '" ' + (checked ? 'checked' : '') + (disabled ? ' disabled' : '') + ' onchange="selectSingleGroupDomain(\'' + item.id + '\', \'' + group.id + '\', \'' + domain.domain + '\', this.checked)">' +
+                '<span><span class="font-semibold">' + escapeHtml(domain.domainName) + '</span>' + (disabled ? '（已选择）' : '') + '<span class="block text-xs text-slate-500 mt-1">领域下证书统一修改：' + escapeHtml(certText) + '</span><span class="block text-xs text-blue-700 mt-1">原标准：' + escapeHtml(getDomainStandard(domain.domain)) + '</span></span>' +
+                '</label>';
+        }).join('') +
+        '</div>' +
+        '<div class="grid grid-cols-1 xl:grid-cols-3 gap-4 mt-4">' +
+        '<div><label class="block text-sm font-medium text-slate-700 mb-2">拟变更为 <span class="text-red-500">*</span></label>' +
+        '<textarea id="after_' + group.id + '" maxlength="500" placeholder="请输入所选领域统一变更后的认证标准或技术规范"></textarea></div>' +
+        '<div class="xl:col-span-2"><label class="block text-sm font-medium text-slate-700 mb-2">变更情况和原因描述 <span class="text-red-500">*</span></label>' +
+        '<textarea id="desc_' + group.id + '" maxlength="500" placeholder="请描述所选领域认证标准或技术规范变更的情况和原因"></textarea></div>' +
         '</div>' +
         '<div class="mt-4">' + renderEvidenceCell(group.id) + '</div>' +
         '</div>';
@@ -1876,6 +1948,13 @@ function renderCertificateChangeGroup(item, group, index) {
 }
 
 function addCertificateChangeGroup(itemId) {
+    if(isDomainCertificateItem(itemId)) {
+        if(areAllDomainsSelected(itemId)) return;
+        if(!certificateChangeGroups[itemId]) certificateChangeGroups[itemId] = [];
+        certificateChangeGroups[itemId].push({id: itemId + '_grp_' + Date.now(), domainCodes: [], certIds: []});
+        renderCertificateGroups(itemId);
+        return;
+    }
     if(areAllCertificatesSelected(itemId)) return;
     if(!certificateChangeGroups[itemId]) certificateChangeGroups[itemId] = [];
     certificateChangeGroups[itemId].push({id: itemId + '_grp_' + Date.now()});
@@ -1887,6 +1966,48 @@ function removeCertificateChangeGroup(itemId, groupId) {
         return group.id !== groupId;
     });
     renderCertificateGroups(itemId);
+}
+
+function selectSingleGroupDomain(itemId, groupId, domainCode, checked) {
+    const group = (certificateChangeGroups[itemId] || []).find(function(entry) { return entry.id === groupId; });
+    if(!group) return;
+    group.domainCodes = checked ? [domainCode] : [];
+    group.certIds = checked ? allCertificates.filter(function(cert) {
+        return cert.domain === domainCode;
+    }).map(function(cert) {
+        return cert.certId;
+    }) : [];
+    renderCertificateGroups(itemId);
+}
+
+function syncGroupDomains(itemId, groupId) {
+    const group = (certificateChangeGroups[itemId] || []).find(function(entry) { return entry.id === groupId; });
+    if(!group) return;
+    const selected = Array.from(document.querySelectorAll('.group-domain-' + groupId + ':checked')).map(function(input) {
+        return input.value;
+    });
+    group.domainCodes = selected.length ? [selected[selected.length - 1]] : [];
+    group.certIds = allCertificates.filter(function(cert) {
+        return group.domainCodes.includes(cert.domain);
+    }).map(function(cert) {
+        return cert.certId;
+    });
+    renderCertificateGroups(itemId);
+}
+
+function isDomainSelectedInOtherGroup(itemId, currentGroupId, domainCode) {
+    return (certificateChangeGroups[itemId] || []).some(function(group) {
+        return group.id !== currentGroupId && group.domainCodes && group.domainCodes.includes(domainCode);
+    });
+}
+
+function areAllDomainsSelected(itemId) {
+    const selected = new Set((certificateChangeGroups[itemId] || []).flatMap(function(group) {
+        return group.domainCodes || [];
+    }));
+    return getCertificateDomains().every(function(domain) {
+        return selected.has(domain.domain);
+    });
 }
 
 function setGroupCertificates(itemId, groupId, checked) {
@@ -2005,6 +2126,11 @@ function saveSurvey() {
         if(item.id === 'multiSite' || isUnifiedCertificateItem(item.id)) return false;
         const checked = document.getElementById('change_' + item.id);
         const groups = certificateChangeGroups[item.id] || [];
+        if(isDomainCertificateItem(item.id)) {
+            return checked && checked.checked && groups.every(function(group) {
+                return !group.domainCodes || group.domainCodes.length === 0;
+            });
+        }
         return checked && checked.checked && groups.every(function(group) {
             return !group.certIds || group.certIds.length === 0;
         });
@@ -2019,6 +2145,12 @@ function saveSurvey() {
         if(item.id === 'multiSite' || isUnifiedCertificateItem(item.id)) return false;
         const checked = document.getElementById('change_' + item.id);
         if(!checked || !checked.checked) return false;
+        if(isDomainCertificateItem(item.id)) {
+            const selectedDomains = (certificateChangeGroups[item.id] || []).flatMap(function(group) {
+                return group.domainCodes || [];
+            });
+            return new Set(selectedDomains).size !== selectedDomains.length;
+        }
         const selectedCertIds = (certificateChangeGroups[item.id] || []).flatMap(function(group) {
             return group.certIds || [];
         });
@@ -2026,7 +2158,7 @@ function saveSurvey() {
     });
 
     if(duplicateCertificateSelection) {
-        showNotification('同一本证书不能出现在多个变更内容组', 'error');
+        showNotification('同一本证书或同一认证领域不能出现在多个变更内容组', 'error');
         return;
     }
 
@@ -2036,6 +2168,13 @@ function saveSurvey() {
         if(!checked || !checked.checked) return [];
         if(isUnifiedCertificateItem(item.id)) {
             return (certificateChangeGroups[item.id] || []).map(function(group) {
+                return group.id;
+            });
+        }
+        if(isDomainCertificateItem(item.id)) {
+            return (certificateChangeGroups[item.id] || []).filter(function(group) {
+                return group.domainCodes && group.domainCodes.length > 0;
+            }).map(function(group) {
                 return group.id;
             });
         }
