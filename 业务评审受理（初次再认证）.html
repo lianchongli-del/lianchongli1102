@@ -29,6 +29,135 @@
         .nav-item:hover:not(.active) { background-color: #f8fafc; border-left: 3px solid #cbd5e1; }
 
         .readonly-field { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 12px; border-radius: 6px; font-size: 13px; color: #1e293b; min-height: 36px; }
+
+
+        /* 获证方情况调查和变更申请表弹窗，来源于监督审核通知详情 */
+        .certificate-survey-modal .section-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+        }
+        .certificate-survey-modal .info-label {
+            color: #64748b;
+            font-size: 13px;
+        }
+        .certificate-survey-modal .readonly-field {
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: #0f172a;
+            min-height: 42px;
+        }
+        .certificate-survey-modal .readonly-note {
+            border: 1px solid #dbe5f0;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 22px;
+            color: #334155;
+            line-height: 1.75;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+        .certificate-survey-modal .change-compare-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .certificate-survey-modal .change-compare-header {
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .certificate-survey-modal .change-compare-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+        .certificate-survey-modal .compare-section {
+            padding: 16px;
+        }
+        .certificate-survey-modal .compare-section.before {
+            background: #ffffff;
+            border-right: 1px solid #e2e8f0;
+        }
+        .certificate-survey-modal .compare-section.after {
+            background: #f0fdf4;
+        }
+        .certificate-survey-modal .compare-label {
+            font-size: 11px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .certificate-survey-modal .compare-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #1e293b;
+        }
+        .certificate-survey-modal .compare-content.before-text {
+            color: #64748b;
+            text-decoration: line-through;
+            text-decoration-color: #cbd5e1;
+        }
+        .certificate-survey-modal .compare-content.after-text {
+            color: #047857;
+            font-weight: 600;
+        }
+        .certificate-survey-modal .change-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .certificate-survey-modal .change-badge.modified {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .certificate-survey-modal .cert-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #ffffff;
+            border: 1px solid #bfdbfe;
+            color: #1d4ed8;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .certificate-survey-modal .attachment-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            font-size: 12px;
+        }
+        @media (max-width: 768px) {
+            .certificate-survey-modal .change-compare-body {
+                grid-template-columns: 1fr;
+            }
+            .certificate-survey-modal .compare-section.before {
+                border-right: none;
+                border-bottom: 1px solid #e2e8f0;
+            }
+        }
+
         .editable-field { border: 1px solid #d1d5db; padding: 8px 12px; border-radius: 6px; font-size: 13px; transition: all 0.2s; width: 100%; }
         .editable-field:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
         select.editable-field { appearance: auto; padding-right: 24px; }
@@ -1483,126 +1612,259 @@
                     </div>
                     <div>
                         <h3 class="text-lg font-bold text-slate-900">获证方情况和变更申请表</h3>
-                        <p class="text-xs text-slate-500 mt-1">只读查看，展示再认证申请带入的获证方情况及变更前后内容</p>
                     </div>
                 </div>
                 <button type="button" onclick="closeCertificateHolderChangeModal()" class="w-8 h-8 rounded-lg hover:bg-white text-slate-500 hover:text-slate-800 transition-colors"><i class="fas fa-times"></i></button>
             </div>
-            <div class="p-6 overflow-y-auto space-y-4 bg-slate-50">
-                <div class="bg-white border border-slate-200 rounded-xl p-4">
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs"><i class="fas fa-building"></i></span>
-                        <h4 class="font-semibold text-slate-900">获证方情况</h4>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                        <div class="readonly-field"><span class="text-slate-500">获证组织：</span>北京某某科技有限公司</div>
-                        <div class="readonly-field"><span class="text-slate-500">现有证书覆盖：</span>OHSMS 职业健康安全管理体系认证</div>
-                    </div>
-                </div>
-
-                <div class="bg-white border border-emerald-100 rounded-xl p-4">
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs"><i class="fas fa-check"></i></span>
-                        <h4 class="font-semibold text-slate-900">认证范围变更</h4>
-                        <span class="text-xs text-slate-500">适用证书：00123S34571R0S/37000</span>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                            <div class="mb-2"><div class="font-semibold text-slate-900">00123S34571R0S/37000</div><div class="text-xs text-slate-500">职业健康安全管理体系</div></div>
-                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 text-sm">
-                                <div class="bg-white rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>变更前内容</div><div class="text-slate-800">软件研发、系统集成项目实施及办公运营相关职业健康安全管理活动。</div></div>
-                                <div class="bg-white rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>变更后内容</div><div class="text-slate-800">软件研发、系统集成项目实施、云平台运维服务、办公运营及相关职业健康安全管理活动。</div></div>
-                                <div class="bg-white rounded-lg border border-slate-200 p-3"><div class="text-xs text-slate-500 mb-1">变更情况和原因</div><div class="text-slate-800">新增云平台运维服务过程，纳入一体化管理体系控制。</div></div>
-                            </div>
-                        </div>
-                        <div class="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                            <div class="mb-2"><div class="font-semibold text-slate-900">00123Q34567R0S/37000</div><div class="text-xs text-slate-500">质量管理体系</div></div>
-                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 text-sm">
-                                <div class="bg-white rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>变更前内容</div><div class="text-slate-800">计算机软件开发、系统集成服务及相关管理活动。</div></div>
-                                <div class="bg-white rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>变更后内容</div><div class="text-slate-800">计算机软件开发、系统集成服务、信息技术运维服务及相关管理活动。</div></div>
-                                <div class="bg-white rounded-lg border border-slate-200 p-3"><div class="text-xs text-slate-500 mb-1">变更情况和原因</div><div class="text-slate-800">根据业务发展情况，补充运维服务相关范围。</div></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white border border-blue-100 rounded-xl p-4">
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs"><i class="fas fa-map-marker-alt"></i></span>
-                        <h4 class="font-semibold text-slate-900">分支机构/常设多场所变更</h4>
-                    </div>
-                    <div class="bg-slate-50 rounded-lg border border-slate-200 p-3 text-sm mb-3">
-                        <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold mb-3"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>变更前内容：认证覆盖场所</div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                            <div class="rounded border border-slate-100 bg-white p-2"><div class="font-medium text-slate-800">1. 北京总部</div><div class="text-xs text-slate-500 mt-1">北京市海淀区中关村软件园8号楼</div></div>
-                            <div class="rounded border border-slate-100 bg-white p-2"><div class="font-medium text-slate-800">2. 项目实施现场</div><div class="text-xs text-slate-500 mt-1">客户现场短期实施和运维支持</div></div>
-                            <div class="rounded border border-slate-100 bg-white p-2"><div class="font-medium text-slate-800">3. 成都交付办公室</div><div class="text-xs text-slate-500 mt-1">成都市高新区天府三街99号</div></div>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 text-sm">
-                        <div class="bg-slate-50 rounded-lg border border-green-100 p-3">
-                            <div class="font-medium text-green-700 mb-2"><i class="fas fa-plus-circle mr-1"></i>新增场所</div>
-                            <div class="text-slate-800">杭州服务中心</div>
-                            <div class="text-xs text-slate-500 mt-1">杭州市滨江区江南大道3888号</div>
-                        </div>
-                        <div class="bg-slate-50 rounded-lg border border-red-100 p-3">
-                            <div class="font-medium text-red-700 mb-2"><i class="fas fa-minus-circle mr-1"></i>减少场所</div>
-                            <div class="text-slate-800">成都交付办公室</div>
-                            <div class="text-xs text-slate-500 mt-1">成都市高新区天府三街99号</div>
-                        </div>
-                    </div>
-                    <div class="mt-3 bg-slate-50 rounded-lg border border-slate-200 p-3 text-sm">
-                        <div class="text-xs text-slate-500 mb-1">变更情况和原因</div>
-                        <div class="text-slate-800">服务网络调整，新增杭州服务中心承接区域客户服务，成都办公室不再承担认证范围内活动。</div>
-                    </div>
-                </div>
-
-                <div class="bg-white border border-amber-100 rounded-xl p-4">
-                    <div class="flex items-center gap-2 mb-3"><span class="w-5 h-5 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-xs"><i class="fas fa-user"></i></span><h4 class="font-semibold text-slate-900">联系人/联系方式变更</h4></div>
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 text-sm">
-                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>变更前内容</div><div class="text-slate-800">管理者代表：王强；电话：13900139000；邮箱：wangqiang@example.com。</div></div>
-                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>变更后内容</div><div class="text-slate-800">管理者代表：李明；电话：13800138000；邮箱：liming@example.com。</div></div>
-                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="text-xs text-slate-500 mb-1">变更情况和原因</div><div class="text-slate-800">管理者代表岗位调整，联系方式同步更新。</div></div>
-                    </div>
-                </div>
-
-                <div class="bg-white border border-cyan-100 rounded-xl p-4">
-                    <div class="flex items-center gap-2 mb-3"><span class="w-5 h-5 rounded-full bg-cyan-100 text-cyan-600 flex items-center justify-center text-xs"><i class="fas fa-users"></i></span><h4 class="font-semibold text-slate-900">组织人数和体系覆盖人数变更</h4></div>
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 text-sm">
-                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>变更前内容</div><div class="text-slate-800">组织总人数 128 人；OHSMS 覆盖 126 人。</div></div>
-                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>变更后内容</div><div class="text-slate-800">组织总人数 156 人；OHSMS 覆盖 156 人。</div></div>
-                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="text-xs text-slate-500 mb-1">变更情况和原因</div><div class="text-slate-800">研发和交付团队扩编，部分外包岗位转为正式人员。</div></div>
-                    </div>
-                </div>
-
-                <div class="bg-white border border-rose-100 rounded-xl p-4">
-                    <div class="flex items-center gap-2 mb-3"><span class="w-5 h-5 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-xs"><i class="fas fa-file-alt"></i></span><h4 class="font-semibold text-slate-900">管理体系文件和主要过程变更</h4></div>
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 text-sm">
-                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>变更前内容</div><div class="text-slate-800">管理手册 V3.1，过程文件未单列云平台运维和远程服务要求。</div></div>
-                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>变更后内容</div><div class="text-slate-800">管理手册升级至 V3.2，新增《云平台运维控制程序》《远程运维服务控制规范》。</div></div>
-                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="text-xs text-slate-500 mb-1">变更情况和原因</div><div class="text-slate-800">为覆盖新增服务活动，对过程识别、职责接口和记录要求进行修订。</div></div>
-                    </div>
-                </div>
-
-                <div class="bg-white border border-orange-100 rounded-xl p-4">
-                    <div class="flex items-center gap-2 mb-3"><span class="w-5 h-5 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xs"><i class="fas fa-network-wired"></i></span><h4 class="font-semibold text-slate-900">外包过程和外部服务场所变更</h4></div>
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 text-sm">
-                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>变更前内容</div><div class="text-slate-800">外包过程仅包括保洁、设备维保和办公网络支持。</div></div>
-                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold mb-2"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>变更后内容</div><div class="text-slate-800">新增云资源监控外包服务，供应商纳入年度评价和 SLA 监控。</div></div>
-                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="text-xs text-slate-500 mb-1">变更情况和原因</div><div class="text-slate-800">部分运维人员在客户现场提供短期支持服务，按项目台账实施管理。</div></div>
-                    </div>
-                </div>
-
-                <div class="bg-white border border-sky-100 rounded-xl p-4">
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="w-5 h-5 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center text-xs"><i class="fas fa-calendar-alt"></i></span>
-                        <h4 class="font-semibold text-slate-900">审核日期确认</h4>
-                    </div>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 text-sm">
-                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="text-xs text-slate-500 mb-1">期望审核日期</div><div class="text-slate-800">2026-04-15 至 2026-04-18</div></div>
-                        <div class="bg-slate-50 rounded-lg border border-slate-200 p-3"><div class="text-xs text-slate-500 mb-1">不能安排实施的日期和原因</div><div class="text-slate-800">2026-04-04 至 2026-04-06 为节假日，客户现场无法接待审核。</div></div>
-                    </div>
-                </div>
+            <div class="certificate-survey-modal p-6 overflow-y-auto bg-slate-50">
+                <div class="space-y-6">
+                                        <section class="section-card">
+                                            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                                                <div class="flex items-center gap-2">
+                                                    <i class="fas fa-certificate text-blue-600"></i>
+                                                    <h2 class="font-semibold text-slate-900">一、认证证书信息</h2>
+                                                </div>
+                                                <div class="flex flex-wrap items-center justify-end gap-2">
+                                                    <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">OHSMS（职业健康安全管理体系）/ 2本证书</span>
+                                                    <span class="text-xs text-blue-700 bg-blue-50 border border-blue-100 px-2 py-1 rounded">GB/T 45001-2020 / ISO 45001:2018</span>
+                                                </div>
+                                            </div>
+                                            <div class="p-6 grid grid-cols-1 xl:grid-cols-2 gap-4">
+                                                <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                                                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                                                        <div>
+                                                            <div class="font-mono text-sm font-semibold text-slate-900">00123S34571R0S/37000</div>
+                                                            <div class="text-xs text-slate-500 mt-1">中国质量认证中心</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-4 grid grid-cols-2 gap-3 text-xs">
+                                                        <div class="readonly-field"><div class="text-slate-500 mb-1">首次发证</div><div class="font-semibold">2020/04/18</div></div>
+                                                        <div class="readonly-field"><div class="text-slate-500 mb-1">本周期发证</div><div class="font-semibold">2023/04/18</div></div>
+                                                        <div class="readonly-field"><div class="text-slate-500 mb-1">有效期至</div><div class="font-semibold">2026年4月17日</div></div>
+                                                        <div class="readonly-field"><div class="text-slate-500 mb-1">最近现场审核</div><div class="font-semibold">2025/04/12 至 2025/04/14</div></div>
+                                                    </div>
+                                                </div>
+                                                <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                                                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                                                        <div>
+                                                            <div class="font-mono text-sm font-semibold text-slate-900">00123S34572R0S/37000</div>
+                                                            <div class="text-xs text-slate-500 mt-1">中国质量认证中心</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-4 grid grid-cols-2 gap-3 text-xs">
+                                                        <div class="readonly-field"><div class="text-slate-500 mb-1">首次发证</div><div class="font-semibold">2021/06/10</div></div>
+                                                        <div class="readonly-field"><div class="text-slate-500 mb-1">本周期发证</div><div class="font-semibold">2024/06/10</div></div>
+                                                        <div class="readonly-field"><div class="text-slate-500 mb-1">有效期至</div><div class="font-semibold">2027/06/09</div></div>
+                                                        <div class="readonly-field"><div class="text-slate-500 mb-1">最近现场审核</div><div class="font-semibold">2025/06/06 至 2025/06/08</div></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </section>
+                
+                                        <section class="section-card">
+                                            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                                                <div class="flex items-center gap-2">
+                                                    <i class="fas fa-file-signature text-blue-600"></i>
+                                                    <h2 class="font-semibold text-slate-900">二、证书变更信息</h2>
+                                                </div>
+                                                <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">4项变更</span>
+                                            </div>
+                                            <div class="p-6 space-y-5">
+                                                <div class="change-compare-card">
+                                                    <div class="change-compare-header">
+                                                        <span class="change-badge modified">组织名称</span>
+                                                        <span class="font-medium text-slate-900">全部证书统一修改</span>
+                                                    </div>
+                                                    <div class="change-compare-body">
+                                                        <div class="compare-section before">
+                                                            <div class="compare-label"><i class="fas fa-history text-slate-400"></i>原认证信息</div>
+                                                            <div class="compare-content before-text">北京某某科技有限公司</div>
+                                                        </div>
+                                                        <div class="compare-section after">
+                                                            <div class="compare-label"><i class="fas fa-arrow-right text-green-500"></i>拟变更为</div>
+                                                            <div class="compare-content after-text">北京某某数字科技有限公司</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="px-4 py-3 border-t border-slate-200 bg-white grid grid-cols-1 xl:grid-cols-[1fr_auto] gap-3">
+                                                        <div>
+                                                            <div class="compare-label mb-1"><i class="fas fa-message text-slate-400"></i>变更情况和原因描述</div>
+                                                            <div class="text-sm text-slate-700 leading-relaxed">企业已完成工商名称变更，统一社会信用代码不变，申请全部证书统一更新组织名称。</div>
+                                                        </div>
+                                                        <div class="flex flex-wrap gap-2 items-start xl:justify-end">
+                                                            <span class="attachment-chip"><i class="fas fa-paperclip text-slate-400"></i>营业执照副本.pdf</span>
+                                                            <span class="attachment-chip"><i class="fas fa-paperclip text-slate-400"></i>名称变更核准通知书.pdf</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                
+                                                <div class="change-compare-card">
+                                                    <div class="change-compare-header">
+                                                        <span class="change-badge modified">认证范围</span>
+                                                        <span class="font-medium text-slate-900">适用证书</span>
+                                                        <span class="cert-badge"><i class="fas fa-certificate text-blue-400"></i>00123S34571R0S/37000</span>
+                                                        <span class="cert-badge"><i class="fas fa-certificate text-blue-400"></i>00123S34572R0S/37000</span>
+                                                    </div>
+                                                    <div class="change-compare-body">
+                                                        <div class="compare-section before">
+                                                            <div class="compare-label"><i class="fas fa-history text-slate-400"></i>变更前</div>
+                                                            <div class="compare-content before-text">软件研发、系统集成项目实施及办公运营相关职业健康安全管理活动</div>
+                                                        </div>
+                                                        <div class="compare-section after">
+                                                            <div class="compare-label"><i class="fas fa-arrow-right text-green-500"></i>拟变更为</div>
+                                                            <div class="compare-content after-text">软件研发、系统集成项目实施、信息技术运维服务及办公运营相关职业健康安全管理活动</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="px-4 py-3 border-t border-slate-200 bg-white grid grid-cols-1 xl:grid-cols-[1fr_auto] gap-3">
+                                                        <div>
+                                                            <div class="compare-label mb-1"><i class="fas fa-message text-slate-400"></i>变更情况和原因描述</div>
+                                                            <div class="text-sm text-slate-700 leading-relaxed">客户新增驻场运维服务过程，已纳入管理体系文件、过程清单和岗位职责管理。</div>
+                                                        </div>
+                                                        <div class="flex flex-wrap gap-2 items-start xl:justify-end">
+                                                            <span class="attachment-chip"><i class="fas fa-paperclip text-slate-400"></i>过程清单.xlsx</span>
+                                                            <span class="attachment-chip"><i class="fas fa-paperclip text-slate-400"></i>服务合同样本.pdf</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                
+                                                <div class="change-compare-card">
+                                                    <div class="change-compare-header">
+                                                        <span class="change-badge modified">运营地址</span>
+                                                        <span class="font-medium text-slate-900">适用证书</span>
+                                                        <span class="cert-badge"><i class="fas fa-certificate text-blue-400"></i>00123S34571R0S/37000</span>
+                                                    </div>
+                                                    <div class="change-compare-body">
+                                                        <div class="compare-section before">
+                                                            <div class="compare-label"><i class="fas fa-history text-slate-400"></i>变更前</div>
+                                                            <div class="compare-content before-text">北京市海淀区示例路88号</div>
+                                                        </div>
+                                                        <div class="compare-section after">
+                                                            <div class="compare-label"><i class="fas fa-arrow-right text-green-500"></i>拟变更为</div>
+                                                            <div class="compare-content after-text">北京市海淀区示例路88号、客户现场驻场运维服务点</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="px-4 py-3 border-t border-slate-200 bg-white">
+                                                        <div class="compare-label mb-1"><i class="fas fa-message text-slate-400"></i>变更情况和原因描述</div>
+                                                        <div class="text-sm text-slate-700 leading-relaxed">新增客户现场驻场运维服务点，相关现场活动已纳入体系过程控制。</div>
+                                                    </div>
+                                                </div>
+                
+                                                <div class="change-compare-card">
+                                                    <div class="change-compare-header">
+                                                        <span class="change-badge modified">分支机构/常设多场所</span>
+                                                        <span class="font-medium text-slate-900">适用证书</span>
+                                                        <span class="cert-badge"><i class="fas fa-certificate text-blue-400"></i>00123S34572R0S/37000</span>
+                                                    </div>
+                                                    <div class="change-compare-body">
+                                                        <div class="compare-section before">
+                                                            <div class="compare-label"><i class="fas fa-history text-slate-400"></i>原认证信息</div>
+                                                            <div class="compare-content before-text">关联场所：北京总部、广州研发中心</div>
+                                                        </div>
+                                                        <div class="compare-section after">
+                                                            <div class="compare-label"><i class="fas fa-arrow-right text-green-500"></i>拟变更为</div>
+                                                            <div class="compare-content after-text">新增：苏州项目实施中心（是否发子证：是）；减少：广州研发中心；总部场所保留</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="px-4 py-3 border-t border-slate-200 bg-white grid grid-cols-1 xl:grid-cols-[1fr_auto] gap-3">
+                                                        <div>
+                                                            <div class="compare-label mb-1"><i class="fas fa-message text-slate-400"></i>变更情况和原因描述</div>
+                                                            <div class="text-sm text-slate-700 leading-relaxed">项目交付重心迁移，广州研发中心不再纳入本证书认证范围；新增苏州项目实施中心并申请发子证。</div>
+                                                        </div>
+                                                        <div class="flex flex-wrap gap-2 items-start xl:justify-end">
+                                                            <span class="attachment-chip"><i class="fas fa-paperclip text-slate-400"></i>认证场所清单.xlsx</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </section>
+                
+                                        <section class="section-card">
+                                            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                                                <div class="flex items-center gap-2">
+                                                    <i class="fas fa-clipboard-check text-blue-600"></i>
+                                                    <h2 class="font-semibold text-slate-900">三、其他调查项目</h2>
+                                                </div>
+                                                <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">4项样例</span>
+                                            </div>
+                                            <div class="p-6 grid grid-cols-1 xl:grid-cols-2 gap-5">
+                                                <div class="readonly-note">
+                                                    <div class="font-semibold text-slate-900 mb-4">最高管理者</div>
+                                                    <div><span class="text-slate-500">原信息：</span>王强，总经理，全面负责管理体系运行。</div>
+                                                    <div class="mt-2"><span class="text-slate-500">变更情况和原因描述：</span>最高管理者调整为李明，授权职责已在任命文件中明确。</div>
+                                                </div>
+                
+                                                <div class="readonly-note">
+                                                    <div class="font-semibold text-slate-900 mb-4">联系人/联系方式</div>
+                                                    <div><span class="text-slate-500">原信息：</span>张经理，010-12345678。</div>
+                                                    <div class="mt-2"><span class="text-slate-500">变更情况和原因描述：</span>联系人变更为刘经理，联系电话 0512-66668888。</div>
+                                                </div>
+                
+                                                <div class="readonly-note">
+                                                    <div class="font-semibold text-slate-900 mb-4">组织人数</div>
+                                                    <div><span class="text-slate-500">原信息：</span>OHSMS（职业健康安全管理体系）：组织总人数 204 人。</div>
+                                                    <div class="mt-2"><span class="text-slate-500">变更情况和原因描述：</span>因新增产线和项目交付团队，组织总人数调整为 236 人。</div>
+                                                </div>
+                
+                                                <div class="readonly-note">
+                                                    <div class="font-semibold text-slate-900 mb-4">体系覆盖人数</div>
+                                                    <div><span class="text-slate-500">原信息：</span>OHSMS（职业健康安全管理体系）：体系覆盖人数 204 人。</div>
+                                                    <div class="mt-2"><span class="text-slate-500">变更情况和原因描述：</span>体系覆盖人数同步调整为 228 人，临时外包人员不计入覆盖人数。</div>
+                                                </div>
+                                            </div>
+                                        </section>
+                
+                                        <section class="section-card">
+                                            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center gap-2">
+                                                <i class="fas fa-calendar-alt text-blue-600"></i>
+                                                <h2 class="font-semibold text-slate-900">四、审核日期确认</h2>
+                                            </div>
+                                            <div class="p-6">
+                                                <div class="readonly-field flex items-center gap-3">
+                                                    <i class="fas fa-check-circle text-emerald-600"></i>
+                                                    <div>
+                                                        <div class="font-semibold text-slate-900">同意《再认证审核通知》中的审核日期</div>
+                                                        <div class="text-sm text-slate-500 mt-1">确认现场审核时间：2026年4月15日-17日</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </section>
+                
+                                        <section class="section-card">
+                                            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center gap-2">
+                                                <i class="fas fa-file-signature text-blue-600"></i>
+                                                <h2 class="font-semibold text-slate-900">五、签发信息</h2>
+                                            </div>
+                                            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <div class="info-label">签发类型</div>
+                                                    <div class="readonly-field mt-2">自动签发</div>
+                                                </div>
+                                                <div>
+                                                    <div class="info-label">是否加急</div>
+                                                    <div class="readonly-field mt-2">否</div>
+                                                </div>
+                                            </div>
+                                        </section>
+                
+                                        <section class="section-card">
+                                            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center gap-2">
+                                                <i class="fas fa-pen-nib text-blue-600"></i>
+                                                <h2 class="font-semibold text-slate-900">六、声明</h2>
+                                            </div>
+                                            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <div class="info-label">客户代表</div>
+                                                    <div class="readonly-field mt-2">李明</div>
+                                                </div>
+                                                <div>
+                                                    <div class="info-label">填写日期</div>
+                                                    <div class="readonly-field mt-2">2026-04-02</div>
+                                                </div>
+                                                <div class="md:col-span-2 text-sm text-slate-600 bg-slate-50 border border-slate-200 rounded-lg p-4">
+                                                    我们确认以上提供的信息均属实，并理解认证机构将基于本调查表组织监督审核及必要的变更评审。
+                                                </div>
+                                            </div>
+                                        </section>
+                                    </div>
             </div>
             <div class="p-4 border-t border-slate-100 bg-white flex justify-end">
                 <button type="button" onclick="closeCertificateHolderChangeModal()" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors">关闭</button>
