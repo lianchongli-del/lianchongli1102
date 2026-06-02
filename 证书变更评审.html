@@ -165,6 +165,13 @@
             color: #991b1b;
         }
 
+        .investigation-note {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
         /* 附件预览卡片 */
         .attachment-preview-card {
             background: #ffffff;
@@ -422,7 +429,7 @@
                         <h1 class="text-lg font-bold text-slate-900">证书变更评审</h1>
                         <span class="px-2 py-1 rounded text-xs font-medium bg-amber-100 text-amber-700 border border-amber-200">待评审</span>
                         <span class="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">EMS</span>
-                        <span class="px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-700 border border-purple-200">变更申请</span>
+                        <span class="px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-700 border border-purple-200">证书变更</span>
                     </div>
                 </div>
                 <div class="flex gap-3">
@@ -831,10 +838,27 @@
                 groups: [
                     {
                         certIds: ['e_cert_1', 'e_cert_2', 'e_cert_3'],
+                        applyLabel: '统一变更内容',
+                        applyText: '适用于当前全部证书',
                         before: '彩晶光电科技(昆山)有限公司',
                         after: '彩晶智能光电科技(昆山)有限公司',
                         reason: '企业完成工商名称变更，统一社会信用代码不变。',
                         attachments: ['营业执照副本复印件.pdf', '名称变更核准通知书.pdf']
+                    }
+                ]
+            },
+            {
+                item: '认证标准或技术规范',
+                type: '修改',
+                groups: [
+                    {
+                        certIds: ['e_cert_1', 'e_cert_2', 'e_cert_3'],
+                        applyLabel: '统一变更内容',
+                        applyText: '适用于当前领域证书',
+                        before: 'GB/T 24001-2016 / ISO 14001:2015',
+                        after: 'GB/T 24001-2016 / ISO 14001:2015；适用 CNAS-CC01:2015 相关要求',
+                        reason: '依据本周期评审要求补充引用技术规范，证书适用标准主体不变。',
+                        attachments: []
                     }
                 ]
             },
@@ -854,7 +878,7 @@
                         before: '软件研发、系统集成项目实施现场及相关环境管理活动',
                         after: '软件研发、系统集成项目实施现场、驻场运维服务及相关环境管理活动',
                         reason: '两份证书覆盖的项目现场新增驻场运维服务过程，变更内容一致。',
-                        attachments: ['过程清单（EMS）.docx']
+                        attachments: []
                     }
                 ]
             },
@@ -878,9 +902,61 @@
                     {
                         certIds: ['e_cert_2'],
                         before: '关联场所：北京总部、广州研发中心',
-                        after: '新增：苏州项目实施中心；减少：广州研发中心',
-                        reason: '项目交付重心迁移，广州研发中心不再纳入本证书认证范围。',
+                        after: '新增：苏州项目实施中心（是否发子证：是）；减少：广州研发中心',
+                        reason: '项目交付重心迁移，广州研发中心不再纳入本证书认证范围；总部场所保留。',
                         attachments: ['认证场所清单.xlsx']
+                    }
+                ]
+            },
+            {
+                item: '最高管理者',
+                type: '修改',
+                groups: [
+                    {
+                        certIds: ['e_cert_1', 'e_cert_2', 'e_cert_3'],
+                        before: '王强，总经理，全面负责管理体系运行。',
+                        after: '李明，总经理，全面负责管理体系运行。',
+                        reason: '最高管理者调整为李明，授权职责已在任命文件中明确。',
+                        attachments: []
+                    }
+                ]
+            },
+            {
+                item: '联系人/联系方式',
+                type: '修改',
+                groups: [
+                    {
+                        certIds: ['e_cert_1', 'e_cert_2', 'e_cert_3'],
+                        before: '张经理，010-12345678。',
+                        after: '刘经理，0512-66668888。',
+                        reason: '联系人变更为刘经理，联系电话 0512-66668888。',
+                        attachments: []
+                    }
+                ]
+            },
+            {
+                item: '组织人数',
+                type: '修改',
+                groups: [
+                    {
+                        certIds: ['e_cert_1', 'e_cert_2', 'e_cert_3'],
+                        before: '环境管理体系：组织总人数 204 人。',
+                        after: '环境管理体系：组织总人数 236 人。',
+                        reason: '因新增产线和项目交付团队，组织总人数调整为 236 人。',
+                        attachments: []
+                    }
+                ]
+            },
+            {
+                item: '体系覆盖人数',
+                type: '修改',
+                groups: [
+                    {
+                        certIds: ['e_cert_1', 'e_cert_2', 'e_cert_3'],
+                        before: '环境管理体系：体系覆盖人数 204 人。',
+                        after: '环境管理体系：体系覆盖人数 228 人。',
+                        reason: '体系覆盖人数同步调整为 228 人，临时外包人员不计入覆盖人数。',
+                        attachments: []
                     }
                 ]
             }
@@ -973,15 +1049,19 @@
         function renderApplicationChangeInfo() {
             const container = document.getElementById('applicationChangeInfo');
             if (!container) return;
-            container.innerHTML = applicationChangeItems.map((item, itemIndex) => {
+            const certificateItems = applicationChangeItems.slice(0, 5);
+            const investigationItems = applicationChangeItems.slice(5);
+
+            const renderCertificateItem = (item, itemIndex) => {
                 const groups = item.groups.map((group, groupIndex) => {
-                    const certBadges = group.certIds.map(certId => {
+                    const showCerts = !group.applyText;
+                    const certBadges = showCerts ? group.certIds.map(certId => {
                         const cert = getReviewCertificate(certId);
                         return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white border border-blue-200 text-blue-700 text-xs font-medium">
                             <i class="fas fa-certificate text-blue-400"></i>${cert.certNo}
                         </span>`;
-                    }).join('');
-                    const attachmentHtml = group.attachments.map((file, fileIndex) => {
+                    }).join('') : '';
+                    const attachmentHtml = (group.attachments || []).map((file, fileIndex) => {
                         const fileId = getAttachmentFileId(itemIndex, groupIndex, fileIndex);
                         const type = getFileTypeByName(file);
                         filePreviewData[fileId] = {
@@ -1001,11 +1081,15 @@
                             </button>
                         </div>`;
                     }).join('');
+                    const groupHeaderHtml = group.applyText
+                        ? `<span class="px-2 py-1 rounded text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100">${group.applyLabel || '统一变更内容'}</span>
+                            <span class="font-medium text-slate-900">${group.applyText}</span>`
+                        : `<span class="px-2 py-1 rounded text-xs font-semibold bg-slate-100 text-slate-600">第 ${groupIndex + 1} 组</span>
+                            <span class="font-medium text-slate-900">适用证书</span>
+                            <div class="flex flex-wrap gap-2 ml-2">${certBadges}</div>`;
                     return `<div class="change-compare-card">
                         <div class="change-compare-header">
-                            <span class="change-badge modified">第 ${groupIndex + 1} 组</span>
-                            <span class="font-medium text-slate-900">适用证书</span>
-                            <div class="flex flex-wrap gap-2 ml-2">${certBadges}</div>
+                            ${groupHeaderHtml}
                         </div>
                         <div class="change-compare-body">
                             <div class="compare-section before">
@@ -1030,12 +1114,47 @@
                     <div class="bg-slate-50 px-5 py-4 border-b border-slate-200 flex flex-wrap items-center gap-3">
                         <span class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 inline-flex items-center justify-center text-xs font-bold">${itemIndex + 1}</span>
                         <div class="font-semibold text-slate-900">${item.item}</div>
-                        <span class="change-badge modified">${item.type}</span>
-                        <span class="text-xs text-slate-500 ml-auto">${item.groups.length} 组变更内容</span>
+                        ${item.groups.length > 1 ? `<span class="text-xs text-slate-500 ml-auto">${item.groups.length} 组变更内容</span>` : ''}
                     </div>
                     <div class="p-4 space-y-4">${groups}</div>
                 </section>`;
+            };
+
+            const investigationCards = investigationItems.map(item => {
+                const group = item.groups[0];
+                return `<div class="investigation-note">
+                    <div class="font-semibold text-slate-900 mb-3">${item.item}</div>
+                    <div class="text-sm text-slate-700 leading-relaxed">
+                        <span class="text-slate-500">原信息：</span>${group.before}
+                    </div>
+                    <div class="text-sm text-slate-700 leading-relaxed mt-2">
+                        <span class="text-slate-500">变更情况和原因描述：</span>${group.reason}
+                    </div>
+                </div>`;
             }).join('');
+
+            container.innerHTML = `
+                <section class="border border-slate-200 rounded-xl overflow-hidden bg-white">
+                    <div class="bg-slate-50 px-5 py-4 border-b border-slate-200 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-file-signature text-blue-600"></i>
+                            <h2 class="font-semibold text-slate-900">证书变更信息</h2>
+                        </div>
+                        <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">${certificateItems.length}项变更</span>
+                    </div>
+                    <div class="p-6 space-y-5">${certificateItems.map(renderCertificateItem).join('')}</div>
+                </section>
+
+                <section class="border border-slate-200 rounded-xl overflow-hidden bg-white">
+                    <div class="bg-slate-50 px-5 py-4 border-b border-slate-200 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-clipboard-check text-blue-600"></i>
+                            <h2 class="font-semibold text-slate-900">其他调查项目</h2>
+                        </div>
+                    </div>
+                    <div class="p-6 grid grid-cols-1 xl:grid-cols-2 gap-4">${investigationCards}</div>
+                </section>
+            `;
         }
 
         function refreshHistoryCertificate() {
