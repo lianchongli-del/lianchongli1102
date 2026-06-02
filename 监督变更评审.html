@@ -1,0 +1,1976 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>监督变更评审 - 中检华南认证业务管理系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        
+        body { 
+            font-family: 'Inter', 'Noto Sans SC', sans-serif; 
+            background-color: #f8fafc; 
+        }
+        
+        .review-section { 
+            transition: all 0.3s ease; 
+            scroll-margin-top: 120px; 
+        }
+        
+        .nav-item { 
+            position: relative; 
+            transition: all 0.2s ease; 
+        }
+        
+        .nav-item.active { 
+            background: linear-gradient(90deg, #eff6ff 0%, #ffffff 100%); 
+            border-left: 3px solid #2563eb; 
+            color: #2563eb; 
+            font-weight: 600; 
+        }
+        
+        .nav-item:hover:not(.active) { 
+            background-color: #f8fafc; 
+            border-left: 3px solid #cbd5e1; 
+        }
+
+        .domain-nav-item {
+            display: block;
+            width: 100%;
+            padding: 8px 16px 8px 48px;
+            text-align: left;
+            font-size: 12px;
+            color: #64748b;
+            transition: all 0.2s ease;
+        }
+
+        .domain-nav-item:hover {
+            background-color: #f8fafc;
+            color: #2563eb;
+        }
+
+        .domain-nav-item.active {
+            background-color: #eff6ff;
+            color: #2563eb;
+            font-weight: 600;
+        }
+        
+        .readonly-field { 
+            background: #f8fafc; 
+            border: 1px solid #e2e8f0; 
+            padding: 8px 12px; 
+            border-radius: 6px; 
+            font-size: 13px; 
+            color: #1e293b; 
+            min-height: 36px; 
+        }
+        
+        .editable-field { 
+            border: 1px solid #d1d5db; 
+            padding: 8px 12px; 
+            border-radius: 6px; 
+            font-size: 13px; 
+            transition: all 0.2s; 
+            width: 100%; 
+        }
+        
+        .editable-field:focus { 
+            outline: none; 
+            border-color: #3b82f6; 
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); 
+        }
+        
+        /* 变更对比卡片样式 */
+        .change-compare-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        
+        .change-compare-header {
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .change-compare-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .change-compare-body {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .compare-section {
+            padding: 16px;
+        }
+        
+        .compare-section.before {
+            background: #ffffff;
+            border-right: 1px solid #e2e8f0;
+        }
+        
+        @media (max-width: 768px) {
+            .compare-section.before {
+                border-right: none;
+                border-bottom: 1px solid #e2e8f0;
+            }
+        }
+        
+        .compare-section.after {
+            background: #f0fdf4;
+        }
+        
+        .compare-label {
+            font-size: 11px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .compare-content {
+            font-size: 14px;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+        
+        .compare-content.before-text {
+            color: #64748b;
+            text-decoration: line-through;
+            text-decoration-color: #cbd5e1;
+        }
+        
+        .compare-content.after-text {
+            color: #059669;
+            font-weight: 500;
+        }
+        
+        .change-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .change-badge.modified {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .change-badge.added {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .change-badge.deleted {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .investigation-note {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        /* 附件预览卡片 */
+        .attachment-preview-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .attachment-preview-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+        }
+        
+        .file-icon-lg {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .file-icon-lg.pdf {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+        
+        .file-icon-lg.word {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+        
+        .file-icon-lg.img {
+            background: #f0fdf4;
+            color: #059669;
+        }
+
+        /* 专业代码标签 */
+        .prof-code-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #1e40af;
+            font-weight: 500;
+        }
+        
+        .prof-code-tag .remove {
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+        
+        .prof-code-tag .remove:hover {
+            opacity: 1;
+            color: #dc2626;
+        }
+
+        /* 条件显示区域 */
+        .conditional-block {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+        
+        .conditional-block.show {
+            max-height: 1000px;
+            opacity: 1;
+            margin-top: 1rem;
+        }
+
+        /* 单选卡片 */
+        .radio-card {
+            display: flex;
+            align-items: start;
+            gap: 12px;
+            padding: 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .radio-card:hover {
+            border-color: #cbd5e1;
+            background: #f8fafc;
+        }
+        
+        .radio-card.selected {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        
+        .radio-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f1f5f9;
+        }
+
+        /* 模态框 */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: scale(0.95);
+            transition: transform 0.3s;
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        /* 图片预览模态框 */
+        .image-preview-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .image-preview-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .image-preview-content {
+            max-width: 90vw;
+            max-height: 90vh;
+            position: relative;
+        }
+        
+        .image-preview-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 8px;
+        }
+        
+        .image-preview-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            transition: background 0.2s;
+        }
+        
+        .image-preview-close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-surveillance1 { background: #dbeafe; color: #1e40af; }
+        .status-surveillance2 { background: #fef3c7; color: #92400e; }
+        .status-recertification { background: #f3e8ff; color: #7c3aed; }
+        .cert-status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+        .cert-status-valid { background: #dcfce7; color: #166534; }
+
+        /* 复选框样式优化 */
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 2px solid #d1d5db;
+            cursor: pointer;
+        }
+        
+        .checkbox-wrapper input[type="checkbox"]:checked {
+            background-color: #2563eb;
+            border-color: #2563eb;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar { display: none; }
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- 顶部导航 -->
+    <div class="fixed top-0 left-0 right-0 z-40 bg-white border-b border-slate-200 shadow-sm">
+        <div class="max-w-[1920px] mx-auto px-6">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-4">
+                    <button onclick="history.back()" class="text-slate-600 hover:text-slate-900 flex items-center gap-2 text-sm transition-colors">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>返回列表</span>
+                    </button>
+                    <div class="h-6 w-px bg-slate-300"></div>
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-lg font-bold text-slate-900">监督变更评审</h1>
+                        <span class="px-2 py-1 rounded text-xs font-medium bg-amber-100 text-amber-700 border border-amber-200">待评审</span>
+                        <span class="px-2 py-1 rounded text-xs font-medium bg-indigo-100 text-indigo-700 border border-indigo-200">QMS</span>
+                        <span class="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">EMS</span>
+                        <span class="px-2 py-1 rounded text-xs font-medium bg-emerald-100 text-emerald-700 border border-emerald-200">OHSMS</span>
+                        <span class="px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-700 border border-purple-200">监督变更</span>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="saveReview()" class="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-all">
+                        <i class="fas fa-save mr-2"></i>暂存
+                    </button>
+                    <button onclick="submitReview()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md shadow-blue-200 transition-all">
+                        <i class="fas fa-paper-plane mr-2"></i>提交
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主体布局 -->
+    <div class="max-w-[1920px] mx-auto px-6 pt-24 pb-8 flex gap-6">
+
+        <!-- 左侧导航 -->
+        <div class="w-72 shrink-0 sidebar">
+            <div class="sticky top-24 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-4 bg-slate-50 border-b border-slate-200">
+                    <h3 class="font-semibold text-slate-900 text-sm">评审导航</h3>
+                    <p class="text-xs text-slate-500 mt-1">监督变更评审流程</p>
+                </div>
+                <nav class="py-2">
+                    <a href="#section-basic" class="nav-item active block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent" onclick="switchTab('basic')">
+                        <div class="flex items-center justify-between">
+                            <span class="flex items-center gap-2"><i class="fas fa-file-signature w-5 text-center"></i>变更内容信息</span>
+                        </div>
+                    </a>
+                    <div class="border-l border-slate-100 ml-4 my-1" id="changeDomainNav">
+                        <button type="button" class="domain-nav-item" data-domain="质量管理体系" onclick="switchChangeDomain('质量管理体系')">质量管理体系</button>
+                        <button type="button" class="domain-nav-item" data-domain="环境管理体系" onclick="switchChangeDomain('环境管理体系')">环境管理体系</button>
+                        <button type="button" class="domain-nav-item" data-domain="职业健康安全管理体系" onclick="switchChangeDomain('职业健康安全管理体系')">职业健康安全管理体系</button>
+                    </div>
+                    <a href="#section-profcode" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent" onclick="switchTab('profcode')">
+                        <div class="flex items-center justify-between">
+                            <span class="flex items-center gap-2"><i class="fas fa-list-check w-5 text-center"></i>专业代码</span>
+                            <span class="text-xs bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full" id="profCountBadge">0</span>
+                        </div>
+                    </a>
+                    <a href="#section-audit" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent" onclick="switchTab('audit')">
+                        <div class="flex items-center justify-between">
+                            <span class="flex items-center gap-2"><i class="fas fa-tasks w-5 text-center"></i>审核方式</span>
+                        </div>
+                    </a>
+                    <a href="#section-conclusion" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent" onclick="switchTab('conclusion')">
+                        <div class="flex items-center justify-between">
+                            <span class="flex items-center gap-2"><i class="fas fa-gavel w-5 text-center"></i>评审结论</span>
+                        </div>
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="flex-1 space-y-6" id="mainContent">
+
+            <!-- 业务信息栏 -->
+            <div class="bg-blue-50 rounded-xl border border-blue-200 p-4 flex flex-wrap gap-4 items-center justify-between">
+                <div class="flex gap-6 text-sm">
+                    <div><span class="text-slate-500">监督申请号：</span><span class="font-mono font-semibold text-slate-900">JD202604220006</span></div>
+                    <div><span class="text-slate-500">涉及证书：</span><span class="font-semibold text-slate-900">3个领域 / 6份证书</span></div>
+                    <div><span class="text-slate-500">企业名称：</span><span class="font-semibold text-slate-900">彩晶光电科技(昆山)有限公司</span></div>
+                    <div><span class="text-slate-500">审核类型：</span><span class="font-semibold text-slate-900">监督审核</span></div>
+                    <div><span class="text-slate-500">签发类型：</span><span class="font-semibold text-slate-900">自动签发</span></div>
+                    <div><span class="text-slate-500">是否加急：</span><span class="font-semibold text-slate-900">否</span></div>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-slate-500"><i class="fas fa-clock"></i><span>申请日期：2026-04-22</span></div>
+            </div>
+
+            <!-- 1. 变更内容信息 -->
+            <div id="section-basic" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-file-signature text-blue-600"></i>
+                        <h3 class="font-semibold text-slate-900">变更内容信息</h3>
+                    </div>
+                </div>
+                
+                <div class="p-6 space-y-6">
+                    <div id="applicationChangeInfo" class="space-y-5"></div>
+                </div>
+            </div>
+
+            <!-- 3. 专业代码选择模块 -->
+            <div id="section-profcode" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-list-check text-blue-600"></i>
+                        <h3 class="font-semibold text-slate-900">评审专业代码</h3>
+                    </div>
+                    <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">可多选</span>
+                </div>
+                
+                <div class="p-6">
+                    <div class="mb-4">
+                        <label class="block text-xs font-medium text-slate-700 mb-2">
+                            专业代码 <span class="text-red-500">*</span>
+                            <span class="text-slate-400 font-normal ml-1">（按证书分别填写，每份证书单独选择专业代码并自动带入认可机构）</span>
+                        </label>
+                        <div id="certificateProfCodeDisplay" class="space-y-4"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. 审核方式选择模块（修改后逻辑） -->
+            <div id="section-audit" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-tasks text-blue-600"></i>
+                        <h3 class="font-semibold text-slate-900">审核方式选择</h3>
+                    </div>
+                </div>
+                
+                <div class="p-6 space-y-6">
+                    
+                    <!-- 第一层：是否结合监督 -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-3">是否结合监督审核进行？<span class="text-red-500">*</span></label>
+                        <div class="grid grid-cols-1 gap-4">
+                            <label class="radio-card selected" id="combineAuditCard" onclick="selectAuditMode('combine')">
+                                <input type="radio" name="auditMode" value="combine" class="text-blue-600 mt-1" onchange="handleAuditModeChange(this.value)" checked>
+                                <div class="flex-1">
+                                    <div class="font-medium text-slate-900">与监督审核结合</div>
+                                    <div class="text-xs text-slate-500 mt-1">监督变更评审只能与本次监督审核合并进行</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 结合审核时显示：是否有审核一阶段 -->
+                    <div id="hasStage1Section" class="conditional-block hidden bg-amber-50 border border-amber-200 rounded-lg p-4">
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <div class="flex items-center h-5 mt-0.5">
+                                <input type="checkbox" id="hasStage1Check" class="rounded text-amber-600 focus:ring-amber-500 w-4 h-4" onchange="handleHasStage1Change(this.checked)">
+                            </div>
+                            <div class="flex-1">
+                                <span class="text-sm font-medium text-amber-900 block">是否有审核一阶段？</span>
+                                <p class="text-xs text-amber-700 mt-1">如勾选，审核方案将包含一阶段审核内容</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- 单独审核时显示：现场审核类型 -->
+                    <div id="siteAuditTypeSection" class="conditional-block hidden">
+                        <label class="block text-sm font-medium text-slate-700 mb-3">现场审核类型<span class="text-red-500">*</span></label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <label class="radio-card" id="hasSiteCard" onclick="selectSiteType('hasSite')">
+                                <input type="radio" name="siteType" value="hasSite" class="text-blue-600 mt-1" onchange="handleSiteTypeChange(this.value)">
+                                <div class="flex-1">
+                                    <div class="font-medium text-slate-900">有现场审核</div>
+                                    <div class="text-xs text-slate-500 mt-1">需要安排现场审核活动</div>
+                                </div>
+                            </label>
+
+                            <label class="radio-card" id="noSiteCard" onclick="selectSiteType('noSite')">
+                                <input type="radio" name="siteType" value="noSite" class="text-blue-600 mt-1" onchange="handleSiteTypeChange(this.value)">
+                                <div class="flex-1">
+                                    <div class="font-medium text-slate-900">无现场审核</div>
+                                    <div class="text-xs text-slate-500 mt-1">仅进行文件评审，不安排现场</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 有现场审核时显示：选择文审或一阶段 -->
+                    <div id="auditStageSection" class="conditional-block hidden">
+                        <label class="block text-sm font-medium text-slate-700 mb-3">审核阶段选择<span class="text-red-500">*</span></label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <label class="radio-card" id="docReviewCard" onclick="selectAuditStage('docReview')">
+                                <input type="radio" name="auditStage" value="docReview" class="text-blue-600 mt-1" onchange="handleAuditStageChange(this.value)">
+                                <div class="flex-1">
+                                    <div class="font-medium text-slate-900">文件评审（文审）</div>
+                                    <div class="text-xs text-slate-500 mt-1">仅进行文件审查，不实施现场一阶段</div>
+                                </div>
+                            </label>
+
+                            <label class="radio-card" id="stage1Card" onclick="selectAuditStage('stage1')">
+                                <input type="radio" name="auditStage" value="stage1" class="text-blue-600 mt-1" onchange="handleAuditStageChange(this.value)">
+                                <div class="flex-1">
+                                    <div class="font-medium text-slate-900">一阶段审核</div>
+                                    <div class="text-xs text-slate-500 mt-1">实施现场一阶段审核</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 5. 评审结论 -->
+            <div id="section-conclusion" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-gavel text-blue-600"></i>
+                        <h3 class="font-semibold text-slate-900">评审结论</h3>
+                    </div>
+                </div>
+                
+                <div class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-2">评审结论</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <label class="radio-card selected" id="approveConclusionCard" onclick="selectConclusion('approve')">
+                                <input type="radio" name="reviewConclusion" value="approve" class="text-blue-600 mt-1" checked>
+                                <div class="flex-1">
+                                    <div class="font-medium text-slate-900">通过</div>
+                                    <div class="text-xs text-slate-500 mt-1">资料满足变更评审要求，提交后进入后续流程</div>
+                                </div>
+                            </label>
+                            <label class="radio-card" id="rejectConclusionCard" onclick="selectConclusion('reject')">
+                                <input type="radio" name="reviewConclusion" value="reject" class="text-blue-600 mt-1">
+                                <div class="flex-1">
+                                    <div class="font-medium text-slate-900">驳回</div>
+                                    <div class="text-xs text-slate-500 mt-1">资料或变更内容不满足要求，退回申请人补正</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-2">评审意见</label>
+                        <textarea class="editable-field w-full" rows="3" placeholder="请输入评审意见...">经评审，该企业监督变更申请资料齐全，涉及多个领域的证书变更内容、证明材料和专业代码信息满足评审要求，建议批准变更。</textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-2">评审人员</label>
+                            <input type="text" id="reviewerName" class="editable-field" value="" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-2">评审日期</label>
+                            <input type="date" id="reviewDate" class="editable-field" value="" readonly>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4 mt-4">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" class="rounded text-blue-600 w-4 h-4" checked>
+                            <span class="text-sm text-slate-700">已核实变更内容符合认证规则要求</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 专业代码选择模态框 -->
+    <div id="profCodeModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="p-6 border-b border-slate-100 bg-blue-50 rounded-t-2xl flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-list-check text-blue-600 text-xl"></i>
+                    <h3 class="text-lg font-bold text-slate-900">选择专业代码</h3>
+                </div>
+                <button onclick="closeProfCodeModal()" class="w-8 h-8 rounded-full hover:bg-blue-100 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="p-6 flex-1 overflow-hidden flex flex-col">
+                <div class="flex gap-3 mb-4">
+                    <div class="flex-1 relative">
+                        <input type="text" id="modalProfCodeSearch" class="w-full pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-sm" 
+                               placeholder="搜索代码编号或分类名称（如：19.01.01 或 办公设备）" oninput="searchModalProfCode(this.value)">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="selectAllModalCodes()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                            <i class="fas fa-check-square"></i>全选
+                        </button>
+                        <button onclick="clearModalSelection()" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                            <i class="fas fa-trash-alt"></i>清空
+                        </button>
+                    </div>
+                </div>
+
+                <div id="modalSelectedPreview" class="mb-4">
+                    <div class="text-xs text-slate-500 mb-2">
+                        已选择 <span id="selectedCount" class="font-bold text-blue-600">0</span> 项：
+                    </div>
+                    <div id="previewTags" class="flex flex-wrap gap-2">
+                        <span class="text-slate-400 text-sm">暂未选择</span>
+                    </div>
+                </div>
+
+                <div class="flex-1 overflow-y-auto border border-slate-200 rounded-lg">
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-50 sticky top-0 z-10">
+                            <tr>
+                                <th class="w-12 py-3 px-4 text-left">
+                                    <input type="checkbox" id="headerCheckbox" onchange="toggleAllFromHeader()" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer">
+                                </th>
+                                <th class="py-3 px-4 text-left font-semibold text-slate-700">代码编号</th>
+                                <th class="py-3 px-4 text-left font-semibold text-slate-700">分类名称</th>
+                                <th class="py-3 px-4 text-left font-semibold text-slate-700">认可机构</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalProfCodeList" class="divide-y divide-slate-100">
+                            <tr><td colspan="4" class="py-8 text-center text-slate-400">加载中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="p-6 border-t border-slate-100 flex justify-between items-center bg-slate-50 rounded-b-2xl">
+                <span class="text-sm text-slate-500">
+                    共 <span id="totalCodesCount">0</span> 条记录
+                </span>
+                <div class="flex gap-3">
+                    <button onclick="closeProfCodeModal()" class="px-6 py-2.5 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-colors">取消</button>
+                    <button onclick="confirmProfCodeSelection()" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md shadow-blue-200 transition-colors">
+                        确认选择 (<span id="confirmCount">0</span>)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 图片预览模态框 -->
+    <div id="imagePreviewModal" class="image-preview-modal" onclick="closeImagePreview()">
+        <div class="image-preview-content" onclick="event.stopPropagation()">
+            <div class="image-preview-close" onclick="closeImagePreview()">
+                <i class="fas fa-times"></i>
+            </div>
+            <img id="previewImage" src="" alt="预览">
+        </div>
+    </div>
+
+    <!-- 文件预览模态框 -->
+    <div id="filePreviewModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="p-5 border-b border-slate-100 bg-slate-50 rounded-t-2xl flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div id="filePreviewIcon" class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div>
+                        <h3 id="filePreviewTitle" class="text-base font-bold text-slate-900">文件预览</h3>
+                        <p id="filePreviewMeta" class="text-xs text-slate-500 mt-1"></p>
+                    </div>
+                </div>
+                <button onclick="closeFilePreview()" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="filePreviewBody" class="p-6 overflow-auto bg-white flex-1"></div>
+            <div class="p-5 border-t border-slate-100 flex justify-end gap-3 bg-slate-50 rounded-b-2xl">
+                <button onclick="closeFilePreview()" class="px-4 py-2 border border-slate-300 rounded-lg hover:bg-white text-sm font-medium text-slate-700 transition-colors">关闭</button>
+                <button id="filePreviewDownloadBtn" onclick="" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors">
+                    <i class="fas fa-download mr-2"></i>下载
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 提示消息 -->
+    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2 opacity-0 transition-opacity pointer-events-none">
+        <i class="fas fa-check-circle text-green-400"></i>
+        <span id="toastMessage">操作成功</span>
+    </div>
+
+    <script>
+        // 全局状态 - 初始全部为 null，不预设任何选择
+        let selectedProfCodes = [];
+        let activeProfCertId = null;
+        const reviewCertificates = [
+            {
+                id: 'q_cert_1',
+                certNo: '00124Q301110R1M/3200',
+                domain: '质量管理体系',
+                standard: 'GB/T 19001-2016 / ISO 9001:2015',
+                scopeBefore: '数码相机、摄像模组、印刷电路板零组件的设计和制造',
+                scopeAfter: '数码相机、摄像模组、印刷电路板零组件、智能家居监控设备的设计和制造'
+            },
+            {
+                id: 'q_cert_2',
+                certNo: '00124Q301111R1M/3200',
+                domain: '质量管理体系',
+                standard: 'GB/T 19001-2016 / ISO 9001:2015',
+                scopeBefore: '软件研发、系统集成项目实施和售后服务',
+                scopeAfter: '软件研发、系统集成项目实施、驻场运维和售后服务'
+            },
+            {
+                id: 'e_cert_1',
+                certNo: '00126E301110R701',
+                domain: '环境管理体系',
+                standard: 'GB/T 24001-2016 / ISO 14001:2015',
+                scopeBefore: '数码相机的制造，摄像模组的制造，印刷电路板零组件的制造及相关管理活动',
+                scopeAfter: '数码相机的制造，摄像模组的制造，印刷电路板零组件的制造，智能家居监控设备的制造及相关管理活动'
+            },
+            {
+                id: 'e_cert_2',
+                certNo: '00123E34569R0S/37000',
+                domain: '环境管理体系',
+                standard: 'GB/T 24001-2016 / ISO 14001:2015',
+                scopeBefore: '软件研发、系统集成项目实施现场及相关环境管理活动',
+                scopeAfter: '软件研发、系统集成项目实施现场、驻场运维服务及相关环境管理活动'
+            },
+            {
+                id: 's_cert_1',
+                certNo: '00124S301110R1M/3200',
+                domain: '职业健康安全管理体系',
+                standard: 'GB/T 45001-2020 / ISO 45001:2018',
+                scopeBefore: '数码相机、摄像模组、印刷电路板零组件制造及相关职业健康安全管理活动',
+                scopeAfter: '数码相机、摄像模组、印刷电路板零组件、智能家居监控设备制造及相关职业健康安全管理活动'
+            },
+            {
+                id: 's_cert_2',
+                certNo: '00124S301111R1M/3200',
+                domain: '职业健康安全管理体系',
+                standard: 'GB/T 45001-2020 / ISO 45001:2018',
+                scopeBefore: '软件研发、系统集成项目实施现场及相关职业健康安全管理活动',
+                scopeAfter: '软件研发、系统集成项目实施现场、驻场运维服务及相关职业健康安全管理活动'
+            }
+        ];
+        const certificateProfCodes = Object.fromEntries(reviewCertificates.map(cert => [cert.id, []]));
+        const applicationChangeItems = [
+            {
+                item: '组织名称',
+                groups: [
+                    {
+                        certIds: reviewCertificates.map(cert => cert.id),
+                        applyLabel: '统一变更内容',
+                        applyText: '适用于当前全部证书',
+                        before: '彩晶光电科技(昆山)有限公司',
+                        after: '彩晶智能光电科技(昆山)有限公司',
+                        reason: '企业完成工商名称变更，统一社会信用代码不变。',
+                        attachments: ['营业执照副本复印件.pdf', '名称变更核准通知书.pdf']
+                    }
+                ]
+            },
+            {
+                item: '认证标准或技术规范',
+                groups: [
+                    {
+                        certIds: ['q_cert_1', 'q_cert_2'],
+                        applyLabel: '统一变更内容',
+                        applyText: '适用于当前领域证书',
+                        before: 'GB/T 19001-2016 / ISO 9001:2015',
+                        after: 'GB/T 19001-2016 / ISO 9001:2015；适用 CNAS-CC01:2015 相关要求',
+                        reason: '质量管理体系监督周期补充引用技术规范，标准主体不变。',
+                        attachments: []
+                    },
+                    {
+                        certIds: ['e_cert_1', 'e_cert_2'],
+                        applyLabel: '统一变更内容',
+                        applyText: '适用于当前领域证书',
+                        before: 'GB/T 24001-2016 / ISO 14001:2015',
+                        after: 'GB/T 24001-2016 / ISO 14001:2015；适用 CNAS-CC01:2015 相关要求',
+                        reason: '环境管理体系监督周期补充引用技术规范，标准主体不变。',
+                        attachments: []
+                    },
+                    {
+                        certIds: ['s_cert_1', 's_cert_2'],
+                        applyLabel: '统一变更内容',
+                        applyText: '适用于当前领域证书',
+                        before: 'GB/T 45001-2020 / ISO 45001:2018',
+                        after: 'GB/T 45001-2020 / ISO 45001:2018；适用 CNAS-CC125:2020 相关要求',
+                        reason: '职业健康安全管理体系监督周期补充引用技术规范，标准主体不变。',
+                        attachments: []
+                    }
+                ]
+            },
+            {
+                item: '认证范围（产品/服务或业务）',
+                groups: [
+                    {
+                        certIds: ['q_cert_1'],
+                        before: '数码相机、摄像模组、印刷电路板零组件的设计和制造',
+                        after: '数码相机、摄像模组、印刷电路板零组件、智能家居监控设备的设计和制造',
+                        reason: '新增智能家居监控设备产品线，设计开发和制造过程已纳入质量管理体系控制。',
+                        attachments: ['质量管理体系范围说明.docx', '新增产品过程流程图.png']
+                    },
+                    {
+                        certIds: ['q_cert_2'],
+                        before: '软件研发、系统集成项目实施和售后服务',
+                        after: '软件研发、系统集成项目实施、驻场运维和售后服务',
+                        reason: '系统集成项目新增驻场运维服务过程，服务交付和质量控制要求已识别。',
+                        attachments: ['服务过程清单（QMS）.docx']
+                    },
+                    {
+                        certIds: ['e_cert_1'],
+                        before: '数码相机的制造，摄像模组的制造，印刷电路板零组件的制造及相关管理活动',
+                        after: '数码相机的制造，摄像模组的制造，印刷电路板零组件的制造，智能家居监控设备的制造及相关管理活动',
+                        reason: '新增生产线的环境因素已识别并纳入运行控制。',
+                        attachments: ['环境因素清单.xlsx']
+                    },
+                    {
+                        certIds: ['e_cert_2'],
+                        before: '软件研发、系统集成项目实施现场及相关环境管理活动',
+                        after: '软件研发、系统集成项目实施现场、驻场运维服务及相关环境管理活动',
+                        reason: '项目现场新增驻场运维服务，办公和差旅环境因素已纳入监督审核范围。',
+                        attachments: []
+                    },
+                    {
+                        certIds: ['s_cert_1'],
+                        before: '数码相机、摄像模组、印刷电路板零组件制造及相关职业健康安全管理活动',
+                        after: '数码相机、摄像模组、印刷电路板零组件、智能家居监控设备制造及相关职业健康安全管理活动',
+                        reason: '新增生产线岗位危害因素已重新识别并更新控制措施。',
+                        attachments: ['岗位风险辨识表.xlsx']
+                    },
+                    {
+                        certIds: ['s_cert_2'],
+                        before: '软件研发、系统集成项目实施现场及相关职业健康安全管理活动',
+                        after: '软件研发、系统集成项目实施现场、驻场运维服务及相关职业健康安全管理活动',
+                        reason: '驻场运维人员作业风险已纳入职业健康安全管理体系控制。',
+                        attachments: []
+                    }
+                ]
+            },
+            {
+                item: '运营地址',
+                groups: [
+                    {
+                        certIds: ['q_cert_1', 'e_cert_1', 's_cert_1'],
+                        before: '中国江苏省昆山综合保税区第三大道77号',
+                        after: '中国江苏省苏州市昆山市玉山镇南淞路299号',
+                        reason: '制造及仓储运营场所整体搬迁，相关过程、环境因素和职业健康安全风险已重新识别。',
+                        attachments: ['新址平面布置图.jpg', '场所变更说明.docx']
+                    },
+                    {
+                        certIds: ['q_cert_2', 'e_cert_2', 's_cert_2'],
+                        before: '北京总部、上海项目实施现场',
+                        after: '北京总部、上海项目实施现场、苏州项目实施中心',
+                        reason: '监督周期新增苏州项目实施中心，现场过程纳入多领域监督审核。',
+                        attachments: ['多场所清单.xlsx']
+                    }
+                ]
+            },
+            {
+                item: '分支机构/常设多场所',
+                groups: [
+                    {
+                        certIds: ['q_cert_2', 'e_cert_2', 's_cert_2'],
+                        before: '关联场所：北京总部、广州研发中心',
+                        after: '新增：苏州项目实施中心（是否发子证：是）；减少：广州研发中心',
+                        reason: '项目交付重心迁移，广州研发中心不再纳入本次监督覆盖范围；总部场所保留。',
+                        attachments: ['认证场所清单.xlsx']
+                    }
+                ]
+            },
+            {
+                item: '最高管理者',
+                groups: [
+                    {
+                        before: '王强，总经理，全面负责管理体系运行。',
+                        reason: '最高管理者调整为李明，授权职责已在任命文件中明确。'
+                    }
+                ]
+            },
+            {
+                item: '联系人/联系方式',
+                groups: [
+                    {
+                        before: '张经理，010-12345678。',
+                        reason: '联系人变更为刘经理，联系电话 0512-66668888。'
+                    }
+                ]
+            },
+            {
+                item: '组织人数',
+                groups: [
+                    {
+                        before: 'QMS/EMS/OHSMS：组织总人数 204 人。',
+                        reason: '因新增产线和项目交付团队，组织总人数调整为 236 人。'
+                    }
+                ]
+            },
+            {
+                item: '体系覆盖人数',
+                groups: [
+                    {
+                        before: 'QMS：204 人；EMS：204 人；OHSMS：196 人。',
+                        reason: '体系覆盖人数同步调整为 QMS 236 人、EMS 228 人、OHSMS 228 人，临时外包人员不计入覆盖人数。'
+                    }
+                ]
+            }
+        ];
+        let activeChangeDomain = '';
+        let selectedAuditMode = 'combine';
+        let selectedSiteType = null;
+        let selectedAuditStage = null;
+        let hasStage1 = false;
+        let selectedConclusion = 'approve';
+        const currentLoginUser = {
+            name: localStorage.getItem('currentUserName') || '张评审'
+        };
+
+        const filePreviewData = {
+            original_certificate: {
+                title: '原证书-00126E301110R7O1.pdf',
+                type: 'pdf',
+                size: '1.8 MB',
+                summary: '原证书编号 00126E301110R7O1，有效期 2026年04月09日 至 2029年04月08日。'
+            }
+        };
+
+        const attachmentCategories = [
+            {id: 'system_file', title: '1. 有效版本的管理体系文件：如方针、目标、体系范围等（QES）', type: 'word', fileName: '有效版本的管理体系文件（QES）.docx', size: '2.4 MB'},
+            {id: 'process_list', title: '2. 过程清单（QES）', type: 'word', fileName: '过程清单（QES）.docx', size: '156 KB'},
+            {id: 'risk_source', title: '3. 重要环境因素清单（E）、主要危险源和OHS风险（S）', type: 'word', fileName: '重要环境因素及OHS风险清单.xlsx', size: '318 KB'},
+            {id: 'risk_opportunity', title: '4. 需要应对的风险和机遇（E/S）', type: 'word', fileName: '风险和机遇应对清单.xlsx', size: '246 KB'},
+            {id: 'risk_rules', title: '5. 重要环境因素/风险的确定准则（ES）', type: 'word', fileName: '环境因素与风险确定准则.docx', size: '188 KB'},
+            {id: 'compliance_obligation', title: '6. 合规义务文件化信息：如客户适用的法律法规及其他要求清单', type: 'word', fileName: '合规义务及法律法规清单.xlsx', size: '292 KB'},
+            {id: 'license', title: '7. 营业执照（副本）复印件或机构成立批文复印件', type: 'pdf', fileName: '营业执照副本复印件.pdf', size: '856 KB'},
+            {id: 'qualification', title: '8. 相关资质文件复印件（法律法规有要求时）', type: 'pdf', fileName: '相关资质文件复印件.pdf', size: '1.1 MB'},
+            {id: 'location_layout', title: '9. 地理位置示意图和厂区平面布置图（除Q以外）', type: 'img', fileName: '地理位置示意图和厂区平面布置图.jpg', size: '3.2 MB'},
+            {id: 'process_flow', title: '10. 生产工艺流程图', type: 'img', fileName: '生产工艺流程图.png', size: '728 KB'},
+            {id: 'org_chart', title: '11. 组织机构图', type: 'word', fileName: '组织机构图.pdf', size: '436 KB'},
+            {id: 'site_list', title: '12. 认证场所清单（仅适用于固定多场所组织及建筑类组织）', type: 'word', fileName: '认证场所清单.xlsx', size: '164 KB'},
+            {id: 'approval_docs', title: '13. 环境批复/安全批复/职业病危害预评价批复复印件（适用时）（E/S）', type: 'pdf', fileName: '环境安全职业健康批复复印件.pdf', size: '1.6 MB'},
+            {id: 'three_same', title: '14. “三同时”验收报告（环境、安全及职业健康）复印件（适用时）（E/S）', type: 'pdf', fileName: '三同时验收报告复印件.pdf', size: '2.0 MB'}
+        ];
+
+        // 专业代码数据
+        const professionalCodeData = [
+            {code: "19.01.01", category: "办公设备的制造", accreditation: ["CNAS", "UKAS"]},
+            {code: "19.02.00", category: "家用电器的制造", accreditation: ["CNAS"]},
+            {code: "19.06.00", category: "电子元器件及板卡的制造", accreditation: ["CNAS"]},
+            {code: "19.07.00", category: "计算机及外部设备的制造", accreditation: ["CNAS", "DAKKS"]},
+            {code: "19.09.00", category: "消费类电子产品的制造", accreditation: ["CNAS", "UKAS"]},
+            {code: "19.12.00", category: "电池和蓄电池的制造", accreditation: ["CNAS"]},
+            {code: "28.01.01", category: "电子光学仪器制造", accreditation: ["CNAS"]},
+            {code: "28.02.00", category: "测量仪器制造", accreditation: ["CNAS", "UKAS"]}
+        ];
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initScrollSpy();
+            renderApplicationChangeInfo();
+            renderMainProfCodeDisplay();
+            fillReviewerInfo();
+            resetAuditSections();
+            selectAuditMode('combine');
+        });
+
+        // 重置所有审核相关区域
+        function resetAuditSections() {
+            const hasStage1Section = document.getElementById('hasStage1Section');
+            const siteAuditTypeSection = document.getElementById('siteAuditTypeSection');
+            const auditStageSection = document.getElementById('auditStageSection');
+            
+            hasStage1Section.classList.add('hidden');
+            hasStage1Section.classList.remove('show');
+            siteAuditTypeSection.classList.add('hidden');
+            siteAuditTypeSection.classList.remove('show');
+            auditStageSection.classList.add('hidden');
+            auditStageSection.classList.remove('show');
+        }
+
+        function getReviewCertificate(certId) {
+            return reviewCertificates.find(cert => cert.id === certId) || {certNo: certId, domain: '-', standard: '-'};
+        }
+
+        function getAttachmentFileId(itemIndex, groupIndex, fileIndex) {
+            return `change_attachment_${itemIndex}_${groupIndex}_${fileIndex}`;
+        }
+
+        function getFileTypeByName(fileName) {
+            if (/\.pdf$/i.test(fileName)) return 'pdf';
+            if (/\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(fileName)) return 'img';
+            return 'word';
+        }
+
+        function renderApplicationChangeInfo() {
+            const container = document.getElementById('applicationChangeInfo');
+            if (!container) return;
+            const certificateItems = applicationChangeItems.slice(0, 5);
+            const investigationItems = applicationChangeItems.slice(5);
+
+            const getDomainNames = () => [...new Set(reviewCertificates.map(cert => cert.domain))];
+            const getDomainCertificates = domain => reviewCertificates.filter(cert => cert.domain === domain);
+            const groupBelongsToDomain = (group, domain) => (group.certIds || []).some(certId => getReviewCertificate(certId).domain === domain);
+            const isAllCertificateGroup = group => (group.certIds || []).length === reviewCertificates.length;
+            const renderCertBadges = certIds => certIds.map(certId => {
+                const cert = getReviewCertificate(certId);
+                return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white border border-blue-200 text-blue-700 text-xs font-medium">
+                    <i class="fas fa-certificate text-blue-400"></i>${cert.certNo}
+                </span>`;
+            }).join('');
+
+            const renderChangeGroup = (item, group, itemIndex, groupIndex, options = {}) => {
+                const showCerts = !group.applyText || options.forceCerts;
+                const certBadges = showCerts && group.certIds ? renderCertBadges(group.certIds) : '';
+                const attachmentHtml = (group.attachments || []).map((file, fileIndex) => {
+                    const fileId = getAttachmentFileId(itemIndex, groupIndex, fileIndex);
+                    const type = getFileTypeByName(file);
+                    filePreviewData[fileId] = {
+                        title: file,
+                        type: type,
+                        size: type === 'img' ? '728 KB' : type === 'pdf' ? '856 KB' : '246 KB',
+                        summary: `${item.item} - 第 ${groupIndex + 1} 组变更附件`
+                    };
+                    return `<div class="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-700">
+                        <i class="fas fa-paperclip text-slate-400"></i>
+                        <span class="max-w-[220px] truncate">${file}</span>
+                        <button type="button" title="预览" onclick="event.stopPropagation(); previewFile('${fileId}')" class="w-7 h-7 rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button type="button" title="下载" onclick="event.stopPropagation(); downloadFile('${fileId}')" class="w-7 h-7 rounded-md bg-white text-slate-600 border border-slate-200 hover:bg-slate-100 transition-colors">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>`;
+                }).join('');
+                const groupHeaderHtml = group.applyText
+                    ? `<span class="px-2 py-1 rounded text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100">${group.applyLabel || '统一变更内容'}</span>
+                        <span class="font-medium text-slate-900">${group.applyText}</span>`
+                    : `<span class="px-2 py-1 rounded text-xs font-semibold bg-slate-100 text-slate-600">第 ${groupIndex + 1} 组</span>
+                        <span class="font-medium text-slate-900">适用证书</span>
+                        <div class="flex flex-wrap gap-2 ml-2">${certBadges}</div>`;
+                return `<div class="change-compare-card">
+                    <div class="change-compare-header">
+                        ${groupHeaderHtml}
+                    </div>
+                    <div class="change-compare-body">
+                        <div class="compare-section before">
+                            <div class="compare-label"><i class="fas fa-history text-slate-400"></i>变更前</div>
+                            <div class="compare-content before-text">${group.before}</div>
+                        </div>
+                        <div class="compare-section after">
+                            <div class="compare-label"><i class="fas fa-arrow-right text-green-500"></i>拟变更为</div>
+                            <div class="compare-content after-text">${group.after}</div>
+                        </div>
+                    </div>
+                    <div class="px-4 py-3 border-t border-slate-200 bg-white grid grid-cols-1 xl:grid-cols-[1fr_auto] gap-3">
+                        <div>
+                            <div class="compare-label mb-1"><i class="fas fa-message text-slate-400"></i>变更情况和原因描述</div>
+                            <div class="text-sm text-slate-700 leading-relaxed">${group.reason}</div>
+                        </div>
+                        <div class="flex flex-wrap gap-2 items-start xl:justify-end">${attachmentHtml}</div>
+                    </div>
+                </div>`;
+            };
+
+            const renderCertificateItem = (item, itemIndex, groupsToRender = item.groups) => {
+                const groups = groupsToRender.map((group, groupIndex) => {
+                    const showCerts = !group.applyText;
+                    return renderChangeGroup(item, group, itemIndex, groupIndex, {forceCerts: showCerts});
+                }).join('');
+                return `<section class="border border-slate-200 rounded-xl overflow-hidden bg-white">
+                    <div class="bg-slate-50 px-5 py-4 border-b border-slate-200 flex flex-wrap items-center gap-3">
+                        <span class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 inline-flex items-center justify-center text-xs font-bold">${itemIndex + 1}</span>
+                        <div class="font-semibold text-slate-900">${item.item}</div>
+                        ${item.groups.length > 1 ? `<span class="text-xs text-slate-500 ml-auto">${item.groups.length} 组变更内容</span>` : ''}
+                    </div>
+                    <div class="p-4 space-y-4">${groups}</div>
+                </section>`;
+            };
+
+            const commonItems = certificateItems
+                .map((item, itemIndex) => {
+                    const commonGroups = item.groups.filter(isAllCertificateGroup);
+                    return commonGroups.length ? renderCertificateItem(item, itemIndex, commonGroups) : '';
+                })
+                .join('');
+
+            const domainNames = getDomainNames();
+
+            const domainSections = domainNames.map(domain => {
+                const domainCerts = getDomainCertificates(domain);
+                const domainItems = certificateItems
+                    .map((item, itemIndex) => {
+                        const domainGroups = item.groups.filter(group => !isAllCertificateGroup(group) && groupBelongsToDomain(group, domain));
+                        return domainGroups.length ? renderCertificateItem(item, itemIndex, domainGroups) : '';
+                    })
+                    .filter(Boolean)
+                    .join('');
+                return `<div id="${getDomainAnchorId(domain)}" class="border border-slate-200 rounded-xl overflow-hidden bg-slate-50 scroll-mt-28">
+                    <div class="px-5 py-4 border-b border-slate-200 bg-white flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <div class="font-semibold text-slate-900">${domain}</div>
+                            <div class="text-xs text-slate-500 mt-1">${domainCerts.length} 本证书 · ${domainCerts[0]?.standard || ''}</div>
+                        </div>
+                        <div class="flex flex-wrap gap-2">${renderCertBadges(domainCerts.map(cert => cert.id))}</div>
+                    </div>
+                    <div class="p-5 space-y-5">${domainItems}</div>
+                </div>`;
+            }).join('');
+
+            const investigationCards = investigationItems.map(item => {
+                const group = item.groups[0];
+                return `<div class="investigation-note">
+                    <div class="font-semibold text-slate-900 mb-3">${item.item}</div>
+                    <div class="text-sm text-slate-700 leading-relaxed">
+                        <span class="text-slate-500">原信息：</span>${group.before}
+                    </div>
+                    <div class="text-sm text-slate-700 leading-relaxed mt-2">
+                        <span class="text-slate-500">变更情况和原因描述：</span>${group.reason}
+                    </div>
+                </div>`;
+            }).join('');
+
+            container.innerHTML = `
+                <section class="border border-slate-200 rounded-xl overflow-hidden bg-white">
+                    <div class="bg-slate-50 px-5 py-4 border-b border-slate-200 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-file-signature text-blue-600"></i>
+                            <h2 class="font-semibold text-slate-900">证书变更信息</h2>
+                        </div>
+                        <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">${certificateItems.length}项变更</span>
+                    </div>
+                    <div class="p-6 space-y-5">
+                        ${commonItems}
+                        ${domainSections}
+                    </div>
+                </section>
+
+                <section class="border border-slate-200 rounded-xl overflow-hidden bg-white">
+                    <div class="bg-slate-50 px-5 py-4 border-b border-slate-200 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-clipboard-check text-blue-600"></i>
+                            <h2 class="font-semibold text-slate-900">其他调查项目</h2>
+                        </div>
+                    </div>
+                    <div class="p-6 grid grid-cols-1 xl:grid-cols-2 gap-4">${investigationCards}</div>
+                </section>
+            `;
+        }
+
+        function switchChangeDomain(domain) {
+            activeChangeDomain = domain;
+            updateChangeDomainNav();
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            const basicNav = document.querySelector('.nav-item[href="#section-basic"]');
+            if (basicNav) basicNav.classList.add('active');
+            const domainSection = document.getElementById(getDomainAnchorId(domain));
+            if (domainSection) domainSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function getDomainAnchorId(domain) {
+            return `change-domain-${encodeURIComponent(domain)}`;
+        }
+
+        function updateChangeDomainNav() {
+            document.querySelectorAll('.domain-nav-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.domain === activeChangeDomain);
+            });
+        }
+
+        function refreshHistoryCertificate() {
+            const btn = document.getElementById('historyRefreshBtn');
+            if (!btn) return;
+            const icon = btn.querySelector('i');
+            const label = btn.querySelector('span');
+            icon.classList.add('fa-spin');
+            label.textContent = '刷新中...';
+            btn.disabled = true;
+            setTimeout(() => {
+                icon.classList.remove('fa-spin');
+                label.textContent = '预览证书';
+                btn.disabled = false;
+                showToast('历史证书信息已刷新');
+            }, 800);
+        }
+
+        // 导航切换
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            const section = document.getElementById(`section-${tab}`);
+            if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function initScrollSpy() {
+            const sections = document.querySelectorAll('.review-section[id]');
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        navItems.forEach(item => {
+                            item.classList.remove('active');
+                            if (item.getAttribute('href') === `#${id}`) {
+                                item.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: '-20% 0px -80% 0px', threshold: 0 });
+            
+            sections.forEach(section => observer.observe(section));
+        }
+
+        // 审核方式逻辑控制
+        function selectAuditMode(mode) {
+            // 移除所有选中样式和 checked 状态
+            document.querySelectorAll('input[name="auditMode"]').forEach(radio => {
+                radio.closest('.radio-card').classList.remove('selected');
+                radio.checked = false;
+            });
+            
+            // 设置当前选中
+            const selectedCard = document.getElementById(mode + 'AuditCard');
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+                selectedCard.querySelector('input').checked = true;
+            }
+            
+            handleAuditModeChange(mode);
+        }
+
+        function handleAuditModeChange(value) {
+            selectedAuditMode = value;
+            const hasStage1Section = document.getElementById('hasStage1Section');
+            const siteAuditTypeSection = document.getElementById('siteAuditTypeSection');
+            const auditStageSection = document.getElementById('auditStageSection');
+            const hasStage1Check = document.getElementById('hasStage1Check');
+            
+            // 先全部隐藏并重置
+            hasStage1Section.classList.add('hidden');
+            hasStage1Section.classList.remove('show');
+            siteAuditTypeSection.classList.add('hidden');
+            siteAuditTypeSection.classList.remove('show');
+            auditStageSection.classList.add('hidden');
+            auditStageSection.classList.remove('show');
+            
+            if (value === 'combine') {
+                // 切换到结合监督：显示"是否有审核一阶段"
+                hasStage1Section.classList.remove('hidden');
+                hasStage1Section.classList.add('show');
+                
+                // 清理单独审核的选择状态
+                selectedSiteType = null;
+                selectedAuditStage = null;
+                document.querySelectorAll('input[name="siteType"]').forEach(radio => {
+                    radio.closest('.radio-card').classList.remove('selected');
+                    radio.checked = false;
+                });
+                document.querySelectorAll('input[name="auditStage"]').forEach(radio => {
+                    radio.closest('.radio-card').classList.remove('selected');
+                    radio.checked = false;
+                });
+                
+            } else if (value === 'separate') {
+                // 切换到单独审核：显示"现场审核类型"
+                siteAuditTypeSection.classList.remove('hidden');
+                siteAuditTypeSection.classList.add('show');
+                
+                // 清理结合监督的选择
+                hasStage1 = false;
+                if (hasStage1Check) hasStage1Check.checked = false;
+            }
+        }
+
+        function handleHasStage1Change(checked) {
+            hasStage1 = checked;
+        }
+
+        function selectSiteType(type) {
+            // 移除所有选中样式
+            document.querySelectorAll('input[name="siteType"]').forEach(radio => {
+                radio.closest('.radio-card').classList.remove('selected');
+                radio.checked = false;
+            });
+            
+            // 设置当前选中
+            const selectedCard = document.getElementById(type + 'Card');
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+                selectedCard.querySelector('input').checked = true;
+            }
+            
+            handleSiteTypeChange(type);
+        }
+
+        function handleSiteTypeChange(value) {
+            selectedSiteType = value;
+            const auditStageSection = document.getElementById('auditStageSection');
+            
+            if (selectedAuditMode === 'separate' && value === 'hasSite') {
+                // 单独审核 + 有现场：显示审核阶段选择
+                auditStageSection.classList.remove('hidden');
+                auditStageSection.classList.add('show');
+            } else {
+                // 其他情况：隐藏审核阶段选择
+                auditStageSection.classList.add('hidden');
+                auditStageSection.classList.remove('show');
+                
+                // 清理审核阶段选择
+                selectedAuditStage = null;
+                document.querySelectorAll('input[name="auditStage"]').forEach(radio => {
+                    radio.closest('.radio-card').classList.remove('selected');
+                    radio.checked = false;
+                });
+            }
+        }
+
+        function selectAuditStage(stage) {
+            // 移除所有选中样式
+            document.querySelectorAll('input[name="auditStage"]').forEach(radio => {
+                radio.closest('.radio-card').classList.remove('selected');
+                radio.checked = false;
+            });
+            
+            // 设置当前选中
+            const selectedCard = document.getElementById(stage + 'Card');
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+                selectedCard.querySelector('input').checked = true;
+            }
+            
+            handleAuditStageChange(stage);
+        }
+
+        function handleAuditStageChange(value) {
+            selectedAuditStage = value;
+        }
+
+        // 专业代码选择器功能
+        function openProfCodeModal(certId) {
+            activeProfCertId = certId || reviewCertificates[0].id;
+            selectedProfCodes = (certificateProfCodes[activeProfCertId] || []).map(item => ({...item}));
+            document.getElementById('profCodeModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            renderModalProfCodeList();
+            updateModalPreview();
+        }
+
+        function closeProfCodeModal() {
+            document.getElementById('profCodeModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function searchModalProfCode(keyword) {
+            renderModalProfCodeList(keyword);
+        }
+
+        function renderModalProfCodeList(keyword = '') {
+            const tbody = document.getElementById('modalProfCodeList');
+            const lowerKeyword = keyword.toLowerCase();
+
+            let filtered = professionalCodeData;
+            if (keyword.trim()) {
+                filtered = professionalCodeData.filter(item => 
+                    item.code.toLowerCase().includes(lowerKeyword) || 
+                    item.category.toLowerCase().includes(lowerKeyword)
+                );
+            }
+
+            document.getElementById('totalCodesCount').textContent = filtered.length;
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="py-8 text-center text-slate-400">未找到匹配的专业代码</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(item => {
+                const isSelected = selectedProfCodes.some(s => s.code === item.code);
+                const accBadges = item.accreditation.map(acc => {
+                    const colorClass = acc === 'CNAS' ? 'bg-blue-100 text-blue-700' : 
+                                      acc === 'DAKKS' ? 'bg-pink-100 text-pink-700' : 
+                                      'bg-green-100 text-green-700';
+                    return `<span class="${colorClass} text-xs px-2 py-0.5 rounded font-medium">${acc}</span>`;
+                }).join('');
+
+                return `<tr class="hover:bg-blue-50 transition-colors ${isSelected ? 'bg-blue-50' : ''}">
+                    <td class="py-3 px-4">
+                        <input type="checkbox" value="${item.code}" ${isSelected ? 'checked' : ''} 
+                            onchange="toggleModalCode('${item.code}', '${item.category}', '${item.accreditation.join(',')}')"
+                            class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4">
+                    </td>
+                    <td class="py-3 px-4 font-mono font-semibold text-slate-700">${item.code}</td>
+                    <td class="py-3 px-4 text-slate-700">${item.category}</td>
+                    <td class="py-3 px-4">${accBadges || '<span class="text-slate-400 text-xs">-</span>'}</td>
+                </tr>`;
+            }).join('');
+
+            updateHeaderCheckbox();
+        }
+
+        function toggleModalCode(code, category, accreditationStr) {
+            const accreditation = accreditationStr ? accreditationStr.split(',') : [];
+            const index = selectedProfCodes.findIndex(s => s.code === code);
+            if (index >= 0) {
+                selectedProfCodes.splice(index, 1);
+            } else {
+                selectedProfCodes.push({code, category, accreditation});
+            }
+            renderModalProfCodeList(document.getElementById('modalProfCodeSearch').value);
+            updateModalPreview();
+        }
+
+        function updateModalPreview() {
+            const previewContainer = document.getElementById('previewTags');
+            const countSpan = document.getElementById('selectedCount');
+            const confirmCount = document.getElementById('confirmCount');
+
+            countSpan.textContent = selectedProfCodes.length;
+            confirmCount.textContent = selectedProfCodes.length;
+
+            if (selectedProfCodes.length === 0) {
+                previewContainer.innerHTML = '<span class="text-slate-400 text-sm">暂未选择</span>';
+            } else {
+                previewContainer.innerHTML = selectedProfCodes.map(item => {
+                    return `<span class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium border border-blue-200">
+                        <span class="font-mono font-bold">${item.code}</span>
+                        <span class="text-blue-400">|</span>
+                        <span class="truncate max-w-[150px]">${item.category}</span>
+                        <button onclick="event.stopPropagation(); removeFromPreview('${item.code}')" class="ml-1 w-4 h-4 flex items-center justify-center rounded-full hover:bg-blue-200 text-blue-600 transition-colors">
+                            <i class="fas fa-times text-[10px]"></i>
+                        </button>
+                    </span>`;
+                }).join('');
+            }
+        }
+
+        function removeFromPreview(code) {
+            const index = selectedProfCodes.findIndex(s => s.code === code);
+            if (index >= 0) {
+                selectedProfCodes.splice(index, 1);
+            }
+            renderModalProfCodeList(document.getElementById('modalProfCodeSearch').value);
+            updateModalPreview();
+        }
+
+        function selectAllModalCodes() {
+            const searchValue = document.getElementById('modalProfCodeSearch').value.toLowerCase();
+            let targetCodes = professionalCodeData;
+
+            if (searchValue) {
+                targetCodes = professionalCodeData.filter(item => 
+                    item.code.toLowerCase().includes(searchValue) || 
+                    item.category.toLowerCase().includes(searchValue)
+                );
+            }
+
+            let addedCount = 0;
+            targetCodes.forEach(item => {
+                if (!selectedProfCodes.some(s => s.code === item.code)) {
+                    selectedProfCodes.push({code: item.code, category: item.category, accreditation: item.accreditation});
+                    addedCount++;
+                }
+            });
+
+            renderModalProfCodeList(searchValue);
+            updateModalPreview();
+            showToast(addedCount > 0 ? `已添加 ${addedCount} 项` : '所有可见项已选中');
+        }
+
+        function clearModalSelection() {
+            if (selectedProfCodes.length === 0) return;
+            if (confirm(`确定要清空已选择的 ${selectedProfCodes.length} 个专业代码吗？`)) {
+                selectedProfCodes = [];
+                renderModalProfCodeList(document.getElementById('modalProfCodeSearch').value);
+                updateModalPreview();
+                showToast('已清空所有选择');
+            }
+        }
+
+        function toggleAllFromHeader() {
+            const headerCheckbox = document.getElementById('headerCheckbox');
+            const searchValue = document.getElementById('modalProfCodeSearch').value.toLowerCase();
+            let visibleCodes = professionalCodeData;
+
+            if (searchValue) {
+                visibleCodes = professionalCodeData.filter(item => 
+                    item.code.toLowerCase().includes(searchValue) || 
+                    item.category.toLowerCase().includes(searchValue)
+                );
+            }
+
+            if (headerCheckbox.checked) {
+                visibleCodes.forEach(item => {
+                    if (!selectedProfCodes.some(s => s.code === item.code)) {
+                        selectedProfCodes.push({code: item.code, category: item.category, accreditation: item.accreditation});
+                    }
+                });
+            } else {
+                visibleCodes.forEach(item => {
+                    const index = selectedProfCodes.findIndex(s => s.code === item.code);
+                    if (index >= 0) selectedProfCodes.splice(index, 1);
+                });
+            }
+
+            renderModalProfCodeList(searchValue);
+            updateModalPreview();
+        }
+
+        function updateHeaderCheckbox() {
+            const headerCheckbox = document.getElementById('headerCheckbox');
+            const searchValue = document.getElementById('modalProfCodeSearch').value.toLowerCase();
+            let visibleCodes = professionalCodeData;
+
+            if (searchValue) {
+                visibleCodes = professionalCodeData.filter(item => 
+                    item.code.toLowerCase().includes(searchValue) || 
+                    item.category.toLowerCase().includes(searchValue)
+                );
+            }
+
+            const allVisibleSelected = visibleCodes.every(item => 
+                selectedProfCodes.some(s => s.code === item.code)
+            );
+            const someVisibleSelected = visibleCodes.some(item => 
+                selectedProfCodes.some(s => s.code === item.code)
+            );
+
+            headerCheckbox.checked = allVisibleSelected;
+            headerCheckbox.indeterminate = someVisibleSelected && !allVisibleSelected;
+        }
+
+        function confirmProfCodeSelection() {
+            if (activeProfCertId) {
+                certificateProfCodes[activeProfCertId] = selectedProfCodes.map(item => ({...item}));
+            }
+            renderMainProfCodeDisplay();
+            closeProfCodeModal();
+            const cert = reviewCertificates.find(item => item.id === activeProfCertId);
+            showToast(`${cert ? cert.certNo : '当前证书'} 已选择 ${selectedProfCodes.length} 个专业代码`);
+        }
+
+        function renderMainProfCodeDisplay() {
+            const container = document.getElementById('certificateProfCodeDisplay');
+            const badge = document.getElementById('profCountBadge');
+            if (!container) return;
+            const totalCount = Object.values(certificateProfCodes).reduce((sum, list) => sum + list.length, 0);
+            if (badge) badge.textContent = totalCount;
+
+            const renderCertProfCard = cert => {
+                const codes = certificateProfCodes[cert.id] || [];
+                const scopeChanged = cert.scopeBefore !== cert.scopeAfter;
+                const scopeHtml = scopeChanged
+                    ? `<div class="mt-3 grid grid-cols-1 xl:grid-cols-2 gap-3 text-sm">
+                            <div class="rounded-lg border border-slate-200 bg-white p-3">
+                                <div class="text-[11px] text-slate-500 mb-1 flex items-center gap-1"><i class="fas fa-history"></i>变更前认证范围</div>
+                                <div class="text-slate-500 leading-relaxed line-through decoration-slate-300">${cert.scopeBefore}</div>
+                            </div>
+                            <div class="rounded-lg border border-green-200 bg-green-50 p-3">
+                                <div class="text-[11px] text-green-700 mb-1 flex items-center gap-1"><i class="fas fa-arrow-right"></i>变更后认证范围</div>
+                                <div class="text-green-800 font-medium leading-relaxed">${cert.scopeAfter}</div>
+                            </div>
+                        </div>`
+                    : `<div class="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">
+                            <div class="text-[11px] text-slate-500 mb-1 flex items-center gap-1"><i class="fas fa-equals"></i>认证范围</div>
+                            <div class="text-slate-700 leading-relaxed">${cert.scopeAfter}</div>
+                        </div>`;
+                const codeHtml = codes.length === 0
+                    ? `<div class="text-sm text-slate-400 py-5 px-4 bg-slate-50 rounded-lg border border-slate-200 border-dashed text-center">
+                            <i class="fas fa-list-check text-xl mb-2 text-slate-300"></i>
+                            <p>暂未为本证书选择专业代码</p>
+                        </div>`
+                    : `<div class="grid grid-cols-1 md:grid-cols-2 gap-3">${codes.map(item => {
+                        const accBadges = item.accreditation.map(acc => {
+                            const colorClass = acc === 'CNAS' ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                                              acc === 'DAKKS' ? 'bg-pink-100 text-pink-700 border-pink-200' :
+                                              'bg-green-100 text-green-700 border-green-200';
+                            return `<span class="${colorClass} text-[10px] px-2 py-0.5 rounded border font-medium">${acc}</span>`;
+                        }).join('');
+                        return `<div class="group flex items-start gap-3 p-3 bg-white border border-slate-200 rounded-lg shadow-sm hover:border-blue-300 hover:shadow-md transition-all">
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="font-mono font-bold text-slate-800 text-sm">${item.code}</span>
+                                    <span class="text-slate-300">|</span>
+                                    <span class="text-sm text-slate-700 font-medium truncate">${item.category}</span>
+                                </div>
+                                <div class="flex flex-wrap gap-1">${accBadges || '<span class="text-slate-400 text-xs">无认可机构</span>'}</div>
+                            </div>
+                            <button onclick="removeMainProfCode('${item.code}', '${cert.id}')" class="mt-0.5 w-7 h-7 flex items-center justify-center rounded-full hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100" title="删除">
+                                <i class="fas fa-trash-alt text-xs"></i>
+                            </button>
+                        </div>`;
+                    }).join('')}</div>`;
+
+                return `<div class="border border-slate-200 rounded-lg overflow-hidden">
+                    <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <div class="font-semibold text-slate-900">${cert.certNo}</div>
+                                <span class="px-2 py-0.5 rounded-full text-xs border ${scopeChanged ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-slate-100 text-slate-600 border-slate-200'}">${scopeChanged ? '认证范围已变更' : '认证范围不变'}</span>
+                            </div>
+                            <div class="text-xs text-slate-500 mt-1">${cert.domain} · ${cert.standard}</div>
+                        </div>
+                        <button onclick="openProfCodeModal('${cert.id}')" class="px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-lg text-sm font-medium transition-colors inline-flex items-center gap-2">
+                            <i class="fas fa-list-check"></i>
+                            <span>选择专业代码</span>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        ${scopeHtml}
+                        <div class="mt-4">${codeHtml}</div>
+                    </div>
+                </div>`;
+            };
+
+            const domainNames = [...new Set(reviewCertificates.map(cert => cert.domain))];
+            container.innerHTML = domainNames.map(domain => {
+                const certs = reviewCertificates.filter(cert => cert.domain === domain);
+                return `<section class="border border-slate-200 rounded-xl overflow-hidden bg-white">
+                    <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <div class="font-semibold text-slate-900">${domain}</div>
+                            <div class="text-xs text-slate-500 mt-1">${certs.length} 本证书 · 按证书分别选择专业代码</div>
+                        </div>
+                        <span class="text-xs text-slate-500 bg-white border border-slate-200 rounded-full px-2.5 py-1">${certs.reduce((sum, cert) => sum + (certificateProfCodes[cert.id] || []).length, 0)} 个代码</span>
+                    </div>
+                    <div class="p-4 space-y-4">${certs.map(renderCertProfCard).join('')}</div>
+                </section>`;
+            }).join('');
+        }
+
+        function removeMainProfCode(code, certId) {
+            const targetCertId = certId || activeProfCertId;
+            certificateProfCodes[targetCertId] = (certificateProfCodes[targetCertId] || []).filter(item => item.code !== code);
+            if (targetCertId === activeProfCertId) {
+                selectedProfCodes = (certificateProfCodes[targetCertId] || []).map(item => ({...item}));
+            }
+            renderMainProfCodeDisplay();
+            showToast('已删除');
+        }
+
+        function fillReviewerInfo() {
+            const reviewerName = document.getElementById('reviewerName');
+            const reviewDate = document.getElementById('reviewDate');
+            const now = new Date();
+            const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            if (reviewerName) reviewerName.value = currentLoginUser.name;
+            if (reviewDate) reviewDate.value = localDate;
+        }
+
+        function selectConclusion(value) {
+            selectedConclusion = value;
+            document.querySelectorAll('input[name="reviewConclusion"]').forEach(radio => {
+                radio.closest('.radio-card').classList.remove('selected');
+                radio.checked = false;
+            });
+            const card = document.getElementById(value === 'approve' ? 'approveConclusionCard' : 'rejectConclusionCard');
+            if (card) {
+                card.classList.add('selected');
+                card.querySelector('input').checked = true;
+            }
+        }
+
+        function getAttachmentIcon(type) {
+            if (type === 'pdf') return {icon: 'fa-file-pdf', className: 'pdf'};
+            if (type === 'img') return {icon: 'fa-image', className: 'img'};
+            return {icon: 'fa-file-lines', className: 'word'};
+        }
+
+        function renderAttachmentGrid() {
+            const grid = document.getElementById('attachmentGrid');
+            if (!grid) return;
+            grid.innerHTML = attachmentCategories.map(item => {
+                filePreviewData[item.id] = {
+                    title: item.fileName,
+                    type: item.type,
+                    size: item.size,
+                    summary: item.title
+                };
+                const icon = getAttachmentIcon(item.type);
+                return `
+                    <div class="attachment-preview-card cursor-default" onclick="previewFile('${item.id}')">
+                        <div class="file-icon-lg ${icon.className}">
+                            <i class="fas ${icon.icon}"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="text-sm font-bold text-slate-900 leading-snug mb-2">${item.title}</div>
+                            <div class="text-xs text-slate-500 mb-2">1 个文件</div>
+                            <div class="flex items-center gap-3 text-xs">
+                                <span class="text-slate-400 truncate">${item.fileName}</span>
+                                <span class="text-slate-300">|</span>
+                                <span class="text-slate-400">${item.size}</span>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="button" title="预览" onclick="event.stopPropagation(); previewFile('${item.id}')" class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button type="button" title="下载" onclick="event.stopPropagation(); downloadFile('${item.id}')" class="w-9 h-9 rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-100 transition-colors">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 附件预览功能
+        function previewFile(fileId) {
+            const file = filePreviewData[fileId];
+            if (!file) {
+                showToast('未找到可预览文件', 'error');
+                return;
+            }
+            const modal = document.getElementById('filePreviewModal');
+            const title = document.getElementById('filePreviewTitle');
+            const meta = document.getElementById('filePreviewMeta');
+            const body = document.getElementById('filePreviewBody');
+            const iconWrap = document.getElementById('filePreviewIcon');
+            const downloadBtn = document.getElementById('filePreviewDownloadBtn');
+            const icon = getAttachmentIcon(file.type);
+            title.textContent = file.title;
+            meta.textContent = `${file.size} · 预览件`;
+            iconWrap.className = `w-10 h-10 rounded-lg flex items-center justify-center file-icon-lg ${icon.className}`;
+            iconWrap.innerHTML = `<i class="fas ${icon.icon}"></i>`;
+            downloadBtn.setAttribute('onclick', `downloadFile('${fileId}')`);
+            body.innerHTML = `
+                <div class="mx-auto max-w-3xl border border-slate-200 rounded-lg bg-slate-50 p-6">
+                    <div class="bg-white rounded-lg border border-slate-200 p-8 min-h-[420px] shadow-sm">
+                        <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-6">
+                            <div>
+                                <div class="text-lg font-bold text-slate-900">${file.title}</div>
+                                <div class="text-xs text-slate-500 mt-1">${file.summary}</div>
+                            </div>
+                            <span class="px-2 py-1 rounded text-xs bg-green-100 text-green-700 border border-green-200">已上传</span>
+                        </div>
+                        <div class="space-y-4 text-sm text-slate-700">
+                            <div class="h-3 bg-slate-200 rounded w-3/4"></div>
+                            <div class="h-3 bg-slate-200 rounded w-full"></div>
+                            <div class="h-3 bg-slate-200 rounded w-11/12"></div>
+                            <div class="h-28 bg-blue-50 border border-blue-100 rounded-lg flex items-center justify-center text-blue-500">
+                                <i class="fas ${icon.icon} mr-2"></i>文件内容预览
+                            </div>
+                            <div class="h-3 bg-slate-200 rounded w-full"></div>
+                            <div class="h-3 bg-slate-200 rounded w-2/3"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            modal.classList.add('active');
+        }
+
+        function previewImage(fileId) {
+            const modal = document.getElementById('imagePreviewModal');
+            const img = document.getElementById('previewImage');
+            img.src = 'https://picsum.photos/800/600?random=' + Math.random();
+            modal.classList.add('active');
+        }
+
+        function closeImagePreview() {
+            document.getElementById('imagePreviewModal').classList.remove('active');
+        }
+
+        function closeFilePreview() {
+            document.getElementById('filePreviewModal').classList.remove('active');
+        }
+
+        function downloadFile(fileId) {
+            const file = filePreviewData[fileId];
+            if (!file) {
+                showToast('未找到可下载文件', 'error');
+                return;
+            }
+            const blob = new Blob([`${file.title}\n${file.summary}\n此文件为页面原型中的下载示例。`], {type: 'text/plain;charset=utf-8'});
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = file.title.replace(/\.(pdf|docx|xlsx|jpg|png)$/i, '.txt');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showToast(`已开始下载：${file.title}`);
+        }
+
+        // 通用功能
+        function saveReview() {
+            showToast('评审信息已暂存');
+        }
+
+        function submitReview() {
+            // 验证必填项
+            if (!selectedAuditMode) {
+                showToast('请选择审核方式', 'error');
+                document.getElementById('section-audit').scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+            
+            if (selectedAuditMode === 'separate' && !selectedSiteType) {
+                showToast('请选择现场审核类型', 'error');
+                document.getElementById('section-audit').scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+            
+            if (selectedAuditMode === 'separate' && selectedSiteType === 'hasSite' && !selectedAuditStage) {
+                showToast('请选择审核阶段', 'error');
+                document.getElementById('section-audit').scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+            
+            const missingProfCert = reviewCertificates.find(cert => (certificateProfCodes[cert.id] || []).length === 0);
+            if (missingProfCert) {
+                showToast(`请为证书 ${missingProfCert.certNo} 选择专业代码`, 'error');
+                document.getElementById('section-profcode').scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+            
+            showToast(selectedConclusion === 'approve' ? '变更评审已提交：通过' : '变更评审已提交：驳回');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const msg = document.getElementById('toastMessage');
+            const icon = toast.querySelector('i');
+            
+            msg.textContent = message;
+            
+            if (type === 'error') {
+                icon.className = 'fas fa-exclamation-circle text-red-400';
+            } else {
+                icon.className = 'fas fa-check-circle text-green-400';
+            }
+            
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100');
+            
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none');
+                toast.classList.remove('opacity-100');
+            }, 3000);
+        }
+
+        // 点击模态框外部关闭
+        document.getElementById('profCodeModal').addEventListener('click', function(e) {
+            if (e.target === this) closeProfCodeModal();
+        });
+    </script>
+</body>
+</html>
