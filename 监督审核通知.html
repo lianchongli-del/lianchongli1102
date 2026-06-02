@@ -1471,8 +1471,8 @@ function renderCertificateRows() {
             '<span class="ml-auto text-xs text-slate-500">' + (item.id === 'certStandard' ? '按领域统一修改' : (unified ? '全部证书统一修改' : certCount + '本证书')) + '</span>' +
             '</label>' +
             '<div id="body_' + item.id + '" class="change-card-body hidden">' +
-            (item.id === 'multiSite' ? '' : '<div class="reference-box"><i class="fas fa-info-circle mr-1"></i>原认证信息：' + escapeHtml(getCertificateSummary(item)) + '</div>') +
-            '<div id="certForms_' + item.id + '" class="' + (item.id === 'multiSite' ? 'space-y-3' : 'mt-4 space-y-3') + '"></div>' +
+            ((item.id === 'multiSite' || item.id === 'certStandard') ? '' : '<div class="reference-box"><i class="fas fa-info-circle mr-1"></i>原认证信息：' + escapeHtml(getCertificateSummary(item)) + '</div>') +
+            '<div id="certForms_' + item.id + '" class="' + ((item.id === 'multiSite' || item.id === 'certStandard') ? 'space-y-3' : 'mt-4 space-y-3') + '"></div>' +
             '</div>' +
             '</div>';
     }).join('');
@@ -1841,8 +1841,7 @@ function renderCertificateGroups(itemId) {
             ? ''
             : '<button type="button" class="mt-2 px-4 py-2 bg-white border border-blue-500 text-blue-600 rounded-lg text-sm hover:bg-blue-50 transition inline-flex items-center gap-2" onclick="addCertificateChangeGroup(\'' + itemId + '\')">' +
               '<i class="fas fa-plus"></i>新增一组领域变更内容</button>';
-        container.innerHTML = '<div class="text-xs text-slate-500 mb-3">请逐个选择需要变更认证标准或技术规范的认证领域；每组只能选择一个领域，不能全选或批量选择；同一领域下的证书将统一应用同一变更内容。</div>' +
-            groups.map(function(group, index) {
+        container.innerHTML = groups.map(function(group, index) {
                 return renderDomainCertificateChangeGroup(item, group, index);
             }).join('') + addButton;
         groups.forEach(function(group) {
