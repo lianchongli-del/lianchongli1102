@@ -488,11 +488,6 @@
                             <span class="flex items-center gap-2"><i class="fas fa-walking w-5 text-center"></i>现场访问</span>
                         </div>
                     </a>
-                    <a href="#section-attachments" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent hover:bg-slate-50" onclick="switchTab('attachments')">
-                        <div class="flex items-center justify-between">
-                            <span class="flex items-center gap-2"><i class="fas fa-paperclip w-5 text-center"></i>应附文件资料</span>
-                        </div>
-                    </a>
                     <a href="#section-conclusion" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent hover:bg-slate-50" onclick="switchTab('conclusion')">
                         <div class="flex items-center justify-between">
                             <span class="flex items-center gap-2"><i class="fas fa-gavel w-5 text-center"></i>转换评审结论</span>
@@ -509,8 +504,8 @@
             <div class="bg-blue-50 rounded-xl border border-blue-200 p-4 flex flex-wrap gap-4 items-center justify-between">
                 <div class="flex gap-6 text-sm">
                     <div><span class="text-slate-500">转换评审编号：</span><span class="font-mono font-semibold text-slate-900" id="reviewNo">ZH202603250001</span></div>
-                    <div><span class="text-slate-500">认证领域：</span><span class="font-semibold text-slate-900">OHSMS</span></div>
-                    <div><span class="text-slate-500">原证书数量：</span><span class="font-semibold text-slate-900">3份</span></div>
+                    <div><span class="text-slate-500">认证领域：</span><span class="font-semibold text-slate-900">2个（OHSMS、QMS）</span></div>
+                    <div><span class="text-slate-500">原证书数量：</span><span class="font-semibold text-slate-900">4份</span></div>
                     <div><span class="text-slate-500">客户名称：</span><span class="font-semibold text-slate-900">示例制造有限公司</span></div>
                     <div><span class="text-slate-500">原认证机构：</span><span class="font-semibold text-slate-900">XX认证中心有限公司</span></div>
                 </div>
@@ -547,11 +542,14 @@
                     </div>
 
                     <div class="border-t border-slate-100 pt-4">
-                        <h4 class="section-title"><i class="fas fa-certificate text-blue-500"></i>认证需求信息（OHSMS）</h4>
+                        <h4 class="section-title"><i class="fas fa-certificate text-blue-500"></i>认证需求信息（OHSMS、QMS）</h4>
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm border border-slate-200 rounded-lg overflow-hidden">
                                 <thead class="bg-slate-50 text-slate-600"><tr><th class="text-left p-3">认证领域</th><th class="text-left p-3">认证标准</th><th class="text-left p-3">认证范围</th><th class="text-left p-3">认可机构</th><th class="text-left p-3">证书要求</th></tr></thead>
-                                <tbody><tr class="border-t border-slate-200"><td class="p-3">OHSMS（职业健康安全管理体系）</td><td class="p-3">GB/T 45001-2020 / ISO 45001:2018</td><td class="p-3">机械加工、装配、仓储及相关职业健康安全管理活动</td><td class="p-3">CNAS</td><td class="p-3">电子证书+纸质证书</td></tr></tbody>
+                                <tbody>
+                                    <tr class="border-t border-slate-200"><td class="p-3">OHSMS（职业健康安全管理体系）</td><td class="p-3">GB/T 45001-2020 / ISO 45001:2018</td><td class="p-3">机械加工、装配、仓储及相关职业健康安全管理活动</td><td class="p-3">CNAS</td><td class="p-3">电子证书+纸质证书</td></tr>
+                                    <tr class="border-t border-slate-200"><td class="p-3">QMS（质量管理体系）</td><td class="p-3">GB/T 19001-2016 / ISO 9001:2015</td><td class="p-3">机械零部件加工、装配、产品设计开发及相关质量管理活动</td><td class="p-3">CNAS</td><td class="p-3">电子证书+纸质证书</td></tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -560,8 +558,7 @@
                         <h4 class="section-title"><i class="fas fa-exchange-alt text-blue-500"></i>转换申请信息</h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div><label class="block text-xs font-medium text-slate-700 mb-1">原认证机构</label><div class="readonly-field">XX认证中心有限公司</div></div>
-                            <div><label class="block text-xs font-medium text-slate-700 mb-1">申请认证转换的理由</label><div class="readonly-field">集团统一认证机构管理，需将原OHSMS证书转换至CQC。</div></div>
-                            <div><label class="block text-xs font-medium text-slate-700 mb-1">原证书编号</label><div class="readonly-field">00123S4567R0M；00123S4567R0S-01；00123S4567R0S-02</div></div>
+                            <div><label class="block text-xs font-medium text-slate-700 mb-1">原证书编号</label><div class="readonly-field">00123S4567R0M；00123S4567R0S-01；00123Q4567R0M；00123Q4567R0S-01</div></div>
                             <div><label class="block text-xs font-medium text-slate-700 mb-1">原证书有效期至</label><div class="readonly-field">2026-01-13</div></div>
                             <div class="md:col-span-2"><label class="block text-xs font-medium text-slate-700 mb-1">转换补充说明</label><div class="readonly-field">原机构证书覆盖总部、天津生产基地和上海研发中心；申请方承诺已提交最近一次审核报告、不符合关闭证据、投诉处理记录及法律法规符合性证据。</div></div>
                         </div>
@@ -573,158 +570,153 @@
             <!-- 2. 客户目前持有证书的情况 -->
             <div id="section-current-cert" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-                    <div class="flex items-center gap-2"><i class="fas fa-certificate text-blue-600"></i><h3 class="font-semibold text-slate-900">客户目前持有证书的情况（OHSMS）</h3></div>
+                    <div class="flex items-center gap-2"><i class="fas fa-certificate text-blue-600"></i><h3 class="font-semibold text-slate-900">客户目前持有证书的情况</h3></div>
                     <button onclick="verifyOriginalCert()" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition-colors">
                         <i class="fas fa-search mr-1"></i>批量验证原证书
                     </button>
                 </div>
-                <div class="p-6 space-y-4">
+                <div class="p-6 space-y-5">
                     <div class="alert-box info">
                         <i class="fas fa-info-circle mt-0.5"></i>
                         <div>
-                            <p class="font-medium">同一认证领域下可存在多份原证书</p>
-                            <p class="mt-1 text-sm">以下校验项默认通过CNCA官网、认可机构官网自动获取；若连接超时，可由评审人员手动选择确认。</p>
+                            <p class="font-medium">支持多领域、多证书展示</p>
+                            <p class="mt-1 text-sm">同一认证转换申请下可存在多个认证领域，每个领域下可包含多份原证书；自动校验项默认通过CNCA官网、认可机构官网获取，连接超时时可手动确认。</p>
                         </div>
                     </div>
 
-                    <div class="space-y-4">
-                        <div class="cert-card" data-cert-row>
-                            <div class="cert-card-header">
+                    <div class="space-y-5">
+                        <section class="border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
+                            <div class="px-5 py-4 border-b border-slate-200 bg-white flex flex-wrap items-center justify-between gap-3">
                                 <div>
-                                    <div class="font-medium text-slate-900">00123S4567R0M</div>
+                                    <div class="font-semibold text-slate-900">OHSMS（职业健康安全管理体系）</div>
+                                    <div class="text-xs text-slate-500 mt-1">2份原证书 · GB/T 45001-2020 / ISO 45001:2018</div>
                                 </div>
-                                <span class="cert-status-pill cert-status-valid"><i class="fas fa-check-circle"></i>有效</span>
+                                <span class="text-xs text-blue-700 bg-blue-50 border border-blue-200 px-2 py-1 rounded">当前转换领域</span>
                             </div>
                             <div class="p-4 space-y-4">
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                                    <div><span class="text-slate-500 block text-xs mb-1">认证机构的名称</span><span class="font-medium text-slate-900">XX认证中心有限公司</span></div>
-                                    <div><span class="text-slate-500 block text-xs mb-1">被认证的领域</span><span class="font-medium text-slate-900">OHSMS（职业健康安全管理体系）</span></div>
-                                    <div><span class="text-slate-500 block text-xs mb-1">证书有效期至</span><span class="font-medium text-slate-900">2026-01-13</span></div>
-                                    <div class="md:col-span-3"><span class="text-slate-500 block text-xs mb-1">认证证书的范围</span><span class="font-medium text-slate-900">机械加工、装配及相关职业健康安全管理活动</span></div>
+                                <div class="cert-card" data-cert-row>
+                                    <div class="cert-card-header">
+                                        <div>
+                                            <div class="font-medium text-slate-900">00123S4567R0M</div>
+                                            <div class="text-xs text-slate-500 mt-1">总部主证书</div>
+                                        </div>
+                                        <span class="cert-status-pill cert-status-valid"><i class="fas fa-check-circle"></i>有效</span>
+                                    </div>
+                                    <div class="p-4 space-y-4">
+                                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                                            <div><span class="text-slate-500 block text-xs mb-1">认证机构的名称</span><span class="font-medium text-slate-900">XX认证中心有限公司</span></div>
+                                            <div><span class="text-slate-500 block text-xs mb-1">被认证的领域</span><span class="font-medium text-slate-900">OHSMS</span></div>
+                                            <div><span class="text-slate-500 block text-xs mb-1">证书首次发放日期</span><span class="font-medium text-slate-900">2023-01-14</span></div>
+                                            <div><span class="text-slate-500 block text-xs mb-1">证书有效期至</span><span class="font-medium text-slate-900">2026-01-13</span></div>
+                                            <div><span class="text-slate-500 block text-xs mb-1">是否IAF/MLA签约机构</span><span class="font-medium text-slate-900">是</span></div>
+                                            <div class="md:col-span-3"><span class="text-slate-500 block text-xs mb-1">认证证书的范围</span><span class="font-medium text-slate-900">机械加工、装配及相关职业健康安全管理活动</span></div>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                            <div>
+                                                <label class="block text-xs font-medium text-slate-700 mb-1">原证书带标情况 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label>
+                                                <select class="editable-field cert-mark-select">
+                                                    <option value="CNAS" selected>CNAS</option>
+                                                    <option value="UKAS">UKAS</option>
+                                                    <option value="DAKKS">DAKKS</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-slate-700 mb-1">证书当前有效性 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label>
+                                                <select class="editable-field cert-validity-select" onchange="syncCertStatusBadge(this)">
+                                                    <option value="valid" selected>有效</option>
+                                                    <option value="suspended">暂停</option>
+                                                    <option value="revoked">撤销</option>
+                                                    <option value="cancelled">注销</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-slate-700 mb-1">原机构认可状态 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label>
+                                                <select class="editable-field agency-status-select" onchange="checkConversionValid()">
+                                                    <option value="valid" selected>有效</option>
+                                                    <option value="stop">中止认证业务</option>
+                                                    <option value="expire">资格到期</option>
+                                                    <option value="suspend">暂停</option>
+                                                    <option value="revoke">撤销</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-slate-700 mb-1">认证范围是否在我中心被认可范围内</label>
+                                                <select class="editable-field scope-valid-select" onchange="checkConversionValid()"><option value="Y" selected>是</option><option value="N">否</option></select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-slate-700 mb-1">是否需要上报CNAS</label>
+                                                <select class="editable-field report-cnas-select"><option value="N" selected>否</option><option value="Y">是</option></select>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-slate-700 mb-1">当前认证周期阶段</label>
+                                                <select class="editable-field cycle-stage-select"><option value="surveillance1">监督1</option><option value="surveillance2" selected>监督2</option><option value="recertification">再认证</option></select>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                    <div>
-                                        <label class="block text-xs font-medium text-slate-700 mb-1">原证书带标情况 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label>
-                                        <select class="editable-field cert-mark-select">
-                                            <option value="CNAS" selected>CNAS</option>
-                                            <option value="UKAS">UKAS</option>
-                                            <option value="DAKKS">DAKKS</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-slate-700 mb-1">证书当前有效性 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label>
-                                        <select class="editable-field cert-validity-select" onchange="syncCertStatusBadge(this)">
-                                            <option value="valid" selected>有效</option>
-                                            <option value="suspended">暂停</option>
-                                            <option value="revoked">撤销</option>
-                                            <option value="cancelled">注销</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-slate-700 mb-1">原机构认可状态 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label>
-                                        <select class="editable-field agency-status-select" onchange="checkConversionValid()">
-                                            <option value="valid" selected>有效</option>
-                                            <option value="stop">中止认证业务</option>
-                                            <option value="expire">资格到期</option>
-                                            <option value="suspend">暂停</option>
-                                            <option value="revoke">撤销</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="cert-card" data-cert-row>
-                            <div class="cert-card-header">
-                                <div>
-                                    <div class="font-medium text-slate-900">00123S4567R0S-01</div>
-                                </div>
-                                <span class="cert-status-pill cert-status-valid"><i class="fas fa-check-circle"></i>有效</span>
-                            </div>
-                            <div class="p-4 space-y-4">
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                                    <div><span class="text-slate-500 block text-xs mb-1">认证机构的名称</span><span class="font-medium text-slate-900">XX认证中心有限公司</span></div>
-                                    <div><span class="text-slate-500 block text-xs mb-1">被认证的领域</span><span class="font-medium text-slate-900">OHSMS（职业健康安全管理体系）</span></div>
-                                    <div><span class="text-slate-500 block text-xs mb-1">证书有效期至</span><span class="font-medium text-slate-900">2026-01-13</span></div>
-                                    <div class="md:col-span-3"><span class="text-slate-500 block text-xs mb-1">认证证书的范围</span><span class="font-medium text-slate-900">天津生产基地机械零部件加工及职业健康安全管理活动</span></div>
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                    <div>
-                                        <label class="block text-xs font-medium text-slate-700 mb-1">原证书带标情况 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label>
-                                        <select class="editable-field cert-mark-select">
-                                            <option value="CNAS">CNAS</option>
-                                            <option value="UKAS" selected>UKAS</option>
-                                            <option value="DAKKS">DAKKS</option>
-                                        </select>
+                                <div class="cert-card" data-cert-row>
+                                    <div class="cert-card-header">
+                                        <div>
+                                            <div class="font-medium text-slate-900">00123S4567R0S-01</div>
+                                            <div class="text-xs text-slate-500 mt-1">天津生产基地子证书</div>
+                                        </div>
+                                        <span class="cert-status-pill cert-status-valid"><i class="fas fa-check-circle"></i>有效</span>
                                     </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-slate-700 mb-1">证书当前有效性 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label>
-                                        <select class="editable-field cert-validity-select" onchange="syncCertStatusBadge(this)">
-                                            <option value="valid" selected>有效</option>
-                                            <option value="suspended">暂停</option>
-                                            <option value="revoked">撤销</option>
-                                            <option value="cancelled">注销</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-slate-700 mb-1">原机构认可状态 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label>
-                                        <select class="editable-field agency-status-select" onchange="checkConversionValid()">
-                                            <option value="valid" selected>有效</option>
-                                            <option value="stop">中止认证业务</option>
-                                            <option value="expire">资格到期</option>
-                                            <option value="suspend">暂停</option>
-                                            <option value="revoke">撤销</option>
-                                        </select>
+                                    <div class="p-4 space-y-4">
+                                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                                            <div><span class="text-slate-500 block text-xs mb-1">认证机构的名称</span><span class="font-medium text-slate-900">XX认证中心有限公司</span></div>
+                                            <div><span class="text-slate-500 block text-xs mb-1">被认证的领域</span><span class="font-medium text-slate-900">OHSMS</span></div>
+                                            <div><span class="text-slate-500 block text-xs mb-1">证书首次发放日期</span><span class="font-medium text-slate-900">2023-01-14</span></div>
+                                            <div><span class="text-slate-500 block text-xs mb-1">证书有效期至</span><span class="font-medium text-slate-900">2026-01-13</span></div>
+                                            <div><span class="text-slate-500 block text-xs mb-1">是否IAF/MLA签约机构</span><span class="font-medium text-slate-900">是</span></div>
+                                            <div class="md:col-span-3"><span class="text-slate-500 block text-xs mb-1">认证证书的范围</span><span class="font-medium text-slate-900">天津生产基地机械零部件加工及职业健康安全管理活动</span></div>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">原证书带标情况 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label><select class="editable-field cert-mark-select"><option value="CNAS">CNAS</option><option value="UKAS" selected>UKAS</option><option value="DAKKS">DAKKS</option></select></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">证书当前有效性 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label><select class="editable-field cert-validity-select" onchange="syncCertStatusBadge(this)"><option value="valid" selected>有效</option><option value="suspended">暂停</option><option value="revoked">撤销</option><option value="cancelled">注销</option></select></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">原机构认可状态 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label><select class="editable-field agency-status-select" onchange="checkConversionValid()"><option value="valid" selected>有效</option><option value="stop">中止认证业务</option><option value="expire">资格到期</option><option value="suspend">暂停</option><option value="revoke">撤销</option></select></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">认证范围是否在我中心被认可范围内</label><select class="editable-field scope-valid-select" onchange="checkConversionValid()"><option value="Y" selected>是</option><option value="N">否</option></select></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">是否需要上报CNAS</label><select class="editable-field report-cnas-select"><option value="N" selected>否</option><option value="Y">是</option></select></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">当前认证周期阶段</label><select class="editable-field cycle-stage-select"><option value="surveillance1" selected>监督1</option><option value="surveillance2">监督2</option><option value="recertification">再认证</option></select></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </section>
 
-                        <div class="cert-card" data-cert-row>
-                            <div class="cert-card-header">
+                        <section class="border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
+                            <div class="px-5 py-4 border-b border-slate-200 bg-white flex flex-wrap items-center justify-between gap-3">
                                 <div>
-                                    <div class="font-medium text-slate-900">00123S4567R0S-02</div>
+                                    <div class="font-semibold text-slate-900">QMS（质量管理体系）</div>
+                                    <div class="text-xs text-slate-500 mt-1">2份原证书 · GB/T 19001-2016 / ISO 9001:2015</div>
                                 </div>
-                                <span class="cert-status-pill cert-status-suspended"><i class="fas fa-pause-circle"></i>暂停</span>
                             </div>
                             <div class="p-4 space-y-4">
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                                    <div><span class="text-slate-500 block text-xs mb-1">认证机构的名称</span><span class="font-medium text-slate-900">XX认证中心有限公司</span></div>
-                                    <div><span class="text-slate-500 block text-xs mb-1">被认证的领域</span><span class="font-medium text-slate-900">OHSMS（职业健康安全管理体系）</span></div>
-                                    <div><span class="text-slate-500 block text-xs mb-1">证书有效期至</span><span class="font-medium text-slate-900">2026-01-13</span></div>
-                                    <div class="md:col-span-3"><span class="text-slate-500 block text-xs mb-1">认证证书的范围</span><span class="font-medium text-slate-900">上海研发中心产品设计开发及职业健康安全管理活动</span></div>
+                                <div class="cert-card" data-cert-row>
+                                    <div class="cert-card-header"><div><div class="font-medium text-slate-900">00123Q4567R0M</div><div class="text-xs text-slate-500 mt-1">总部主证书</div></div><span class="cert-status-pill cert-status-valid"><i class="fas fa-check-circle"></i>有效</span></div>
+                                    <div class="p-4 space-y-4">
+                                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                                            <div><span class="text-slate-500 block text-xs mb-1">认证机构的名称</span><span class="font-medium text-slate-900">XX认证中心有限公司</span></div><div><span class="text-slate-500 block text-xs mb-1">被认证的领域</span><span class="font-medium text-slate-900">QMS</span></div><div><span class="text-slate-500 block text-xs mb-1">证书首次发放日期</span><span class="font-medium text-slate-900">2022-09-20</span></div><div><span class="text-slate-500 block text-xs mb-1">证书有效期至</span><span class="font-medium text-slate-900">2025-09-19</span></div><div><span class="text-slate-500 block text-xs mb-1">是否IAF/MLA签约机构</span><span class="font-medium text-slate-900">是</span></div><div class="md:col-span-3"><span class="text-slate-500 block text-xs mb-1">认证证书的范围</span><span class="font-medium text-slate-900">机械零部件加工、装配和售后服务</span></div>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">原证书带标情况 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label><select class="editable-field cert-mark-select"><option value="CNAS" selected>CNAS</option><option value="UKAS">UKAS</option><option value="DAKKS">DAKKS</option></select></div><div><label class="block text-xs font-medium text-slate-700 mb-1">证书当前有效性 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label><select class="editable-field cert-validity-select" onchange="syncCertStatusBadge(this)"><option value="valid" selected>有效</option><option value="suspended">暂停</option><option value="revoked">撤销</option><option value="cancelled">注销</option></select></div><div><label class="block text-xs font-medium text-slate-700 mb-1">原机构认可状态 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label><select class="editable-field agency-status-select" onchange="checkConversionValid()"><option value="valid" selected>有效</option><option value="stop">中止认证业务</option><option value="expire">资格到期</option><option value="suspend">暂停</option><option value="revoke">撤销</option></select></div><div><label class="block text-xs font-medium text-slate-700 mb-1">认证范围是否在我中心被认可范围内</label><select class="editable-field scope-valid-select" onchange="checkConversionValid()"><option value="Y" selected>是</option><option value="N">否</option></select></div><div><label class="block text-xs font-medium text-slate-700 mb-1">是否需要上报CNAS</label><select class="editable-field report-cnas-select"><option value="N" selected>否</option><option value="Y">是</option></select></div><div><label class="block text-xs font-medium text-slate-700 mb-1">当前认证周期阶段</label><select class="editable-field cycle-stage-select"><option value="surveillance1">监督1</option><option value="surveillance2">监督2</option><option value="recertification" selected>再认证</option></select></div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                    <div>
-                                        <label class="block text-xs font-medium text-slate-700 mb-1">原证书带标情况 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label>
-                                        <select class="editable-field cert-mark-select">
-                                            <option value="CNAS">CNAS</option>
-                                            <option value="UKAS">UKAS</option>
-                                            <option value="DAKKS" selected>DAKKS</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-slate-700 mb-1">证书当前有效性 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label>
-                                        <select class="editable-field cert-validity-select" onchange="syncCertStatusBadge(this)">
-                                            <option value="valid">有效</option>
-                                            <option value="suspended" selected>暂停</option>
-                                            <option value="revoked">撤销</option>
-                                            <option value="cancelled">注销</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-slate-700 mb-1">原机构认可状态 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label>
-                                        <select class="editable-field agency-status-select" onchange="checkConversionValid()">
-                                            <option value="valid">有效</option>
-                                            <option value="stop">中止认证业务</option>
-                                            <option value="expire">资格到期</option>
-                                            <option value="suspend" selected>暂停</option>
-                                            <option value="revoke">撤销</option>
-                                        </select>
+                                <div class="cert-card" data-cert-row>
+                                    <div class="cert-card-header"><div><div class="font-medium text-slate-900">00123Q4567R0S-01</div><div class="text-xs text-slate-500 mt-1">上海研发中心子证书</div></div><span class="cert-status-pill cert-status-valid"><i class="fas fa-check-circle"></i>有效</span></div>
+                                    <div class="p-4 space-y-4">
+                                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                                            <div><span class="text-slate-500 block text-xs mb-1">认证机构的名称</span><span class="font-medium text-slate-900">XX认证中心有限公司</span></div><div><span class="text-slate-500 block text-xs mb-1">被认证的领域</span><span class="font-medium text-slate-900">QMS</span></div><div><span class="text-slate-500 block text-xs mb-1">证书首次发放日期</span><span class="font-medium text-slate-900">2022-09-20</span></div><div><span class="text-slate-500 block text-xs mb-1">证书有效期至</span><span class="font-medium text-slate-900">2025-09-19</span></div><div><span class="text-slate-500 block text-xs mb-1">是否IAF/MLA签约机构</span><span class="font-medium text-slate-900">是</span></div><div class="md:col-span-3"><span class="text-slate-500 block text-xs mb-1">认证证书的范围</span><span class="font-medium text-slate-900">产品设计开发及相关质量管理活动</span></div>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">原证书带标情况 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label><select class="editable-field cert-mark-select"><option value="CNAS" selected>CNAS</option><option value="UKAS">UKAS</option><option value="DAKKS">DAKKS</option></select></div><div><label class="block text-xs font-medium text-slate-700 mb-1">证书当前有效性 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label><select class="editable-field cert-validity-select" onchange="syncCertStatusBadge(this)"><option value="valid" selected>有效</option><option value="suspended">暂停</option><option value="revoked">撤销</option><option value="cancelled">注销</option></select></div><div><label class="block text-xs font-medium text-slate-700 mb-1">原机构认可状态 <span class="auto-fetch-tag"><i class="fas fa-cloud-download-alt"></i>自动获取</span></label><select class="editable-field agency-status-select" onchange="checkConversionValid()"><option value="valid" selected>有效</option><option value="stop">中止认证业务</option><option value="expire">资格到期</option><option value="suspend">暂停</option><option value="revoke">撤销</option></select></div><div><label class="block text-xs font-medium text-slate-700 mb-1">认证范围是否在我中心被认可范围内</label><select class="editable-field scope-valid-select" onchange="checkConversionValid()"><option value="Y" selected>是</option><option value="N">否</option></select></div><div><label class="block text-xs font-medium text-slate-700 mb-1">是否需要上报CNAS</label><select class="editable-field report-cnas-select"><option value="N" selected>否</option><option value="Y">是</option></select></div><div><label class="block text-xs font-medium text-slate-700 mb-1">当前认证周期阶段</label><select class="editable-field cycle-stage-select"><option value="surveillance1" selected>监督1</option><option value="surveillance2">监督2</option><option value="recertification">再认证</option></select></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </section>
                     </div>
                 </div>
             </div>
@@ -735,7 +727,10 @@
                     <div class="flex items-center gap-2"><i class="fas fa-file-alt text-blue-600"></i><h3 class="font-semibold text-slate-900">转换前评审--文件评审</h3></div>
                     <div class="flex items-center gap-2 text-xs">
                         <span class="text-slate-500">文件评审人员：</span>
-                        <input type="text" class="editable-field w-32 py-1" placeholder="姓名">
+                        <button type="button" onclick="openPersonModal('reviewer')" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition-colors inline-flex items-center gap-1">
+                            <i class="fas fa-user-check"></i>选择
+                        </button>
+                        <span id="selectedReviewersInline" class="font-medium text-slate-700">未选择</span>
                         <span class="text-slate-500 ml-2">日期：</span>
                         <input type="date" class="editable-field w-32 py-1" value="2026-03-25">
                     </div>
@@ -743,18 +738,25 @@
                 <div class="p-6 space-y-6">
                     
                     <!-- 专业人员 -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="block text-xs font-medium text-slate-700 mb-1">专业人员（多领域分别注明专业代码）</label><input type="text" class="editable-field" placeholder="如：OHSMS-28.01.01 张三"></div>
-                        <div><label class="block text-xs font-medium text-slate-700 mb-1">申请认证转换的理由</label><input type="text" class="editable-field" placeholder="客户填写的转换原因"></div>
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-xs font-medium text-slate-700">专业人员（多领域分别注明专业代码）</label>
+                            <button type="button" onclick="openPersonModal('professional')" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition-colors inline-flex items-center gap-1">
+                                <i class="fas fa-users"></i>选择专业人员
+                            </button>
+                        </div>
+                        <div id="selectedProfessionals" class="space-y-2 bg-slate-50 border border-slate-200 rounded-lg p-3">
+                            <div class="text-sm text-slate-500">暂无已选择专业人员</div>
+                        </div>
                     </div>
 
-                    <!-- 1. 评审的文件 -->
+                    <!-- 评审的文件 -->
                     <div class="field-group">
-                        <h4 class="section-title"><i class="fas fa-folder-open text-blue-500"></i>1. 评审的文件包括</h4>
+                        <h4 class="section-title"><i class="fas fa-folder-open text-blue-500"></i>评审的文件包括</h4>
                         
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-xs font-medium text-slate-700 mb-2">1.1 认证申请书及提交材料</label>
+                                <label class="block text-xs font-medium text-slate-700 mb-2">认证申请书及提交材料</label>
                                 <div class="rich-editor" id="applicationMaterials">
                                     <div class="rich-editor-toolbar">
                                         <button onclick="formatText('bold')" title="加粗"><i class="fas fa-bold"></i></button>
@@ -766,17 +768,7 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-xs font-medium text-slate-700 mb-2">1.2 客户原认证证书（含认可信息）</label>
-                                    <div class="flex items-center gap-2 mb-2">
-                                        <select class="editable-field w-24">
-                                            <option value="valid">有效</option>
-                                            <option value="invalid">无效</option>
-                                        </select>
-                                        <span class="text-xs text-slate-500">原颁证机构认可状态</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-slate-700 mb-2">1.3 审核报告（份数及类型）</label>
+                                    <label class="block text-xs font-medium text-slate-700 mb-2">审核报告（份数及类型）</label>
                                     <div class="flex gap-2">
                                         <input type="number" class="editable-field w-20" placeholder="份数">
                                         <input type="text" class="editable-field flex-1" placeholder="说明类型">
@@ -786,124 +778,33 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-xs font-medium text-slate-700 mb-2">1.4 不符合报告（共 <input type="number" class="editable-field w-16 py-0.5 inline" value="0"> 份）</label>
+                                    <label class="block text-xs font-medium text-slate-700 mb-2">不符合报告（共 <input type="number" class="editable-field w-16 py-0.5 inline" value="0"> 份）</label>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-medium text-slate-700 mb-2">1.5 原颁证机构的审核计划（共 <input type="number" class="editable-field w-16 py-0.5 inline" value="0"> 份）</label>
+                                    <label class="block text-xs font-medium text-slate-700 mb-2">原颁证机构的审核计划（共 <input type="number" class="editable-field w-16 py-0.5 inline" value="0"> 份）</label>
+                                    <input type="text" class="editable-field" placeholder="分别是 xxx审核计划">
                                 </div>
                             </div>
 
                             <div>
-                                <label class="block text-xs font-medium text-slate-700 mb-2">1.6 其他补充材料</label>
+                                <label class="block text-xs font-medium text-slate-700 mb-2">其他补充材料</label>
                                 <textarea class="editable-field" rows="2" placeholder="如有其他材料请在此说明..."></textarea>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 2. 评审结果 -->
+                    <!-- 评审结果 -->
                     <div class="field-group border-amber-100 bg-amber-50/30">
-                        <h4 class="section-title border-amber-200 text-amber-900"><i class="fas fa-clipboard-check text-amber-600"></i>2. 评审结果</h4>
+                        <h4 class="section-title border-amber-200 text-amber-900"><i class="fas fa-clipboard-check text-amber-600"></i>评审结果</h4>
                         
                         <div class="space-y-3">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200">
-                                    <span class="text-sm text-slate-700">2.1 认证证书是否有认可标志</span>
-                                    <select id="hasAccreditation" class="editable-field w-32" onchange="checkAccreditation()">
-                                        <option value="Y">是（Y）</option>
-                                        <option value="N">否（N）</option>
-                                    </select>
-                                </div>
-                                <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200">
-                                    <span class="text-sm text-slate-700">认可机构名称</span>
-                                    <select class="editable-field w-32">
-                                        <option value="CNAS">CNAS</option>
-                                        <option value="UKAS">UKAS</option>
-                                        <option value="ANAB">ANAB</option>
-                                        <option value="other">其他</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div id="accreditationDetail" class="grid grid-cols-1 md:grid-cols-2 gap-3 hidden">
-                                <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200">
-                                    <span class="text-sm text-slate-700">2.2 该认可机构是否为IAF或MLA签约机构</span>
-                                    <select class="editable-field w-32">
-                                        <option value="Y">是（Y）</option>
-                                        <option value="N">否（N）</option>
-                                    </select>
-                                </div>
-                                <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200">
-                                    <span class="text-sm text-slate-700">2.3 认证证书是否真实，并在有效期内</span>
-                                    <select id="certValid" class="editable-field w-32" onchange="checkConversionValid()">
-                                        <option value="Y">是（Y）</option>
-                                        <option value="N">否（N）</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200">
-                                    <span class="text-sm text-slate-700">2.4 认证范围是否在我中心被认可的范围内</span>
-                                    <select id="scopeValid" class="editable-field w-32" onchange="checkConversionValid()">
-                                        <option value="Y">是（Y）</option>
-                                        <option value="N">否（N）</option>
-                                    </select>
-                                </div>
-                                <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200">
-                                    <span class="text-sm text-slate-700">2.5 原认证机构的认可资格状态</span>
-                                    <select id="accreditationStatus" class="editable-field w-40" onchange="checkAccreditationStatus()">
-                                        <option value="valid">有效</option>
-                                        <option value="stop">中止认证业务</option>
-                                        <option value="expire">资格到期</option>
-                                        <option value="suspend">暂停</option>
-                                        <option value="revoke">撤销</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- 认可状态异常提示 -->
-                            <div id="accreditationWarning" class="hidden alert-box warning">
-                                <i class="fas fa-exclamation-triangle mt-0.5"></i>
-                                <div>
-                                    <p class="font-medium">原认证机构认可状态异常</p>
-                                    <p class="mt-1 text-sm">原机构认可资格被暂停/撤销/到期，需要上报CNAS并评估转换风险。</p>
-                                    <div class="mt-2">
-                                        <label class="flex items-center gap-2 text-sm">
-                                            <input type="checkbox" id="needReportCNAS" class="rounded">
-                                            <span>是否需要上报CNAS</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200">
-                                    <span class="text-sm text-slate-700">2.7 在当前认证周期内所处的阶段</span>
-                                    <select class="editable-field w-40">
-                                        <option value="initial">初次认证</option>
-                                        <option value="surveillance1">第1次监督</option>
-                                        <option value="surveillance2">第2次监督</option>
-                                        <option value="recertification">再认证</option>
-                                    </select>
-                                </div>
-                                <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200">
-                                    <span class="text-sm text-slate-700">2.8 认证证书目前状态是否有效</span>
-                                    <select id="certCurrentStatus" class="editable-field w-32" onchange="checkCertStatus()">
-                                        <option value="valid">有效</option>
-                                        <option value="suspend">暂停</option>
-                                        <option value="revoke">撤销</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- 证书状态异常详情 -->
-                            <div id="certStatusDetail" class="hidden p-3 bg-red-50 rounded-lg border border-red-200">
-                                <label class="block text-xs font-medium text-red-700 mb-1">暂停或撤销的时间和原因</label>
-                                <textarea class="editable-field border-red-300 bg-white" rows="2" placeholder="请详细说明..."></textarea>
+                            <div class="p-3 bg-white rounded-lg border border-slate-200">
+                                <label class="block text-xs font-medium text-slate-700 mb-2">申请认证转换的理由</label>
+                                <textarea class="editable-field" rows="2" placeholder="手动录入客户申请认证转换的理由...">集团统一认证机构管理，需将原OHSMS、QMS证书转换至CQC。</textarea>
                             </div>
 
                             <div class="p-3 bg-white rounded-lg border border-slate-200">
-                                <label class="block text-xs font-medium text-slate-700 mb-2">2.9 最近一个认证周期内包括 <input type="number" class="editable-field w-16 py-0.5 inline" value="0"> 次审核</label>
+                                <label class="block text-xs font-medium text-slate-700 mb-2">最近一个认证周期内包括 <input type="number" class="editable-field w-16 py-0.5 inline" value="0"> 次审核</label>
                                 <div class="text-sm text-slate-600 mb-2">列明审核类型及时间：</div>
                                 <div class="rich-editor">
                                     <div class="rich-editor-toolbar">
@@ -914,7 +815,7 @@
                             </div>
 
                             <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200">
-                                <span class="text-sm text-slate-700">2.10 初次认证或最近的再认证审核报告及最近的监督审核报告是否收集齐全</span>
+                                <span class="text-sm text-slate-700">初次认证或最近的再认证审核报告及最近的监督审核报告是否收集齐全</span>
                                 <select class="editable-field w-32">
                                     <option value="Y">是（Y）</option>
                                     <option value="N">否（N）</option>
@@ -923,7 +824,7 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                                 <div class="p-3 bg-white rounded-lg border border-slate-200">
-                                    <label class="block text-xs font-medium text-slate-700 mb-2">2.11 最近周期不符合统计</label>
+                                    <label class="block text-xs font-medium text-slate-700 mb-2">最近周期不符合统计</label>
                                     <div class="flex gap-2 items-center">
                                         <span class="text-sm text-slate-600">严重：</span>
                                         <input type="number" class="editable-field w-16" value="0" min="0">
@@ -932,7 +833,7 @@
                                     </div>
                                 </div>
                                 <div class="md:col-span-2 p-3 bg-white rounded-lg border border-slate-200">
-                                    <label class="block text-xs font-medium text-slate-700 mb-2">2.12 不符合项的关闭情况</label>
+                                    <label class="block text-xs font-medium text-slate-700 mb-2">不符合项的关闭情况</label>
                                     <select id="ncStatus" class="editable-field w-full mb-2" onchange="checkNCStatus()">
                                         <option value="allClosed">全部关闭</option>
                                         <option value="partialOpen">存在未关闭的不符合</option>
@@ -965,7 +866,7 @@
 
                             <div class="p-3 bg-white rounded-lg border border-slate-200">
                                 <div class="flex items-center justify-between mb-2">
-                                    <span class="text-sm font-medium text-slate-700">2.13 客户是否收到投诉</span>
+                                    <span class="text-sm font-medium text-slate-700">客户是否收到投诉</span>
                                     <select id="hasComplaint" class="editable-field w-32" onchange="toggleComplaint(this.value)">
                                         <option value="N">否（N）</option>
                                         <option value="Y">是（Y）</option>
@@ -986,7 +887,7 @@
                             </div>
 
                             <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200">
-                                <span class="text-sm text-slate-700">2.14 客户对适用法律法规的遵守情况，是否有重大违法现象</span>
+                                <span class="text-sm text-slate-700">客户对适用法律法规的遵守情况，是否有重大违法现象</span>
                                 <select id="hasViolation" class="editable-field w-32" onchange="toggleViolation(this.value)">
                                     <option value="N">否（N）</option>
                                     <option value="Y">是（Y）</option>
@@ -1472,21 +1373,6 @@
                         <textarea class="editable-field" rows="2" placeholder="如有其他需要说明的情况..."></textarea>
                     </div>
 
-                    <!-- 评审人员签字 - 已完善交互 -->
-                    <div class="border-t border-slate-200 pt-4">
-                        <label class="block text-xs font-medium text-slate-700 mb-2">评审人员签字</label>
-                        <div id="signatureArea" class="signature-area" onclick="openSignatureModal()">
-                            <div class="signature-placeholder" id="signaturePlaceholder">
-                                <i class="fas fa-signature"></i>
-                                <span class="text-sm">点击此处进行电子签章</span>
-                            </div>
-                            <img id="signatureImage" class="signature-preview hidden" alt="签名预览">
-                            <span class="re-sign-btn" onclick="event.stopPropagation(); openSignatureModal()">重新签署</span>
-                            <div class="signature-info" id="signatureInfo"></div>
-                        </div>
-                        <p class="text-xs text-slate-500 mt-1"><i class="fas fa-info-circle mr-1"></i>请点击上方区域进行手写签名，签名将用于评审报告的电子签章</p>
-                    </div>
-
                 </div>
             </div>
 
@@ -1498,8 +1384,8 @@
         <div class="side-panel">
             <div class="px-6 py-5 border-b border-slate-200 flex items-start justify-between">
                 <div>
-                    <h3 class="text-lg font-bold text-slate-900">选择现场访问人员</h3>
-                    <p class="text-sm text-slate-500 mt-1">从人员资质系统选择现场访问人员</p>
+                    <h3 id="personModalTitle" class="text-lg font-bold text-slate-900">选择现场访问人员</h3>
+                    <p id="personModalDesc" class="text-sm text-slate-500 mt-1">从人员资质系统选择现场访问人员</p>
                 </div>
                 <button onclick="closePersonModal()" class="w-9 h-9 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800"><i class="fas fa-times text-lg"></i></button>
             </div>
@@ -1529,10 +1415,10 @@
             </div>
             <div id="personOptionsList" class="flex-1 overflow-y-auto p-6 space-y-3"></div>
             <div class="px-6 py-4 border-t border-slate-200 bg-white flex items-center justify-between">
-                <div class="text-sm text-slate-600">已选择 <span id="personSelectedCount" class="font-bold text-blue-600">0</span> 人</div>
+                <div class="text-sm text-slate-600"><span id="personSelectedCountLabel">已选择</span> <span id="personSelectedCount" class="font-bold text-blue-600">0</span> 人</div>
                 <div class="flex gap-3">
                     <button onclick="closePersonModal()" class="px-5 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700">取消</button>
-                    <button onclick="confirmPersonSelection()" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-sm">确认添加</button>
+                    <button id="personConfirmBtn" onclick="confirmPersonSelection()" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-sm">确认添加</button>
                 </div>
             </div>
         </div>
@@ -1652,9 +1538,19 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            moveAttachmentsIntoApplicationInfo();
             initApplicationAttachmentActions();
             toggleSiteVisit(isSiteVisitRequired() ? 'Y' : 'N');
         });
+
+        function moveAttachmentsIntoApplicationInfo() {
+            const attachments = document.getElementById('section-attachments');
+            const basicBody = document.querySelector('#section-basic > .p-6');
+            if (!attachments || !basicBody || attachments.parentElement === basicBody) return;
+            attachments.classList.remove('review-section', 'bg-white', 'rounded-xl', 'shadow-sm', 'border', 'border-slate-200', 'overflow-hidden');
+            attachments.classList.add('border-t', 'border-slate-100', 'pt-4');
+            basicBody.appendChild(attachments);
+        }
 
         function initApplicationAttachmentActions() {
             const sourceFileNames = [
@@ -1714,13 +1610,52 @@
             { id: 'p2', name: '黄起超', code: 'CQC10634', company: '东北区域', type: '专职', days: 134, role: '组员', qualifications: 'OHSMS-6015922', tags: ['OHSMS'] },
             { id: 'p3', name: '娄杰', code: 'CQC10601', company: '东北区域', type: '专职', days: 167, role: '组员', qualifications: 'OHSMS-4014327', tags: ['OHSMS'] },
             { id: 'p4', name: '沈书华', code: 'CQC10228', company: '华北区域', type: '兼职', days: 78, role: '组员', qualifications: 'OHSMS-4011889', tags: ['OHSMS'] },
-            { id: 'p5', name: '周明', code: 'CQC10888', company: '华东区域', type: '专职', days: 42, role: '组长', qualifications: 'OHSMS-4012001', tags: ['OHSMS'] }
+            { id: 'p5', name: '周明', code: 'CQC10888', company: '华东区域', type: '专职', days: 42, role: '组长', qualifications: 'OHSMS-4012001 / QMS-1901', tags: ['OHSMS', 'QMS'] },
+            { id: 'p6', name: '李晓华', code: 'CQC10962', company: '华东区域', type: '专职', days: 61, role: '专业人员', qualifications: 'QMS-1902 / QMS-1701', tags: ['QMS'] }
         ];
+        const personModalConfig = {
+            visit: {
+                title: '选择现场访问人员',
+                desc: '从人员资质系统选择现场访问人员',
+                multiple: true,
+                confirmText: '确认添加',
+                selectedIds: () => selectedVisitPersonIds,
+                setSelectedIds: ids => { selectedVisitPersonIds = ids; renderSelectedVisitPersons(); },
+                toast: count => `已选择 ${count} 名现场访问人员`
+            },
+            reviewer: {
+                title: '选择文件评审人员',
+                desc: '从人员资质系统选择文件评审人员',
+                multiple: false,
+                confirmText: '确认选择',
+                selectedIds: () => selectedReviewPersonIds,
+                setSelectedIds: ids => { selectedReviewPersonIds = ids; renderSelectedReviewers(); },
+                toast: count => count ? '已选择文件评审人员' : '未选择文件评审人员'
+            },
+            professional: {
+                title: '选择专业人员',
+                desc: '从人员资质系统选择参与文件评审的专业人员',
+                multiple: true,
+                confirmText: '确认添加',
+                selectedIds: () => selectedProfessionalIds,
+                setSelectedIds: ids => { selectedProfessionalIds = ids; renderSelectedProfessionals(); },
+                toast: count => `已选择 ${count} 名专业人员`
+            }
+        };
         let selectedVisitPersonIds = [];
+        let selectedReviewPersonIds = [];
+        let selectedProfessionalIds = [];
         let pendingVisitPersonIds = [];
+        let currentPersonMode = 'visit';
 
-        function openPersonModal() {
-            pendingVisitPersonIds = [...selectedVisitPersonIds];
+        function openPersonModal(mode = 'visit') {
+            currentPersonMode = personModalConfig[mode] ? mode : 'visit';
+            const config = personModalConfig[currentPersonMode];
+            pendingVisitPersonIds = [...config.selectedIds()];
+            document.getElementById('personModalTitle').textContent = config.title;
+            document.getElementById('personModalDesc').textContent = config.desc;
+            document.getElementById('personSelectedCountLabel').textContent = config.multiple ? '已选择' : '当前选择';
+            document.getElementById('personConfirmBtn').textContent = config.confirmText;
             document.getElementById('personSelectModal').classList.remove('hidden');
             renderPersonOptions();
         }
@@ -1770,19 +1705,55 @@
         }
 
         function togglePendingPerson(id) {
+            const config = personModalConfig[currentPersonMode] || personModalConfig.visit;
             if (pendingVisitPersonIds.includes(id)) {
                 pendingVisitPersonIds = pendingVisitPersonIds.filter(item => item !== id);
             } else {
-                pendingVisitPersonIds.push(id);
+                pendingVisitPersonIds = config.multiple ? [...pendingVisitPersonIds, id] : [id];
             }
             renderPersonOptions();
         }
 
         function confirmPersonSelection() {
-            selectedVisitPersonIds = [...pendingVisitPersonIds];
-            renderSelectedVisitPersons();
+            const config = personModalConfig[currentPersonMode] || personModalConfig.visit;
+            config.setSelectedIds([...pendingVisitPersonIds]);
             closePersonModal();
-            showToast(`已选择 ${selectedVisitPersonIds.length} 名现场访问人员`);
+            showToast(config.toast(pendingVisitPersonIds.length));
+        }
+
+        function renderSelectedReviewers() {
+            const inline = document.getElementById('selectedReviewersInline');
+            const selected = visitPersonOptions.filter(person => selectedReviewPersonIds.includes(person.id));
+            inline.textContent = selected.length ? selected.map(person => `${person.name}（${person.code}）`).join('、') : '未选择';
+        }
+
+        function renderSelectedProfessionals() {
+            const container = document.getElementById('selectedProfessionals');
+            const selected = visitPersonOptions.filter(person => selectedProfessionalIds.includes(person.id));
+            if (selected.length === 0) {
+                container.innerHTML = '<div class="text-sm text-slate-500">暂无已选择专业人员</div>';
+                return;
+            }
+            container.innerHTML = selected.map(person => {
+                const typeClass = person.type === '专职' ? 'fulltime' : 'parttime';
+                return `
+                    <div class="bg-white border border-blue-100 rounded-lg p-3 flex items-start justify-between gap-3">
+                        <div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="font-medium text-slate-900">${person.name}</span>
+                                <span class="person-tag days">${person.days}天/180天</span>
+                                <span class="person-tag ${typeClass}">${person.type}</span>
+                            </div>
+                            <div class="text-xs text-slate-500 mt-1">CQC编号：${person.code} · 专业代码：${person.qualifications}</div>
+                        </div>
+                        <button type="button" onclick="removeSelectedProfessional('${person.id}')" class="text-slate-400 hover:text-red-600"><i class="fas fa-times"></i></button>
+                    </div>`;
+            }).join('');
+        }
+
+        function removeSelectedProfessional(id) {
+            selectedProfessionalIds = selectedProfessionalIds.filter(item => item !== id);
+            renderSelectedProfessionals();
         }
 
         function renderSelectedVisitPersons() {
@@ -2011,40 +1982,7 @@
             showToast('文件已移除');
         }
 
-        // 其他检查函数保持不变...
-        function checkAccreditation() {
-            const hasAcc = document.getElementById('hasAccreditation').value;
-            const detail = document.getElementById('accreditationDetail');
-            if (hasAcc === 'N') {
-                detail.classList.add('hidden');
-            } else {
-                detail.classList.remove('hidden');
-            }
-        }
-
-        function checkAccreditationStatus() {
-            const status = document.getElementById('accreditationStatus').value;
-            const warning = document.getElementById('accreditationWarning');
-            if (status !== 'valid') {
-                warning.classList.remove('hidden');
-                document.getElementById('needReportCNAS').checked = true;
-            } else {
-                warning.classList.add('hidden');
-            }
-            checkConversionValid();
-        }
-
-        function checkCertStatus() {
-            const status = document.getElementById('certCurrentStatus').value;
-            const detail = document.getElementById('certStatusDetail');
-            if (status !== 'valid') {
-                detail.classList.remove('hidden');
-            } else {
-                detail.classList.add('hidden');
-            }
-            checkConversionValid();
-        }
-
+        // 原证书卡片状态同步
         function syncCertStatusBadge(select) {
             const card = select.closest('[data-cert-row]');
             if (!card) return;
@@ -2062,10 +2000,7 @@
         }
 
         function checkConversionValid() {
-            const certValid = document.getElementById('certValid').value;
-            const scopeValid = document.getElementById('scopeValid').value;
-            const accStatus = document.getElementById('accreditationStatus').value;
-            const certStatus = document.getElementById('certCurrentStatus').value;
+            const hasInvalidScope = Array.from(document.querySelectorAll('.scope-valid-select')).some(select => select.value === 'N');
             const hasAbnormalOriginalCert = Array.from(document.querySelectorAll('.cert-validity-select')).some(select => select.value !== 'valid') ||
                 Array.from(document.querySelectorAll('.agency-status-select')).some(select => select.value !== 'valid');
             
@@ -2073,7 +2008,7 @@
             const acceptRadio = document.getElementById('acceptConversion');
             const rejectRadio = document.getElementById('rejectConversion');
             
-            if (certValid === 'N' || scopeValid === 'N' || accStatus === 'revoke' || certStatus === 'revoke' || hasAbnormalOriginalCert) {
+            if (hasInvalidScope || hasAbnormalOriginalCert) {
                 alert.classList.remove('hidden');
                 acceptRadio.classList.add('opacity-50', 'cursor-not-allowed');
                 acceptRadio.querySelector('input').disabled = true;
@@ -2211,7 +2146,8 @@
                 const fetchedValues = [
                     { mark: 'CNAS', validity: 'valid', agency: 'valid' },
                     { mark: 'UKAS', validity: 'valid', agency: 'valid' },
-                    { mark: 'DAKKS', validity: 'suspended', agency: 'suspend' }
+                    { mark: 'CNAS', validity: 'valid', agency: 'valid' },
+                    { mark: 'CNAS', validity: 'valid', agency: 'valid' }
                 ];
                 rows.forEach((row, index) => {
                     const values = fetchedValues[index] || fetchedValues[0];
@@ -2231,7 +2167,7 @@
                     });
                 });
                 checkConversionValid();
-                showToast('原证书校验项已刷新，发现1份证书存在异常');
+                showToast('原证书校验项已刷新');
             }, 1500);
         }
 
