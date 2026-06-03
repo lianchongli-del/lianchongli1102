@@ -827,9 +827,16 @@
             }
         ];
         const certificateProfCodes = {
-            e_cert_1: [],
-            e_cert_2: [],
-            e_cert_3: []
+            e_cert_1: [
+                {code: '19.01.01', category: '办公设备的制造', accreditation: ['CNAS', 'UKAS']},
+                {code: '19.02.00', category: '家用电器的制造', accreditation: ['CNAS']}
+            ],
+            e_cert_2: [
+                {code: '19.06.00', category: '电子元器件及板卡的制造', accreditation: ['CNAS']}
+            ],
+            e_cert_3: [
+                {code: '28.01.01', category: '电子光学仪器制造', accreditation: ['CNAS']}
+            ]
         };
         const applicationChangeItems = [
             {
@@ -1588,6 +1595,7 @@
                             <div class="flex flex-wrap items-center gap-2">
                                 <div class="font-semibold text-slate-900">${cert.certNo}</div>
                                 <span class="px-2 py-0.5 rounded-full text-xs border ${scopeChanged ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-slate-100 text-slate-600 border-slate-200'}">${scopeChanged ? '认证范围已变更' : '认证范围不变'}</span>
+                                <span class="px-2 py-0.5 rounded-full text-xs border ${codes.length > 0 ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-red-50 text-red-600 border-red-200'}">已选择 ${codes.length} 个专业代码</span>
                             </div>
                             <div class="text-xs text-slate-500 mt-1">${cert.domain} · ${cert.standard}</div>
                         </div>
