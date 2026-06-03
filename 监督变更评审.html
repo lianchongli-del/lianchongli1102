@@ -1,10 +1,11 @@
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>监督变更评审 - 中检华南认证业务管理系统</title>
+    <title>监督变更评审（单领域） - 中检华南认证业务管理系统</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -37,27 +38,6 @@
             border-left: 3px solid #cbd5e1; 
         }
 
-        .domain-nav-item {
-            display: block;
-            width: 100%;
-            padding: 8px 16px 8px 48px;
-            text-align: left;
-            font-size: 12px;
-            color: #64748b;
-            transition: all 0.2s ease;
-        }
-
-        .domain-nav-item:hover {
-            background-color: #f8fafc;
-            color: #2563eb;
-        }
-
-        .domain-nav-item.active {
-            background-color: #eff6ff;
-            color: #2563eb;
-            font-weight: 600;
-        }
-        
         .readonly-field { 
             background: #f8fafc; 
             border: 1px solid #e2e8f0; 
@@ -446,11 +426,9 @@
                     </button>
                     <div class="h-6 w-px bg-slate-300"></div>
                     <div class="flex items-center gap-3">
-                        <h1 class="text-lg font-bold text-slate-900">监督变更评审</h1>
+                        <h1 class="text-lg font-bold text-slate-900">监督变更评审（单领域）</h1>
                         <span class="px-2 py-1 rounded text-xs font-medium bg-amber-100 text-amber-700 border border-amber-200">待评审</span>
-                        <span class="px-2 py-1 rounded text-xs font-medium bg-indigo-100 text-indigo-700 border border-indigo-200">QMS</span>
                         <span class="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">EMS</span>
-                        <span class="px-2 py-1 rounded text-xs font-medium bg-emerald-100 text-emerald-700 border border-emerald-200">OHSMS</span>
                         <span class="px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-700 border border-purple-200">监督变更</span>
                     </div>
                 </div>
@@ -482,11 +460,6 @@
                             <span class="flex items-center gap-2"><i class="fas fa-file-signature w-5 text-center"></i>变更内容信息</span>
                         </div>
                     </a>
-                    <div class="border-l border-slate-100 ml-4 my-1" id="changeDomainNav">
-                        <button type="button" class="domain-nav-item" data-domain="质量管理体系" onclick="switchChangeDomain('质量管理体系')">质量管理体系</button>
-                        <button type="button" class="domain-nav-item" data-domain="环境管理体系" onclick="switchChangeDomain('环境管理体系')">环境管理体系</button>
-                        <button type="button" class="domain-nav-item" data-domain="职业健康安全管理体系" onclick="switchChangeDomain('职业健康安全管理体系')">职业健康安全管理体系</button>
-                    </div>
                     <a href="#section-profcode" class="nav-item block px-4 py-3 text-sm text-slate-700 border-l-3 border-transparent" onclick="switchTab('profcode')">
                         <div class="flex items-center justify-between">
                             <span class="flex items-center gap-2"><i class="fas fa-list-check w-5 text-center"></i>专业代码</span>
@@ -514,7 +487,7 @@
             <div class="bg-blue-50 rounded-xl border border-blue-200 p-4 flex flex-wrap gap-4 items-center justify-between">
                 <div class="flex gap-6 text-sm">
                     <div><span class="text-slate-500">监督申请号：</span><span class="font-mono font-semibold text-slate-900">JD202604220006</span></div>
-                    <div><span class="text-slate-500">涉及证书：</span><span class="font-semibold text-slate-900">3个领域 / 6份证书</span></div>
+                    <div><span class="text-slate-500">涉及证书：</span><span class="font-semibold text-slate-900">环境管理体系 / 2份证书</span></div>
                     <div><span class="text-slate-500">企业名称：</span><span class="font-semibold text-slate-900">彩晶光电科技(昆山)有限公司</span></div>
                     <div><span class="text-slate-500">审核类型：</span><span class="font-semibold text-slate-900">监督审核</span></div>
                     <div><span class="text-slate-500">签发类型：</span><span class="font-semibold text-slate-900">自动签发</span></div>
@@ -675,7 +648,7 @@
 
                     <div>
                         <label class="block text-xs font-medium text-slate-700 mb-2">评审意见</label>
-                        <textarea class="editable-field w-full" rows="3" placeholder="请输入评审意见...">经评审，该企业监督变更申请资料齐全，涉及多个领域的证书变更内容、证明材料和专业代码信息满足评审要求，建议批准变更。</textarea>
+                        <textarea class="editable-field w-full" rows="3" placeholder="请输入评审意见...">经评审，该企业监督变更申请资料齐全，环境管理体系证书变更内容、证明材料和专业代码信息满足评审要求，建议批准变更。</textarea>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -822,22 +795,6 @@
         let activeProfCertId = null;
         const reviewCertificates = [
             {
-                id: 'q_cert_1',
-                certNo: '00124Q301110R1M/3200',
-                domain: '质量管理体系',
-                standard: 'GB/T 19001-2016 / ISO 9001:2015',
-                scopeBefore: '数码相机、摄像模组、印刷电路板零组件的设计和制造',
-                scopeAfter: '数码相机、摄像模组、印刷电路板零组件、智能家居监控设备的设计和制造'
-            },
-            {
-                id: 'q_cert_2',
-                certNo: '00124Q301111R1M/3200',
-                domain: '质量管理体系',
-                standard: 'GB/T 19001-2016 / ISO 9001:2015',
-                scopeBefore: '软件研发、系统集成项目实施和售后服务',
-                scopeAfter: '软件研发、系统集成项目实施、驻场运维和售后服务'
-            },
-            {
                 id: 'e_cert_1',
                 certNo: '00126E301110R701',
                 domain: '环境管理体系',
@@ -852,22 +809,6 @@
                 standard: 'GB/T 24001-2016 / ISO 14001:2015',
                 scopeBefore: '软件研发、系统集成项目实施现场及相关环境管理活动',
                 scopeAfter: '软件研发、系统集成项目实施现场、驻场运维服务及相关环境管理活动'
-            },
-            {
-                id: 's_cert_1',
-                certNo: '00124S301110R1M/3200',
-                domain: '职业健康安全管理体系',
-                standard: 'GB/T 45001-2020 / ISO 45001:2018',
-                scopeBefore: '数码相机、摄像模组、印刷电路板零组件制造及相关职业健康安全管理活动',
-                scopeAfter: '数码相机、摄像模组、印刷电路板零组件、智能家居监控设备制造及相关职业健康安全管理活动'
-            },
-            {
-                id: 's_cert_2',
-                certNo: '00124S301111R1M/3200',
-                domain: '职业健康安全管理体系',
-                standard: 'GB/T 45001-2020 / ISO 45001:2018',
-                scopeBefore: '软件研发、系统集成项目实施现场及相关职业健康安全管理活动',
-                scopeAfter: '软件研发、系统集成项目实施现场、驻场运维服务及相关职业健康安全管理活动'
             }
         ];
         const certificateProfCodes = Object.fromEntries(reviewCertificates.map(cert => [cert.id, []]));
@@ -890,15 +831,6 @@
                 item: '认证标准或技术规范',
                 groups: [
                     {
-                        certIds: ['q_cert_1', 'q_cert_2'],
-                        applyLabel: '统一变更内容',
-                        applyText: '适用于当前领域证书',
-                        before: 'GB/T 19001-2016 / ISO 9001:2015',
-                        after: 'GB/T 19001-2016 / ISO 9001:2015；适用 CNAS-CC01:2015 相关要求',
-                        reason: '质量管理体系监督周期补充引用技术规范，标准主体不变。',
-                        attachments: []
-                    },
-                    {
                         certIds: ['e_cert_1', 'e_cert_2'],
                         applyLabel: '统一变更内容',
                         applyText: '适用于当前领域证书',
@@ -906,35 +838,12 @@
                         after: 'GB/T 24001-2016 / ISO 14001:2015；适用 CNAS-CC01:2015 相关要求',
                         reason: '环境管理体系监督周期补充引用技术规范，标准主体不变。',
                         attachments: []
-                    },
-                    {
-                        certIds: ['s_cert_1', 's_cert_2'],
-                        applyLabel: '统一变更内容',
-                        applyText: '适用于当前领域证书',
-                        before: 'GB/T 45001-2020 / ISO 45001:2018',
-                        after: 'GB/T 45001-2020 / ISO 45001:2018；适用 CNAS-CC125:2020 相关要求',
-                        reason: '职业健康安全管理体系监督周期补充引用技术规范，标准主体不变。',
-                        attachments: []
                     }
                 ]
             },
             {
                 item: '认证范围（产品/服务或业务）',
                 groups: [
-                    {
-                        certIds: ['q_cert_1'],
-                        before: '数码相机、摄像模组、印刷电路板零组件的设计和制造',
-                        after: '数码相机、摄像模组、印刷电路板零组件、智能家居监控设备的设计和制造',
-                        reason: '新增智能家居监控设备产品线，设计开发和制造过程已纳入质量管理体系控制。',
-                        attachments: ['质量管理体系范围说明.docx', '新增产品过程流程图.png']
-                    },
-                    {
-                        certIds: ['q_cert_2'],
-                        before: '软件研发、系统集成项目实施和售后服务',
-                        after: '软件研发、系统集成项目实施、驻场运维和售后服务',
-                        reason: '系统集成项目新增驻场运维服务过程，服务交付和质量控制要求已识别。',
-                        attachments: ['服务过程清单（QMS）.docx']
-                    },
                     {
                         certIds: ['e_cert_1'],
                         before: '数码相机的制造，摄像模组的制造，印刷电路板零组件的制造及相关管理活动',
@@ -948,20 +857,6 @@
                         after: '软件研发、系统集成项目实施现场、驻场运维服务及相关环境管理活动',
                         reason: '项目现场新增驻场运维服务，办公和差旅环境因素已纳入监督审核范围。',
                         attachments: []
-                    },
-                    {
-                        certIds: ['s_cert_1'],
-                        before: '数码相机、摄像模组、印刷电路板零组件制造及相关职业健康安全管理活动',
-                        after: '数码相机、摄像模组、印刷电路板零组件、智能家居监控设备制造及相关职业健康安全管理活动',
-                        reason: '新增生产线岗位危害因素已重新识别并更新控制措施。',
-                        attachments: ['岗位风险辨识表.xlsx']
-                    },
-                    {
-                        certIds: ['s_cert_2'],
-                        before: '软件研发、系统集成项目实施现场及相关职业健康安全管理活动',
-                        after: '软件研发、系统集成项目实施现场、驻场运维服务及相关职业健康安全管理活动',
-                        reason: '驻场运维人员作业风险已纳入职业健康安全管理体系控制。',
-                        attachments: []
                     }
                 ]
             },
@@ -969,17 +864,17 @@
                 item: '运营地址',
                 groups: [
                     {
-                        certIds: ['q_cert_1', 'e_cert_1', 's_cert_1'],
+                        certIds: ['e_cert_1'],
                         before: '中国江苏省昆山综合保税区第三大道77号',
                         after: '中国江苏省苏州市昆山市玉山镇南淞路299号',
-                        reason: '制造及仓储运营场所整体搬迁，相关过程、环境因素和职业健康安全风险已重新识别。',
+                        reason: '制造及仓储运营场所整体搬迁，相关环境因素和应急设施已重新识别。',
                         attachments: ['新址平面布置图.jpg', '场所变更说明.docx']
                     },
                     {
-                        certIds: ['q_cert_2', 'e_cert_2', 's_cert_2'],
+                        certIds: ['e_cert_2'],
                         before: '北京总部、上海项目实施现场',
                         after: '北京总部、上海项目实施现场、苏州项目实施中心',
-                        reason: '监督周期新增苏州项目实施中心，现场过程纳入多领域监督审核。',
+                        reason: '监督周期新增苏州项目实施中心，现场环境管理活动纳入审核范围。',
                         attachments: ['多场所清单.xlsx']
                     }
                 ]
@@ -988,7 +883,7 @@
                 item: '分支机构/常设多场所',
                 groups: [
                     {
-                        certIds: ['q_cert_2', 'e_cert_2', 's_cert_2'],
+                        certIds: ['e_cert_2'],
                         before: '关联场所：北京总部、广州研发中心',
                         after: '新增：苏州项目实施中心（是否发子证：是）；减少：广州研发中心',
                         reason: '项目交付重心迁移，广州研发中心不再纳入本次监督覆盖范围；总部场所保留。',
@@ -1018,7 +913,7 @@
                 item: '组织人数',
                 groups: [
                     {
-                        before: 'QMS/EMS/OHSMS：组织总人数 204 人。',
+                        before: '环境管理体系：组织总人数 204 人。',
                         reason: '因新增产线和项目交付团队，组织总人数调整为 236 人。'
                     }
                 ]
@@ -1027,13 +922,12 @@
                 item: '体系覆盖人数',
                 groups: [
                     {
-                        before: 'QMS：204 人；EMS：204 人；OHSMS：196 人。',
-                        reason: '体系覆盖人数同步调整为 QMS 236 人、EMS 228 人、OHSMS 228 人，临时外包人员不计入覆盖人数。'
+                        before: '环境管理体系：体系覆盖人数 204 人。',
+                        reason: '体系覆盖人数同步调整为 228 人，临时外包人员不计入覆盖人数。'
                     }
                 ]
             }
         ];
-        let activeChangeDomain = '';
         let selectedAuditMode = 'combine';
         let selectedSiteType = null;
         let selectedAuditStage = null;
@@ -1274,24 +1168,8 @@
             `;
         }
 
-        function switchChangeDomain(domain) {
-            activeChangeDomain = domain;
-            updateChangeDomainNav();
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            const basicNav = document.querySelector('.nav-item[href="#section-basic"]');
-            if (basicNav) basicNav.classList.add('active');
-            const domainSection = document.getElementById(getDomainAnchorId(domain));
-            if (domainSection) domainSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-
         function getDomainAnchorId(domain) {
             return `change-domain-${encodeURIComponent(domain)}`;
-        }
-
-        function updateChangeDomainNav() {
-            document.querySelectorAll('.domain-nav-item').forEach(item => {
-                item.classList.toggle('active', item.dataset.domain === activeChangeDomain);
-            });
         }
 
         function refreshHistoryCertificate() {
