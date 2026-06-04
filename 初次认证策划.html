@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -1260,10 +1261,6 @@
                     <button class="btn btn-default btn-sm" onclick="openProcessListModal()">
                         <i class="fas fa-list-check text-xs"></i>
                         管理体系过程清单
-                    </button>
-                    <button class="btn btn-default btn-sm" onclick="saveDraft()">
-                        <i class="far fa-save text-xs"></i>
-                        保存
                     </button>
                     <button class="btn btn-primary btn-sm" onclick="submitPlan()">
                         <i class="fas fa-check text-xs"></i>
@@ -3625,7 +3622,7 @@
                         <span class="font-medium text-gray-900" id="certDrawerRegAddress">北京市海淀区中关村大街1号</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <span class="text-gray-500">认证地址：</span>
+                        <span class="text-gray-500">运营地址：</span>
                         <span class="font-medium text-gray-900" id="certDrawerCertAddress">北京市海淀区中关村大街1号</span>
                     </div>
                     <div class="flex items-center gap-2">
@@ -3695,7 +3692,7 @@
                 <div class="cert-form-grid-2">
                     <div class="form-row">
                         <label class="form-label">1. 客户名称 <span class="text-red-500">*</span></label>
-                        <input type="text" class="form-input" id="certEdit_customerName" value="华信环境监测技术中心">
+                        <input type="text" class="form-input" id="certEdit_customerName" value="华信环境监测技术中心" oninput="syncMainCertSiteFromCustomerInfo()">
                     </div>
                     <div class="form-row">
                         <label class="form-label">客户名称（英文）</label>
@@ -3716,11 +3713,11 @@
 
                 <div class="cert-form-grid-2">
                     <div class="form-row">
-                        <label class="form-label">3. 认证地址 <span class="text-red-500">*</span></label>
-                        <input type="text" class="form-input" id="certEdit_certAddress" value="北京市海淀区中关村大街1号">
+                        <label class="form-label">3. 运营地址 <span class="text-red-500">*</span></label>
+                        <input type="text" class="form-input" id="certEdit_certAddress" value="北京市海淀区中关村大街1号" oninput="syncMainCertSiteFromCustomerInfo()">
                     </div>
                     <div class="form-row">
-                        <label class="form-label">认证地址（英文）</label>
+                        <label class="form-label">运营地址（英文）</label>
                         <input type="text" class="form-input" id="certEdit_certAddressEn" value="No.1 Zhongguancun Street, Haidian District, Beijing, P.R.China">
                     </div>
                 </div>
@@ -3732,7 +3729,7 @@
                     </div>
                     <div class="form-row">
                         <label class="form-label">5. 统一社会信用代码或注册编号(境外组织) <span class="text-red-500">*</span></label>
-                        <input type="text" class="form-input" id="certEdit_creditCode" value="91110108XXXXXXXXXX">
+                        <input type="text" class="form-input" id="certEdit_creditCode" value="91110108XXXXXXXXXX" oninput="syncMainCertSiteFromCustomerInfo()">
                     </div>
                 </div>
 
@@ -3740,17 +3737,23 @@
                 <div class="cert-section-title">6. 认证范围</div>
                 <div class="form-row">
                     <label class="form-label">认证范围（中文） <span class="text-red-500">*</span></label>
-                    <textarea class="form-textarea" id="certEdit_scope" rows="3" placeholder="请输入完整的认证范围，包括全部产品和服务及其活动..."></textarea>
+                    <textarea class="form-textarea" id="certEdit_scope" rows="3" placeholder="请输入完整的认证范围，包括全部产品和服务及其活动..." oninput="syncMainCertSiteFromCustomerInfo()"></textarea>
                 </div>
                 <div class="form-row">
                     <label class="form-label">认证范围（英文）</label>
                     <textarea class="form-textarea" id="certEdit_scopeEn" rows="3" placeholder="English scope..."></textarea>
                 </div>
 
-                <!-- 7. 认证标准（放置在6下方，不可修改） -->
+                <!-- 7. 认证标准 -->
                 <div class="form-row" style="margin-top: 12px;">
                     <label class="form-label">7. 认证标准 <span class="text-red-500">*</span></label>
-                    <input type="text" class="form-input" id="certEdit_standard" value="ISO 9001:2015" readonly style="background:#f5f5f5; cursor:not-allowed;">
+                    <select class="form-select" id="certEdit_standard">
+                        <option value="ISO 9001:2015">ISO 9001:2015</option>
+                        <option value="ISO 14001:2015">ISO 14001:2015</option>
+                        <option value="ISO 45001:2018">ISO 45001:2018</option>
+                        <option value="ISO 22000:2018">ISO 22000:2018</option>
+                        <option value="ISO/IEC 27001:2022">ISO/IEC 27001:2022</option>
+                    </select>
                 </div>
 
                 <!-- 8. 认证证书标志（放置在6下方，与10同行，改为单选） -->
@@ -3800,7 +3803,7 @@
                             <th style="width: 50px">序号</th>
                             <th>（组织/场所）名称</th>
                             <th style="width: 150px">统一信用代码</th>
-                            <th>地址</th>
+                            <th>运营地址</th>
                             <th>覆盖的产品和服务</th>
                             <th style="width: 140px">客户需要子证/是否出子证</th>
                             <th style="width: 150px">备注</th>
@@ -3977,7 +3980,7 @@
                 hasSubCert: 'yes',
                 isMultiSite: '是',
                 sites: [
-                    { name: '运营地址（中心职能）', code: '91110108XXXXXXXXXX', address: '北京市海淀区中关村大街1号', products: '软件开发、系统集成', subCert: 'no', remark: '-' },
+                    { name: '华信环境监测技术中心', code: '91110108XXXXXXXXXX', address: '北京市海淀区中关村大街1号', products: '软件开发、系统集成', subCert: 'no', remark: '-' },
                     { name: '生产现场一', code: '91110108XXXXXXXX01', address: '北京市昌平区生产基地', products: '硬件制造', subCert: 'yes', remark: '颁发子证书' },
                     { name: '研发中心', code: '91110108XXXXXXXX02', address: '北京市朝阳区研发大厦', products: '软件研发', subCert: 'yes', remark: '颁发子证书' },
                     { name: '分公司', code: '91110108XXXXXXXX03', address: '上海市浦东新区', products: '销售服务', subCert: 'no', remark: '-' },
@@ -4003,7 +4006,7 @@
                 hasSubCert: 'no',
                 isMultiSite: '否',
                 sites: [
-                    { name: '运营地址（中心职能）', code: '91110108XXXXXXXXXX', address: '北京市海淀区中关村大街1号', products: '环境监测服务', subCert: 'no', remark: '-' }
+                    { name: '华信环境监测技术中心', code: '91110108XXXXXXXXXX', address: '北京市海淀区中关村大街1号', products: '环境监测服务', subCert: 'no', remark: '-' }
                 ],
                 products: []
             }
@@ -4301,15 +4304,45 @@
             }
         }
 
+        function getCertMainSiteName() {
+            return document.getElementById('certEdit_customerName')?.value || document.getElementById('headerCustomerName')?.textContent || '客户名称';
+        }
+
+        function getCertMainSiteAddress() {
+            return document.getElementById('certEdit_certAddress')?.value || document.getElementById('certDrawerCertAddress')?.textContent || '';
+        }
+
+        function getCertMainSiteCode() {
+            return document.getElementById('certEdit_creditCode')?.value || document.getElementById('certDrawerCreditCode')?.textContent || '';
+        }
+
+        function getCertMainSiteProducts() {
+            return document.getElementById('certEdit_scope')?.value || '';
+        }
+
+        function syncMainCertSiteFromCustomerInfo() {
+            const firstRow = document.querySelector('#certSitesTableBody tr');
+            if (!firstRow) return;
+
+            const nameInput = firstRow.querySelector('.cert-site-name-input');
+            const codeInput = firstRow.querySelector('.cert-site-code-input');
+            const addressInput = firstRow.querySelector('.cert-site-address-input');
+            const productsInput = firstRow.querySelector('.cert-site-products-input');
+            if (nameInput) nameInput.value = getCertMainSiteName();
+            if (codeInput) codeInput.value = getCertMainSiteCode();
+            if (addressInput) addressInput.value = getCertMainSiteAddress();
+            if (productsInput) productsInput.value = getCertMainSiteProducts();
+        }
+
         function autoFillCertSites(sitesInfo) {
             const tbody = document.getElementById('certSitesTableBody');
             tbody.innerHTML = '';
             
             const mainSite = sitesInfo.find(s => s.isMain) || {
-                name: '运营地址（中心职能）',
-                code: '91110108XXXXXXXXXX',
-                address: '北京市海淀区中关村大街1号',
-                products: '软件开发、系统集成'
+                name: getCertMainSiteName(),
+                code: getCertMainSiteCode(),
+                address: getCertMainSiteAddress(),
+                products: getCertMainSiteProducts()
             };
             
             const tableData = [
@@ -4328,6 +4361,7 @@
                     }
                 }
             }
+            tableData[0] = { ...tableData[0], name: getCertMainSiteName(), code: getCertMainSiteCode(), address: getCertMainSiteAddress(), products: getCertMainSiteProducts(), isMain: true };
             
             tableData.forEach((site, index) => {
                 const isMain = site.isMain || index === 0;
@@ -4341,10 +4375,10 @@
                 
                 tr.innerHTML = `
                     <td>${index + 1}</td>
-                    <td><input type="text" class="form-input" value="${site.name || ''}" ${isMain ? 'readonly style="background:#f5f5f5"' : ''}></td>
-                    <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">${site.code || ''}</textarea></td>
-                    <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">${site.address || ''}</textarea></td>
-                    <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">${site.products || ''}</textarea></td>
+                    <td><input type="text" class="form-input cert-site-name-input" value="${site.name || ''}" ${isMain ? 'readonly style="background:#f5f5f5; cursor:not-allowed;"' : ''}></td>
+                    <td><textarea class="form-input cert-site-code-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.code || ''}</textarea></td>
+                    <td><textarea class="form-input cert-site-address-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.address || ''}</textarea></td>
+                    <td><textarea class="form-input cert-site-products-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.products || ''}</textarea></td>
                     <td>
                         <div style="display:flex;align-items:center;gap:4px;">
                             <span class="subcert-readonly" style="font-size:12px;color:var(--color-text-muted);white-space:nowrap;">${subCertValue}</span>
@@ -4471,7 +4505,7 @@
             tbody.innerHTML = '';
             
             const defaultSites = [
-                { name: '运营地址（中心职能）', code: '91110108XXXXXXXXXX', address: '北京市海淀区中关村大街1号', products: '软件开发、系统集成', subCert: 'no', remark: '-', isMain: true },
+                { name: getCertMainSiteName(), code: getCertMainSiteCode(), address: getCertMainSiteAddress(), products: getCertMainSiteProducts(), subCert: 'no', remark: '-', isMain: true },
                 { name: '生产现场一', code: '91110108XXXXXXXX01', address: '北京市昌平区生产基地', products: '硬件制造', subCert: 'yes', remark: '' },
                 { name: '研发中心', code: '91110108XXXXXXXX02', address: '北京市朝阳区研发大厦', products: '软件研发', subCert: 'yes', remark: '' },
                 { name: '分公司', code: '91110108XXXXXXXX03', address: '上海市浦东新区', products: '销售服务', subCert: 'no', remark: '' },
@@ -4486,6 +4520,7 @@
                     displaySites.push(defaultSites[i]);
                 }
             }
+            displaySites[0] = { ...displaySites[0], name: getCertMainSiteName(), code: getCertMainSiteCode(), address: getCertMainSiteAddress(), products: getCertMainSiteProducts(), isMain: true };
             
             displaySites.forEach((site, index) => {
                 const isMain = site.isMain || index === 0;
@@ -4499,10 +4534,10 @@
                 
                 tr.innerHTML = `
                     <td>${index + 1}</td>
-                    <td><input type="text" class="form-input" value="${site.name || ''}" ${isMain ? 'readonly style="background:#f5f5f5"' : ''}></td>
-                    <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">${site.code || ''}</textarea></td>
-                    <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">${site.address || ''}</textarea></td>
-                    <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">${site.products || ''}</textarea></td>
+                    <td><input type="text" class="form-input cert-site-name-input" value="${site.name || ''}" ${isMain ? 'readonly style="background:#f5f5f5; cursor:not-allowed;"' : ''}></td>
+                    <td><textarea class="form-input cert-site-code-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.code || ''}</textarea></td>
+                    <td><textarea class="form-input cert-site-address-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.address || ''}</textarea></td>
+                    <td><textarea class="form-input cert-site-products-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.products || ''}</textarea></td>
                     <td>
                         <div style="display:flex;align-items:center;gap:4px;">
                             <span class="subcert-readonly" style="font-size:12px;color:var(--color-text-muted);white-space:nowrap;">${subCertValue}</span>
@@ -4624,14 +4659,14 @@
             
             const siteRows = document.querySelectorAll('#certSitesTableBody tr');
             siteRows.forEach((row, index) => {
-                const inputs = row.querySelectorAll('input');
+                const inputs = row.querySelectorAll('input, textarea');
                 const select = row.querySelector('.cert-subcert-select');
                 if (inputs.length >= 4) {
                     data.sites.push({
-                        name: inputs[0].value,
-                        code: inputs[1].value,
-                        address: inputs[2].value,
-                        products: inputs[3].value,
+                        name: index === 0 ? data.customerName : inputs[0].value,
+                        code: index === 0 ? data.creditCode : inputs[1].value,
+                        address: index === 0 ? data.certAddress : inputs[2].value,
+                        products: index === 0 ? data.scope : inputs[3].value,
                         subCert: select ? select.value : 'no',
                         remark: inputs[4] ? inputs[4].value : '',
                         isMain: index === 0
@@ -4642,7 +4677,7 @@
             const prodRows = document.querySelectorAll('#certProductsTableBody tr');
             prodRows.forEach(row => {
                 if (row.cells.length > 1) {
-                    const inputs = row.querySelectorAll('input');
+                    const inputs = row.querySelectorAll('input, textarea');
                     if (inputs.length >= 2) {
                         data.products.push({
                             category: inputs[0].value,
@@ -5447,7 +5482,7 @@
                 hasSubCert: 'yes',
                 isMultiSite: '是',
                 sites: [
-                    { name: '运营地址（中心职能）', code: '91110108XXXXXXXXXX', address: '北京市海淀区中关村大街1号', products: '软件开发、系统集成', subCert: 'no', remark: '-' },
+                    { name: '华信环境监测技术中心', code: '91110108XXXXXXXXXX', address: '北京市海淀区中关村大街1号', products: '软件开发、系统集成', subCert: 'no', remark: '-' },
                     { name: '生产现场一', code: '91110108XXXXXXXX01', address: '北京市昌平区生产基地', products: '硬件制造', subCert: 'yes', remark: '颁发子证书' },
                     { name: '研发中心', code: '91110108XXXXXXXX02', address: '北京市朝阳区研发大厦', products: '软件研发', subCert: 'yes', remark: '颁发子证书' },
                     { name: '分公司', code: '91110108XXXXXXXX03', address: '上海市浦东新区', products: '销售服务', subCert: 'no', remark: '-' },
@@ -5473,7 +5508,7 @@
                 hasSubCert: 'no',
                 isMultiSite: '否',
                 sites: [
-                    { name: '运营地址（中心职能）', code: '91110108XXXXXXXXXX', address: '北京市海淀区中关村大街1号', products: '环境监测服务', subCert: 'no', remark: '-' }
+                    { name: '华信环境监测技术中心', code: '91110108XXXXXXXXXX', address: '北京市海淀区中关村大街1号', products: '环境监测服务', subCert: 'no', remark: '-' }
                 ],
                 products: []
             }
