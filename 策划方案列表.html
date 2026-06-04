@@ -508,13 +508,12 @@
             </div>
 
             <div class="flex flex-col gap-1.5">
-                <label class="text-sm text-gray-600 font-medium">策划状态</label>
-                <select id="filterStatus" class="w-40 h-9 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all bg-white">
+                <label class="text-sm text-gray-600 font-medium">认证领域</label>
+                <select id="filterDomain" class="w-40 h-9 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all bg-white">
                     <option value="">全部</option>
-                    <option value="pending">待策划</option>
-                    <option value="notified">已通知审核</option>
-                    <option value="notify">待通知审核</option>
-                    <option value="planned">已策划</option>
+                    <option value="QMS">QMS</option>
+                    <option value="EMS">EMS</option>
+                    <option value="OHSMS">OHSMS</option>
                 </select>
             </div>
 
@@ -525,6 +524,7 @@
                     <option value="initial">初次认证</option>
                     <option value="supervise">监督</option>
                     <option value="rc">再认证</option>
+                    <option value="certChange">证书变更审核</option>
                     <option value="temp">临时审核</option>
                 </select>
             </div>
@@ -973,6 +973,7 @@
                 else if (item.currentType === '监督二') { typeBgClass = 'bg-green-50'; typeTextClass = 'text-green-700'; }
                 else if (item.currentType === '监督一+变更') { typeBgClass = 'bg-amber-50'; typeTextClass = 'text-amber-700'; }
                 else if (item.currentType === '再认证') { typeBgClass = 'bg-purple-50'; typeTextClass = 'text-purple-700'; }
+                else if (item.currentType === '证书变更审核') { typeBgClass = 'bg-orange-50'; typeTextClass = 'text-orange-700'; }
                 else if (item.currentType === '临时审核') { typeBgClass = 'bg-cyan-50'; typeTextClass = 'text-cyan-700'; }
 
                 tr.innerHTML = `
@@ -1094,27 +1095,20 @@
         function applyFilter() {
             const no = document.getElementById('filterNo').value.toLowerCase();
             const customer = document.getElementById('filterCustomer').value;
-            const status = document.getElementById('filterStatus').value;
+            const domain = document.getElementById('filterDomain').value;
             const type = document.getElementById('filterType').value;
             const region = document.getElementById('filterRegion').value;
             const service = document.getElementById('filterService').value;
             const contact = document.getElementById('filterContact').value;
 
             filteredData = allData.filter(item => {
-                let statusMatch = true;
-                if (status === 'pending') statusMatch = item.status === '待策划';
-                else if (status === 'notified') statusMatch = item.status === '已通知审核';
-                else if (status === 'notify') statusMatch = item.status === '待通知审核';
-                else if (status === 'planned') statusMatch = item.status === '已策划';
-                else statusMatch = true;
-
                 const customerMatch = !customer || item.customer.toLowerCase().includes(customer.toLowerCase());
                 const serviceMatch = !service || item.service.toLowerCase().includes(service.toLowerCase());
                 const contactMatch = !contact || item.contact.toLowerCase().includes(contact.toLowerCase());
 
                 return (no === '' || item.no.toLowerCase().includes(no)) &&
                        customerMatch &&
-                       statusMatch &&
+                       (domain === '' || item.domain === domain) &&
                        (type === '' || (type === 'supervise' && (item.currentType.includes('监督'))) || item.currentType === getTypeText(type)) &&
                        (region === '' || item.region === region) &&
                        serviceMatch &&
@@ -1132,6 +1126,7 @@
                 'initial': '初次认证',
                 'supervise': '监督',
                 'rc': '再认证',
+                'certChange': '证书变更审核',
                 'temp': '临时审核'
             };
             return typeMap[typeValue] || typeValue;
@@ -1140,7 +1135,7 @@
         function resetFilter() {
             document.getElementById('filterNo').value = '';
             document.getElementById('filterCustomer').value = '';
-            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterDomain').value = '';
             document.getElementById('filterType').value = '';
             document.getElementById('filterRegion').value = '';
             document.getElementById('filterService').value = '';
