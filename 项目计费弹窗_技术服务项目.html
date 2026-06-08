@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>项目计费</title>
+  <style>
+    :root {
+      --brand: #0052d9;
+      --brand-hover: #366ef4;
+      --text: rgba(0, 0, 0, .9);
+      --muted: rgba(0, 0, 0, .56);
+      --line: #e7e7e7;
+      --page: #f3f4f7;
+      --panel: #fff;
+      --green: #008858;
+      --red: #d54941;
+      --amber: #e37318;
+      --blue-soft: #eef4ff;
+      --shadow: 0 8px 24px rgba(0, 0, 0, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background: var(--page);
+      font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    button, input, select, textarea { font: inherit; }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+    }
+
+    .open-button {
+      height: 44px;
+      padding: 0 22px;
+      border: 0;
+      border-radius: 4px;
+      color: #fff;
+      background: var(--brand);
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(0, 82, 217, .18);
+    }
+
+    .open-button:hover, .primary:hover { background: var(--brand-hover); }
+
+    .drawer {
+      position: fixed;
+      inset: 0 0 0 auto;
+      width: min(1200px, 100vw);
+      background: var(--panel);
+      box-shadow: -8px 0 28px rgba(0, 0, 0, .13);
+      display: grid;
+      grid-template-rows: 57px 1fr 65px;
+      transform: translateX(0);
+      transition: transform .22s ease;
+      z-index: 20;
+    }
+
+    .drawer.closed { transform: translateX(100%); }
+
+    .drawer-header, .drawer-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .drawer-footer {
+      border-top: 1px solid var(--line);
+      border-bottom: 0;
+      gap: 16px;
+    }
+
+    .title-wrap { display: flex; align-items: center; gap: 10px; }
+    .title { font-size: 20px; font-weight: 700; }
+    .tag { color: #0052d9; background: #e8f1ff; border-radius: 3px; padding: 2px 8px; font-size: 12px; }
+    .close { border: 0; background: transparent; cursor: pointer; color: #6b7280; font-size: 24px; line-height: 1; }
+
+    .drawer-body {
+      overflow: auto;
+      padding: 18px 24px 24px;
+      background: #fff;
+    }
+
+    .section { margin-bottom: 30px; }
+    .section-title {
+      margin: 0 0 16px;
+      padding-left: 10px;
+      border-left: 4px solid var(--brand);
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 700;
+    }
+
+    .info-grid, .form-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 22px 24px;
+    }
+
+    .info-label, label, .field-label { color: var(--muted); font-size: 14px; margin-bottom: 6px; display: block; }
+    .info-value { font-weight: 600; min-height: 22px; }
+
+    .notice {
+      height: 37px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 24px;
+      padding: 0 14px;
+      color: #e37318;
+      background: #fff7ed;
+      border: 1px solid #ffd8a8;
+      border-radius: 3px;
+    }
+
+    .radio-row { display: flex; align-items: center; gap: 20px; min-height: 36px; }
+    .radio-row label { display: inline-flex; align-items: center; gap: 6px; margin: 0; color: var(--text); }
+
+    .control {
+      width: 100%;
+      height: 36px;
+      border: 1px solid #dcdcdc;
+      border-radius: 3px;
+      padding: 0 10px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+    }
+
+    .control:focus { border-color: var(--brand); box-shadow: 0 0 0 2px rgba(0, 82, 217, .1); }
+    .control[readonly], .control:disabled { background: #f7f8fa; color: #646464; cursor: default; }
+    .picker { cursor: pointer; background: #fff; }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 960px;
+      background: #fff;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    th { color: #444; background: #fafafa; font-weight: 600; }
+    tr:last-child td { border-bottom: 0; }
+    td .control { min-width: 130px; }
+
+    .danger-text {
+      border: 0;
+      color: var(--red);
+      background: transparent;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .add-row {
+      display: block;
+      width: min(360px, 100%);
+      height: 38px;
+      margin: 24px auto 0;
+      border: 1px dashed #c9c9c9;
+      border-radius: 4px;
+      background: #fff;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .upload-list { display: grid; gap: 16px; }
+    .upload-card {
+      border: 1px solid #dedede;
+      background: #fafafa;
+      border-radius: 8px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: 86px;
+      cursor: pointer;
+    }
+
+    .upload-card.required { border-color: #8fd6ac; background: #f5fff8; }
+    .upload-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
+    .upload-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: #fff3d8;
+      color: #d97706;
+      font-size: 22px;
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    .required .upload-icon { background: #ffe8e8; color: #d54941; }
+    .upload-name { font-size: 16px; font-weight: 600; }
+    .upload-state { margin-top: 4px; color: var(--muted); }
+    .required .upload-state { color: var(--red); }
+
+    .summary {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 26px;
+      color: #333;
+    }
+
+    .amount { font-size: 18px; font-weight: 700; }
+    .income { color: var(--green); }
+    .cost { color: var(--red); }
+    .net { color: var(--brand); }
+
+    .actions { display: flex; align-items: center; gap: 12px; }
+    .btn {
+      height: 36px;
+      min-width: 72px;
+      padding: 0 16px;
+      border-radius: 4px;
+      border: 1px solid #d8d8d8;
+      background: #fff;
+      cursor: pointer;
+      color: #222;
+    }
+
+    .primary { border-color: var(--brand); background: var(--brand); color: #fff; }
+    .outline { color: var(--brand); border-color: var(--brand); background: #fff; }
+
+    .modal-mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .34);
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 10vh;
+      z-index: 50;
+    }
+
+    .modal-mask.show { display: flex; }
+
+    .modal {
+      width: min(900px, calc(100vw - 36px));
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .modal.small { width: min(800px, calc(100vw - 36px)); }
+    .modal-header, .modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modal-footer { justify-content: flex-end; gap: 12px; border-top: 1px solid var(--line); border-bottom: 0; }
+    .modal-title { font-size: 16px; font-weight: 700; }
+    .modal-body { padding: 18px; }
+
+    .filter-box {
+      background: #f7f8fa;
+      border-radius: 4px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .filter-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px; }
+    .type-tag { display: inline-block; padding: 3px 8px; border-radius: 3px; font-size: 12px; }
+    .type-inner { color: #0052d9; background: #e8f1ff; }
+    .type-outer { color: #d54941; background: #fff0ed; }
+    .pagination { margin-top: 12px; color: var(--muted); text-align: right; }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 80;
+      padding: 10px 16px;
+      border-radius: 4px;
+      color: #fff;
+      background: #2ba471;
+      box-shadow: var(--shadow);
+      display: none;
+    }
+
+    .toast.warn { background: #e37318; }
+    .toast.show { display: block; }
+
+    @media (max-width: 900px) {
+      .info-grid, .form-grid, .filter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .drawer-footer { align-items: flex-start; flex-direction: column; height: auto; padding: 12px 18px; }
+      .drawer { grid-template-rows: 57px 1fr auto; }
+    }
+
+    @media (max-width: 560px) {
+      .page { padding: 18px; }
+      .drawer-body { padding: 16px; }
+      .info-grid, .form-grid, .filter-grid { grid-template-columns: 1fr; }
+      .summary { gap: 10px; }
+      .actions { width: 100%; justify-content: flex-end; }
+      .upload-card { align-items: stretch; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <button class="open-button" id="openDrawer">打开项目计费</button>
+  </div>
+
+  <aside class="drawer" id="drawer" aria-label="项目计费">
+    <header class="drawer-header">
+      <div class="title-wrap">
+        <span class="title">项目计费</span>
+        <span class="tag">技术服务项目</span>
+      </div>
+      <button class="close" id="closeDrawer" aria-label="关闭">×</button>
+    </header>
+
+    <main class="drawer-body">
+      <section class="section">
+        <h2 class="section-title">基本信息</h2>
+        <div class="info-grid">
+          <div><div class="info-label">项目编号</div><div class="info-value">1100/Q0/2026/0001</div></div>
+          <div><div class="info-label">客户名称</div><div class="info-value">北京中检技术服务有限公司</div></div>
+          <div><div class="info-label">项目类型</div><div class="info-value">技术服务项目</div></div>
+          <div><div class="info-label">关键场所机构</div><div class="info-value">北京总部</div></div>
+          <div><div class="info-label">业务来源机构</div><div class="info-value">华北区业务部</div></div>
+          <div><div class="info-label">计划启动日期</div><div class="info-value">2026-04-15</div></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">收费信息</h2>
+        <div class="notice">注意：一个年度的项目仅能关联一个合同，重复关联将被拦截。</div>
+        <div class="form-grid">
+          <div>
+            <span class="field-label">收费来源类型</span>
+            <div class="radio-row">
+              <label><input type="radio" name="revenueSource" value="1" checked> 合同</label>
+              <label><input type="radio" name="revenueSource" value="2"> 结算单</label>
+            </div>
+          </div>
+          <div>
+            <label for="contractNo">关联业务合同</label>
+            <input class="control picker" id="contractNo" placeholder="请选择" readonly>
+          </div>
+          <div>
+            <label for="revenueAmount">收费金额 (元)</label>
+            <input class="control" id="revenueAmount" type="number" min="0" placeholder="请输入收费金额">
+          </div>
+          <div>
+            <label for="remainingAmount">合同剩余金额 (元)</label>
+            <input class="control" id="remainingAmount" placeholder="自动计算" readonly>
+          </div>
+          <div>
+            <label>归属机构</label>
+            <select class="control" disabled><option>北京分公司</option></select>
+          </div>
+          <div>
+            <label>归属部门</label>
+            <select class="control" disabled><option>审核部</option></select>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">成本信息</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>外付类型</th>
+                <th>成本类型</th>
+                <th>外付对象</th>
+                <th>归属机构</th>
+                <th>归属部门</th>
+                <th>成本金额 (元)</th>
+                <th>备注</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="costBody"></tbody>
+          </table>
+        </div>
+        <button class="add-row" id="addCost">＋ 添加成本行</button>
+      </section>
+
+      <section class="section">
+        <h2 class="section-title">附件信息</h2>
+        <div class="upload-list">
+          <label class="upload-card" id="settlementCard">
+            <input type="file" id="settlementFiles" multiple hidden>
+            <div class="upload-left">
+              <div class="upload-icon">▣</div>
+              <div>
+                <div class="upload-name">结算单附件</div>
+                <div class="upload-state" id="settlementState">选填</div>
+              </div>
+            </div>
+            <button type="button" class="btn primary">上传</button>
+          </label>
+          <label class="upload-card">
+            <input type="file" id="otherFiles" multiple hidden>
+            <div class="upload-left">
+              <div class="upload-icon">▣</div>
+              <div>
+                <div class="upload-name">其他附件 (如项目立项审批单等)</div>
+                <div class="upload-state" id="otherState">选填</div>
+              </div>
+            </div>
+            <button type="button" class="btn outline">上传</button>
+          </label>
+        </div>
+      </section>
+    </main>
+
+    <footer class="drawer-footer">
+      <div class="summary">
+        <div>总收入：<span class="amount income" id="sumIncome">¥ 0.00</span></div>
+        <div>总成本：<span class="amount cost" id="sumCost">¥ 0.00</span></div>
+        <div>净收入：<span class="amount net" id="sumNet">¥ 0.00</span></div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="cancelBtn">取消</button>
+        <button class="btn primary" id="submitBtn">确定</button>
+      </div>
+    </footer>
+  </aside>
+
+  <div class="modal-mask" id="contractModal">
+    <div class="modal">
+      <div class="modal-header"><div class="modal-title">选择业务合同</div><button class="close" data-close-modal>×</button></div>
+      <div class="modal-body">
+        <div class="filter-box">
+          <div class="filter-grid">
+            <div><label>合同编号</label><input class="control" placeholder="请输入"></div>
+            <div><label>合同名称</label><input class="control" placeholder="请输入"></div>
+            <div><label>客户名称</label><input class="control" placeholder="请输入"></div>
+          </div>
+          <div class="filter-actions"><button class="btn primary">查询</button><button class="btn">重置</button></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th></th><th>合同编号</th><th>合同名称</th><th>客户</th><th>签订日期</th></tr></thead>
+            <tbody id="contractRows"></tbody>
+          </table>
+        </div>
+        <div class="pagination">共 12 条，每页 5 条</div>
+      </div>
+      <div class="modal-footer"><button class="btn" data-close-modal>取消</button><button class="btn primary" id="selectContract">确定</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="supplierModal">
+    <div class="modal small">
+      <div class="modal-header"><div class="modal-title">选择外付对象</div><button class="close" data-close-modal>×</button></div>
+      <div class="modal-body">
+        <div class="filter-box">
+          <div class="filter-grid">
+            <div><label>供应商名称</label><input class="control" placeholder="请输入"></div>
+            <div><label>信用代码</label><input class="control" placeholder="请输入"></div>
+            <div><label>供应商类型</label><select class="control"><option>全部</option><option>内部供应商</option><option>外部供应商</option></select></div>
+          </div>
+          <div class="filter-actions"><button class="btn primary">查询</button><button class="btn">重置</button></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th></th><th>供应商名称</th><th>社会信用代码</th><th>类型</th></tr></thead>
+            <tbody id="supplierRows"></tbody>
+          </table>
+        </div>
+        <div class="pagination">共 42 条，每页 5 条</div>
+      </div>
+      <div class="modal-footer"><button class="btn" data-close-modal>取消</button><button class="btn primary" id="selectSupplier">确定</button></div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="personModal">
+    <div class="modal">
+      <div class="modal-header"><div class="modal-title">选择人员</div><button class="close" data-close-modal>×</button></div>
+      <div class="modal-body">
+        <div class="filter-box">
+          <div class="filter-grid">
+            <div><label>人员姓名</label><input class="control" placeholder="请输入"></div>
+            <div><label>人员编号</label><input class="control" placeholder="请输入"></div>
+            <div><label>所属单位</label><input class="control" placeholder="全部"></div>
+          </div>
+          <div class="filter-actions"><button class="btn primary">查询</button><button class="btn">重置</button></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th></th><th>人员姓名</th><th>人员编号</th><th>所属单位</th><th>所属部门</th></tr></thead>
+            <tbody id="personRows"></tbody>
+          </table>
+        </div>
+        <div class="pagination">共 128 条，每页 5 条</div>
+      </div>
+      <div class="modal-footer"><button class="btn" data-close-modal>取消</button><button class="btn primary" id="selectPerson">确定</button></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const contracts = [
+      { id: "1", contractNo: "HT-BJ-2026-0089", contractName: "2026年度质量体系认证技术服务...", customerName: "北京中检技术服务有限公司", signDate: "2026-01-15", totalAmount: 1000000 },
+      { id: "2", contractNo: "HT-SH-2026-0124", contractName: "博格华纳一期环境评估与认证合同", customerName: "博格华纳汽车零部件有限公司", signDate: "2026-02-10", totalAmount: 1000000 },
+      { id: "3", contractNo: "HT-BJ-2026-0201", contractName: "信息安全与服务管理体系专项协议", customerName: "北京科技有限公司", signDate: "2026-03-05", totalAmount: 1000000 },
+      { id: "4", contractNo: "HT-GZ-2025-0882", contractName: "2025-2027年实验室认可咨询服...", customerName: "广州市华南认证审核中心", signDate: "2025-11-20", totalAmount: 1000000 },
+      { id: "5", contractNo: "HT-CD-2026-0045", contractName: "天府新区供应商二方审核委托合同", customerName: "成都天府质量管理咨询服务部", signDate: "2026-01-08", totalAmount: 1000000 }
+    ];
+
+    const suppliers = [
+      { id: "1", name: "北京中检技术服务有限公司", creditCode: "91110108MA01KXXXXX", type: "内部供应商" },
+      { id: "2", name: "上海某某检测科技有限公司", creditCode: "91310115MA1H2YYYYY", type: "外部供应商" },
+      { id: "3", name: "广州市华南认证审核中心", creditCode: "91440106MA5A7ZZZZZ", type: "内部供应商" },
+      { id: "4", name: "深圳市博格华纳零配件制造厂", creditCode: "91440300MA5EXAAAAA", type: "外部供应商" },
+      { id: "5", name: "成都天府质量管理咨询服务部", creditCode: "92510100MA6BQBBBBB", type: "外部供应商" }
+    ];
+
+    const persons = [
+      { id: "1", name: "林建国", empNo: "CCIC-880192", company: "中国检验认证集团", organization: "辽宁分公司", department: "体系审核部" },
+      { id: "2", name: "陈晓", empNo: "BW-Q-20381", company: "中国检验认证集团", organization: "辽宁分公司", department: "质量管理部" },
+      { id: "3", name: "王伟", empNo: "CCIC-880205", company: "中国检验认证集团", organization: "辽宁分公司", department: "技术服务中心" },
+      { id: "4", name: "赵梦琪", empNo: "EXT-A-0912", company: "中国检验认证集团", organization: "辽宁分公司", department: "认证一部" },
+      { id: "5", name: "刘强", empNo: "BW-E-10552", company: "中国检验认证集团", organization: "辽宁分公司", department: "工程支持部" }
+    ];
+
+    const state = {
+      contractTotal: 0,
+      activeCostIndex: 0,
+      costRows: [{ id: Date.now(), costType: "", payeeType: "", payeeName: "", organization: "", department: "", amount: "", remarks: "" }]
+    };
+
+    const $ = selector => document.querySelector(selector);
+    const money = value => "¥ " + (Number(value || 0)).toFixed(2);
+    const costTypeOptions = {
+      "企业": ["技术服务费（0102分包）", "企业佣金（0302企业佣金）", "差旅费", "劳务费", "认可费"],
+      "个人": ["个人佣金", "差旅费", "劳务费", "认可费"]
+    };
+
+    function renderCostTypeOptions(payeeType) {
+      const options = costTypeOptions[payeeType] || [];
+      return `<option value="">${payeeType ? "请选择" : "请先选择外付类型"}</option>` + options.map(item => `<option>${item}</option>`).join("");
+    }
+
+    function showToast(text, warn = false) {
+      const toast = $("#toast");
+      toast.textContent = text;
+      toast.className = "toast show" + (warn ? " warn" : "");
+      setTimeout(() => toast.className = "toast", 1800);
+    }
+
+    function openModal(id) { $(id).classList.add("show"); }
+    function closeModals() { document.querySelectorAll(".modal-mask").forEach(item => item.classList.remove("show")); }
+
+    function renderLookupRows() {
+      $("#contractRows").innerHTML = contracts.map(item => `
+        <tr>
+          <td><input type="radio" name="contractPick" value="${item.id}"></td>
+          <td>${item.contractNo}</td><td>${item.contractName}</td><td>${item.customerName}</td><td>${item.signDate}</td>
+        </tr>`).join("");
+
+      $("#supplierRows").innerHTML = suppliers.map(item => `
+        <tr>
+          <td><input type="radio" name="supplierPick" value="${item.id}"></td>
+          <td>${item.name}</td><td>${item.creditCode}</td>
+          <td><span class="type-tag ${item.type === "内部供应商" ? "type-inner" : "type-outer"}">${item.type}</span></td>
+        </tr>`).join("");
+
+      $("#personRows").innerHTML = persons.map(item => `
+        <tr>
+          <td><input type="radio" name="personPick" value="${item.id}"></td>
+          <td>${item.name}</td><td>${item.empNo}</td><td>${item.company}</td><td>${item.department}</td>
+        </tr>`).join("");
+    }
+
+    function renderCosts() {
+      $("#costBody").innerHTML = state.costRows.map((row, index) => `
+        <tr>
+          <td><select class="control" data-field="payeeType" data-index="${index}">
+            <option value="">请选择</option><option>企业</option><option>个人</option>
+          </select></td>
+          <td><select class="control" data-field="costType" data-index="${index}" ${row.payeeType ? "" : "disabled"}>
+            ${renderCostTypeOptions(row.payeeType)}
+          </select></td>
+          <td><input class="control picker" data-pick-payee="${index}" value="${row.payeeName}" readonly placeholder="${row.payeeType ? "点击选择" : "请先选择外付类型"}"></td>
+          <td>${row.payeeType === "企业"
+            ? `<select class="control" data-field="organization" data-index="${index}"><option value="">请选择机构</option><option>中国质量认证中心（CQC）</option><option>中国检验认证集团北京有限公司</option><option>中国检验认证集团上海有限公司</option><option>中国检验认证集团广东有限公司</option><option>中国检验认证集团江苏有限公司</option></select>`
+            : `<span>-</span>`}</td>
+          <td>${row.payeeType === "企业"
+            ? `<select class="control" data-field="department" data-index="${index}"><option value="">请选择部门</option><option>体系认证一部</option><option>体系认证二部</option><option>工业产品审核部</option><option>环境与职业健康安全审核部</option><option>食品农产品认证审核部</option></select>`
+            : `<span>-</span>`}</td>
+          <td><input class="control" type="number" min="0" data-field="amount" data-index="${index}" value="${row.amount}" placeholder="输入数值"></td>
+          <td><input class="control" data-field="remarks" data-index="${index}" value="${row.remarks}" placeholder="请输入"></td>
+          <td><button class="danger-text" data-delete="${index}" title="删除">×</button></td>
+        </tr>`).join("");
+
+      state.costRows.forEach((row, index) => {
+        document.querySelectorAll(`[data-index="${index}"]`).forEach(input => {
+          if (input.tagName === "SELECT" && row[input.dataset.field]) input.value = row[input.dataset.field];
+        });
+      });
+      updateSummary();
+    }
+
+    function updateSummary() {
+      const income = Number($("#revenueAmount").value || 0);
+      const cost = state.costRows.reduce((sum, row) => sum + Number(row.amount || 0), 0);
+      $("#remainingAmount").value = state.contractTotal ? String(state.contractTotal - income) : "";
+      $("#sumIncome").textContent = money(income);
+      $("#sumCost").textContent = money(cost);
+      $("#sumNet").textContent = money(income - cost);
+    }
+
+    function updateAttachmentState() {
+      const source = document.querySelector("input[name='revenueSource']:checked").value;
+      const required = source === "2";
+      $("#settlementCard").classList.toggle("required", required);
+      $("#settlementState").textContent = required ? "必填" : "选填";
+    }
+
+    $("#openDrawer").addEventListener("click", () => $("#drawer").classList.remove("closed"));
+    $("#closeDrawer").addEventListener("click", () => $("#drawer").classList.add("closed"));
+    $("#cancelBtn").addEventListener("click", () => $("#drawer").classList.add("closed"));
+    $("#contractNo").addEventListener("click", () => openModal("#contractModal"));
+    $("#revenueAmount").addEventListener("input", updateSummary);
+
+    document.querySelectorAll("input[name='revenueSource']").forEach(input => {
+      input.addEventListener("change", updateAttachmentState);
+    });
+
+    $("#addCost").addEventListener("click", () => {
+      state.costRows.push({ id: Date.now(), costType: "", payeeType: "", payeeName: "", organization: "", department: "", amount: "", remarks: "" });
+      renderCosts();
+    });
+
+    $("#costBody").addEventListener("input", event => {
+      const target = event.target;
+      const index = Number(target.dataset.index);
+      if (!Number.isNaN(index) && target.dataset.field) {
+        state.costRows[index][target.dataset.field] = target.value;
+        updateSummary();
+      }
+    });
+
+    $("#costBody").addEventListener("change", event => {
+      const target = event.target;
+      const index = Number(target.dataset.index);
+      if (Number.isNaN(index) || !target.dataset.field) return;
+      state.costRows[index][target.dataset.field] = target.value;
+      if (target.dataset.field === "payeeType") {
+        Object.assign(state.costRows[index], { costType: "", payeeName: "", organization: "", department: "" });
+        renderCosts();
+      }
+    });
+
+    $("#costBody").addEventListener("click", event => {
+      const deleteIndex = event.target.dataset.delete;
+      const pickIndex = event.target.dataset.pickPayee;
+      if (deleteIndex !== undefined) {
+        state.costRows.splice(Number(deleteIndex), 1);
+        if (state.costRows.length === 0) state.costRows.push({ id: Date.now(), costType: "", payeeType: "", payeeName: "", organization: "", department: "", amount: "", remarks: "" });
+        renderCosts();
+      }
+      if (pickIndex !== undefined) {
+        const row = state.costRows[Number(pickIndex)];
+        if (!row.payeeType) return showToast("请先选择外付类型", true);
+        state.activeCostIndex = Number(pickIndex);
+        openModal(row.payeeType === "企业" ? "#supplierModal" : "#personModal");
+      }
+    });
+
+    document.querySelectorAll("[data-close-modal], .modal-mask").forEach(item => {
+      item.addEventListener("click", event => {
+        if (event.target === item || event.target.hasAttribute("data-close-modal")) closeModals();
+      });
+    });
+
+    $("#selectContract").addEventListener("click", () => {
+      const checked = document.querySelector("input[name='contractPick']:checked");
+      if (!checked) return showToast("请选择关联业务合同", true);
+      const item = contracts.find(contract => contract.id === checked.value);
+      $("#contractNo").value = item.contractNo;
+      state.contractTotal = item.totalAmount;
+      updateSummary();
+      closeModals();
+    });
+
+    $("#selectSupplier").addEventListener("click", () => {
+      const checked = document.querySelector("input[name='supplierPick']:checked");
+      if (!checked) return showToast("请选择外付对象", true);
+      const item = suppliers.find(supplier => supplier.id === checked.value);
+      Object.assign(state.costRows[state.activeCostIndex], { payeeName: item.name });
+      renderCosts();
+      closeModals();
+    });
+
+    $("#selectPerson").addEventListener("click", () => {
+      const checked = document.querySelector("input[name='personPick']:checked");
+      if (!checked) return showToast("请选择人员", true);
+      const item = persons.find(person => person.id === checked.value);
+      Object.assign(state.costRows[state.activeCostIndex], { payeeName: item.name, organization: "-", department: "-" });
+      renderCosts();
+      closeModals();
+    });
+
+    $("#settlementFiles").addEventListener("change", event => {
+      $("#settlementState").textContent = event.target.files.length ? `已选择 ${event.target.files.length} 个文件` : "选填";
+    });
+
+    $("#otherFiles").addEventListener("change", event => {
+      $("#otherState").textContent = event.target.files.length ? `已选择 ${event.target.files.length} 个文件` : "选填";
+    });
+
+    $("#submitBtn").addEventListener("click", () => {
+      const source = document.querySelector("input[name='revenueSource']:checked").value;
+      if (!$("#contractNo").value) return showToast("请选择关联业务合同", true);
+      if (!$("#revenueAmount").value) return showToast("请输入收费金额", true);
+      if (source === "2" && $("#settlementFiles").files.length === 0) return showToast("收费来源为结算单时，必须上传结算单附件", true);
+      showToast("提交成功");
+    });
+
+    renderLookupRows();
+    renderCosts();
+    updateAttachmentState();
+  </script>
+</body>
+</html>
