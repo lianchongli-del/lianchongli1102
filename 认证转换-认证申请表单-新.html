@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -2622,7 +2623,7 @@
                         <textarea maxlength="200" rows="2" placeholder="200字以内，非必填" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-xs font-medium text-slate-700 mb-1 required">管理体系开始运行时间</label>
                             <input type="date" id="systemStart_${uniqueId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" onchange="validateSystemAuditDates('${uniqueId}', ${isEnMS})">
@@ -2630,6 +2631,10 @@
                         <div>
                             <label class="block text-xs font-medium text-slate-700 mb-1 required">最近一次内审时间</label>
                             <input type="date" id="internalAudit_${uniqueId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" onchange="validateSystemAuditDates('${uniqueId}', ${isEnMS})">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1 required">管理体系评审时间</label>
+                            <input type="date" id="managementReview_${uniqueId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all">
                         </div>
                     </div>
 
@@ -2711,9 +2716,9 @@
             setTimeout(() => checkAttachmentConditions(), 100);
         }
 
-        function renderEnergyComplexityFields(uniqueId) {
+        function renderLocationEnergyComplexityFields(scopeId) {
             return `
-                <div class="domain-special-group enms">
+                <div class="mt-4 bg-lime-50 rounded-lg border border-lime-200 p-3">
                     <h5 class="font-medium text-lime-900 mb-3 text-xs flex items-center gap-2">
                         <i class="fas fa-bolt"></i>能源管理复杂程度信息
                     </h5>
@@ -2721,11 +2726,11 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 mb-1">年度综合能耗</label>
-                                <input type="number" min="0" step="0.01" name="energyConsumption_${uniqueId}" placeholder="请输入年度综合能耗" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 bg-white transition-all">
+                                <input type="number" min="0" step="0.01" name="energyConsumption_${scopeId}" placeholder="请输入年度综合能耗" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 bg-white transition-all">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 mb-1">能耗单位</label>
-                                <select name="energyConsumptionUnit_${uniqueId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 bg-white transition-all">
+                                <select name="energyConsumptionUnit_${scopeId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 bg-white transition-all">
                                     <option value="tce/year">吨标煤/年</option>
                                     <option value="TJ/year">TJ/年</option>
                                 </select>
@@ -2733,7 +2738,7 @@
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 mb-1">主要能源使用的数量</label>
                                 <div class="flex gap-2">
-                                    <input type="number" min="0" step="1" name="seuCount_${uniqueId}" placeholder="请输入主要能源使用数量" class="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 bg-white transition-all">
+                                    <input type="number" min="0" step="1" name="seuCount_${scopeId}" placeholder="请输入主要能源使用数量" class="flex-1 px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 bg-white transition-all">
                                     <span class="inline-flex items-center px-3 text-xs text-slate-600 bg-white border border-slate-300 rounded-lg">SEUs</span>
                                 </div>
                             </div>
@@ -2745,26 +2750,15 @@
                                     <label class="block text-xs font-medium text-slate-700">能源种类及数量</label>
                                     <span class="text-[10px] text-slate-500">填写主要能源种类及综合能耗占比</span>
                                 </div>
-                                <button type="button" onclick="addEnergyTypeRow('${uniqueId}')" class="px-3 py-1.5 bg-lime-600 text-white rounded-lg text-xs font-medium hover:bg-lime-700 transition-colors shadow-sm flex items-center gap-1">
+                                <button type="button" onclick="addEnergyTypeRow('${scopeId}')" class="px-3 py-1.5 bg-lime-600 text-white rounded-lg text-xs font-medium hover:bg-lime-700 transition-colors shadow-sm flex items-center gap-1">
                                     <i class="fas fa-plus"></i>新增能源种类
                                 </button>
                             </div>
-                            <div id="energyTypes_${uniqueId}" class="space-y-2"></div>
-                            <div id="energyRatioTotal_${uniqueId}" class="mt-2 text-xs text-slate-500">综合能耗占比合计：0%</div>
-                            <div id="emptyEnergyTypeTip_${uniqueId}" class="text-center py-4 bg-lime-50 rounded-lg border border-dashed border-lime-200">
+                            <div id="energyTypes_${scopeId}" class="space-y-2"></div>
+                            <div id="energyRatioTotal_${scopeId}" class="mt-2 text-xs text-slate-500">综合能耗占比合计：0%</div>
+                            <div id="emptyEnergyTypeTip_${scopeId}" class="text-center py-4 bg-lime-50 rounded-lg border border-dashed border-lime-200">
                                 <i class="fas fa-bolt text-lg text-lime-300 mb-1"></i>
                                 <p class="text-xs text-slate-500">暂无能源种类，请按需新增</p>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-medium text-slate-700 mb-1">行业准入制度（适用时）</label>
-                                <textarea name="energyAccessSystem_${uniqueId}" maxlength="500" rows="2" placeholder="请填写行业准入制度名称，无则可填无。" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 bg-white transition-all resize-none"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-700 mb-1">能耗限额标准、能效标准（适用时）</label>
-                                <textarea name="energyQuotaStandard_${uniqueId}" maxlength="500" rows="2" placeholder="请填写应执行的能耗限额标准、能效标准，无则可填无。" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 bg-white transition-all resize-none"></textarea>
                             </div>
                         </div>
                     </div>
@@ -2772,6 +2766,22 @@
             `;
         }
 
+        function renderEnergyComplexityFields(uniqueId) {
+            return `
+                <div class="domain-special-group enms">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">行业准入制度（适用时）</label>
+                            <textarea name="energyAccessSystem_${uniqueId}" maxlength="500" rows="2" placeholder="请填写行业准入制度名称，无则可填无。" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 bg-white transition-all resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">能耗限额标准、能效标准（适用时）</label>
+                            <textarea name="energyQuotaStandard_${uniqueId}" maxlength="500" rows="2" placeholder="请填写应执行的能耗限额标准、能效标准，无则可填无。" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 bg-white transition-all resize-none"></textarea>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
         function renderTransferCertificateFields(uniqueId, systemKey) {
             return `
                 <div class="transfer-info-group">
@@ -3037,9 +3047,8 @@
         }
 
         function validateAllEnergyRatioTotals(showMessage = false) {
-            return selectedSystems
-                .filter(system => system.key === 'EnMS')
-                .every(system => validateEnergyRatioTotal(system.id, showMessage));
+            return Array.from(document.querySelectorAll('[id^="energyTypes_"]'))
+                .every(container => validateEnergyRatioTotal(container.id.replace('energyTypes_', ''), showMessage));
         }
 
         // 更新认证类型
@@ -3698,7 +3707,7 @@
                         <textarea maxlength="200" rows="2" placeholder="200字以内，非必填" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-xs font-medium text-slate-700 mb-1 required">管理体系开始运行时间</label>
                             <input type="date" id="systemStart_${uniqueId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" onchange="validateSystemAuditDates('${uniqueId}', ${isEnMS})">
@@ -3706,6 +3715,10 @@
                         <div>
                             <label class="block text-xs font-medium text-slate-700 mb-1 required">最近一次内审时间</label>
                             <input type="date" id="internalAudit_${uniqueId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" onchange="validateSystemAuditDates('${uniqueId}', ${isEnMS})">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1 required">管理体系评审时间</label>
+                            <input type="date" id="managementReview_${uniqueId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all">
                         </div>
                     </div>
 
@@ -5090,6 +5103,9 @@ function initAttachments() {
             const typeLabel = type === 'service' ? '服务点' : (type === 'temp' ? '临时场所' : '固定场所');
             const typeClass = type === 'service' ? 'bg-violet-100 text-violet-700' : (type === 'temp' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700');
             const typeIcon = type === 'service' ? 'fa-headset' : (type === 'temp' ? 'fa-map-pin' : 'fa-building');
+            const systemCard = container.closest('.system-card');
+            const isEnMSLocation = systemCard?.dataset.system === 'EnMS';
+            const energyScopeId = `${cardId}_energy`;
             div.innerHTML = `
                 <div class="flex items-start justify-between mb-3">
                     <div class="flex items-center gap-3">
@@ -5151,6 +5167,7 @@ function initAttachments() {
                         </select>
                     </div>
                 </div>
+                ${isEnMSLocation ? renderLocationEnergyComplexityFields(energyScopeId) : ''}
             `;
             container.appendChild(div);
 
