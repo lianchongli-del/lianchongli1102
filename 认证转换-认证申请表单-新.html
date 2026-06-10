@@ -1472,85 +1472,6 @@
                         </div>
                     </div>
 
-                    <!-- 生产/服务班次情况 - 横向布局 -->
-                    <div id="productionInfoSection" class="border-t border-slate-100 pt-4">
-                        <div class="sub-section-title">
-                            <i class="fas fa-clock"></i>
-                            生产（服务）班次情况
-                        </div>
-                        <label class="flex items-center gap-2 cursor-pointer mb-4">
-                            <input type="checkbox" id="enableProductionInfo" class="rounded text-blue-600 focus:ring-blue-500 transition-all" onchange="toggleProductionInfo(this.checked)">
-                            <span class="text-sm font-medium text-slate-700">填写生产（服务）班次情况</span>
-                        </label>
-                        <div id="productionInfoFields" class="hidden">
-                        <div class="flex items-center gap-4 mb-4">
-                            <span class="text-sm text-slate-600">共</span>
-                            <select id="shiftCount" class="w-20 px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" onchange="updateShiftTimeInputs(this.value)">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                            <span class="text-sm text-slate-600">班次</span>
-                        </div>
-
-                        <!-- 横向班次时间 -->
-                        <div id="shiftTimesContainer" class="space-y-2 bg-slate-50 p-4 rounded-lg border border-slate-200">
-                            <!-- 动态生成班次时间输入 -->
-                        </div>
-
-                        <div class="mt-4">
-                            <label class="block text-xs font-medium text-slate-700 mb-2 required">各班次的过程、控制方法是否相同？</label>
-                            <div class="flex gap-4">
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="shiftSame" value="yes" class="text-blue-600" onchange="toggleField('shiftDifferentDesc', false)">
-                                    <span class="text-sm text-slate-700">相同</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="shiftSame" value="no" class="text-blue-600" onchange="toggleField('shiftDifferentDesc', true)">
-                                    <span class="text-sm text-slate-700">不同</span>
-                                </label>
-                            </div>
-                            <div id="shiftDifferentDesc" class="conditional-field mt-2">
-                                <textarea maxlength="500" rows="2" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none" placeholder="请说明各班次情况"></textarea>
-                            </div>
-                        </div>
-                        <div id="shiftSameConfig" class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-medium text-slate-700 mb-1">轮班数</label>
-                                <input type="number" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-700 mb-1">参与轮班的人数</label>
-                                <input type="number" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0">
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-
-                    <!-- 生产线情况 -->
-                    <div id="productionLineSection" class="border-t border-slate-100 pt-4 hidden">
-                        <div class="sub-section-title">
-                            <i class="fas fa-industry"></i>
-                            生产线情况
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
-                            <div>
-                                <label class="block text-xs font-medium text-slate-700 mb-1 required">生产线总数</label>
-                                <input type="number" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-700 mb-1">相同生产线数量</label>
-                                <input type="number" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-700 mb-1">涉及人数</label>
-                                <input type="number" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0">
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- 作息时间 -->
                     <div class="border-t border-slate-100 pt-4">
                         <div class="sub-section-title">
@@ -3100,8 +3021,9 @@
             updateShiftTimeInputs(1);
         }
 
-        function updateShiftTimeInputs(count) {
-            const container = document.getElementById('shiftTimesContainer');
+        function updateShiftTimeInputs(count, containerId = 'shiftTimesContainer') {
+            const container = document.getElementById(containerId);
+            if (!container) return;
             let html = '';
             for (let i = 1; i <= count; i++) {
                 const startHour = i === 1 ? '08' : (i === 2 ? '16' : '00');
@@ -3137,6 +3059,21 @@
                 `;
             }
             container.innerHTML = html;
+            const scopeId = containerId.startsWith('shiftTimes_') ? containerId.replace('shiftTimes_', '') : null;
+            if (scopeId) updateLocationShiftConditionVisibility(scopeId, Number(count));
+        }
+
+        function updateLocationShiftConditionVisibility(scopeId, count) {
+            const section = document.getElementById(`shiftSameSection_${scopeId}`);
+            if (!section) return;
+            const shouldShow = Number(count) >= 2;
+            section.classList.toggle('hidden', !shouldShow);
+            if (!shouldShow) {
+                document.querySelectorAll(`input[name="shiftSame_${scopeId}"]`).forEach(radio => {
+                    radio.checked = false;
+                });
+            }
+            toggleLocationShiftSame(scopeId, !shouldShow || document.querySelector(`input[name="shiftSame_${scopeId}"][value="no"]`)?.checked);
         }
 
         function validateShiftTime(select) {
@@ -3154,6 +3091,162 @@
             if (endTime <= startTime && endTime !== 0) {
                 showToast('结束时间必须晚于开始时间', 'warning');
             }
+        }
+
+        function renderLocationProductionInfoFields(scopeId) {
+            const hiddenForInfoTech = hasOnlyInfoTechSystems() ? 'hidden' : '';
+            return `
+                <div class="location-production-section mt-4 border-t border-slate-100 pt-4 ${hiddenForInfoTech}">
+                    <div class="flex items-center justify-between gap-3 mb-3">
+                        <h5 class="font-medium text-slate-800 text-xs flex items-center gap-2">
+                            <i class="fas fa-clock text-blue-500"></i>生产（服务）班次情况
+                        </h5>
+                        <button type="button" onclick="copyLocationProductionInfoToSameName('${scopeId}')" class="px-2 py-1 text-xs text-blue-600 border border-blue-200 rounded hover:bg-blue-50 transition-colors">
+                            <i class="fas fa-copy mr-1"></i>复制到同名场所
+                        </button>
+                    </div>
+                    <div id="productionInfoFields_${scopeId}" class="space-y-3">
+                        <div class="flex flex-wrap items-end gap-3">
+                            <span class="h-9 inline-flex items-center text-xs text-slate-600">共</span>
+                            <select data-prod-field="shiftCount" class="w-20 px-2 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-1 focus:ring-blue-500 bg-white" onchange="updateShiftTimeInputs(this.value, 'shiftTimes_${scopeId}')">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                            <span class="h-9 inline-flex items-center text-xs text-slate-600">班次</span>
+                        </div>
+                        <div id="shiftTimes_${scopeId}" class="space-y-2 bg-slate-50 p-3 rounded-lg border border-slate-200"></div>
+                        <div id="shiftSameSection_${scopeId}" class="hidden">
+                            <label class="block text-xs font-medium text-slate-700 mb-2 required">各班次的过程、控制方法是否相同？</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-700">
+                                    <input type="radio" name="shiftSame_${scopeId}" value="yes" class="text-blue-600" onchange="toggleLocationShiftSame('${scopeId}', false)">
+                                    <span>相同</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-700">
+                                    <input type="radio" name="shiftSame_${scopeId}" value="no" class="text-blue-600" onchange="toggleLocationShiftSame('${scopeId}', true)">
+                                    <span>不同</span>
+                                </label>
+                            </div>
+                            <div id="shiftSameFields_${scopeId}" class="hidden mt-2 grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1 required">轮班</label>
+                                    <input type="number" data-prod-field="shiftRotation" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1 required">参与轮班的人数</label>
+                                    <input type="number" data-prod-field="shiftRotationPeople" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0">
+                                </div>
+                            </div>
+                            <div id="shiftDifferentDesc_${scopeId}" class="conditional-field mt-2">
+                                <textarea data-prod-field="shiftDifferentDesc" maxlength="500" rows="2" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none" placeholder="请说明各班次情况"></textarea>
+                            </div>
+                        </div>
+                        <div class="border-t border-slate-100 pt-3">
+                            <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-700 mb-3">
+                                <input type="checkbox" data-prod-field="productionLineEnabled" class="rounded text-blue-600 focus:ring-blue-500" onchange="toggleLocationProductionLine('${scopeId}', this.checked)">
+                                <span>填写生产线情况</span>
+                            </label>
+                            <div id="productionLineFields_${scopeId}" class="hidden grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1 required">生产线总数</label>
+                                    <input type="number" data-prod-field="lineTotal" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">相同生产线数量</label>
+                                    <input type="number" data-prod-field="sameLineCount" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">涉及人数</label>
+                                    <input type="number" data-prod-field="linePeople" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleLocationProductionInfo(scopeId, show) {
+            const fields = document.getElementById(`productionInfoFields_${scopeId}`);
+            if (fields) fields.classList.toggle('hidden', !show);
+            if (show) updateShiftTimeInputs(1, `shiftTimes_${scopeId}`);
+        }
+
+        function toggleLocationShiftSame(scopeId, isDifferent) {
+            const section = document.getElementById(`shiftSameSection_${scopeId}`);
+            const desc = document.getElementById(`shiftDifferentDesc_${scopeId}`);
+            const sameFields = document.getElementById(`shiftSameFields_${scopeId}`);
+            const sameChecked = document.querySelector(`input[name="shiftSame_${scopeId}"][value="yes"]`)?.checked;
+            const sectionVisible = section && !section.classList.contains('hidden');
+            if (desc) desc.classList.toggle('active', isDifferent);
+            if (sameFields) sameFields.classList.toggle('hidden', !sectionVisible || isDifferent || !sameChecked);
+        }
+
+        function toggleLocationProductionLine(scopeId, show) {
+            const fields = document.getElementById(`productionLineFields_${scopeId}`);
+            if (fields) fields.classList.toggle('hidden', !show);
+        }
+
+        function copyLocationProductionInfoToSameName(scopeId) {
+            const source = document.getElementById(scopeId);
+            if (!source) return;
+            const locationName = source.dataset.locName;
+            const targets = Array.from(document.querySelectorAll('.location-card'))
+                .filter(card => card.id !== scopeId && card.dataset.locName === locationName);
+            if (targets.length === 0) {
+                showToast('未找到其他领域下的同名场所', 'info');
+                return;
+            }
+
+            const shiftCount = source.querySelector('[data-prod-field="shiftCount"]')?.value || '1';
+            const shiftSame = source.querySelector(`input[name="shiftSame_${scopeId}"]:checked`)?.value || '';
+            const differentDesc = source.querySelector('[data-prod-field="shiftDifferentDesc"]')?.value || '';
+            const sameShiftValues = {
+                shiftRotation: source.querySelector('[data-prod-field="shiftRotation"]')?.value || '',
+                shiftRotationPeople: source.querySelector('[data-prod-field="shiftRotationPeople"]')?.value || ''
+            };
+            const productionLineEnabled = !!source.querySelector('[data-prod-field="productionLineEnabled"]')?.checked;
+            const lineValues = {
+                lineTotal: source.querySelector('[data-prod-field="lineTotal"]')?.value || '',
+                sameLineCount: source.querySelector('[data-prod-field="sameLineCount"]')?.value || '',
+                linePeople: source.querySelector('[data-prod-field="linePeople"]')?.value || ''
+            };
+            const sourceShiftSelects = Array.from(source.querySelectorAll(`#shiftTimes_${scopeId} select`)).map(select => select.value);
+
+            targets.forEach(target => {
+                const targetScopeId = target.id;
+                const targetShiftCount = target.querySelector('[data-prod-field="shiftCount"]');
+                if (targetShiftCount) targetShiftCount.value = shiftCount;
+                updateShiftTimeInputs(shiftCount, `shiftTimes_${targetScopeId}`);
+                const targetShiftSelects = Array.from(target.querySelectorAll(`#shiftTimes_${targetScopeId} select`));
+                sourceShiftSelects.forEach((value, index) => {
+                    if (targetShiftSelects[index]) targetShiftSelects[index].value = value;
+                });
+
+                target.querySelectorAll(`input[name="shiftSame_${targetScopeId}"]`).forEach(radio => {
+                    radio.checked = radio.value === shiftSame;
+                });
+                const targetDesc = target.querySelector('[data-prod-field="shiftDifferentDesc"]');
+                if (targetDesc) targetDesc.value = differentDesc;
+                toggleLocationShiftSame(targetScopeId, shiftSame === 'no');
+                Object.entries(sameShiftValues).forEach(([field, value]) => {
+                    const input = target.querySelector(`[data-prod-field="${field}"]`);
+                    if (input) input.value = value;
+                });
+
+                const targetLineSwitch = target.querySelector('[data-prod-field="productionLineEnabled"]');
+                if (targetLineSwitch) targetLineSwitch.checked = productionLineEnabled;
+                toggleLocationProductionLine(targetScopeId, productionLineEnabled);
+                Object.entries(lineValues).forEach(([field, value]) => {
+                    const input = target.querySelector(`[data-prod-field="${field}"]`);
+                    if (input) input.value = value;
+                });
+            });
+
+            showToast(`已复制到 ${targets.length} 个同名场所`);
         }
 
         function validateSystemAuditDates(uniqueId, isEnergySystem) {
@@ -3212,6 +3305,9 @@
             const productionSection = document.getElementById('productionInfoSection');
             const productionSwitch = document.getElementById('enableProductionInfo');
             if (productionSection) productionSection.classList.toggle('hidden', hasOnlyInfoTechSystems());
+            document.querySelectorAll('.location-production-section').forEach(section => {
+                section.classList.toggle('hidden', hasOnlyInfoTechSystems());
+            });
             if (hasOnlyInfoTechSystems() && productionSwitch) {
                 productionSwitch.checked = false;
                 toggleProductionInfo(false);
@@ -4238,7 +4334,7 @@ function initAttachments() {
             ];
 
             const integrationFiles = [
-                { name: '文件、管理体系要素和职责整合的信息（适用于整合管理体系）', required: false }
+                { name: '文件、管理体系要素和职责整合的信息（适用于整合管理体系）', forceRequired: true }
             ];
 
             const transferFiles = [
@@ -4252,8 +4348,8 @@ function initAttachments() {
                 { name: '环评及三同时证明文件（如：批复、竣工验收报告、登记表、备案）、排污许可证复印件（适用时）', required: false },
                 { name: '安评、职评及三同时证明文件（如：批复、备案等的复印件）（适用时）', required: false },
                 { name: '近一年内的污染物排放监测报告/作业场所危害因素检测报告复印件（适用时）', required: false },
-                { name: '消防法规符合性证明文件（如：设计审查意见、验收意见等）（适用于OHSMS）', required: false },
-                { name: '需要应对的风险和机遇（OHSAS 18001认证无需提供）', required: false },
+                { name: '消防法规符合性证明文件（如：设计审查意见、验收意见等）（适用于OHSMS）', systems: ['OHSMS'] },
+                { name: '需要应对的风险和机遇', required: false },
                 { name: '合规义务（适用法律法规及其他要求）清单', required: false }
             ];
 
@@ -4290,21 +4386,25 @@ function initAttachments() {
             ];
 
             // 渲染函数
+            const shouldShowFile = (file) => !file.systems || file.systems.some(system => selectedSystems.some(selected => selected.key === system));
+            const visibleFiles = (files) => files.filter(shouldShowFile);
+
             const renderFileCard = (file, idx, type) => {
                 const fileTypeId = `${type}_${idx}`;
+                const isRequired = file.forceRequired || !/(适用时|必要时)/.test(file.name);
                 window.uploadedFiles[fileTypeId] = window.uploadedFiles[fileTypeId] || [];
 
                 return `
                 <div class="file-upload-card empty mb-3" id="fileCard_${fileTypeId}" data-file-type="${fileTypeId}">
                     <div class="file-upload-header">
                         <div class="file-upload-info">
-                            <div class="file-upload-icon ${file.required ? 'required' : ''}">
+                            <div class="file-upload-icon ${isRequired ? 'required' : ''}">
                                 <i class="fas fa-file-alt"></i>
                             </div>
                             <div>
                                 <div class="file-upload-title">${file.name}</div>
                                 <div class="file-upload-meta">
-                                    ${file.required ? '<span class="required-tag">必填</span>' : '<span>选填</span>'}
+                                    ${isRequired ? '<span class="required-tag">必填</span>' : '<span>选填</span>'}
                                     ${file.template ? `<a href="${file.template}" download class="text-blue-600 hover:underline ml-2" onclick="event.stopPropagation()">下载模板</a>` : ''}
                                     <span id="fileCount_${fileTypeId}" class="file-count hidden"></span>
                                 </div>
@@ -4330,34 +4430,34 @@ function initAttachments() {
             };
 
             if (commonContainer) {
-                commonContainer.innerHTML = commonFiles.map((f, i) => renderFileCard(f, i, 'common')).join('');
+                commonContainer.innerHTML = visibleFiles(commonFiles).map((f, i) => renderFileCard(f, i, 'common')).join('');
             }
             if (processContainer) {
-                processContainer.innerHTML = processFiles.map((f, i) => renderFileCard(f, i, 'process')).join('');
+                processContainer.innerHTML = visibleFiles(processFiles).map((f, i) => renderFileCard(f, i, 'process')).join('');
             }
             if (qualityContainer) {
-                qualityContainer.innerHTML = qualityFiles.map((f, i) => renderFileCard(f, i, 'quality')).join('');
+                qualityContainer.innerHTML = visibleFiles(qualityFiles).map((f, i) => renderFileCard(f, i, 'quality')).join('');
             }
             if (integrationContainer) {
-                integrationContainer.innerHTML = integrationFiles.map((f, i) => renderFileCard(f, i, 'integration')).join('');
+                integrationContainer.innerHTML = visibleFiles(integrationFiles).map((f, i) => renderFileCard(f, i, 'integration')).join('');
             }
             if (transferContainer) {
-                transferContainer.innerHTML = transferFiles.map((f, i) => renderFileCard(f, i, 'transfer')).join('');
+                transferContainer.innerHTML = visibleFiles(transferFiles).map((f, i) => renderFileCard(f, i, 'transfer')).join('');
             }
             if (emsContainer) {
-                emsContainer.innerHTML = emsFiles.map((f, i) => renderFileCard(f, i, 'ems')).join('');
+                emsContainer.innerHTML = visibleFiles(emsFiles).map((f, i) => renderFileCard(f, i, 'ems')).join('');
             }
             if (enmsContainer) {
-                enmsContainer.innerHTML = enmsFiles.map((f, i) => renderFileCard(f, i, 'enms')).join('');
+                enmsContainer.innerHTML = visibleFiles(enmsFiles).map((f, i) => renderFileCard(f, i, 'enms')).join('');
             }
             if (ismsContainer) {
-                ismsContainer.innerHTML = ismsFiles.map((f, i) => renderFileCard(f, i, 'isms')).join('');
+                ismsContainer.innerHTML = visibleFiles(ismsFiles).map((f, i) => renderFileCard(f, i, 'isms')).join('');
             }
             if (itsmsContainer) {
-                itsmsContainer.innerHTML = itsmsFiles.map((f, i) => renderFileCard(f, i, 'itsms')).join('');
+                itsmsContainer.innerHTML = visibleFiles(itsmsFiles).map((f, i) => renderFileCard(f, i, 'itsms')).join('');
             }
             if (fsmsContainer) {
-                fsmsContainer.innerHTML = fsmsFiles.map((f, i) => renderFileCard(f, i, 'fsms')).join('');
+                fsmsContainer.innerHTML = visibleFiles(fsmsFiles).map((f, i) => renderFileCard(f, i, 'fsms')).join('');
             }
         }
 
@@ -5106,6 +5206,7 @@ function initAttachments() {
             const systemCard = container.closest('.system-card');
             const isEnMSLocation = systemCard?.dataset.system === 'EnMS';
             const energyScopeId = `${cardId}_energy`;
+            const productionScopeId = cardId;
             div.innerHTML = `
                 <div class="flex items-start justify-between mb-3">
                     <div class="flex items-center gap-3">
@@ -5128,12 +5229,8 @@ function initAttachments() {
                         <label class="block text-[10px] font-medium text-slate-500 mb-1 required">涉及的产品、过程、活动/工程项目进展情况</label>
                         <input type="text" placeholder="500字以内" maxlength="500" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
                     </div>
-                    <div class="col-span-3">
-                        <label class="block text-[10px] font-medium text-slate-500 mb-1">班次时间</label>
-                        <input type="text" placeholder="如：08:00-17:00" maxlength="500" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
-                    </div>
-                    <div class="col-span-1">
-                        <label class="block text-[10px] font-medium text-slate-500 mb-1">人数</label>
+                    <div class="col-span-2">
+                        <label class="block text-[10px] font-medium text-slate-500 mb-1">场所人数</label>
                         <input type="number" placeholder="0" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
                     </div>
                     <div class="col-span-2">
@@ -5155,11 +5252,11 @@ function initAttachments() {
                             <input type="text" placeholder="联系人姓名" class="manual-location-contact hidden flex-1 min-w-0 px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
                         </div>
                     </div>
-                    <div class="col-span-2">
+                    <div class="col-span-3">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">电话</label>
                         <input type="tel" placeholder="电话" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
                     </div>
-                    <div class="col-span-1">
+                    <div class="col-span-2">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">是否出子证</label>
                         <select class="w-full px-1 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white" title="是否出子证">
                             <option value="no">否</option>
@@ -5167,9 +5264,11 @@ function initAttachments() {
                         </select>
                     </div>
                 </div>
+                ${renderLocationProductionInfoFields(productionScopeId)}
                 ${isEnMSLocation ? renderLocationEnergyComplexityFields(energyScopeId) : ''}
             `;
             container.appendChild(div);
+            updateShiftTimeInputs(1, `shiftTimes_${productionScopeId}`);
 
             // 标记为多场所
             if (!options.locked) {
