@@ -841,6 +841,90 @@
             padding: 12px;
             margin-top: 8px;
         }
+
+        .step-tabs {
+            display: flex;
+            align-items: stretch;
+            gap: 22px;
+            padding: 10px 0 12px;
+        }
+
+        .step-tab {
+            display: flex;
+            flex: 1 1 0;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #fff;
+            color: #64748b;
+            text-align: left;
+            transition: all .18s ease;
+        }
+
+        .step-tab:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            right: -18px;
+            top: 50%;
+            width: 10px;
+            height: 10px;
+            border-top: 2px solid #cbd5e1;
+            border-right: 2px solid #cbd5e1;
+            transform: translateY(-50%) rotate(45deg);
+        }
+
+        .step-tab:hover {
+            border-color: #93c5fd;
+            background: #eff6ff;
+        }
+
+        .step-tab.active {
+            border-color: #2563eb;
+            background: #eff6ff;
+            color: #1d4ed8;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, .12);
+        }
+
+        .step-index {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            background: #e2e8f0;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 700;
+            flex: 0 0 auto;
+        }
+
+        .step-tab.active .step-index {
+            background: #2563eb;
+            color: #fff;
+        }
+
+        .step-main {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .step-desc {
+            display: block;
+            margin-top: 2px;
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.3;
+        }
+
+        .step-hidden {
+            display: none !important;
+        }
     </style>
 <base target="_blank">
 </head>
@@ -861,6 +945,12 @@
                     <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 shrink-0">待提交</span>
                 </div>
                 <div class="flex gap-2 shrink-0">
+                    <button type="button" id="prevStepBtn" onclick="goStep(currentStep - 1)" class="px-3 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-all">
+                        <i class="fas fa-arrow-left mr-1.5"></i>上一步
+                    </button>
+                    <button type="button" id="nextStepBtn" onclick="goStep(currentStep + 1)" class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md shadow-blue-200 transition-all">
+                        下一步<i class="fas fa-arrow-right ml-1.5"></i>
+                    </button>
                     <button onclick="saveDraft()" class="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-all active:scale-95">
                         <i class="fas fa-save mr-1.5"></i>保存
                     </button>
@@ -870,26 +960,41 @@
                 </div>
             </div>
 
-            <!-- 锚点导航 -->
-            <nav class="flex gap-6 text-sm text-slate-600 overflow-x-auto custom-scrollbar pb-1">
-                <a href="#section-basic" target="_self" class="nav-item active py-2" data-section="section-basic">申请单信息</a>
-                <a href="#section-customer" target="_self" class="nav-item py-2" data-section="section-customer">客户信息</a>
-                <a href="#section-org" target="_self" class="nav-item py-2" data-section="section-org">组织信息</a>
-                <a href="#section-system" target="_self" class="nav-item py-2" data-section="section-system">认证需求</a>
-                <a href="#section-integration" target="_self" class="nav-item hidden py-2" id="nav-integration" data-section="section-integration">整合程度</a>
-                <a href="#section-attachment" target="_self" class="nav-item py-2" data-section="section-attachment">应附文件</a>
-                </nav>
+            <!-- 三步填写导航 -->
+            <nav class="step-tabs" aria-label="认证转换申请填写步骤">
+                <button type="button" class="step-tab active" data-step-target="1">
+                    <span class="step-index">1</span>
+                    <span>
+                        <span class="step-main">基础申请信息</span>
+                        <span class="step-desc">申请单、客户、组织/人员及其他内容</span>
+                    </span>
+                </button>
+                <button type="button" class="step-tab" data-step-target="2">
+                    <span class="step-index">2</span>
+                    <span>
+                        <span class="step-main">认证需求信息</span>
+                        <span class="step-desc">认证领域需求、组织管理体系整合程度</span>
+                    </span>
+                </button>
+                <button type="button" class="step-tab" data-step-target="3">
+                    <span class="step-index">3</span>
+                    <span>
+                        <span class="step-main">专项与附件</span>
+                        <span class="step-desc">IS/ITS专项信息、转换附件信息</span>
+                    </span>
+                </button>
+            </nav>
         </div>
     </div>
 
     <!-- 主体布局：左侧表单，中间填写说明，右侧快速导航 -->
-    <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-32 flex gap-6">
+    <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 pt-40 pb-32 flex gap-6">
 
         <!-- 左侧：表单内容区 -->
         <div class="flex-1 min-w-0 space-y-6" id="mainFormContainer">
 
             <!-- 1. 申请单信息 - 移除认证类型 -->
-            <div id="section-basic" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div id="section-basic" data-step="1" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleSection(this)">
                     <div class="flex items-center gap-2">
                         <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">1</div>
@@ -921,7 +1026,7 @@
             </div>
 
             <!-- 2. 客户基本信息 -->
-            <div id="section-customer" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div id="section-customer" data-step="1" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleSection(this)">
                     <div class="flex items-center gap-2">
                         <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">2</div>
@@ -1065,11 +1170,11 @@
             </div>
 
             <!-- 3. 认证体系需求信息 - 重构认证类型和批量添加 -->
-            <div id="section-system" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div id="section-system" data-step="2" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
                     <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">3</div>
+                            <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">5</div>
                             <h3 class="font-semibold text-slate-900">认证领域需求信息</h3>
                         </div>
                         <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full" id="systemCount">已添加 0 个认证领域</span>
@@ -1143,6 +1248,42 @@
                     </div>
                 </div>
 
+                <!-- 组织管理体系的整合程度 -->
+                <div id="section-integration" data-step="2" class="mx-4 mb-4 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleSection(this)">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <h3 class="font-semibold text-slate-900">组织管理体系的整合程度（适用于多体系认证申请）</h3>
+                        </div>
+                        <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 text-xs"></i>
+                    </div>
+                    <div class="p-6 space-y-4 transition-all duration-300" style="max-height: none; overflow: visible;">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1 required">级别</label>
+                                <select id="integrationLevel" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" onchange="updateIntegrationContent()">
+                                    <option value="">请选择</option>
+                                    <option value="low">整合程度低（0%-40%）</option>
+                                    <option value="medium">整合程度中（41%-80%）</option>
+                                    <option value="high">整合程度高（81%-100%）</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1 required">整合程度（0-100%）</label>
+                                <input type="number" min="0" max="100" id="integrationDegree" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0" onchange="validateIntegrationDegree()">
+                            </div>
+                        </div>
+                        <div id="integrationDetails" class="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                            <p class="text-xs text-slate-500 mb-3">请选择本组织管理体系的情况：</p>
+                            <div id="integrationCheckboxes" class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                <!-- 动态生成 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 批量操作栏 -->
                 <div id="batchActionsBar" class="batch-actions">
                     <div class="flex items-center justify-between">
@@ -1180,43 +1321,11 @@
                 </div>
             </div>
 
-            <!-- 4. 组织管理体系的整合程度 -->
-            <div id="section-integration" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden">
+            <!-- 5. 组织/人员及其他认证信息 -->
+            <div id="section-org" data-step="1" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleSection(this)">
                     <div class="flex items-center gap-2">
-                        <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">4</div>
-                        <h3 class="font-semibold text-slate-900">组织管理体系的整合程度（适用于多体系认证申请）</h3>
-                    </div>
-                    <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 text-xs"></i>
-                </div>
-                <div class="p-6 space-y-4 transition-all duration-300" style="max-height: none; overflow: visible;">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700 mb-1 required">整合程度（0-100%）</label>
-                            <input type="number" min="0" max="100" id="integrationDegree" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0" onchange="validateIntegrationDegree()">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700 mb-1 required">级别</label>
-                            <select id="integrationLevel" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" onchange="updateIntegrationContent()">
-                                <option value="">请选择</option>
-                                <option value="low">整合程度低（0%-40%）</option>
-                                <option value="medium">整合程度中（41%-80%）</option>
-                                <option value="high">整合程度高（81%-100%）</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div id="integrationDetails" class="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                        <p class="text-xs text-slate-500 mb-3">请选择本组织管理体系的情况：</p>
-                        <div id="integrationCheckboxes" class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                            <!-- 动态生成 -->
-                        </div>
-                    </div>
-                </div>
-            </div><!-- 5. 组织/人员及其他认证信息 -->
-            <div id="section-org" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleSection(this)">
-                    <div class="flex items-center gap-2">
-                        <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">5</div>
+                        <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">3</div>
                         <h3 class="font-semibold text-slate-900">组织/人员及其他认证信息</h3>
                     </div>
                     <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 text-xs"></i>
@@ -1566,15 +1675,17 @@
             </div>
 
             <!-- 6. 应附文件和材料 - 条件化显示 -->
-            <div id="section-attachment" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div id="section-attachment" data-step="3" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleSection(this)">
                     <div class="flex items-center gap-2">
-                        <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">6</div>
+                        <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">7</div>
                         <h3 class="font-semibold text-slate-900">应附文件和材料</h3>
                     </div>
                     <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 text-xs"></i>
                 </div>
-                <div class="p-6 space-y-6 transition-all duration-300" id="attachmentsContainer" style="max-height: none; overflow: visible;">
+                <div class="p-6 transition-all duration-300" id="attachmentsContainer" style="max-height: none; overflow: visible;">
+                    <div class="space-y-2" id="mergedAttachmentsList"></div>
+                    <div class="hidden">
                     <!-- 通用认证材料 -->
                     <div class="border-b border-slate-100 pb-4" id="commonAttachmentsSection">
                         <h4 class="font-medium text-slate-900 mb-3 flex items-center gap-2 text-sm">
@@ -1681,6 +1792,7 @@
                         </h4>
                         <div class="space-y-2" id="fsmsAttachmentsList"></div>
                     </div>
+                    </div>
                 </div>
             </div>
 
@@ -1688,10 +1800,10 @@
             
 
             <!-- 8. 其他内容 -->
-            <div id="section-other" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div id="section-other" data-step="1" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleSection(this)">
                     <div class="flex items-center gap-2">
-                        <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">8</div>
+                        <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">4</div>
                         <h3 class="font-semibold text-slate-900">其他内容</h3>
                     </div>
                     <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 text-xs"></i>
@@ -1763,8 +1875,8 @@
             </div>
         </div>
 
-        <!-- 右侧：快速导航栏 -->
-        <div class="w-80 shrink-0 hidden xl:block">
+        <!-- 右侧导航和填写说明按三步填写要求隐藏，保留节点供原脚本兼容 -->
+        <div class="hidden">
             <div class="sticky-nav-container space-y-4">
                 <!-- 认证领域导航 -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
@@ -2146,12 +2258,78 @@
             }
         };
 
+        let currentStep = 1;
+        const stepDescriptions = {
+            1: '第 1 步 / 共 3 步：填写申请单信息、客户基本信息、组织/人员及其他内容',
+            2: '第 2 步 / 共 3 步：填写认证领域需求信息、组织管理体系的整合程度（适用于多体系认证申请）',
+            3: '第 3 步 / 共 3 步：填写IS/ITS专项信息、转换附件信息'
+        };
+
+        function ensureInfoTechStepSection() {
+            const infoTechBlock = document.getElementById('infoTechOrgSection');
+            const attachmentSection = document.getElementById('section-attachment');
+            if (!infoTechBlock || !attachmentSection || document.getElementById('section-info-tech')) return;
+
+            const section = document.createElement('div');
+            section.id = 'section-info-tech';
+            section.dataset.step = '3';
+            section.className = 'form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden';
+            section.innerHTML = `
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleSection(this)">
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">6</div>
+                        <h3 class="font-semibold text-slate-900">IS/ITS专项信息</h3>
+                    </div>
+                    <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 text-xs"></i>
+                </div>
+                <div class="px-6 py-2 transition-all duration-300" style="max-height: none; overflow: visible;">
+                    <div id="infoTechStepPlaceholder" class="hidden"></div>
+                </div>`;
+            attachmentSection.parentNode.insertBefore(section, attachmentSection);
+            infoTechBlock.classList.remove('border-t', 'border-slate-100', 'pt-4');
+            section.querySelector('[style*="max-height"]').appendChild(infoTechBlock);
+        }
+
+        function updateStepView() {
+            document.querySelectorAll('[data-step]').forEach(section => {
+                section.classList.toggle('step-hidden', Number(section.dataset.step) !== currentStep);
+            });
+            document.querySelectorAll('[data-step-target]').forEach(tab => {
+                tab.classList.toggle('active', Number(tab.dataset.stepTarget) === currentStep);
+            });
+            const prevBtn = document.getElementById('prevStepBtn');
+            const nextBtn = document.getElementById('nextStepBtn');
+            if (prevBtn) prevBtn.classList.toggle('hidden', currentStep === 1);
+            if (nextBtn) {
+                nextBtn.classList.toggle('hidden', currentStep === 3);
+                nextBtn.innerHTML = '下一步<i class="fas fa-arrow-right ml-1.5"></i>';
+            }
+            const container = document.getElementById('mainFormContainer');
+            if (container) container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function goStep(step) {
+            if (step > 3) {
+                submitForm();
+                return;
+            }
+            currentStep = Math.min(3, Math.max(1, step));
+            updateStepView();
+        }
+
+        function initStepWizard() {
+            ensureInfoTechStepSection();
+            document.querySelectorAll('[data-step-target]').forEach(tab => {
+                tab.addEventListener('click', () => goStep(Number(tab.dataset.stepTarget)));
+            });
+            updateStepView();
+        }
+
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
             generateAppNo();
             initAttachments();
-            initScrollSpy();
-            initTopAnchorNavigation();
+            initStepWizard();
             updateIntegrationVisibility();
             initCanvas();
             renderCustomerList();
@@ -2447,6 +2625,61 @@
             updateQuickNav();
         }
 
+        function enhanceSystemCard(card, uniqueId) {
+            if (!card || card.dataset.enhanced === 'true') return;
+            const header = card.firstElementChild;
+            const body = header ? header.nextElementSibling : null;
+            const actions = header ? header.querySelector('.flex.items-center.gap-2:last-child') : null;
+            if (!header || !body || !actions) return;
+
+            card.dataset.enhanced = 'true';
+            body.id = body.id || `systemBody_${uniqueId}`;
+            header.classList.add('cursor-pointer');
+
+            const saveBtn = document.createElement('button');
+            saveBtn.type = 'button';
+            saveBtn.className = 'text-xs text-blue-600 hover:bg-blue-50 px-2 py-1 rounded transition-colors';
+            saveBtn.innerHTML = '<i class="fas fa-save"></i> 保存';
+            saveBtn.onclick = (event) => {
+                event.stopPropagation();
+                saveSystemCard(uniqueId);
+            };
+
+            const toggleBtn = document.createElement('button');
+            toggleBtn.type = 'button';
+            toggleBtn.className = 'text-xs text-slate-600 hover:bg-slate-100 px-2 py-1 rounded transition-colors';
+            toggleBtn.dataset.systemToggle = uniqueId;
+            toggleBtn.innerHTML = '<i class="fas fa-chevron-up"></i> 收起';
+            toggleBtn.onclick = (event) => {
+                event.stopPropagation();
+                toggleSystemCardCollapse(uniqueId);
+            };
+
+            actions.prepend(toggleBtn);
+            actions.prepend(saveBtn);
+            header.addEventListener('click', (event) => {
+                if (event.target.closest('button,input,label,select,textarea,a')) return;
+                toggleSystemCardCollapse(uniqueId);
+            });
+        }
+
+        function toggleSystemCardCollapse(uniqueId) {
+            const card = document.getElementById(`system-card-${uniqueId}`);
+            const body = card && card.firstElementChild ? card.firstElementChild.nextElementSibling : null;
+            const toggleBtn = card ? card.querySelector(`[data-system-toggle="${uniqueId}"]`) : null;
+            if (!body) return;
+            const collapsed = body.classList.toggle('hidden');
+            if (toggleBtn) {
+                toggleBtn.innerHTML = collapsed
+                    ? '<i class="fas fa-chevron-down"></i> 展开'
+                    : '<i class="fas fa-chevron-up"></i> 收起';
+            }
+        }
+
+        function saveSystemCard(uniqueId) {
+            showToast('认证领域已保存', 'success');
+        }
+
         // 修改renderSystemCard，添加认证类型选择和转换证书信息
         function renderSystemCard(systemKey, uniqueId, index) {
             const sys = systemConfig[systemKey];
@@ -2629,6 +2862,7 @@
             `;
 
             cardsList.appendChild(card);
+            enhanceSystemCard(card, uniqueId);
             const headquarters = getDefaultHeadquartersLocation();
             addLocationCard(uniqueId, 'HQ', headquarters.name, headquarters.address, 'fixed', true, { locked: true });
             applyDefaultInputPlaceholders(card);
@@ -3300,7 +3534,12 @@
 
         function updateInfoTechVisibility() {
             const infoTechSection = document.getElementById('infoTechOrgSection');
-            if (infoTechSection) infoTechSection.classList.toggle('hidden', !hasInfoTechSystem());
+            const showInfoTech = hasInfoTechSystem();
+            if (infoTechSection) infoTechSection.classList.toggle('hidden', !showInfoTech);
+            const infoTechStepSection = document.getElementById('section-info-tech');
+            if (infoTechStepSection) infoTechStepSection.classList.toggle('hidden', !showInfoTech);
+            const infoTechPlaceholder = document.getElementById('infoTechStepPlaceholder');
+            if (infoTechPlaceholder) infoTechPlaceholder.classList.toggle('hidden', showInfoTech);
 
             const productionSection = document.getElementById('productionInfoSection');
             const productionSwitch = document.getElementById('enableProductionInfo');
@@ -3327,17 +3566,17 @@
 
             // 产品质量标准清单
             const qualityAttach = document.getElementById('qualityStandardAttachment');
-            if (showQualityStd) {
+            if (qualityAttach && showQualityStd) {
                 qualityAttach.classList.add('visible');
-            } else {
+            } else if (qualityAttach) {
                 qualityAttach.classList.remove('visible');
             }
 
             // 整合管理体系信息（多体系时显示）
             const integrationAttach = document.getElementById('integrationAttachment');
-            if (selectedSystems.length > 1) {
+            if (integrationAttach && selectedSystems.length > 1) {
                 integrationAttach.classList.add('visible');
-            } else {
+            } else if (integrationAttach) {
                 integrationAttach.classList.remove('visible');
             }
 
@@ -3387,6 +3626,9 @@
             // 更新食品专项显示
             checkFoodSpecialSection();
             updateInfoTechVisibility();
+            if (typeof window.renderMergedAttachments === 'function') {
+                window.renderMergedAttachments();
+            }
         }
 
         // 客户选择相关
@@ -3886,6 +4128,7 @@
             `;
 
             cardsList.appendChild(card);
+            enhanceSystemCard(card, uniqueId);
             const headquarters = getDefaultHeadquartersLocation();
             addLocationCard(uniqueId, 'HQ', headquarters.name, headquarters.address, 'fixed', true, { locked: true });
             applyDefaultInputPlaceholders(card);
@@ -4129,11 +4372,11 @@
             const navItem = document.getElementById('nav-integration');
 
             if (selectedSystems.length > 1) {
-                section.classList.remove('hidden');
-                navItem.classList.remove('hidden');
+                if (section) section.classList.remove('hidden');
+                if (navItem) navItem.classList.remove('hidden');
             } else {
-                section.classList.add('hidden');
-                navItem.classList.add('hidden');
+                if (section) section.classList.add('hidden');
+                if (navItem) navItem.classList.add('hidden');
             }
         }
 
@@ -4248,6 +4491,7 @@
                 [40, 80, 90].includes(currentValue)) {
                 degreeInput.value = newValue;
             }
+            clampIntegrationDegreeToLevel();
 
             // 生成复选框，第一个默认选中且不可取消
             const items = integrationData[level].items;
@@ -4260,6 +4504,29 @@
                 '    <span class="text-xs text-slate-700 ' + (idx === 0 ? 'font-medium' : '') + '">' + item + '</span>' +
                 '</label>'
             ).join('');
+        }
+
+        function getIntegrationRange(level) {
+            const ranges = {
+                low: { min: 0, max: 40 },
+                medium: { min: 41, max: 80 },
+                high: { min: 81, max: 100 }
+            };
+            return ranges[level] || { min: 0, max: 100 };
+        }
+
+        function clampIntegrationDegreeToLevel() {
+            const levelSelect = document.getElementById('integrationLevel');
+            const input = document.getElementById('integrationDegree');
+            if (!levelSelect || !input || !levelSelect.value) return;
+            const range = getIntegrationRange(levelSelect.value);
+            let value = parseInt(input.value);
+            if (isNaN(value)) value = range.min;
+            if (value < range.min) value = range.min;
+            if (value > range.max) value = range.max;
+            input.min = range.min;
+            input.max = range.max;
+            input.value = value;
         }
 
         function validateIntegrationDegree() {
@@ -4277,8 +4544,13 @@
 
             input.value = value;
 
-            // 根据值自动选择级别（反向联动）
             const levelSelect = document.getElementById('integrationLevel');
+            if (levelSelect.value) {
+                clampIntegrationDegreeToLevel();
+                return;
+            }
+
+            // 未选择级别时，保留按数值反推级别的原逻辑
             if (value <= 40 && levelSelect.value !== 'low') {
                 levelSelect.value = 'low';
                 updateIntegrationContent();
@@ -4300,6 +4572,7 @@
             updateIntegrationContent();
         }
 function initAttachments() {
+            const mergedContainer = document.getElementById('mergedAttachmentsList');
             const commonContainer = document.getElementById('commonAttachments');
             const processContainer = document.getElementById('processAttachmentsList');
             const qualityContainer = document.getElementById('qualityAttachmentsList');
@@ -4392,6 +4665,9 @@ function initAttachments() {
             const renderFileCard = (file, idx, type) => {
                 const fileTypeId = `${type}_${idx}`;
                 const isRequired = file.forceRequired || !/(适用时|必要时)/.test(file.name);
+                const tagsHtml = (file.tags || []).map(tag => `
+                    <span class="inline-flex items-center rounded bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700 border border-amber-100">${tag}</span>
+                `).join('');
                 window.uploadedFiles[fileTypeId] = window.uploadedFiles[fileTypeId] || [];
 
                 return `
@@ -4402,7 +4678,7 @@ function initAttachments() {
                                 <i class="fas fa-file-alt"></i>
                             </div>
                             <div>
-                                <div class="file-upload-title">${file.name}</div>
+                                <div class="file-upload-title flex flex-wrap items-center gap-2">${tagsHtml}<span>${file.name}</span></div>
                                 <div class="file-upload-meta">
                                     ${isRequired ? '<span class="required-tag">必填</span>' : '<span>选填</span>'}
                                     ${file.template ? `<a href="${file.template}" download class="text-blue-600 hover:underline ml-2" onclick="event.stopPropagation()">下载模板</a>` : ''}
@@ -4428,6 +4704,55 @@ function initAttachments() {
                 </div>
                 `;
             };
+
+            const attachmentGroups = [
+                { tag: '通用', files: commonFiles },
+                { tag: '转换', files: commonFiles, condition: () => true, fileFilter: file => /认证转换|原认证机构|审核项目推进表/.test(file.name) },
+                { tag: '多场所', files: processFiles },
+                { tag: 'QMS', files: qualityFiles, systems: ['QMS'] },
+                { tag: 'FSMS', files: qualityFiles, systems: ['FSMS'] },
+                { tag: 'HACCP', files: qualityFiles, systems: ['HACCP'] },
+                { tag: '整合', files: integrationFiles, condition: () => selectedSystems.length > 1 },
+                { tag: 'EMS', files: emsFiles, systems: ['EMS'] },
+                { tag: 'OHSMS', files: emsFiles, systems: ['OHSMS'] },
+                { tag: 'EnMS', files: enmsFiles, systems: ['EnMS'] },
+                { tag: 'ISMS', files: ismsFiles, systems: ['ISMS'] },
+                { tag: 'ITSMS', files: itsmsFiles, systems: ['ITSMS'] },
+                { tag: 'FSMS', files: fsmsFiles, systems: ['FSMS'] },
+                { tag: 'HACCP', files: fsmsFiles, systems: ['HACCP'] }
+            ];
+
+            const renderMergedAttachments = () => {
+                if (!mergedContainer) return;
+                const fileMap = new Map();
+                attachmentGroups.forEach(group => {
+                    const groupVisible = group.condition ? group.condition() : !group.systems || group.systems.some(system => selectedSystems.some(selected => selected.key === system));
+                    if (!groupVisible) return;
+                    visibleFiles(group.files).forEach(file => {
+                        if (group.fileFilter && !group.fileFilter(file)) return;
+                        const key = `${file.name}_${file.template || ''}`;
+                        if (!fileMap.has(key)) {
+                            fileMap.set(key, { ...file, tags: [group.tag] });
+                        } else {
+                            const existing = fileMap.get(key);
+                            if (!existing.tags.includes(group.tag)) existing.tags.push(group.tag);
+                            existing.forceRequired = existing.forceRequired || file.forceRequired;
+                            existing.required = existing.required || file.required;
+                        }
+                    });
+                });
+                const mergedFiles = Array.from(fileMap.values());
+                mergedContainer.innerHTML = mergedFiles.length
+                    ? mergedFiles.map((file, index) => renderFileCard(file, index, 'merged')).join('')
+                    : '<div class="text-sm text-slate-500 bg-slate-50 border border-dashed border-slate-200 rounded-lg p-6 text-center">暂无需上传的附件材料</div>';
+                mergedFiles.forEach((_, index) => renderFileTags(`merged_${index}`));
+            };
+
+            window.renderMergedAttachments = renderMergedAttachments;
+            if (mergedContainer) {
+                renderMergedAttachments();
+                return;
+            }
 
             if (commonContainer) {
                 commonContainer.innerHTML = visibleFiles(commonFiles).map((f, i) => renderFileCard(f, i, 'common')).join('');
