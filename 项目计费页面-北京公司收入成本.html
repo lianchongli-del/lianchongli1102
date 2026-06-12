@@ -19,6 +19,7 @@
       --success: #059669;
       --warning: #d97706;
       --shadow: 0 2px 4px rgba(15, 23, 42, .08);
+      --floating-shadow: 0 8px 24px rgba(15, 23, 42, .12);
     }
 
     * { box-sizing: border-box; }
@@ -40,7 +41,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 58px;
+      height: 56px;
       padding: 0 28px;
       background: var(--surface);
       border-bottom: 1px solid var(--border);
@@ -48,7 +49,7 @@
     }
 
     .title-wrap { display: flex; align-items: center; gap: 12px; }
-    h1 { margin: 0; font-size: 20px; line-height: 1.2; }
+    h1 { margin: 0; font-size: 18px; line-height: 1.2; }
 
     .tag {
       display: inline-flex;
@@ -63,6 +64,13 @@
     }
 
     .header-actions { display: flex; align-items: center; gap: 10px; }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
 
     .btn {
       display: inline-flex;
@@ -109,15 +117,16 @@
 
     .notice strong { color: #0f172a; }
 
-    .section, .charge-card {
+    .section {
       margin-bottom: 16px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 8px;
       box-shadow: var(--shadow);
+      overflow: hidden;
     }
 
-    .section-header, .charge-header {
+    .section-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -126,8 +135,6 @@
       padding: 0 16px;
       border-bottom: 1px solid #f1f5f9;
     }
-
-    .charge-header { cursor: pointer; }
 
     .section-title {
       display: flex;
@@ -147,7 +154,7 @@
       background: var(--primary);
     }
 
-    .section-body, .charge-body { padding: 16px; }
+    .section-body { padding: 16px; }
 
     .info-grid {
       display: grid;
@@ -189,37 +196,6 @@
       font-weight: 700;
     }
 
-    .charge-title {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 0;
-      font-weight: 700;
-      color: #0f172a;
-    }
-
-    .charge-index {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      color: #fff;
-      background: var(--primary);
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .charge-source {
-      color: #64748b;
-      font-size: 13px;
-      font-weight: 500;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
     .package-actions {
       display: flex;
       align-items: center;
@@ -240,8 +216,6 @@
     .package-status.pending { color: #b45309; background: #fef3c7; }
     .package-status.saved { color: #2563eb; background: #dbeafe; }
     .package-status.done { color: #047857; background: #d1fae5; }
-    .toggle-btn { min-width: 62px; }
-    .charge-card.collapsed .charge-body { display: none; }
 
     .read-grid {
       display: grid;
@@ -293,6 +267,8 @@
 
     .table-scroll {
       overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 6px;
       background: #fff;
     }
 
@@ -329,6 +305,7 @@
     }
 
     tr:last-child td { border-bottom: 0; }
+    tbody tr:hover td { background: #f8fafc; }
     th:last-child, td:last-child { border-right: 0; }
 
     .control {
@@ -336,7 +313,7 @@
       height: 30px;
       min-width: 96px;
       padding: 0 8px;
-      border: 1px solid #d1d5db;
+      border: 1px solid #cbd5e1;
       border-radius: 6px;
       color: #1f2937;
       background: #fff;
@@ -431,13 +408,13 @@
       border: 1px solid #cbd5e1;
       border-radius: 6px;
       background: #fff;
-      box-shadow: 0 10px 28px rgba(15, 23, 42, .18);
+      box-shadow: var(--floating-shadow);
     }
 
     .payee-suggest-item {
       width: 100%;
-      min-height: 38px;
-      padding: 7px 10px;
+      min-height: 40px;
+      padding: 8px 10px;
       border: 0;
       border-bottom: 1px solid #f1f5f9;
       color: #0f172a;
@@ -447,8 +424,99 @@
     }
 
     .payee-suggest-item:hover { background: #eff6ff; }
+    .payee-suggest-item:last-child { border-bottom: 0; }
     .payee-suggest-main { font-weight: 700; }
     .payee-suggest-meta { color: #64748b; font-size: 12px; }
+
+    .modal-mask {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, .35);
+    }
+
+    .modal-mask.show { display: flex; }
+
+    .modal {
+      width: min(520px, calc(100vw - 48px));
+      max-height: calc(100vh - 80px);
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 20px 40px -12px rgba(15, 23, 42, .28);
+      overflow: hidden;
+    }
+
+    .modal-header, .modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      min-height: 52px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-footer {
+      justify-content: flex-end;
+      gap: 10px;
+      border-top: 1px solid var(--border);
+      border-bottom: 0;
+    }
+
+    .modal-title { font-size: 16px; font-weight: 700; }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border: 0;
+      border-radius: 6px;
+      color: #64748b;
+      background: transparent;
+      cursor: pointer;
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .modal-close:hover { background: #f1f5f9; color: #334155; }
+    .modal-body { overflow: auto; padding: 18px; }
+
+    .confirm-message {
+      margin-bottom: 14px;
+      color: #0f172a;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .overview-grid {
+      display: block;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .overview-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 44px;
+      padding: 0 14px;
+      border-bottom: 1px solid #f1f5f9;
+      background: #fff;
+      color: #64748b;
+    }
+
+    .overview-item:last-child { border-bottom: 0; }
+
+    .overview-item strong {
+      color: #0f172a;
+      font-size: 16px;
+      line-height: 1.2;
+    }
 
     .empty-row td {
       height: 48px;
@@ -461,9 +529,12 @@
   <header class="app-header">
     <div class="title-wrap">
       <h1>项目计费</h1>
+      <span class="package-status pending" id="headerBillingStatus">待计费</span>
     </div>
     <div class="header-actions">
       <button class="btn btn-normal" type="button">返回</button>
+      <button class="btn btn-normal" data-save-billing type="button">保存</button>
+      <button class="btn btn-primary" data-submit-billing type="button">提交</button>
     </div>
   </header>
 
@@ -488,8 +559,25 @@
       </div>
     </section>
 
-    <div id="chargePackages"></div>
+    <div id="billingInfo"></div>
   </main>
+
+  <div class="modal-mask" id="submitConfirmModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">提交确认</div>
+        <button class="modal-close" id="closeSubmitConfirm" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="confirm-message">该收入成本信息将同步至集团主干系统，是否提交？</div>
+        <div class="overview-grid" id="submitOverview"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-normal" id="cancelSubmitConfirm" type="button">取消</button>
+        <button class="btn btn-primary" id="confirmSubmit" type="button">确定提交</button>
+      </div>
+    </div>
+  </div>
 
   <datalist id="payeeOptions"></datalist>
 
@@ -522,42 +610,29 @@
     ];
 
     const state = {
-      packages: [
-        {
-          id: "pkg-1",
-          status: "待提交",
-          collapsed: true,
-          income: {
-            sourceOrg: "中国质量认证中心（CQC）",
-            amount: 58000,
-            currency: "CNY",
-            exchangeRate: 1,
-            baseCurrency: "人民币 CNY",
-            taxRate: 6,
-            remark: "来源：CQC 外付成本明细 1，转北京公司收入"
-          },
-          externalCosts: [newExternalCost({ amount: 18000, remark: "分包审核服务" })],
-          internalCosts: [newInternalCost({ amount: 5200, remark: "审核组人员费用" })],
-          attachments: { settlement: 0, other: 0 }
+      billing: {
+        id: "billing-1",
+        status: "待计费",
+        income: {
+          sourceOrg: "中国质量认证中心（CQC）",
+          amount: 94000,
+          currency: "CNY",
+          exchangeRate: 1,
+          baseCurrency: "人民币 CNY",
+          taxRate: 6,
+          remark: "来源：CQC 外付成本明细，转北京公司收入"
         },
-        {
-          id: "pkg-2",
-          status: "待提交",
-          collapsed: true,
-          income: {
-            sourceOrg: "中国质量认证中心（CQC）",
-            amount: 36000,
-            currency: "CNY",
-            exchangeRate: 1,
-            baseCurrency: "人民币 CNY",
-            taxRate: 6,
-            remark: "来源：CQC 外付成本明细 2，转北京公司收入"
-          },
-          externalCosts: [newExternalCost({ item: "交通费(FSSC1043)", amount: 9600, remark: "异地审核交通支持" })],
-          internalCosts: [newInternalCost({ item: "住宿费", amount: 4200, remark: "审核住宿费用" })],
-          attachments: { settlement: 0, other: 0 }
-        }
-      ]
+        externalCosts: [
+          newExternalCost({ amount: 18000, remark: "分包审核服务" }),
+          newExternalCost({ item: "交通费(FSSC1043)", amount: 9600, remark: "异地审核交通支持" })
+        ],
+        internalCosts: [
+          newInternalCost({ amount: 5200, remark: "审核组人员费用" }),
+          newInternalCost({ item: "住宿费", amount: 4200, remark: "审核住宿费用" })
+        ],
+        attachments: { settlement: 0, other: 0 }
+      },
+      pendingSubmit: false
     };
 
     function uid(prefix) {
@@ -665,8 +740,7 @@
 
     function rowsForPayeeInput(input) {
       if (!input.dataset.scope || input.dataset.field !== "payeeName") return null;
-      const pkgIndex = Number(input.dataset.package);
-      const rows = rowsFor(input.dataset.scope, pkgIndex);
+      const rows = rowsFor(input.dataset.scope);
       return { rows, row: rows[Number(input.dataset.index)] };
     }
 
@@ -746,59 +820,101 @@
       return { external, internal, costBase };
     }
 
-    function renderPackages() {
-      $("#chargePackages").innerHTML = state.packages.map((pkg, pkgIndex) => {
-        const summary = costSummary(pkg);
-        const submitted = pkg.status === "已提交";
-        const saved = pkg.status === "已保存";
-        const collapsed = pkg.collapsed !== false;
-        return `
-          <section class="charge-card ${collapsed ? "collapsed" : ""}">
-            <div class="charge-header" data-toggle-package="${pkgIndex}">
-              <div class="charge-title">
-                <span class="charge-index">${pkgIndex + 1}</span>
-                <span>计费信息</span>
-                <span class="package-status ${submitted ? "done" : saved ? "saved" : "pending"}">${pkg.status}</span>
-                <span class="charge-source">${pkg.income.remark}</span>
-              </div>
-              <div class="package-actions">
-                <div class="compact-summary">
-                  <span>收入 <strong>${money(pkg.income.baseAmount)}</strong></span>
-                  <span>外付 <strong id="externalTotal-${pkgIndex}">${money(summary.external)}</strong></span>
-                  <span>内付 <strong id="internalTotal-${pkgIndex}">${money(summary.internal)}</strong></span>
-                </div>
-                <button class="btn btn-normal toggle-btn" data-toggle-package="${pkgIndex}" type="button">${collapsed ? "展开" : "收起"}</button>
-                <button class="btn btn-normal" data-save-package="${pkgIndex}" type="button">保存</button>
-                <button class="btn btn-primary" data-submit-package="${pkgIndex}" type="button">提交</button>
-              </div>
-            </div>
-            <div class="charge-body">
-              <div class="sub-section">
-                <div class="sub-header"><div class="sub-title">收入信息</div><span class="readonly-text">只读</span></div>
-                <div style="padding:14px;">${incomeView(pkg.income)}</div>
-              </div>
-              ${costSection("external", pkg.externalCosts, pkgIndex)}
-              ${costSection("internal", pkg.internalCosts, pkgIndex)}
-              ${attachmentSection(pkg, pkgIndex)}
-            </div>
-          </section>`;
-      }).join("");
+    function renderSubmitOverview(rows) {
+      $("#submitOverview").innerHTML = rows.map(item => `
+        <div class="overview-item">
+          <span>${item.label}</span>
+          <strong>${item.value}</strong>
+        </div>`).join("");
     }
 
-    function costSection(scope, rows, pkgIndex) {
+    function openSubmitConfirm() {
+      const billing = state.billing;
+      const summary = costSummary(billing);
+      calc(billing.income);
+      state.pendingSubmit = true;
+      renderSubmitOverview([
+        { label: "收入", value: money(billing.income.amount) },
+        { label: "外付", value: money(summary.external) },
+        { label: "内付", value: money(summary.internal) }
+      ]);
+      $("#submitConfirmModal").classList.add("show");
+    }
+
+    function closeSubmitConfirm() {
+      $("#submitConfirmModal").classList.remove("show");
+      state.pendingSubmit = false;
+    }
+
+    function confirmSubmitBilling() {
+      if (!state.pendingSubmit) return;
+      state.billing.status = "已提交";
+      closeSubmitConfirm();
+      renderBilling();
+    }
+
+    function renderBilling() {
+      const billing = state.billing;
+      const summary = costSummary(billing);
+      const submitted = billing.status === "已提交";
+      const saved = billing.status === "已保存";
+      $("#billingInfo").innerHTML = `
+        <section class="section">
+          <div class="section-header">
+            <div class="section-heading">
+              <h2 class="section-title">收入信息</h2>
+            </div>
+            <div class="compact-summary">
+              <span>收入 <strong>${money(billing.income.baseAmount)}</strong></span>
+            </div>
+          </div>
+          <div class="section-body">
+            ${incomeView(billing.income)}
+          </div>
+        </section>
+        <section class="section">
+          <div class="section-header">
+            <h2 class="section-title">成本信息</h2>
+            <div class="compact-summary">
+              <span>外付 <strong id="externalTotal">${money(summary.external)}</strong></span>
+              <span>内付 <strong id="internalTotal">${money(summary.internal)}</strong></span>
+            </div>
+          </div>
+          <div class="section-body">
+            ${costSection("external", billing.externalCosts)}
+            ${costSection("internal", billing.internalCosts)}
+          </div>
+        </section>
+        <section class="section">
+          <div class="section-header">
+            <h2 class="section-title">附件信息</h2>
+            <span class="readonly-text">选填，无必填校验</span>
+          </div>
+          <div class="section-body">
+            ${attachmentSection(billing)}
+          </div>
+        </section>`;
+      const headerStatus = $("#headerBillingStatus");
+      if (headerStatus) {
+        headerStatus.className = `package-status ${submitted ? "done" : saved ? "saved" : "pending"}`;
+        headerStatus.textContent = billing.status;
+      }
+    }
+
+    function costSection(scope, rows) {
       const isExternal = scope === "external";
       return `
         <div class="sub-section">
           <div class="sub-header">
             <div class="sub-title">${isExternal ? "外付成本" : "内付成本"}</div>
             <div class="sub-actions">
-              <button class="btn btn-primary" data-add="${scope}" data-package="${pkgIndex}" type="button">${isExternal ? "新增外付成本" : "新增内付成本"}</button>
+              <button class="btn btn-primary" data-add="${scope}" type="button">${isExternal ? "新增外付成本" : "新增内付成本"}</button>
             </div>
           </div>
           <div class="table-scroll">
             <table>
               <thead>${isExternal ? externalHead() : internalHead()}</thead>
-              <tbody>${rows.length ? rows.map((row, rowIndex) => isExternal ? externalRow(row, pkgIndex, rowIndex) : internalRow(row, pkgIndex, rowIndex)).join("") : emptyRow(isExternal ? 15 : 13)}</tbody>
+              <tbody>${rows.length ? rows.map((row, rowIndex) => isExternal ? externalRow(row, rowIndex) : internalRow(row, rowIndex)).join("") : emptyRow(isExternal ? 15 : 13)}</tbody>
             </table>
           </div>
         </div>`;
@@ -819,48 +935,48 @@
       </tr>`;
     }
 
-    function externalRow(row, pkgIndex, rowIndex) {
+    function externalRow(row, rowIndex) {
       calc(row);
       const scope = "external";
       const isSubcontract = row.costType === "分包";
       const disabled = "";
       return `<tr>
-        <td><select class="control medium" data-scope="${scope}" data-field="costType" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(externalCostTypes, row.costType)}</select></td>
-        <td><select class="control wide" data-scope="${scope}" data-field="item" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(externalItems, row.item)}</select></td>
-        <td><input class="control wide" data-scope="${scope}" data-field="payeeName" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.payeeName}" placeholder="输入公司/个人名称、编号或信用代码检索" ${disabled}></td>
-        <td><select class="control medium" data-scope="${scope}" data-field="department" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(departments, row.department)}</select></td>
-        <td><input class="control money-field num" data-scope="${scope}" data-field="amount" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.amount}" type="number" min="0" ${disabled}></td>
-        <td><select class="control short" data-scope="${scope}" data-field="currency" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(currencies, row.currency)}</select></td>
+        <td><select class="control medium" data-scope="${scope}" data-field="costType" data-index="${rowIndex}" ${disabled}>${optionList(externalCostTypes, row.costType)}</select></td>
+        <td><select class="control wide" data-scope="${scope}" data-field="item" data-index="${rowIndex}" ${disabled}>${optionList(externalItems, row.item)}</select></td>
+        <td><input class="control wide" data-scope="${scope}" data-field="payeeName" data-index="${rowIndex}" value="${row.payeeName}" placeholder="输入公司/个人名称、编号或信用代码检索" ${disabled}></td>
+        <td><select class="control medium" data-scope="${scope}" data-field="department" data-index="${rowIndex}" ${disabled}>${optionList(departments, row.department)}</select></td>
+        <td><input class="control money-field num" data-scope="${scope}" data-field="amount" data-index="${rowIndex}" value="${row.amount}" type="number" min="0" ${disabled}></td>
+        <td><select class="control short" data-scope="${scope}" data-field="currency" data-index="${rowIndex}" ${disabled}>${optionList(currencies, row.currency)}</select></td>
         <td><input class="control medium" value="${row.baseCurrency}" readonly></td>
-        <td><input class="control short num" data-scope="${scope}" data-field="exchangeRate" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.exchangeRate}" type="number" min="0" step="0.0001" ${disabled}></td>
+        <td><input class="control short num" data-scope="${scope}" data-field="exchangeRate" data-index="${rowIndex}" value="${row.exchangeRate}" type="number" min="0" step="0.0001" ${disabled}></td>
         <td><input class="control money-field num" value="${money(row.baseAmount)}" readonly></td>
-        <td><div class="percent-field"><input class="control num" data-scope="${scope}" data-field="taxRate" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.taxRate}" type="number" min="0" step="0.01" ${disabled}><span class="percent-sign">%</span></div></td>
+        <td><div class="percent-field"><input class="control num" data-scope="${scope}" data-field="taxRate" data-index="${rowIndex}" value="${row.taxRate}" type="number" min="0" step="0.01" ${disabled}><span class="percent-sign">%</span></div></td>
         <td><input class="control money-field num" value="${money(row.taxAmount)}" readonly></td>
         <td><input class="control money-field num" value="${money(row.baseTaxAmount)}" readonly></td>
-        <td>${isSubcontract ? `<select class="control medium" data-scope="${scope}" data-field="createSubOrder" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(["创建", "不创建"], row.createSubOrder)}</select>` : `<span class="readonly-text">无</span>`}</td>
-        <td><input class="control wide" data-scope="${scope}" data-field="remark" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.remark}" placeholder="请输入" ${disabled}></td>
-        <td><button class="btn btn-danger" data-remove="${scope}" data-package="${pkgIndex}" data-index="${rowIndex}" type="button" ${disabled}>删除</button></td>
+        <td>${isSubcontract ? `<select class="control medium" data-scope="${scope}" data-field="createSubOrder" data-index="${rowIndex}" ${disabled}>${optionList(["创建", "不创建"], row.createSubOrder)}</select>` : `<span class="readonly-text">无</span>`}</td>
+        <td><input class="control wide" data-scope="${scope}" data-field="remark" data-index="${rowIndex}" value="${row.remark}" placeholder="请输入" ${disabled}></td>
+        <td><button class="btn btn-danger" data-remove="${scope}" data-index="${rowIndex}" type="button" ${disabled}>删除</button></td>
       </tr>`;
     }
 
-    function internalRow(row, pkgIndex, rowIndex) {
+    function internalRow(row, rowIndex) {
       calc(row);
       const scope = "internal";
       const disabled = "";
       return `<tr>
-        <td><select class="control medium" data-scope="${scope}" data-field="item" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(internalItems, row.item)}</select></td>
-        <td><input class="control wide" data-scope="${scope}" data-field="payeeName" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.payeeName}" placeholder="输入名称/编码检索" ${disabled}></td>
-        <td><select class="control medium" data-scope="${scope}" data-field="department" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(departments, row.department)}</select></td>
-        <td><input class="control money-field num" data-scope="${scope}" data-field="amount" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.amount}" type="number" min="0" ${disabled}></td>
-        <td><select class="control short" data-scope="${scope}" data-field="currency" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(currencies, row.currency)}</select></td>
+        <td><select class="control medium" data-scope="${scope}" data-field="item" data-index="${rowIndex}" ${disabled}>${optionList(internalItems, row.item)}</select></td>
+        <td><input class="control wide" data-scope="${scope}" data-field="payeeName" data-index="${rowIndex}" value="${row.payeeName}" placeholder="输入名称/编码检索" ${disabled}></td>
+        <td><select class="control medium" data-scope="${scope}" data-field="department" data-index="${rowIndex}" ${disabled}>${optionList(departments, row.department)}</select></td>
+        <td><input class="control money-field num" data-scope="${scope}" data-field="amount" data-index="${rowIndex}" value="${row.amount}" type="number" min="0" ${disabled}></td>
+        <td><select class="control short" data-scope="${scope}" data-field="currency" data-index="${rowIndex}" ${disabled}>${optionList(currencies, row.currency)}</select></td>
         <td><input class="control medium" value="${row.baseCurrency}" readonly></td>
-        <td><input class="control short num" data-scope="${scope}" data-field="exchangeRate" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.exchangeRate}" type="number" min="0" step="0.0001" ${disabled}></td>
+        <td><input class="control short num" data-scope="${scope}" data-field="exchangeRate" data-index="${rowIndex}" value="${row.exchangeRate}" type="number" min="0" step="0.0001" ${disabled}></td>
         <td><input class="control money-field num" value="${money(row.baseAmount)}" readonly></td>
-        <td><div class="percent-field"><input class="control num" data-scope="${scope}" data-field="taxRate" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.taxRate}" type="number" min="0" step="0.01" ${disabled}><span class="percent-sign">%</span></div></td>
+        <td><div class="percent-field"><input class="control num" data-scope="${scope}" data-field="taxRate" data-index="${rowIndex}" value="${row.taxRate}" type="number" min="0" step="0.01" ${disabled}><span class="percent-sign">%</span></div></td>
         <td><input class="control money-field num" value="${money(row.taxAmount)}" readonly></td>
         <td><input class="control money-field num" value="${money(row.baseTaxAmount)}" readonly></td>
-        <td><input class="control wide" data-scope="${scope}" data-field="remark" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.remark}" placeholder="请输入" ${disabled}></td>
-        <td><button class="btn btn-danger" data-remove="${scope}" data-package="${pkgIndex}" data-index="${rowIndex}" type="button" ${disabled}>删除</button></td>
+        <td><input class="control wide" data-scope="${scope}" data-field="remark" data-index="${rowIndex}" value="${row.remark}" placeholder="请输入" ${disabled}></td>
+        <td><button class="btn btn-danger" data-remove="${scope}" data-index="${rowIndex}" type="button" ${disabled}>删除</button></td>
       </tr>`;
     }
 
@@ -868,52 +984,42 @@
       return `<tr class="empty-row"><td colspan="${colspan}">暂无成本，可点击右上角新增</td></tr>`;
     }
 
-    function attachmentSection(pkg, pkgIndex) {
+    function attachmentSection(billing) {
       const disabled = "";
       return `
-        <div class="sub-section">
-          <div class="sub-header">
-            <div class="sub-title">附件信息</div>
-            <span class="readonly-text">选填，无必填校验</span>
-          </div>
-          <div style="padding:14px;">
-            <div class="upload-list">
-              <label class="upload-card">
-                <input type="file" data-file="settlement" data-package="${pkgIndex}" multiple hidden ${disabled}>
-                <div class="upload-left">
-                  <div class="upload-icon">▣</div>
-                  <div>
-                    <div class="upload-name">结算单附件</div>
-                    <div class="upload-state" id="settlementState-${pkgIndex}">${pkg.attachments.settlement ? `已选择 ${pkg.attachments.settlement} 个文件` : "选填"}</div>
-                  </div>
-                </div>
-                <span class="btn btn-primary">上传</span>
-              </label>
-              <label class="upload-card">
-                <input type="file" data-file="other" data-package="${pkgIndex}" multiple hidden ${disabled}>
-                <div class="upload-left">
-                  <div class="upload-icon">▣</div>
-                  <div>
-                    <div class="upload-name">其他附件 (如项目立项审批单等)</div>
-                    <div class="upload-state" id="otherState-${pkgIndex}">${pkg.attachments.other ? `已选择 ${pkg.attachments.other} 个文件` : "选填"}</div>
-                  </div>
-                </div>
-                <span class="btn btn-normal">上传</span>
-              </label>
+        <div class="upload-list">
+          <label class="upload-card">
+            <input type="file" data-file="settlement" multiple hidden ${disabled}>
+            <div class="upload-left">
+              <div class="upload-icon">▣</div>
+              <div>
+                <div class="upload-name">结算单附件</div>
+                <div class="upload-state" id="settlementState">${billing.attachments.settlement ? `已选择 ${billing.attachments.settlement} 个文件` : "选填"}</div>
+              </div>
             </div>
-          </div>
+            <span class="btn btn-primary">上传</span>
+          </label>
+          <label class="upload-card">
+            <input type="file" data-file="other" multiple hidden ${disabled}>
+            <div class="upload-left">
+              <div class="upload-icon">▣</div>
+              <div>
+                <div class="upload-name">其他附件 (如项目立项审批单等)</div>
+                <div class="upload-state" id="otherState">${billing.attachments.other ? `已选择 ${billing.attachments.other} 个文件` : "选填"}</div>
+              </div>
+            </div>
+            <span class="btn btn-normal">上传</span>
+          </label>
         </div>`;
     }
 
-    function rowsFor(scope, pkgIndex) {
-      const pkg = state.packages[pkgIndex];
-      return scope === "external" ? pkg.externalCosts : pkg.internalCosts;
+    function rowsFor(scope) {
+      return scope === "external" ? state.billing.externalCosts : state.billing.internalCosts;
     }
 
     function updateRow(target) {
-      const pkgIndex = Number(target.dataset.package);
       const rowIndex = Number(target.dataset.index);
-      const rows = rowsFor(target.dataset.scope, pkgIndex);
+      const rows = rowsFor(target.dataset.scope);
       const row = rows[rowIndex];
       row[target.dataset.field] = target.value;
       if (target.dataset.field === "currency") row.exchangeRate = currencyRates[target.value] || 1;
@@ -931,14 +1037,13 @@
         }
         if (target.value === "分包") row.createSubOrder = row.createSubOrder || "创建";
       }
-      renderPackages();
+      renderBilling();
     }
 
     document.addEventListener("input", event => {
       const target = event.target;
       if (!target.dataset.scope || target.dataset.field !== "payeeName") return;
-      const pkgIndex = Number(target.dataset.package);
-      const rows = rowsFor(target.dataset.scope, pkgIndex);
+      const rows = rowsFor(target.dataset.scope);
       const row = rows[Number(target.dataset.index)];
       row.payeeName = target.value;
       renderPayeeOptions(target.value, target.dataset.scope);
@@ -949,9 +1054,8 @@
       const target = event.target;
       if (target.dataset.scope && target.dataset.field) updateRow(target);
       if (target.dataset.file) {
-        const pkgIndex = Number(target.dataset.package);
-        state.packages[pkgIndex].attachments[target.dataset.file] = target.files.length;
-        const stateId = target.dataset.file === "settlement" ? `#settlementState-${pkgIndex}` : `#otherState-${pkgIndex}`;
+        state.billing.attachments[target.dataset.file] = target.files.length;
+        const stateId = target.dataset.file === "settlement" ? "#settlementState" : "#otherState";
         $(stateId).textContent = target.files.length ? `已选择 ${target.files.length} 个文件` : "选填";
       }
     });
@@ -967,43 +1071,35 @@
     document.addEventListener("click", event => {
       const addScope = event.target.dataset.add;
       if (addScope) {
-        const pkgIndex = Number(event.target.dataset.package);
-        rowsFor(addScope, pkgIndex).push(addScope === "external" ? newExternalCost() : newInternalCost());
-        renderPackages();
+        rowsFor(addScope).push(addScope === "external" ? newExternalCost() : newInternalCost());
+        renderBilling();
       }
       const removeScope = event.target.dataset.remove;
       if (removeScope) {
-        const pkgIndex = Number(event.target.dataset.package);
-        const rows = rowsFor(removeScope, pkgIndex);
+        const rows = rowsFor(removeScope);
         rows.splice(Number(event.target.dataset.index), 1);
-        renderPackages();
+        renderBilling();
       }
-      const submitIndex = event.target.dataset.submitPackage;
-      if (submitIndex !== undefined) {
+      if (event.target.dataset.submitBilling !== undefined) {
         event.stopPropagation();
-        const pkg = state.packages[Number(submitIndex)];
-        pkg.status = "已提交";
-        renderPackages();
+        openSubmitConfirm();
         return;
       }
-      const saveIndex = event.target.dataset.savePackage;
-      if (saveIndex !== undefined) {
+      if (event.target.dataset.saveBilling !== undefined) {
         event.stopPropagation();
-        state.packages[Number(saveIndex)].status = "已保存";
-        renderPackages();
-        return;
-      }
-      const toggleTarget = event.target.closest("[data-toggle-package]");
-      if (toggleTarget) {
-        if (event.target.closest("[data-submit-package], [data-save-package]")) return;
-        const pkg = state.packages[Number(toggleTarget.dataset.togglePackage)];
-        pkg.collapsed = pkg.collapsed === false;
-        renderPackages();
+        state.billing.status = "已保存";
+        renderBilling();
       }
     });
 
     renderPayeeOptions();
-    renderPackages();
+    renderBilling();
+    $("#closeSubmitConfirm").addEventListener("click", closeSubmitConfirm);
+    $("#cancelSubmitConfirm").addEventListener("click", closeSubmitConfirm);
+    $("#confirmSubmit").addEventListener("click", confirmSubmitBilling);
+    $("#submitConfirmModal").addEventListener("click", event => {
+      if (event.target.id === "submitConfirmModal") closeSubmitConfirm();
+    });
   </script>
 </body>
 </html>
