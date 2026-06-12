@@ -19,6 +19,7 @@
       --success: #059669;
       --warning: #d97706;
       --shadow: 0 2px 4px rgba(15, 23, 42, .08);
+      --floating-shadow: 0 8px 24px rgba(15, 23, 42, .12);
     }
 
     * { box-sizing: border-box; }
@@ -40,7 +41,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 58px;
+      height: 56px;
       padding: 0 28px;
       background: var(--surface);
       border-bottom: 1px solid var(--border);
@@ -48,7 +49,7 @@
     }
 
     .title-wrap { display: flex; align-items: center; gap: 12px; }
-    h1 { margin: 0; font-size: 20px; line-height: 1.2; }
+    h1 { margin: 0; font-size: 18px; line-height: 1.2; }
     .tag {
       display: inline-flex;
       align-items: center;
@@ -108,6 +109,7 @@
       border: 1px solid var(--border);
       border-radius: 8px;
       box-shadow: var(--shadow);
+      overflow: hidden;
     }
 
     .section-header {
@@ -283,6 +285,7 @@
     }
 
     tr:last-child td { border-bottom: 0; }
+    tbody tr:hover td { background: #f8fafc; }
     th:last-child, td:last-child { border-right: 0; }
 
     .control {
@@ -290,7 +293,7 @@
       height: 30px;
       min-width: 96px;
       padding: 0 8px;
-      border: 1px solid #d1d5db;
+      border: 1px solid #cbd5e1;
       border-radius: 6px;
       color: #1f2937;
       background: #fff;
@@ -370,6 +373,14 @@
       overflow: hidden;
     }
 
+    .confirm-modal {
+      width: min(520px, calc(100vw - 48px));
+      display: flex;
+      flex-direction: column;
+      max-height: calc(100vh - 80px);
+      box-shadow: 0 20px 40px -12px rgba(15, 23, 42, .28);
+    }
+
     .modal-header, .modal-footer {
       display: flex;
       align-items: center;
@@ -401,6 +412,49 @@
     .modal-close:hover { background: #f1f5f9; color: #334155; }
     .modal-search { padding: 12px 18px; border-bottom: 1px solid #f1f5f9; }
     .modal-body { overflow: auto; padding: 0 18px 18px; }
+    .confirm-modal .modal-header,
+    .confirm-modal .modal-footer {
+      min-height: 52px;
+      flex-shrink: 0;
+    }
+    .confirm-modal .modal-body {
+      padding: 18px;
+      overflow: visible;
+    }
+
+    .confirm-message {
+      margin-bottom: 14px;
+      color: #0f172a;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .overview-grid {
+      display: block;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .overview-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 44px;
+      padding: 0 14px;
+      border-bottom: 1px solid #f1f5f9;
+      background: #fff;
+      color: #64748b;
+    }
+
+    .overview-item:last-child { border-bottom: 0; }
+
+    .overview-item strong {
+      color: #0f172a;
+      font-size: 16px;
+      line-height: 1.2;
+    }
 
     .contract-search, .payee-search {
       display: grid;
@@ -450,6 +504,19 @@
 
     .status-tag.blue { color: #2563eb; background: #dbeafe; }
     .status-tag.red { color: #dc2626; background: #fee2e2; }
+    .package-status {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .package-status.pending { color: #b45309; background: #fef3c7; }
+    .package-status.saved { color: #2563eb; background: #dbeafe; }
+    .package-status.done { color: #047857; background: #d1fae5; }
 
     .upload-list {
       display: grid;
@@ -529,13 +596,13 @@
       border: 1px solid #cbd5e1;
       border-radius: 6px;
       background: #fff;
-      box-shadow: 0 10px 28px rgba(15, 23, 42, .18);
+      box-shadow: var(--floating-shadow);
     }
 
     .payee-suggest-item {
       width: 100%;
-      min-height: 38px;
-      padding: 7px 10px;
+      min-height: 40px;
+      padding: 8px 10px;
       border: 0;
       border-bottom: 1px solid #f1f5f9;
       color: #0f172a;
@@ -545,6 +612,7 @@
     }
 
     .payee-suggest-item:hover { background: #eff6ff; }
+    .payee-suggest-item:last-child { border-bottom: 0; }
     .payee-suggest-main { font-weight: 700; }
     .payee-suggest-meta { color: #64748b; font-size: 12px; }
 
@@ -555,11 +623,12 @@
   <header class="app-header">
     <div class="title-wrap">
       <h1>项目计费</h1>
+      <span class="package-status pending">待计费</span>
     </div>
     <div class="header-actions">
-      <button class="btn btn-normal" type="button">保存</button>
       <button class="btn btn-normal" type="button">返回</button>
-      <button class="btn btn-primary" type="button">提交</button>
+      <button class="btn btn-normal" type="button">保存</button>
+      <button class="btn btn-primary" id="submitPage" type="button">提交</button>
     </div>
   </header>
 
@@ -812,6 +881,23 @@
         <div class="contract-footer-meta" id="payeeMeta">共 0 条，每页 5 条</div>
         <button class="btn btn-normal" id="cancelPicker" type="button">取消</button>
         <button class="btn btn-primary hidden" id="confirmPicker" type="button">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="submitConfirmModal">
+    <div class="modal confirm-modal">
+      <div class="modal-header">
+        <div class="modal-title">提交确认</div>
+        <button class="modal-close" id="closeSubmitConfirm" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="confirm-message">该收入成本信息将同步至集团主干系统，是否提交？</div>
+        <div class="overview-grid" id="submitOverview"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-normal" id="cancelSubmitConfirm" type="button">取消</button>
+        <button class="btn btn-primary" id="confirmSubmit" type="button">确定提交</button>
       </div>
     </div>
   </div>
@@ -1454,6 +1540,29 @@
       state.picker = null;
     }
 
+    function renderSubmitOverview(rows) {
+      $("#submitOverview").innerHTML = rows.map(item => `
+        <div class="overview-item">
+          <span>${item.label}</span>
+          <strong>${item.value}</strong>
+        </div>`).join("");
+    }
+
+    function openSubmitConfirm() {
+      updateSummary();
+      const sum = (rows, field) => rows.reduce((total, row) => total + Number(row[field] || 0), 0);
+      renderSubmitOverview([
+        { label: "收入", value: money(sum(state.incomes, "amount")) },
+        { label: "外付", value: money(sum(state.externalCosts, "amount")) },
+        { label: "内付", value: money(sum(state.internalCosts, "amount")) }
+      ]);
+      $("#submitConfirmModal").classList.add("show");
+    }
+
+    function closeSubmitConfirm() {
+      $("#submitConfirmModal").classList.remove("show");
+    }
+
     document.addEventListener("input", event => {
       const target = event.target;
       if (target.dataset.scope && target.dataset.field) {
@@ -1576,6 +1685,13 @@
     $("#confirmPicker").addEventListener("click", applySelectedContract);
     $("#pickerModal").addEventListener("click", event => {
       if (event.target.id === "pickerModal") closePicker();
+    });
+    $("#submitPage").addEventListener("click", openSubmitConfirm);
+    $("#closeSubmitConfirm").addEventListener("click", closeSubmitConfirm);
+    $("#cancelSubmitConfirm").addEventListener("click", closeSubmitConfirm);
+    $("#confirmSubmit").addEventListener("click", closeSubmitConfirm);
+    $("#submitConfirmModal").addEventListener("click", event => {
+      if (event.target.id === "submitConfirmModal") closeSubmitConfirm();
     });
     $("#settlementFiles").addEventListener("change", event => {
       $("#settlementState").textContent = event.target.files.length ? `已选择 ${event.target.files.length} 个文件` : (state.incomes[0].sourceType === "结算单" ? "必填" : "选填");
