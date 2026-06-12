@@ -1,0 +1,1141 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>项目计费详情页</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --page: #f8fafc;
+      --surface: #fff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --soft: #f1f5f9;
+      --danger: #dc2626;
+      --success: #059669;
+      --warning: #d97706;
+      --shadow: 0 2px 4px rgba(15, 23, 42, .08);
+      --floating-shadow: 0 8px 24px rgba(15, 23, 42, .12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 1280px;
+      color: var(--text);
+      background: var(--page);
+      font: 14px/1.6 "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    button, input, select, textarea { font: inherit; }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      padding: 0 28px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+    }
+
+    .title-wrap, .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    h1 {
+      margin: 0;
+      color: #0f172a;
+      font-size: 19px;
+      line-height: 1.2;
+      font-weight: 700;
+    }
+
+    .back-link {
+      height: 34px;
+      padding: 0 6px;
+      border: 0;
+      color: #475569;
+      background: transparent;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 4px;
+      color: var(--primary);
+      background: #eff6ff;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .tag.mode { color: #475569; background: #f1f5f9; }
+    .tag.mode.editing { color: #047857; background: #d1fae5; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 34px;
+      padding: 0 14px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      white-space: nowrap;
+      transition: background .15s, border-color .15s, color .15s;
+    }
+
+    .btn-primary { color: #fff; background: var(--primary); }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-normal { color: #334155; background: #fff; border-color: var(--border); }
+    .btn-normal:hover { background: #f8fafc; border-color: #cbd5e1; }
+    .btn-danger { color: var(--danger); background: transparent; }
+
+    .page { padding: 16px 28px 36px; }
+
+    .section {
+      margin-bottom: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 48px;
+      padding: 0 16px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .section-header[data-toggle-section] {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .section-header[data-toggle-section]:hover {
+      background: #f8fafc;
+    }
+
+    .section.collapsed .section-body { display: none; }
+    .section.collapsed .section-header { border-bottom: 0; }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .collapse-btn {
+      width: 22px;
+      height: 22px;
+      padding: 0;
+      border: 0;
+      border-radius: 4px;
+      color: #64748b;
+      background: transparent;
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .collapse-btn:hover {
+      color: var(--primary);
+      background: #eff6ff;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      color: #0f172a;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 4px;
+      height: 18px;
+      border-radius: 3px;
+      background: var(--primary);
+    }
+
+    .section-sub {
+      color: #94a3b8;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .section-body { padding: 16px; }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px 28px;
+    }
+
+    .info-label, .field-label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .info-value, .readonly-value {
+      min-height: 24px;
+      color: #334155;
+      font-weight: 500;
+      word-break: break-all;
+    }
+
+    .form-grid { display: grid; gap: 12px; }
+
+    .source-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .income-fields {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px 12px;
+    }
+
+    .source-switch {
+      display: inline-flex;
+      height: 32px;
+      padding: 3px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .source-switch span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 72px;
+      height: 24px;
+      border-radius: 6px;
+      color: #475569;
+      font-size: 13px;
+    }
+
+    .source-switch .active {
+      color: #fff;
+      background: var(--primary);
+    }
+
+    .compact-summary {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: #64748b;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .compact-summary strong {
+      color: #1e293b;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .control {
+      width: 100%;
+      height: 32px;
+      min-width: 96px;
+      padding: 0 8px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      color: #1f2937;
+      background: #fff;
+      outline: none;
+    }
+
+    .control:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
+    }
+
+    .num { text-align: right; }
+
+    .percent-field {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 18px;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .percent-sign { color: #64748b; }
+    .hidden { display: none !important; }
+
+    .sub-section {
+      margin-top: 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .sub-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 44px;
+      padding: 0 14px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sub-title { font-weight: 600; color: #0f172a; }
+
+    .table-scroll {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1480px;
+      border-collapse: separate;
+      border-spacing: 0;
+      table-layout: auto;
+    }
+
+    th, td {
+      height: 42px;
+      padding: 6px 8px;
+      border-right: 1px solid #f1f5f9;
+      border-bottom: 1px solid #f1f5f9;
+      text-align: left;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    th {
+      color: #334155;
+      background: #f8fafc;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    tbody tr:hover td { background: #f8fafc; }
+    tr:last-child td { border-bottom: 0; }
+    th:last-child, td:last-child { border-right: 0; }
+
+    .table-readonly {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      color: #334155;
+      font-weight: 500;
+    }
+
+    .upload-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .upload-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 72px;
+      padding: 14px 16px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .upload-card.editable { cursor: pointer; }
+    .upload-card.editable:hover { border-color: #93c5fd; background: #eff6ff; }
+
+    .upload-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .upload-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      color: var(--primary);
+      background: #dbeafe;
+      font-weight: 600;
+    }
+
+    .upload-name { color: #1e293b; font-weight: 600; }
+    .upload-state { margin-top: 2px; color: #64748b; font-size: 12px; }
+
+    .modal-mask {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, .35);
+    }
+
+    .modal-mask.show { display: flex; }
+
+    .modal {
+      width: min(960px, calc(100vw - 48px));
+      max-height: calc(100vh - 80px);
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 20px 40px -12px rgba(15, 23, 42, .28);
+      overflow: hidden;
+    }
+
+    .modal-header, .modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 52px;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .modal-footer {
+      justify-content: flex-end;
+      gap: 10px;
+      border-top: 1px solid var(--border);
+      border-bottom: 0;
+    }
+
+    .modal-title { font-size: 16px; font-weight: 600; color: #0f172a; }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border: 0;
+      border-radius: 6px;
+      color: #64748b;
+      background: transparent;
+      cursor: pointer;
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .modal-close:hover { background: #f1f5f9; color: #334155; }
+    .modal-body { overflow: auto; padding: 18px; }
+
+    .history-layout {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    .history-list, .history-detail {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .history-item {
+      width: 100%;
+      padding: 12px;
+      border: 0;
+      border-bottom: 1px solid #f1f5f9;
+      background: #fff;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .history-item:last-child { border-bottom: 0; }
+    .history-item.active { color: var(--primary); background: #eff6ff; }
+    .history-item strong { display: block; color: inherit; }
+    .history-item span { color: #64748b; font-size: 12px; }
+    .history-detail table { min-width: 760px; }
+    .before { color: #ef4444; font-weight: 700; }
+    .after { color: #10b981; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="title-wrap">
+      <button class="back-link" type="button">← 返回</button>
+      <h1>项目详情</h1>
+      <span class="tag mode" id="billingStatus">已计费</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-normal" id="historyBtn" type="button">变更日志</button>
+      <button class="btn btn-primary" id="finishBtn" type="button">完工</button>
+      <button class="btn btn-normal" id="billingBtn" type="button">修改计费</button>
+      <button class="btn btn-primary hidden" id="submitModifyBtn" type="button">提交修改</button>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="section" data-section="base">
+      <div class="section-header" data-toggle-section="base">
+        <div class="section-heading">
+          <h2 class="section-title">基本信息</h2>
+        </div>
+        <button class="collapse-btn" type="button">▴</button>
+      </div>
+      <div class="section-body">
+        <div class="info-grid">
+          <div><div class="info-label">项目编号</div><div class="info-value">XM-2026-06001</div></div>
+          <div><div class="info-label">客户名称</div><div class="info-value">中国气象局</div></div>
+          <div><div class="info-label">审核类型</div><div class="info-value">初次认证</div></div>
+          <div><div class="info-label">认证领域</div><div class="info-value">质量管理体系</div></div>
+          <div><div class="info-label">认证范围</div><div class="info-value">质量管理体系认证范围：产品设计、开发、生产和相关技术服务。</div></div>
+          <div><div class="info-label">业务归属机构</div><div class="info-value">中国质量认证中心（CQC）</div></div>
+          <div><div class="info-label">是否承担交通和住宿费</div><div class="info-value">是</div></div>
+          <div><div class="info-label">合同签署方</div><div class="info-value">中国质量认证中心（CQC）</div></div>
+          <div><div class="info-label">项目实施方</div><div class="info-value">中国检验认证集团北京有限公司</div></div>
+          <div><div class="info-label">计划审核时间</div><div class="info-value">2026-06</div></div>
+          <div><div class="info-label">计划审核人/天</div><div class="info-value">5.5 天</div></div>
+          <div><div class="info-label">当前状态</div><div class="info-value">待计费</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-section="income">
+      <div class="section-header" data-toggle-section="income">
+        <div class="section-heading">
+          <h2 class="section-title">收入信息</h2>
+        </div>
+        <div class="compact-summary">
+          <span>收入合计 <strong id="incomeTotal">0.00</strong></span>
+          <span>税额合计 <strong id="incomeTaxTotal">0.00</strong></span>
+          <span>本位币收入 <strong id="incomeBaseTotal">0.00</strong></span>
+          <span>本位币税额 <strong id="incomeBaseTaxTotal">0.00</strong></span>
+          <button class="collapse-btn" type="button">▴</button>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="form-grid" id="incomeForm"></div>
+      </div>
+    </section>
+
+    <section class="section" data-section="cost">
+      <div class="section-header" data-toggle-section="cost">
+        <div class="section-heading">
+          <h2 class="section-title">成本信息</h2>
+        </div>
+        <div class="compact-summary">
+          <span>外付合计 <strong id="externalTotal">0.00</strong></span>
+          <span>内付合计 <strong id="internalTotal">0.00</strong></span>
+          <span>本位币成本 <strong id="costBaseTotal">0.00</strong></span>
+          <button class="collapse-btn" type="button">▴</button>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="sub-section">
+          <div class="sub-header">
+            <div class="sub-title">外付成本</div>
+            <button class="btn btn-primary edit-only hidden" id="addExternal" type="button">新增外付成本</button>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>成本类型</th><th>收支项目</th><th>外付对象</th><th>归属部门</th><th>成本金额</th><th>币种</th>
+                  <th>本位币</th><th>汇率</th><th>本位币金额</th><th>税率</th><th>税额</th><th>本位币税额</th>
+                  <th>是否创建子单</th><th>备注</th><th class="edit-only hidden">操作</th>
+                </tr>
+              </thead>
+              <tbody id="externalBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-header">
+            <div class="sub-title">内付成本</div>
+            <button class="btn btn-primary edit-only hidden" id="addInternal" type="button">新增内付成本</button>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>收支项目</th><th>内付对象</th><th>归属部门</th><th>成本金额</th><th>币种</th><th>本位币</th>
+                  <th>汇率</th><th>本位币金额</th><th>税率</th><th>税额</th><th>本位币税额</th><th>备注</th><th class="edit-only hidden">操作</th>
+                </tr>
+              </thead>
+              <tbody id="internalBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div class="title-wrap">
+          <h2 class="section-title">附件信息</h2>
+          <span class="section-sub">支持上传 PDF、Word、图片格式，单个文件不超过 20M。</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="upload-list">
+          <label class="upload-card" id="settlementCard">
+            <input type="file" id="settlementFiles" multiple hidden>
+            <div class="upload-left">
+              <div class="upload-icon">▣</div>
+              <div>
+                <div class="upload-name">结算单附件</div>
+                <div class="upload-state" id="settlementState">选填</div>
+              </div>
+            </div>
+            <span class="btn btn-primary">上传</span>
+          </label>
+          <label class="upload-card" id="otherCard">
+            <input type="file" id="otherFiles" multiple hidden>
+            <div class="upload-left">
+              <div class="upload-icon">▣</div>
+              <div>
+                <div class="upload-name">其他附件 (如项目立项审批单等)</div>
+                <div class="upload-state" id="otherState">选填</div>
+              </div>
+            </div>
+            <span class="btn btn-normal">上传</span>
+          </label>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-mask" id="historyModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">变更日志</div>
+        <button class="modal-close" id="closeHistory" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="history-layout">
+          <div class="history-list" id="historyList"></div>
+          <div class="history-detail">
+            <table>
+              <thead>
+                <tr><th>变更项目</th><th>变更前</th><th>变更后</th></tr>
+              </thead>
+              <tbody id="historyDetail"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="historyOk" type="button">知道了</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="finishModal">
+    <div class="modal" style="width:min(560px, calc(100vw - 48px));">
+      <div class="modal-header">
+        <div class="modal-title">确认完工</div>
+        <button class="modal-close" id="closeFinish" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-body">
+        <div style="color:#475569;font-size:16px;line-height:1.9;">是否确认将该项目标记为完工？完工后需在主干系统进行激活方可修改收支！</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-normal" id="cancelFinish" type="button">取消</button>
+        <button class="btn btn-primary" id="confirmFinish" type="button">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="modifyModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">确认提交修改</div>
+        <button class="modal-close" id="closeModify" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom:14px;color:#0f172a;font-weight:600;">是否需要提交本次计费修改？</div>
+        <div class="history-detail">
+          <table>
+            <thead>
+              <tr><th>变更项目</th><th>变更前</th><th>变更后</th></tr>
+            </thead>
+            <tbody id="modifyDetail"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-normal" id="cancelModify" type="button">取消</button>
+        <button class="btn btn-primary" id="confirmModify" type="button">确定提交</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = selector => document.querySelector(selector);
+    const money = value => Number(value || 0).toFixed(2);
+
+    const contracts = [
+      { id: "c1", code: "HT-BJ-2026-0089", name: "2026年度质量体系认证技术服务合同", customer: "北京中检技术服务有限公司", signDate: "2026-01-15", remaining: 820000, currency: "CNY", rate: 1 },
+      { id: "c2", code: "HT-SH-2026-0124", name: "环境评价与认证合同", customer: "博格华纳汽车零部件有限公司", signDate: "2026-02-10", remaining: 96000, currency: "USD", rate: 7.18 }
+    ];
+    const currencyRates = { CNY: 1, USD: 7.18, EUR: 7.72, HKD: .92, JPY: .05 };
+    const currencies = Object.keys(currencyRates);
+    const departments = ["体系认证一部", "体系认证二部", "工业产品审核部", "环境与职业健康安全审核部", "食品农产品认证审核部"];
+    const externalCostTypes = ["分包", "个人分成", "企业分成", "个人佣金", "企业佣金", "劳务费"];
+    const externalItems = [
+      "劳务费(FSSC1019)", "咨询费(FSSC1022)", "协作费(FSSC103101)", "检验测试费(FSSC1032)",
+      "制样费(FSSC1033)", "报验代理费(FSSC1034)", "认证费(FSSC1035)", "代理注册费(FSSC1036)",
+      "卫生消毒费(FSSC1039)", "计量费用(FSSC1040)", "能力检验费(FSSC1041)", "抽样费(FSSC1042)",
+      "运输装卸搬运费(FSSC1043)", "物料用品费(FSSC1046)", "佣金(FSSC1048)", "项目管理服务费(FSSC1059)",
+      "其他-其他(FSSC99999)"
+    ];
+    const internalItems = ["审核费", "住宿费", "交通费", "补贴费", "其他费用"];
+
+    const state = {
+      editable: false,
+      activeHistory: "h1",
+      original: null,
+      collapsed: { base: false, income: false, cost: false },
+      income: {
+        sourceType: "合同",
+        contractId: "c1",
+        amount: 58000,
+        currency: "CNY",
+        department: "体系认证一部",
+        taxRate: 6,
+        exchangeRate: 1,
+        baseCurrency: "人民币 CNY",
+        subProject: "质量管理体系初次认证",
+        taxAmount: 0,
+        baseAmount: 0,
+        baseTaxAmount: 0
+      },
+      externalCosts: [
+        { costType: "分包", item: "协作费(FSSC103101)", payeeName: "北京中检技术服务有限公司（企业｜91110108MA01KXXXXX / 内部供应商）", department: "体系认证二部", amount: 18000, currency: "CNY", baseCurrency: "人民币 CNY", exchangeRate: 1, taxRate: 6, createSubOrder: "创建", remark: "分包审核服务", taxAmount: 0, baseAmount: 0, baseTaxAmount: 0 },
+        { costType: "劳务费", item: "劳务费(FSSC1019)", payeeName: "林建国（个人｜CCIC-880192 / 体系审核部）", department: "体系认证一部", amount: 5200, currency: "CNY", baseCurrency: "人民币 CNY", exchangeRate: 1, taxRate: 3, createSubOrder: "不创建", remark: "外部审核专家劳务", taxAmount: 0, baseAmount: 0, baseTaxAmount: 0 }
+      ],
+      internalCosts: [
+        { item: "审核费", payeeName: "审核组成员", department: "体系认证二部", amount: 8200, currency: "CNY", baseCurrency: "人民币 CNY", exchangeRate: 1, taxRate: 6, remark: "审核人员费用", taxAmount: 0, baseAmount: 0, baseTaxAmount: 0 },
+        { item: "交通费", payeeName: "审核组成员", department: "体系认证二部", amount: 3200, currency: "CNY", baseCurrency: "人民币 CNY", exchangeRate: 1, taxRate: 0, remark: "项目差旅交通", taxAmount: 0, baseAmount: 0, baseTaxAmount: 0 }
+      ],
+      histories: [
+        {
+          id: "h1",
+          title: "收入信息变更",
+          time: "2026-03-24 14:20",
+          operator: "李明",
+          details: [
+            { item: "收入信息 / 收入金额", before: "52000.00", after: "58000.00" },
+            { item: "收入信息 / 税率", before: "3%", after: "6%" },
+            { item: "收入信息 / 子项目名称", before: "质量管理体系认证项目", after: "质量管理体系初次认证" }
+          ]
+        },
+        {
+          id: "h2",
+          title: "成本信息变更",
+          time: "2026-03-24 15:05",
+          operator: "王芳",
+          details: [
+            { item: "外付成本 / 协作费(FSSC103101) / 成本金额", before: "15000.00", after: "18000.00" },
+            { item: "外付成本 / 劳务费(FSSC1019) / 成本金额", before: "4800.00", after: "5200.00" },
+            { item: "内付成本 / 交通费 / 成本金额", before: "2500.00", after: "3200.00" },
+            { item: "内付成本 / 新增一行", before: "无", after: "住宿费 1200.00" },
+            { item: "外付成本 / 减少一行", before: "咨询费(FSSC1022) 2000.00", after: "已删除" }
+          ]
+        }
+      ]
+    };
+
+    function calc(row) {
+      const amount = Number(row.amount || 0);
+      const taxRate = Number(row.taxRate || 0) / 100;
+      const exchangeRate = Number(row.exchangeRate || 0);
+      row.taxAmount = amount * taxRate;
+      row.baseAmount = amount * exchangeRate;
+      row.baseTaxAmount = row.taxAmount * exchangeRate;
+    }
+
+    function optionList(list, selected) {
+      return list.map(item => `<option value="${item}" ${item === selected ? "selected" : ""}>${item}</option>`).join("");
+    }
+
+    function contract() {
+      return contracts.find(item => item.id === state.income.contractId) || contracts[0];
+    }
+
+    function readonly(value) {
+      return `<span class="readonly-value">${value || "-"}</span>`;
+    }
+
+    function editableInput(field, value, extra = "") {
+      if (!state.editable) return readonly(value);
+      return `<input class="control ${extra}" data-income-field="${field}" value="${value ?? ""}">`;
+    }
+
+    function editableNumber(field, value) {
+      if (!state.editable) return readonly(money(value));
+      return `<input class="control num" data-income-field="${field}" value="${value ?? ""}" type="number" min="0" step="0.0001">`;
+    }
+
+    function renderIncome() {
+      const row = state.income;
+      calc(row);
+      const linkedContract = contract();
+      $("#incomeForm").innerHTML = `
+        <div class="source-row">
+          <span class="field-label">收入来源类型</span>
+          <div class="source-switch">
+            <span class="${row.sourceType === "合同" ? "active" : ""}">合同</span>
+            <span class="${row.sourceType === "结算单" ? "active" : ""}">结算单</span>
+          </div>
+        </div>
+        <div class="income-fields">
+          <label><span class="field-label">关联业务合同</span>${readonly(`${linkedContract.code} ${linkedContract.name}`)}</label>
+          <label><span class="field-label">合同剩余金额</span>${readonly(money(linkedContract.remaining))}</label>
+          <label><span class="field-label">收入金额</span>${editableNumber("amount", row.amount)}</label>
+          <label><span class="field-label">币种</span>${state.editable ? `<select class="control" data-income-field="currency">${optionList(currencies, row.currency)}</select>` : readonly(row.currency)}</label>
+          <label><span class="field-label">收入归属部门</span>${state.editable ? `<select class="control" data-income-field="department">${optionList(departments, row.department)}</select>` : readonly(row.department)}</label>
+          <label><span class="field-label">税率</span>${state.editable ? `<div class="percent-field"><input class="control num" data-income-field="taxRate" value="${row.taxRate}" type="number" min="0" step="0.01"><span class="percent-sign">%</span></div>` : readonly(`${row.taxRate}%`)}</label>
+          <label><span class="field-label">税额</span>${readonly(money(row.taxAmount))}</label>
+          <label><span class="field-label">汇率</span>${editableNumber("exchangeRate", row.exchangeRate)}</label>
+          <label><span class="field-label">本位币</span>${readonly(row.baseCurrency)}</label>
+          <label><span class="field-label">本位币金额</span>${readonly(money(row.baseAmount))}</label>
+          <label><span class="field-label">本位币税额</span>${readonly(money(row.baseTaxAmount))}</label>
+          <label><span class="field-label">子项目名称</span>${editableInput("subProject", row.subProject)}</label>
+        </div>`;
+    }
+
+    function control(scope, index, field, value, type = "text") {
+      if (!state.editable) return `<span class="table-readonly">${value || "-"}</span>`;
+      return `<input class="control ${type === "number" ? "num" : ""}" data-scope="${scope}" data-index="${index}" data-field="${field}" value="${value ?? ""}" ${type === "number" ? 'type="number" min="0" step="0.0001"' : ""}>`;
+    }
+
+    function selectControl(scope, index, field, value, list) {
+      if (!state.editable) return `<span class="table-readonly">${value || "-"}</span>`;
+      return `<select class="control" data-scope="${scope}" data-index="${index}" data-field="${field}">${optionList(list, value)}</select>`;
+    }
+
+    function renderExternalCosts() {
+      $("#externalBody").innerHTML = state.externalCosts.map((row, index) => {
+        calc(row);
+        return `<tr>
+          <td>${selectControl("external", index, "costType", row.costType, externalCostTypes)}</td>
+          <td>${selectControl("external", index, "item", row.item, externalItems)}</td>
+          <td>${control("external", index, "payeeName", row.payeeName)}</td>
+          <td>${selectControl("external", index, "department", row.department, departments)}</td>
+          <td>${control("external", index, "amount", row.amount, "number")}</td>
+          <td>${selectControl("external", index, "currency", row.currency, currencies)}</td>
+          <td><span class="table-readonly">${row.baseCurrency}</span></td>
+          <td>${control("external", index, "exchangeRate", row.exchangeRate, "number")}</td>
+          <td><span class="table-readonly">${money(row.baseAmount)}</span></td>
+          <td>${control("external", index, "taxRate", row.taxRate, "number")}</td>
+          <td><span class="table-readonly">${money(row.taxAmount)}</span></td>
+          <td><span class="table-readonly">${money(row.baseTaxAmount)}</span></td>
+          <td>${selectControl("external", index, "createSubOrder", row.createSubOrder, ["创建", "不创建"])}</td>
+          <td>${control("external", index, "remark", row.remark)}</td>
+          <td class="edit-only hidden"><button class="btn btn-danger" data-remove="external" data-index="${index}" type="button">删除</button></td>
+        </tr>`;
+      }).join("");
+    }
+
+    function renderInternalCosts() {
+      $("#internalBody").innerHTML = state.internalCosts.map((row, index) => {
+        calc(row);
+        return `<tr>
+          <td>${selectControl("internal", index, "item", row.item, internalItems)}</td>
+          <td>${control("internal", index, "payeeName", row.payeeName)}</td>
+          <td>${selectControl("internal", index, "department", row.department, departments)}</td>
+          <td>${control("internal", index, "amount", row.amount, "number")}</td>
+          <td>${selectControl("internal", index, "currency", row.currency, currencies)}</td>
+          <td><span class="table-readonly">${row.baseCurrency}</span></td>
+          <td>${control("internal", index, "exchangeRate", row.exchangeRate, "number")}</td>
+          <td><span class="table-readonly">${money(row.baseAmount)}</span></td>
+          <td>${control("internal", index, "taxRate", row.taxRate, "number")}</td>
+          <td><span class="table-readonly">${money(row.taxAmount)}</span></td>
+          <td><span class="table-readonly">${money(row.baseTaxAmount)}</span></td>
+          <td>${control("internal", index, "remark", row.remark)}</td>
+          <td class="edit-only hidden"><button class="btn btn-danger" data-remove="internal" data-index="${index}" type="button">删除</button></td>
+        </tr>`;
+      }).join("");
+    }
+
+    function updateSummary() {
+      const income = state.income;
+      calc(income);
+      state.externalCosts.forEach(calc);
+      state.internalCosts.forEach(calc);
+      const sum = (rows, field) => rows.reduce((total, row) => total + Number(row[field] || 0), 0);
+      $("#incomeTotal").textContent = money(income.amount);
+      $("#incomeTaxTotal").textContent = money(income.taxAmount);
+      $("#incomeBaseTotal").textContent = money(income.baseAmount);
+      $("#incomeBaseTaxTotal").textContent = money(income.baseTaxAmount);
+      $("#externalTotal").textContent = money(sum(state.externalCosts, "amount"));
+      $("#internalTotal").textContent = money(sum(state.internalCosts, "amount"));
+      $("#costBaseTotal").textContent = money(sum(state.externalCosts, "baseAmount") + sum(state.internalCosts, "baseAmount"));
+    }
+
+    function snapshotBilling() {
+      return JSON.parse(JSON.stringify({
+        income: state.income,
+        externalCosts: state.externalCosts,
+        internalCosts: state.internalCosts
+      }));
+    }
+
+    function rowLabel(scope, row, index) {
+      if (scope === "income") return "收入信息";
+      const prefix = scope === "externalCosts" ? "外付成本" : "内付成本";
+      const itemName = row?.item || `第 ${index + 1} 行`;
+      return `${prefix} / ${itemName}`;
+    }
+
+    function costScopeLabel(scope) {
+      return scope === "externalCosts" ? "外付成本" : "内付成本";
+    }
+
+    function collectObjectChanges(before, after, scope, index) {
+      const labels = {
+        amount: "金额",
+        currency: "币种",
+        department: "归属部门",
+        taxRate: "税率",
+        exchangeRate: "汇率",
+        subProject: "子项目名称",
+        costType: "成本类型",
+        item: "收支项目",
+        payeeName: "对象",
+        createSubOrder: "是否创建子单",
+        remark: "备注"
+      };
+      return Object.keys(labels).flatMap(field => {
+        const oldValue = before?.[field] ?? "";
+        const newValue = after?.[field] ?? "";
+        const label = field === "amount" ? (scope === "income" ? "收入金额" : "成本金额") : labels[field];
+        return String(oldValue) === String(newValue) ? [] : [{
+          item: `${rowLabel(scope, after || before, index)} / ${label}`,
+          before: oldValue || "无",
+          after: newValue || "无"
+        }];
+      });
+    }
+
+    function collectRowChanges(beforeRows, afterRows, scope) {
+      const max = Math.max(beforeRows.length, afterRows.length);
+      const changes = [];
+      for (let index = 0; index < max; index += 1) {
+        const before = beforeRows[index];
+        const after = afterRows[index];
+        if (!before && after) {
+          changes.push({ item: `${costScopeLabel(scope)} / 新增一行`, before: "无", after: `${after.item || after.sourceType || "明细"} ${money(after.amount)}` });
+        } else if (before && !after) {
+          changes.push({ item: `${costScopeLabel(scope)} / 减少一行`, before: `${before.item || before.sourceType || "明细"} ${money(before.amount)}`, after: "已删除" });
+        } else {
+          changes.push(...collectObjectChanges(before, after, scope, index));
+        }
+      }
+      return changes;
+    }
+
+    function collectModifyChanges() {
+      const original = state.original || snapshotBilling();
+      return [
+        ...collectObjectChanges(original.income, state.income, "income", 0),
+        ...collectRowChanges(original.externalCosts, state.externalCosts, "externalCosts"),
+        ...collectRowChanges(original.internalCosts, state.internalCosts, "internalCosts")
+      ];
+    }
+
+    function setMode(editable) {
+      if (editable && !state.editable) {
+        state.original = snapshotBilling();
+      }
+      state.editable = editable;
+      $("#billingStatus").textContent = editable ? "计费修改中" : "已计费";
+      $("#billingStatus").classList.toggle("editing", editable);
+      $("#billingBtn").textContent = editable ? "取消修改" : "修改计费";
+      $("#submitModifyBtn").classList.toggle("hidden", !editable);
+      $("#finishBtn").classList.toggle("hidden", editable);
+      document.querySelectorAll(".upload-card").forEach(card => card.classList.toggle("editable", editable));
+      renderAll();
+    }
+
+    function renderAll() {
+      renderIncome();
+      renderExternalCosts();
+      renderInternalCosts();
+      updateSummary();
+      document.querySelectorAll(".edit-only").forEach(node => node.classList.toggle("hidden", !state.editable));
+    }
+
+    function newExternalCost() {
+      return { costType: "分包", item: externalItems[0], payeeName: "北京中检技术服务有限公司（企业｜91110108MA01KXXXXX / 内部供应商）", department: departments[0], amount: 1000, currency: "CNY", baseCurrency: "人民币 CNY", exchangeRate: 1, taxRate: 6, createSubOrder: "创建", remark: "", taxAmount: 0, baseAmount: 0, baseTaxAmount: 0 };
+    }
+
+    function newInternalCost() {
+      return { item: "审核费", payeeName: "审核组成员", department: departments[0], amount: 800, currency: "CNY", baseCurrency: "人民币 CNY", exchangeRate: 1, taxRate: 6, remark: "", taxAmount: 0, baseAmount: 0, baseTaxAmount: 0 };
+    }
+
+    function renderHistory() {
+      $("#historyList").innerHTML = state.histories.map(item => `
+        <button class="history-item ${item.id === state.activeHistory ? "active" : ""}" data-history="${item.id}" type="button">
+          <strong>${item.title}</strong>
+          <span>${item.time} / ${item.operator}</span>
+        </button>`).join("");
+      const current = state.histories.find(item => item.id === state.activeHistory);
+      $("#historyDetail").innerHTML = current.details.map(row => `
+        <tr><td>${row.item}</td><td class="before">${row.before}</td><td class="after">${row.after}</td></tr>`).join("");
+    }
+
+    function openHistory() {
+      renderHistory();
+      $("#historyModal").classList.add("show");
+    }
+
+    function closeHistory() {
+      $("#historyModal").classList.remove("show");
+    }
+
+    function openFinishConfirm() {
+      $("#finishModal").classList.add("show");
+    }
+
+    function closeFinishConfirm() {
+      $("#finishModal").classList.remove("show");
+    }
+
+    function openModifyConfirm() {
+      const changes = collectModifyChanges();
+      $("#modifyDetail").innerHTML = changes.length ? changes.map(row => `
+        <tr><td>${row.item}</td><td class="before">${row.before}</td><td class="after">${row.after}</td></tr>`).join("") : `
+        <tr><td colspan="3" style="text-align:center;color:#94a3b8;">暂无修改内容</td></tr>`;
+      $("#modifyModal").classList.add("show");
+    }
+
+    function closeModifyConfirm() {
+      $("#modifyModal").classList.remove("show");
+    }
+
+    function toggleSection(key) {
+      state.collapsed[key] = !state.collapsed[key];
+      const section = document.querySelector(`[data-section="${key}"]`);
+      const button = section?.querySelector(".collapse-btn");
+      if (section) section.classList.toggle("collapsed", state.collapsed[key]);
+      if (button) button.textContent = state.collapsed[key] ? "▾" : "▴";
+    }
+
+    $("#billingBtn").addEventListener("click", () => setMode(!state.editable));
+    $("#finishBtn").addEventListener("click", openFinishConfirm);
+    $("#submitModifyBtn").addEventListener("click", openModifyConfirm);
+    $("#historyBtn").addEventListener("click", openHistory);
+    $("#closeHistory").addEventListener("click", closeHistory);
+    $("#historyOk").addEventListener("click", closeHistory);
+    $("#historyModal").addEventListener("click", event => {
+      if (event.target.id === "historyModal") closeHistory();
+    });
+    $("#closeFinish").addEventListener("click", closeFinishConfirm);
+    $("#cancelFinish").addEventListener("click", closeFinishConfirm);
+    $("#confirmFinish").addEventListener("click", closeFinishConfirm);
+    $("#finishModal").addEventListener("click", event => {
+      if (event.target.id === "finishModal") closeFinishConfirm();
+    });
+    $("#closeModify").addEventListener("click", closeModifyConfirm);
+    $("#cancelModify").addEventListener("click", closeModifyConfirm);
+    $("#confirmModify").addEventListener("click", () => {
+      state.original = snapshotBilling();
+      closeModifyConfirm();
+      setMode(false);
+    });
+    $("#modifyModal").addEventListener("click", event => {
+      if (event.target.id === "modifyModal") closeModifyConfirm();
+    });
+    $("#addExternal").addEventListener("click", () => {
+      state.externalCosts.push(newExternalCost());
+      renderAll();
+    });
+    $("#addInternal").addEventListener("click", () => {
+      state.internalCosts.push(newInternalCost());
+      renderAll();
+    });
+
+    document.addEventListener("change", event => {
+      const target = event.target;
+      if (target.dataset.incomeField) {
+        const field = target.dataset.incomeField;
+        state.income[field] = target.type === "number" ? Number(target.value || 0) : target.value;
+        if (field === "currency") state.income.exchangeRate = currencyRates[target.value] || 1;
+        renderAll();
+      }
+      if (target.dataset.scope) {
+        const rows = target.dataset.scope === "external" ? state.externalCosts : state.internalCosts;
+        const row = rows[Number(target.dataset.index)];
+        const field = target.dataset.field;
+        row[field] = target.type === "number" ? Number(target.value || 0) : target.value;
+        if (field === "currency") row.exchangeRate = currencyRates[target.value] || 1;
+        renderAll();
+      }
+    });
+
+    document.addEventListener("click", event => {
+      const sectionToggle = event.target.closest("[data-toggle-section]");
+      if (sectionToggle) {
+        toggleSection(sectionToggle.dataset.toggleSection);
+        return;
+      }
+      const removeScope = event.target.dataset.remove;
+      if (removeScope) {
+        const rows = removeScope === "external" ? state.externalCosts : state.internalCosts;
+        rows.splice(Number(event.target.dataset.index), 1);
+        renderAll();
+      }
+      const historyId = event.target.closest("[data-history]")?.dataset.history;
+      if (historyId) {
+        state.activeHistory = historyId;
+        renderHistory();
+      }
+    });
+
+    $("#settlementFiles").addEventListener("change", event => {
+      $("#settlementState").textContent = event.target.files.length ? `已选择 ${event.target.files.length} 个文件` : "选填";
+    });
+    $("#otherFiles").addEventListener("change", event => {
+      $("#otherState").textContent = event.target.files.length ? `已选择 ${event.target.files.length} 个文件` : "选填";
+    });
+
+    renderAll();
+  </script>
+</body>
+</html>
