@@ -1,4 +1,5 @@
-﻿
+
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -309,7 +310,7 @@
             vertical-align: middle;
         }
         
-        /* 子证标识样式 */
+        /* 证书份数标签样式 */
         .sub-cert-tag {
             display: inline-flex;
             align-items: center;
@@ -763,12 +764,12 @@
         const currentUserCompany = '辽宁公司';
         const currentUserRegion = '东北区域';
         
-        // 预设场所数据 - 添加子证字段
+        // 预设场所数据
         const venues = [
-            { id: 'site_0', name: "北京市地铁运营有限公司（总部）", isMain: true, certSystem: "QMS+EMS", subCert: "子证001", qmsPeople: 200, emsPeople: 200, address: "北京市西城区北礼士路甲38号", auditDays: 0 },
-            { id: 'site_1', name: "北京市地铁运营有限公司运营一分公司", isMain: false, certSystem: "QMS", subCert: "子证002", qmsPeople: 180, emsPeople: null, address: "北京市昌平区东三旗太平庄车辆段", auditDays: 0 },
-            { id: 'site_2', name: "北京市地铁运营有限公司运营二分公司", isMain: false, certSystem: "EMS", subCert: null, qmsPeople: null, emsPeople: 160, address: "北京市石景山区杨庄大街18号", auditDays: 0 },
-            { id: 'site_3', name: "北京市地铁运营有限公司运营三分公司", isMain: false, certSystem: "QMS+EMS", subCert: "子证003", qmsPeople: 150, emsPeople: 150, address: "北京市海淀区德胜门西大街甲5号", auditDays: 0 }
+            { id: 'site_0', name: "北京市地铁运营有限公司（总部）", isMain: true, certSystem: "QMS+EMS", certCopies: 1, qmsPeople: 200, emsPeople: 200, address: "北京市西城区北礼士路甲38号", auditDays: 0 },
+            { id: 'site_1', name: "北京市地铁运营有限公司运营一分公司", isMain: false, certSystem: "QMS", certCopies: 1, qmsPeople: 180, emsPeople: null, address: "北京市昌平区东三旗太平庄车辆段", auditDays: 0 },
+            { id: 'site_2', name: "北京市地铁运营有限公司运营二分公司", isMain: false, certSystem: "EMS", certCopies: 0, qmsPeople: null, emsPeople: 160, address: "北京市石景山区杨庄大街18号", auditDays: 0 },
+            { id: 'site_3', name: "北京市地铁运营有限公司运营三分公司", isMain: false, certSystem: "QMS+EMS", certCopies: 1, qmsPeople: 150, emsPeople: 150, address: "北京市海淀区德胜门西大街甲5号", auditDays: 0 }
         ];
         
         // 按认证领域分组的专业代码
@@ -1087,7 +1088,7 @@
             });
         }
         
-        // 修改：场所卡片增加子证标识显示，删除认证体系字段
+        // 修改：场所卡片增加证书份数显示，删除认证体系字段
         function createSiteCard(venue, index) {
             const card = document.createElement('div');
             card.className = 'site-card';
@@ -1100,8 +1101,8 @@
             const assignedDays = 0;
             const unassignedDays = totalDays;
             
-            // 子证标识HTML
-            const subCertHtml = venue.subCert ? `<span class="sub-cert-tag"><i class="fas fa-certificate mr-1"></i>${venue.subCert}</span>` : '';
+            // 证书份数HTML
+            const certCopiesHtml = venue.certCopies ? `<span class="sub-cert-tag"><i class="fas fa-certificate mr-1"></i>证书${venue.certCopies}份</span>` : '';
             
             card.innerHTML = `
                 <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between rounded-t-xl">
@@ -1109,7 +1110,7 @@
                         ${venue.isMain ? '<span class="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 text-xs rounded-md font-medium border border-green-200">总部</span>' : '<span class="inline-flex items-center px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded-md font-medium border border-blue-200">场所</span>'}
                         <span class="font-semibold text-slate-800 text-sm">${venue.name}</span>
                         <span class="cert-system-tag">${venue.certSystem}</span>
-                        ${subCertHtml}
+                        ${certCopiesHtml}
                     </div>
                     <div class="flex items-center gap-3">
                         <div class="site-stats-row">
