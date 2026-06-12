@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="zh-CN">
 <head>
@@ -1038,7 +1039,7 @@
           <td><select class="control wide" data-scope="external" data-field="item" data-index="${index}">
             ${optionList(externalItems, row.item)}
           </select></td>
-          <td><input class="control wide" list="payeeOptions" data-scope="external" data-field="payeeName" data-index="${index}" value="${row.payeeName}" placeholder="输入公司/个人名称、编号或信用代码检索"></td>
+          <td><input class="control wide" data-scope="external" data-field="payeeName" data-index="${index}" value="${row.payeeName}" placeholder="输入公司/个人名称、编号或信用代码检索"></td>
           <td><select class="control medium" data-scope="external" data-field="department" data-index="${index}">
             ${optionList(departments, row.department)}
           </select></td>
@@ -1066,7 +1067,7 @@
           <td><select class="control medium" data-scope="internal" data-field="item" data-index="${index}">
             ${optionList(internalItems, row.item)}
           </select></td>
-          <td><input class="control wide" list="payeeOptions" data-scope="internal" data-field="payeeName" data-index="${index}" value="${row.payeeName}" placeholder="输入名称/编码检索"></td>
+          <td><input class="control wide" data-scope="internal" data-field="payeeName" data-index="${index}" value="${row.payeeName}" placeholder="输入名称/编码检索"></td>
           <td><select class="control medium" data-scope="internal" data-field="department" data-index="${index}">
             ${optionList(departments, row.department)}
           </select></td>
@@ -1356,14 +1357,7 @@
         const rows = target.dataset.scope === "income" ? state.incomes : target.dataset.scope === "external" ? state.externalCosts : state.internalCosts;
         rows[Number(target.dataset.index)][target.dataset.field] = target.value;
         if (target.dataset.field === "payeeName") {
-          const matches = matchedPayees(target.value);
           renderPayeeOptions(target.value);
-          if (matches.length === 1) {
-            const label = payeeOptionLabel(matches[0]);
-            rows[Number(target.dataset.index)].payeeName = label;
-            rows[Number(target.dataset.index)].payeeType = matches[0].type;
-            target.value = label;
-          }
         }
         updateSummary();
       }
