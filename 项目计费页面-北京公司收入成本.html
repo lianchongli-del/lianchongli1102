@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="zh-CN">
 <head>
@@ -126,6 +127,8 @@
       border-bottom: 1px solid #f1f5f9;
     }
 
+    .charge-header { cursor: pointer; }
+
     .section-title {
       display: flex;
       align-items: center;
@@ -236,6 +239,8 @@
 
     .package-status.pending { color: #b45309; background: #fef3c7; }
     .package-status.done { color: #047857; background: #d1fae5; }
+    .toggle-btn { min-width: 62px; }
+    .charge-card.collapsed .charge-body { display: none; }
 
     .read-grid {
       display: grid;
@@ -492,6 +497,7 @@
         {
           id: "pkg-1",
           status: "待提交",
+          collapsed: true,
           income: {
             sourceOrg: "中国质量认证中心（CQC）",
             amount: 58000,
@@ -508,6 +514,7 @@
         {
           id: "pkg-2",
           status: "待提交",
+          collapsed: true,
           income: {
             sourceOrg: "中国质量认证中心（CQC）",
             amount: 36000,
@@ -592,10 +599,13 @@
       return [item.name, item.code, item.type, item.supplierType || "", item.org || "", item.department || ""].join(" ").toLowerCase();
     }
 
-    function renderPayeeOptions(keyword = "") {
+    function matchedPayees(keyword) {
       const key = String(keyword || "").trim().toLowerCase();
-      const list = key ? payees.filter(item => payeeSearchText(item).includes(key) || payeeOptionLabel(item).toLowerCase().includes(key)) : payees;
-      $("#payeeOptions").innerHTML = list.map(item => `<option value="${payeeOptionLabel(item)}"></option>`).join("");
+      return key ? payees.filter(item => payeeSearchText(item).includes(key) || payeeOptionLabel(item).toLowerCase().includes(key)) : payees;
+    }
+
+    function renderPayeeOptions(keyword = "") {
+      $("#payeeOptions").innerHTML = matchedPayees(keyword).map(item => `<option value="${payeeOptionLabel(item)}"></option>`).join("");
     }
 
     function findPayeeByInput(value) {
@@ -636,12 +646,13 @@
       $("#chargePackages").innerHTML = state.packages.map((pkg, pkgIndex) => {
         const summary = costSummary(pkg);
         const submitted = pkg.status === "已提交";
+        const collapsed = pkg.collapsed !== false;
         return `
-          <section class="charge-card">
-            <div class="charge-header">
+          <section class="charge-card ${collapsed ? "collapsed" : ""}">
+            <div class="charge-header" data-toggle-package="${pkgIndex}">
               <div class="charge-title">
                 <span class="charge-index">${pkgIndex + 1}</span>
-                <span>计费信息 ${pkgIndex + 1}</span>
+                <span>计费信息</span>
                 <span class="package-status ${submitted ? "done" : "pending"}">${pkg.status}</span>
                 <span class="charge-source">${pkg.income.remark}</span>
               </div>
@@ -651,7 +662,8 @@
                   <span>外付 <strong id="externalTotal-${pkgIndex}">${money(summary.external)}</strong></span>
                   <span>内付 <strong id="internalTotal-${pkgIndex}">${money(summary.internal)}</strong></span>
                 </div>
-                <button class="btn btn-primary" data-submit-package="${pkgIndex}" type="button" ${submitted ? "disabled" : ""}>${submitted ? "已提交" : "提交本包"}</button>
+                <button class="btn btn-normal toggle-btn" data-toggle-package="${pkgIndex}" type="button">${collapsed ? "展开" : "收起"}</button>
+                <button class="btn btn-primary" data-submit-package="${pkgIndex}" type="button" ${submitted ? "disabled" : ""}>${submitted ? "已提交" : "提交"}</button>
               </div>
             </div>
             <div class="charge-body">
@@ -709,7 +721,7 @@
       return `<tr>
         <td><select class="control medium" data-scope="${scope}" data-field="costType" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(externalCostTypes, row.costType)}</select></td>
         <td><select class="control wide" data-scope="${scope}" data-field="item" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(externalItems, row.item)}</select></td>
-        <td><input class="control wide" list="payeeOptions" data-scope="${scope}" data-field="payeeName" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.payeeName}" placeholder="输入公司/个人名称、编号或信用代码检索" ${disabled}></td>
+        <td><input class="control wide" data-scope="${scope}" data-field="payeeName" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.payeeName}" placeholder="输入公司/个人名称、编号或信用代码检索" ${disabled}></td>
         <td><select class="control medium" data-scope="${scope}" data-field="department" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(departments, row.department)}</select></td>
         <td><input class="control money-field num" data-scope="${scope}" data-field="amount" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.amount}" type="number" min="0" ${disabled}></td>
         <td><select class="control short" data-scope="${scope}" data-field="currency" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(currencies, row.currency)}</select></td>
@@ -731,7 +743,7 @@
       const disabled = submitted ? "disabled" : "";
       return `<tr>
         <td><select class="control medium" data-scope="${scope}" data-field="item" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(internalItems, row.item)}</select></td>
-        <td><input class="control wide" list="payeeOptions" data-scope="${scope}" data-field="payeeName" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.payeeName}" placeholder="输入名称/编码检索" ${disabled}></td>
+        <td><input class="control wide" data-scope="${scope}" data-field="payeeName" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.payeeName}" placeholder="输入名称/编码检索" ${disabled}></td>
         <td><select class="control medium" data-scope="${scope}" data-field="department" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(departments, row.department)}</select></td>
         <td><input class="control money-field num" data-scope="${scope}" data-field="amount" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.amount}" type="number" min="0" ${disabled}></td>
         <td><select class="control short" data-scope="${scope}" data-field="currency" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(currencies, row.currency)}</select></td>
@@ -823,7 +835,9 @@
       if (!target.dataset.scope || target.dataset.field !== "payeeName") return;
       const pkgIndex = Number(target.dataset.package);
       if (state.packages[pkgIndex].status === "已提交") return;
-      rowsFor(target.dataset.scope, pkgIndex)[Number(target.dataset.index)].payeeName = target.value;
+      const rows = rowsFor(target.dataset.scope, pkgIndex);
+      const row = rows[Number(target.dataset.index)];
+      row.payeeName = target.value;
       renderPayeeOptions(target.value);
     });
 
@@ -862,9 +876,18 @@
       }
       const submitIndex = event.target.dataset.submitPackage;
       if (submitIndex !== undefined) {
+        event.stopPropagation();
         const pkg = state.packages[Number(submitIndex)];
         if (pkg.status === "已提交") return;
         pkg.status = "已提交";
+        renderPackages();
+        return;
+      }
+      const toggleTarget = event.target.closest("[data-toggle-package]");
+      if (toggleTarget) {
+        if (event.target.closest("[data-submit-package]")) return;
+        const pkg = state.packages[Number(toggleTarget.dataset.togglePackage)];
+        pkg.collapsed = pkg.collapsed === false;
         renderPackages();
       }
     });
