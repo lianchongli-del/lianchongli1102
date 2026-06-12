@@ -1,0 +1,876 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>项目计费-北京公司收入成本</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --page: #f8fafc;
+      --surface: #fff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --soft: #f1f5f9;
+      --danger: #dc2626;
+      --success: #059669;
+      --warning: #d97706;
+      --shadow: 0 2px 4px rgba(15, 23, 42, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 1280px;
+      color: var(--text);
+      background: var(--page);
+      font: 14px/1.6 "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    button, input, select, textarea { font: inherit; }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 58px;
+      padding: 0 28px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+    }
+
+    .title-wrap { display: flex; align-items: center; gap: 12px; }
+    h1 { margin: 0; font-size: 20px; line-height: 1.2; }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 999px;
+      color: var(--primary);
+      background: #eff6ff;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 34px;
+      padding: 0 14px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      white-space: nowrap;
+      transition: background .15s, border-color .15s, color .15s;
+    }
+
+    .btn-primary { color: #fff; background: var(--primary); }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-normal { color: #334155; background: #fff; border-color: var(--border); }
+    .btn-normal:hover { background: #f8fafc; border-color: #cbd5e1; }
+    .btn-danger { color: var(--danger); background: transparent; }
+    .btn:disabled {
+      color: #94a3b8;
+      background: #f1f5f9;
+      border-color: #e2e8f0;
+      cursor: default;
+    }
+
+    .page { padding: 18px 28px 32px; }
+
+    .notice {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 42px;
+      padding: 8px 14px;
+      margin-bottom: 14px;
+      border: 1px solid #bfdbfe;
+      border-radius: 6px;
+      color: #1e40af;
+      background: #eff6ff;
+    }
+
+    .notice strong { color: #0f172a; }
+
+    .section, .charge-card {
+      margin-bottom: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .section-header, .charge-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 46px;
+      padding: 0 16px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 4px;
+      height: 16px;
+      border-radius: 3px;
+      background: var(--primary);
+    }
+
+    .section-body, .charge-body { padding: 16px; }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px 28px;
+    }
+
+    .info-label {
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .info-value {
+      min-height: 22px;
+      color: #0f172a;
+      font-weight: 600;
+      word-break: break-all;
+    }
+
+    .compact-summary {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #64748b;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .compact-summary span {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .compact-summary strong {
+      color: #0f172a;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .charge-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .charge-index {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .charge-source {
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .package-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .package-status {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .package-status.pending { color: #b45309; background: #fef3c7; }
+    .package-status.done { color: #047857; background: #d1fae5; }
+
+    .read-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .read-item.wide { grid-column: span 2; }
+
+    .read-label {
+      margin-bottom: 4px;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .read-value {
+      min-height: 24px;
+      color: #0f172a;
+      font-weight: 700;
+      word-break: break-all;
+    }
+
+    .sub-section {
+      margin-top: 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .sub-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 44px;
+      padding: 0 14px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sub-title { font-weight: 700; color: #0f172a; }
+    .sub-actions { display: flex; align-items: center; gap: 8px; }
+
+    .table-scroll {
+      overflow-x: auto;
+      background: #fff;
+    }
+
+    .table-scroll::-webkit-scrollbar { height: 8px; }
+    .table-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+    .table-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+    table {
+      width: 100%;
+      min-width: 1480px;
+      border-collapse: separate;
+      border-spacing: 0;
+      table-layout: auto;
+    }
+
+    th, td {
+      height: 42px;
+      padding: 6px 8px;
+      border-right: 1px solid #f1f5f9;
+      border-bottom: 1px solid #f1f5f9;
+      text-align: left;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      color: #334155;
+      background: #f8fafc;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+    th:last-child, td:last-child { border-right: 0; }
+
+    .control {
+      width: 100%;
+      height: 30px;
+      min-width: 96px;
+      padding: 0 8px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      color: #1f2937;
+      background: #fff;
+      outline: none;
+    }
+
+    .control:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
+    }
+
+    .control[readonly], .control:disabled {
+      color: #64748b;
+      background: #f8fafc;
+      cursor: default;
+    }
+
+    .num { text-align: right; }
+    .percent-field {
+      display: grid;
+      grid-template-columns: 86px 18px;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .percent-field .control { min-width: 86px; }
+    .percent-sign { color: #64748b; }
+    .money-field { min-width: 112px; }
+    .wide { min-width: 170px; }
+    .medium { min-width: 136px; }
+    .short { min-width: 88px; }
+    .readonly-text { color: #64748b; }
+
+    .upload-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .upload-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 72px;
+      padding: 14px 16px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 8px;
+      background: #f8fafc;
+      cursor: pointer;
+    }
+
+    .upload-card:hover { border-color: #93c5fd; background: #eff6ff; }
+    .upload-card.disabled {
+      cursor: default;
+      opacity: .72;
+    }
+
+    .upload-card.disabled:hover {
+      border-color: #cbd5e1;
+      background: #f8fafc;
+    }
+
+    .upload-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .upload-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      color: #2563eb;
+      background: #dbeafe;
+      font-weight: 700;
+    }
+
+    .upload-name { color: #0f172a; font-weight: 700; }
+    .upload-state { margin-top: 2px; color: #64748b; font-size: 12px; }
+
+    .empty-row td {
+      height: 48px;
+      color: #94a3b8;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="title-wrap">
+      <h1>项目计费</h1>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-normal" type="button">返回</button>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">基本信息</h2>
+      </div>
+      <div class="section-body">
+        <div class="info-grid">
+          <div><div class="info-label">项目编号</div><div class="info-value">XM-2026-06001</div></div>
+          <div><div class="info-label">客户名称</div><div class="info-value">中国气象局</div></div>
+          <div><div class="info-label">审核类型</div><div class="info-value">初次认证</div></div>
+          <div><div class="info-label">认证领域</div><div class="info-value">质量管理体系</div></div>
+          <div><div class="info-label">业务归属机构</div><div class="info-value">中国检验认证集团北京有限公司</div></div>
+          <div><div class="info-label">是否承担交通和住宿费</div><div class="info-value">是</div></div>
+          <div><div class="info-label">合同签署方</div><div class="info-value">中国质量认证中心（CQC）</div></div>
+          <div><div class="info-label">项目实施方</div><div class="info-value">中国检验认证集团北京有限公司</div></div>
+          <div><div class="info-label">计划审核日期</div><div class="info-value">2026-06-20 至 2026-06-22</div></div>
+          <div><div class="info-label">当前状态</div><div class="info-value">待计费</div></div>
+        </div>
+      </div>
+    </section>
+
+    <div id="chargePackages"></div>
+  </main>
+
+  <datalist id="payeeOptions"></datalist>
+
+  <script>
+    const $ = selector => document.querySelector(selector);
+    const money = value => Number(value || 0).toFixed(2);
+
+    const currencyRates = { CNY: 1, USD: 7.18, EUR: 7.72, HKD: .92, JPY: .05 };
+    const currencies = Object.keys(currencyRates);
+    const departments = ["体系认证一部", "体系认证二部", "工业产品审核部", "环境与职业健康安全审核部", "食品农产品认证审核部"];
+    const externalCostTypes = ["分包", "个人分成", "企业分成", "个人佣金", "企业佣金", "劳务费"];
+    const lockedPersonalTypes = ["个人分成", "个人佣金"];
+    const externalItems = [
+      "劳务费(FSSC1019)", "咨询费(FSSC1022)", "协作费(FSSC103101)", "检验测试费(FSSC1032)",
+      "制样费(FSSC1033)", "报验代理费(FSSC1034)", "认证费(FSSC1035)", "代理注册费(FSSC1036)",
+      "卫生消毒费(FSSC1039)", "计量费用(FSSC1040)", "能力检验费(FSSC1041)", "抽样费(FSSC1042)",
+      "运输装卸搬运费(FSSC1043)", "物料用品费(FSSC1046)", "佣金(FSSC1048)", "项目管理服务费(FSSC1059)",
+      "其他-其他(FSSC99999)"
+    ];
+    const internalItems = ["审核费", "住宿费", "交通费", "补贴费", "其他费用"];
+    const payees = [
+      { type: "企业", id: "e1", name: "北京中检技术服务有限公司", code: "91110108MA01KXXXXX", supplierType: "内部供应商" },
+      { type: "企业", id: "e2", name: "上海某某检测科技有限公司", code: "91310115MA1H2YYYYY", supplierType: "外部供应商" },
+      { type: "企业", id: "e3", name: "广州市华南认证审核中心", code: "91440106MA5A7ZZZZZ", supplierType: "内部供应商" },
+      { type: "企业", id: "e4", name: "深圳市博格华纳零配件制造厂", code: "91440300MA5EXAAAAA", supplierType: "外部供应商" },
+      { type: "个人", id: "p1", name: "林建国", code: "CCIC-880192", org: "中国检验认证集团", department: "体系审核部" },
+      { type: "个人", id: "p2", name: "陈晓", code: "BW-Q-20381", org: "中国检验认证集团", department: "质量管理部" },
+      { type: "个人", id: "p3", name: "王伟", code: "CCIC-880205", org: "中国检验认证集团", department: "技术服务中心" },
+      { type: "个人", id: "p4", name: "赵梦琪", code: "EXT-A-0912", org: "中国检验认证集团", department: "认证一部" }
+    ];
+
+    const state = {
+      packages: [
+        {
+          id: "pkg-1",
+          status: "待提交",
+          income: {
+            sourceOrg: "中国质量认证中心（CQC）",
+            amount: 58000,
+            currency: "CNY",
+            exchangeRate: 1,
+            baseCurrency: "人民币 CNY",
+            taxRate: 6,
+            remark: "来源：CQC 外付成本明细 1，转北京公司收入"
+          },
+          externalCosts: [newExternalCost({ amount: 18000, remark: "分包审核服务" })],
+          internalCosts: [newInternalCost({ amount: 5200, remark: "审核组人员费用" })],
+          attachments: { settlement: 0, other: 0 }
+        },
+        {
+          id: "pkg-2",
+          status: "待提交",
+          income: {
+            sourceOrg: "中国质量认证中心（CQC）",
+            amount: 36000,
+            currency: "CNY",
+            exchangeRate: 1,
+            baseCurrency: "人民币 CNY",
+            taxRate: 6,
+            remark: "来源：CQC 外付成本明细 2，转北京公司收入"
+          },
+          externalCosts: [newExternalCost({ item: "交通费(FSSC1043)", amount: 9600, remark: "异地审核交通支持" })],
+          internalCosts: [newInternalCost({ item: "住宿费", amount: 4200, remark: "审核住宿费用" })],
+          attachments: { settlement: 0, other: 0 }
+        }
+      ]
+    };
+
+    function uid(prefix) {
+      return prefix + Math.random().toString(36).slice(2, 8);
+    }
+
+    function optionList(list, selected, placeholder) {
+      const head = placeholder ? `<option value="">${placeholder}</option>` : "";
+      return head + list.map(item => `<option value="${item}" ${item === selected ? "selected" : ""}>${item}</option>`).join("");
+    }
+
+    function calc(row) {
+      const amount = Number(row.amount || 0);
+      const taxRate = Number(row.taxRate || 0) / 100;
+      const exchangeRate = Number(row.exchangeRate || 0);
+      row.taxAmount = amount * taxRate;
+      row.baseAmount = amount * exchangeRate;
+      row.baseTaxAmount = row.taxAmount * exchangeRate;
+    }
+
+    function newExternalCost(values = {}) {
+      return {
+        id: uid("external-"),
+        costType: "分包",
+        item: externalItems[0],
+        payeeType: "企业",
+        payeeName: "",
+        department: departments[0],
+        amount: "",
+        currency: "CNY",
+        baseCurrency: "人民币 CNY",
+        exchangeRate: 1,
+        taxRate: 6,
+        createSubOrder: "创建",
+        remark: "",
+        taxAmount: 0,
+        baseAmount: 0,
+        baseTaxAmount: 0,
+        ...values
+      };
+    }
+
+    function newInternalCost(values = {}) {
+      return {
+        id: uid("internal-"),
+        item: "审核费",
+        payeeName: "审核组成员",
+        department: departments[0],
+        amount: "",
+        currency: "CNY",
+        baseCurrency: "人民币 CNY",
+        exchangeRate: 1,
+        taxRate: 6,
+        remark: "",
+        taxAmount: 0,
+        baseAmount: 0,
+        baseTaxAmount: 0,
+        ...values
+      };
+    }
+
+    function payeeOptionLabel(item) {
+      const info = item.type === "个人" ? `${item.code} / ${item.department}` : `${item.code} / ${item.supplierType}`;
+      return `${item.name}（${item.type}｜${info}）`;
+    }
+
+    function payeeSearchText(item) {
+      return [item.name, item.code, item.type, item.supplierType || "", item.org || "", item.department || ""].join(" ").toLowerCase();
+    }
+
+    function renderPayeeOptions(keyword = "") {
+      const key = String(keyword || "").trim().toLowerCase();
+      const list = key ? payees.filter(item => payeeSearchText(item).includes(key) || payeeOptionLabel(item).toLowerCase().includes(key)) : payees;
+      $("#payeeOptions").innerHTML = list.map(item => `<option value="${payeeOptionLabel(item)}"></option>`).join("");
+    }
+
+    function findPayeeByInput(value) {
+      const keyword = String(value || "").trim().toLowerCase();
+      if (!keyword) return null;
+      return payees.find(item => payeeOptionLabel(item).toLowerCase() === keyword)
+        || payees.find(item => payeeSearchText(item).includes(keyword));
+    }
+
+    function incomeView(income) {
+      calc(income);
+      return `
+        <div class="read-grid">
+          <div><div class="read-label">收入来源机构</div><div class="read-value">${income.sourceOrg}</div></div>
+          <div><div class="read-label">收入金额</div><div class="read-value">${money(income.amount)}</div></div>
+          <div><div class="read-label">币种</div><div class="read-value">${income.currency}</div></div>
+          <div><div class="read-label">汇率</div><div class="read-value">${income.exchangeRate}</div></div>
+          <div><div class="read-label">本位币</div><div class="read-value">${income.baseCurrency}</div></div>
+          <div><div class="read-label">本位币金额</div><div class="read-value">${money(income.baseAmount)}</div></div>
+          <div><div class="read-label">税率</div><div class="read-value">${income.taxRate}%</div></div>
+          <div><div class="read-label">税额</div><div class="read-value">${money(income.taxAmount)}</div></div>
+          <div><div class="read-label">本位币税额</div><div class="read-value">${money(income.baseTaxAmount)}</div></div>
+          <div class="read-item wide"><div class="read-label">备注信息</div><div class="read-value">${income.remark || "无"}</div></div>
+        </div>`;
+    }
+
+    function costSummary(pkg) {
+      pkg.externalCosts.forEach(calc);
+      pkg.internalCosts.forEach(calc);
+      const sum = (rows, field) => rows.reduce((total, row) => total + Number(row[field] || 0), 0);
+      const external = sum(pkg.externalCosts, "amount");
+      const internal = sum(pkg.internalCosts, "amount");
+      const costBase = sum(pkg.externalCosts, "baseAmount") + sum(pkg.internalCosts, "baseAmount");
+      return { external, internal, costBase };
+    }
+
+    function renderPackages() {
+      $("#chargePackages").innerHTML = state.packages.map((pkg, pkgIndex) => {
+        const summary = costSummary(pkg);
+        const submitted = pkg.status === "已提交";
+        return `
+          <section class="charge-card">
+            <div class="charge-header">
+              <div class="charge-title">
+                <span class="charge-index">${pkgIndex + 1}</span>
+                <span>计费信息 ${pkgIndex + 1}</span>
+                <span class="package-status ${submitted ? "done" : "pending"}">${pkg.status}</span>
+                <span class="charge-source">${pkg.income.remark}</span>
+              </div>
+              <div class="package-actions">
+                <div class="compact-summary">
+                  <span>收入 <strong>${money(pkg.income.baseAmount)}</strong></span>
+                  <span>外付 <strong id="externalTotal-${pkgIndex}">${money(summary.external)}</strong></span>
+                  <span>内付 <strong id="internalTotal-${pkgIndex}">${money(summary.internal)}</strong></span>
+                </div>
+                <button class="btn btn-primary" data-submit-package="${pkgIndex}" type="button" ${submitted ? "disabled" : ""}>${submitted ? "已提交" : "提交本包"}</button>
+              </div>
+            </div>
+            <div class="charge-body">
+              <div class="sub-section">
+                <div class="sub-header"><div class="sub-title">收入信息</div><span class="readonly-text">只读</span></div>
+                <div style="padding:14px;">${incomeView(pkg.income)}</div>
+              </div>
+              ${costSection("external", pkg.externalCosts, pkgIndex, submitted)}
+              ${costSection("internal", pkg.internalCosts, pkgIndex, submitted)}
+              ${attachmentSection(pkg, pkgIndex)}
+            </div>
+          </section>`;
+      }).join("");
+    }
+
+    function costSection(scope, rows, pkgIndex, submitted) {
+      const isExternal = scope === "external";
+      return `
+        <div class="sub-section">
+          <div class="sub-header">
+            <div class="sub-title">${isExternal ? "外付成本" : "内付成本"}</div>
+            <div class="sub-actions">
+              <button class="btn btn-primary" data-add="${scope}" data-package="${pkgIndex}" type="button" ${submitted ? "disabled" : ""}>${isExternal ? "新增外付成本" : "新增内付成本"}</button>
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>${isExternal ? externalHead() : internalHead()}</thead>
+              <tbody>${rows.length ? rows.map((row, rowIndex) => isExternal ? externalRow(row, pkgIndex, rowIndex, submitted) : internalRow(row, pkgIndex, rowIndex, submitted)).join("") : emptyRow(isExternal ? 15 : 13)}</tbody>
+            </table>
+          </div>
+        </div>`;
+    }
+
+    function externalHead() {
+      return `<tr>
+        <th>成本类型</th><th>收支项目</th><th>外付对象</th><th>归属部门</th><th>成本金额</th><th>币种</th>
+        <th>本位币</th><th>汇率</th><th>本位币金额</th><th>税率</th><th>税额</th><th>本位币税额</th>
+        <th>是否创建子单</th><th>备注</th><th>操作</th>
+      </tr>`;
+    }
+
+    function internalHead() {
+      return `<tr>
+        <th>收支项目</th><th>内付对象</th><th>归属部门</th><th>成本金额</th><th>币种</th><th>本位币</th>
+        <th>汇率</th><th>本位币金额</th><th>税率</th><th>税额</th><th>本位币税额</th><th>备注</th><th>操作</th>
+      </tr>`;
+    }
+
+    function externalRow(row, pkgIndex, rowIndex, submitted) {
+      calc(row);
+      const scope = "external";
+      const isSubcontract = row.costType === "分包";
+      const disabled = submitted ? "disabled" : "";
+      return `<tr>
+        <td><select class="control medium" data-scope="${scope}" data-field="costType" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(externalCostTypes, row.costType)}</select></td>
+        <td><select class="control wide" data-scope="${scope}" data-field="item" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(externalItems, row.item)}</select></td>
+        <td><input class="control wide" list="payeeOptions" data-scope="${scope}" data-field="payeeName" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.payeeName}" placeholder="输入公司/个人名称、编号或信用代码检索" ${disabled}></td>
+        <td><select class="control medium" data-scope="${scope}" data-field="department" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(departments, row.department)}</select></td>
+        <td><input class="control money-field num" data-scope="${scope}" data-field="amount" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.amount}" type="number" min="0" ${disabled}></td>
+        <td><select class="control short" data-scope="${scope}" data-field="currency" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(currencies, row.currency)}</select></td>
+        <td><input class="control medium" value="${row.baseCurrency}" readonly></td>
+        <td><input class="control short num" data-scope="${scope}" data-field="exchangeRate" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.exchangeRate}" type="number" min="0" step="0.0001" ${disabled}></td>
+        <td><input class="control money-field num" value="${money(row.baseAmount)}" readonly></td>
+        <td><div class="percent-field"><input class="control num" data-scope="${scope}" data-field="taxRate" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.taxRate}" type="number" min="0" step="0.01" ${disabled}><span class="percent-sign">%</span></div></td>
+        <td><input class="control money-field num" value="${money(row.taxAmount)}" readonly></td>
+        <td><input class="control money-field num" value="${money(row.baseTaxAmount)}" readonly></td>
+        <td>${isSubcontract ? `<select class="control medium" data-scope="${scope}" data-field="createSubOrder" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(["创建", "不创建"], row.createSubOrder)}</select>` : `<span class="readonly-text">无</span>`}</td>
+        <td><input class="control wide" data-scope="${scope}" data-field="remark" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.remark}" placeholder="请输入" ${disabled}></td>
+        <td><button class="btn btn-danger" data-remove="${scope}" data-package="${pkgIndex}" data-index="${rowIndex}" type="button" ${disabled}>删除</button></td>
+      </tr>`;
+    }
+
+    function internalRow(row, pkgIndex, rowIndex, submitted) {
+      calc(row);
+      const scope = "internal";
+      const disabled = submitted ? "disabled" : "";
+      return `<tr>
+        <td><select class="control medium" data-scope="${scope}" data-field="item" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(internalItems, row.item)}</select></td>
+        <td><input class="control wide" list="payeeOptions" data-scope="${scope}" data-field="payeeName" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.payeeName}" placeholder="输入名称/编码检索" ${disabled}></td>
+        <td><select class="control medium" data-scope="${scope}" data-field="department" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(departments, row.department)}</select></td>
+        <td><input class="control money-field num" data-scope="${scope}" data-field="amount" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.amount}" type="number" min="0" ${disabled}></td>
+        <td><select class="control short" data-scope="${scope}" data-field="currency" data-package="${pkgIndex}" data-index="${rowIndex}" ${disabled}>${optionList(currencies, row.currency)}</select></td>
+        <td><input class="control medium" value="${row.baseCurrency}" readonly></td>
+        <td><input class="control short num" data-scope="${scope}" data-field="exchangeRate" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.exchangeRate}" type="number" min="0" step="0.0001" ${disabled}></td>
+        <td><input class="control money-field num" value="${money(row.baseAmount)}" readonly></td>
+        <td><div class="percent-field"><input class="control num" data-scope="${scope}" data-field="taxRate" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.taxRate}" type="number" min="0" step="0.01" ${disabled}><span class="percent-sign">%</span></div></td>
+        <td><input class="control money-field num" value="${money(row.taxAmount)}" readonly></td>
+        <td><input class="control money-field num" value="${money(row.baseTaxAmount)}" readonly></td>
+        <td><input class="control wide" data-scope="${scope}" data-field="remark" data-package="${pkgIndex}" data-index="${rowIndex}" value="${row.remark}" placeholder="请输入" ${disabled}></td>
+        <td><button class="btn btn-danger" data-remove="${scope}" data-package="${pkgIndex}" data-index="${rowIndex}" type="button" ${disabled}>删除</button></td>
+      </tr>`;
+    }
+
+    function emptyRow(colspan) {
+      return `<tr class="empty-row"><td colspan="${colspan}">暂无成本，可点击右上角新增</td></tr>`;
+    }
+
+    function attachmentSection(pkg, pkgIndex) {
+      const submitted = pkg.status === "已提交";
+      const disabled = submitted ? "disabled" : "";
+      return `
+        <div class="sub-section">
+          <div class="sub-header">
+            <div class="sub-title">附件信息</div>
+            <span class="readonly-text">选填，无必填校验</span>
+          </div>
+          <div style="padding:14px;">
+            <div class="upload-list">
+              <label class="upload-card ${submitted ? "disabled" : ""}">
+                <input type="file" data-file="settlement" data-package="${pkgIndex}" multiple hidden ${disabled}>
+                <div class="upload-left">
+                  <div class="upload-icon">▣</div>
+                  <div>
+                    <div class="upload-name">结算单附件</div>
+                    <div class="upload-state" id="settlementState-${pkgIndex}">${pkg.attachments.settlement ? `已选择 ${pkg.attachments.settlement} 个文件` : "选填"}</div>
+                  </div>
+                </div>
+                <span class="btn btn-primary">上传</span>
+              </label>
+              <label class="upload-card ${submitted ? "disabled" : ""}">
+                <input type="file" data-file="other" data-package="${pkgIndex}" multiple hidden ${disabled}>
+                <div class="upload-left">
+                  <div class="upload-icon">▣</div>
+                  <div>
+                    <div class="upload-name">其他附件 (如项目立项审批单等)</div>
+                    <div class="upload-state" id="otherState-${pkgIndex}">${pkg.attachments.other ? `已选择 ${pkg.attachments.other} 个文件` : "选填"}</div>
+                  </div>
+                </div>
+                <span class="btn btn-normal">上传</span>
+              </label>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function rowsFor(scope, pkgIndex) {
+      const pkg = state.packages[pkgIndex];
+      return scope === "external" ? pkg.externalCosts : pkg.internalCosts;
+    }
+
+    function updateRow(target) {
+      const pkgIndex = Number(target.dataset.package);
+      if (state.packages[pkgIndex].status === "已提交") return;
+      const rowIndex = Number(target.dataset.index);
+      const rows = rowsFor(target.dataset.scope, pkgIndex);
+      const row = rows[rowIndex];
+      row[target.dataset.field] = target.value;
+      if (target.dataset.field === "currency") row.exchangeRate = currencyRates[target.value] || 1;
+      if (target.dataset.field === "payeeName") {
+        const payee = findPayeeByInput(target.value);
+        if (payee) {
+          row.payeeName = payeeOptionLabel(payee);
+          row.payeeType = payee.type;
+        }
+      }
+      if (target.dataset.field === "costType") {
+        if (lockedPersonalTypes.includes(target.value) || target.value === "劳务费") {
+          row.payeeType = "个人";
+          row.payeeName = "";
+        }
+        if (target.value === "分包") row.createSubOrder = row.createSubOrder || "创建";
+      }
+      renderPackages();
+    }
+
+    document.addEventListener("input", event => {
+      const target = event.target;
+      if (!target.dataset.scope || target.dataset.field !== "payeeName") return;
+      const pkgIndex = Number(target.dataset.package);
+      if (state.packages[pkgIndex].status === "已提交") return;
+      rowsFor(target.dataset.scope, pkgIndex)[Number(target.dataset.index)].payeeName = target.value;
+      renderPayeeOptions(target.value);
+    });
+
+    document.addEventListener("change", event => {
+      const target = event.target;
+      if (target.dataset.scope && target.dataset.field) updateRow(target);
+      if (target.dataset.file) {
+        const pkgIndex = Number(target.dataset.package);
+        if (state.packages[pkgIndex].status === "已提交") return;
+        state.packages[pkgIndex].attachments[target.dataset.file] = target.files.length;
+        const stateId = target.dataset.file === "settlement" ? `#settlementState-${pkgIndex}` : `#otherState-${pkgIndex}`;
+        $(stateId).textContent = target.files.length ? `已选择 ${target.files.length} 个文件` : "选填";
+      }
+    });
+
+    document.addEventListener("focusout", event => {
+      const target = event.target;
+      if (target.dataset.scope && target.dataset.field === "payeeName") updateRow(target);
+    });
+
+    document.addEventListener("click", event => {
+      const addScope = event.target.dataset.add;
+      if (addScope) {
+        const pkgIndex = Number(event.target.dataset.package);
+        if (state.packages[pkgIndex].status === "已提交") return;
+        rowsFor(addScope, pkgIndex).push(addScope === "external" ? newExternalCost() : newInternalCost());
+        renderPackages();
+      }
+      const removeScope = event.target.dataset.remove;
+      if (removeScope) {
+        const pkgIndex = Number(event.target.dataset.package);
+        if (state.packages[pkgIndex].status === "已提交") return;
+        const rows = rowsFor(removeScope, pkgIndex);
+        rows.splice(Number(event.target.dataset.index), 1);
+        renderPackages();
+      }
+      const submitIndex = event.target.dataset.submitPackage;
+      if (submitIndex !== undefined) {
+        const pkg = state.packages[Number(submitIndex)];
+        if (pkg.status === "已提交") return;
+        pkg.status = "已提交";
+        renderPackages();
+      }
+    });
+
+    renderPayeeOptions();
+    renderPackages();
+  </script>
+</body>
+</html>

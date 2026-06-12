@@ -1,0 +1,1495 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>项目计费页面</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --page: #f8fafc;
+      --surface: #fff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --soft: #f1f5f9;
+      --danger: #dc2626;
+      --success: #059669;
+      --warning: #d97706;
+      --shadow: 0 2px 4px rgba(15, 23, 42, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 1280px;
+      color: var(--text);
+      background: var(--page);
+      font: 14px/1.6 "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    button, input, select, textarea { font: inherit; }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 58px;
+      padding: 0 28px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+    }
+
+    .title-wrap { display: flex; align-items: center; gap: 12px; }
+    h1 { margin: 0; font-size: 20px; line-height: 1.2; }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 999px;
+      color: var(--primary);
+      background: #eff6ff;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 34px;
+      padding: 0 14px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      white-space: nowrap;
+      transition: background .15s, border-color .15s, color .15s;
+    }
+
+    .btn-primary { color: #fff; background: var(--primary); }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-normal { color: #334155; background: #fff; border-color: var(--border); }
+    .btn-normal:hover { background: #f8fafc; border-color: #cbd5e1; }
+    .btn-link { height: 28px; padding: 0 6px; color: var(--primary); background: transparent; }
+    .btn-danger { color: var(--danger); background: transparent; }
+
+    .page {
+      padding: 18px 28px 32px;
+    }
+
+    .notice {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 38px;
+      padding: 0 14px;
+      margin-bottom: 14px;
+      border: 1px solid #fed7aa;
+      border-radius: 6px;
+      color: #9a3412;
+      background: #fff7ed;
+    }
+
+    .section {
+      margin-bottom: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 46px;
+      padding: 0 16px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 4px;
+      height: 16px;
+      border-radius: 3px;
+      background: var(--primary);
+    }
+
+    .section-tools {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .compact-summary {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #64748b;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .compact-summary span {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .compact-summary strong {
+      color: #0f172a;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .section-body { padding: 16px; }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px 28px;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .income-fields {
+      display: grid;
+      gap: 10px 12px;
+    }
+
+    .income-fields.contract-mode { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .income-fields.settlement-mode { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+    .source-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .form-item label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .form-grid .control { height: 30px; }
+    .form-grid .percent-field { grid-template-columns: minmax(0, 1fr) 18px; }
+
+    .source-switch {
+      display: inline-flex;
+      height: 32px;
+      padding: 3px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .source-switch label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 72px;
+      height: 24px;
+      margin: 0;
+      border-radius: 6px;
+      color: #475569;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .source-switch input { display: none; }
+    .source-switch label:has(input:checked) { color: #fff; background: var(--primary); }
+
+    .info-label {
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .info-value {
+      min-height: 22px;
+      color: #0f172a;
+      font-weight: 600;
+      word-break: break-all;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    .table-scroll::-webkit-scrollbar { height: 8px; }
+    .table-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+    .table-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+    table {
+      width: 100%;
+      min-width: 1480px;
+      border-collapse: separate;
+      border-spacing: 0;
+      table-layout: auto;
+    }
+
+    th, td {
+      height: 42px;
+      padding: 6px 8px;
+      border-right: 1px solid #f1f5f9;
+      border-bottom: 1px solid #f1f5f9;
+      text-align: left;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      color: #334155;
+      background: #f8fafc;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+    th:last-child, td:last-child { border-right: 0; }
+
+    .control {
+      width: 100%;
+      height: 30px;
+      min-width: 96px;
+      padding: 0 8px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      color: #1f2937;
+      background: #fff;
+      outline: none;
+    }
+
+    .control:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
+    }
+
+    .control[readonly], .control:disabled {
+      color: #64748b;
+      background: #f8fafc;
+      cursor: default;
+    }
+
+    .picker { cursor: pointer; background: #fff; }
+    .num { text-align: right; }
+
+    .percent-field {
+      display: grid;
+      grid-template-columns: 86px 18px;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .percent-field .control { min-width: 86px; }
+    .percent-sign { color: #64748b; }
+
+    .money-field { min-width: 112px; }
+    .wide { min-width: 170px; }
+    .medium { min-width: 136px; }
+    .short { min-width: 88px; }
+    .readonly-text { color: #64748b; }
+
+    .sub-section {
+      margin-top: 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .sub-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 44px;
+      padding: 0 14px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sub-title { font-weight: 700; color: #0f172a; }
+    .modal-mask {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, .35);
+    }
+
+    .modal-mask.show { display: flex; }
+
+    .modal {
+      width: min(1120px, calc(100vw - 48px));
+      max-height: calc(100vh - 80px);
+      display: grid;
+      grid-template-rows: 52px auto 1fr 58px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 20px 60px rgba(15, 23, 42, .24);
+      overflow: hidden;
+    }
+
+    .modal-header, .modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-footer {
+      justify-content: flex-end;
+      gap: 10px;
+      border-top: 1px solid var(--border);
+      border-bottom: 0;
+    }
+
+    .modal-title { font-size: 16px; font-weight: 700; }
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border: 0;
+      border-radius: 6px;
+      color: #64748b;
+      background: transparent;
+      cursor: pointer;
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .modal-close:hover { background: #f1f5f9; color: #334155; }
+    .modal-search { padding: 12px 18px; border-bottom: 1px solid #f1f5f9; }
+    .modal-body { overflow: auto; padding: 0 18px 18px; }
+
+    .contract-search, .payee-search {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) auto auto;
+      align-items: end;
+      gap: 14px;
+      padding: 16px;
+      background: #f8fafc;
+      border-radius: 6px;
+    }
+
+    .search-field label {
+      display: block;
+      margin-bottom: 6px;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .contract-table {
+      width: 100%;
+      min-width: 780px;
+    }
+
+    .payee-table {
+      width: 100%;
+      min-width: 1080px;
+    }
+
+    .contract-table tr.selected td, .payee-table tr.selected td { background: #eff6ff; }
+
+    .contract-footer-meta {
+      margin-left: auto;
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-tag.blue { color: #2563eb; background: #dbeafe; }
+    .status-tag.red { color: #dc2626; background: #fee2e2; }
+
+    .upload-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .upload-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 72px;
+      padding: 14px 16px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 8px;
+      background: #f8fafc;
+      cursor: pointer;
+    }
+
+    .upload-card:hover { border-color: #93c5fd; background: #eff6ff; }
+    .upload-card.required { border-color: #f59e0b; background: #fffbeb; }
+
+    .upload-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .upload-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      color: #2563eb;
+      background: #dbeafe;
+      font-weight: 700;
+    }
+
+    .upload-name { color: #0f172a; font-weight: 700; }
+    .upload-state { margin-top: 2px; color: #64748b; font-size: 12px; }
+
+    .type-filter {
+      display: inline-flex;
+      gap: 4px;
+      padding: 3px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .type-filter button {
+      height: 28px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 6px;
+      color: #475569;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .type-filter button.active {
+      color: #fff;
+      background: var(--primary);
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="title-wrap">
+      <h1>项目计费</h1>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-normal" type="button">暂存</button>
+      <button class="btn btn-normal" type="button">返回</button>
+      <button class="btn btn-primary" type="button">提交</button>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">基本信息</h2>
+      </div>
+      <div class="section-body">
+        <div class="info-grid">
+          <div><div class="info-label">项目编号</div><div class="info-value">XM-2026-06001</div></div>
+          <div><div class="info-label">客户名称</div><div class="info-value">中国气象局</div></div>
+          <div><div class="info-label">审核类型</div><div class="info-value">初次认证</div></div>
+          <div><div class="info-label">认证领域</div><div class="info-value">质量管理体系</div></div>
+          <div><div class="info-label">业务归属机构</div><div class="info-value">中国质量认证中心（CQC）</div></div>
+          <div><div class="info-label">是否承担交通和住宿费</div><div class="info-value">是</div></div>
+          <div><div class="info-label">合同签署方</div><div class="info-value">中国质量认证中心（CQC）</div></div>
+          <div><div class="info-label">项目实施方</div><div class="info-value">中国检验认证集团北京有限公司</div></div>
+          <div><div class="info-label">计划审核日期</div><div class="info-value">2026-06-20 至 2026-06-22</div></div>
+          <div><div class="info-label">当前状态</div><div class="info-value">待计费</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">收入信息</h2>
+        <div class="section-tools">
+          <div class="compact-summary">
+            <span>收入合计 <strong id="incomeTotal">0.00</strong></span>
+            <span>税额合计 <strong id="incomeTaxTotal">0.00</strong></span>
+            <span>本位币收入 <strong id="incomeBaseTotal">0.00</strong></span>
+            <span>本位币税额 <strong id="incomeBaseTaxTotal">0.00</strong></span>
+          </div>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="form-grid" id="incomeForm"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">成本信息</h2>
+        <div class="compact-summary">
+          <span>外付合计 <strong id="externalTotal">0.00</strong></span>
+          <span>内付合计 <strong id="internalTotal">0.00</strong></span>
+          <span>本位币成本 <strong id="costBaseTotal">0.00</strong></span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="sub-section">
+          <div class="sub-header">
+            <div class="sub-title">外付成本</div>
+            <button class="btn btn-primary" id="addExternal" type="button">新增外付成本</button>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>成本类型</th>
+                  <th>收支项目</th>
+                  <th>外付对象</th>
+                  <th>归属部门</th>
+                  <th>成本金额</th>
+                  <th>币种</th>
+                  <th>本位币</th>
+                  <th>汇率</th>
+                  <th>本位币金额</th>
+                  <th>税率</th>
+                  <th>税额</th>
+                  <th>本位币税额</th>
+                  <th>是否创建子单</th>
+                  <th>备注</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="externalBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-header">
+            <div class="sub-title">内付成本</div>
+            <button class="btn btn-primary" id="addInternal" type="button">新增内付成本</button>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>收支项目</th>
+                  <th>内付对象</th>
+                  <th>归属部门</th>
+                  <th>成本金额</th>
+                  <th>币种</th>
+                  <th>本位币</th>
+                  <th>汇率</th>
+                  <th>本位币金额</th>
+                  <th>税率</th>
+                  <th>税额</th>
+                  <th>本位币税额</th>
+                  <th>备注</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="internalBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">附件信息</h2>
+      </div>
+      <div class="section-body">
+        <div class="upload-list">
+          <label class="upload-card" id="settlementCard">
+            <input type="file" id="settlementFiles" multiple hidden>
+            <div class="upload-left">
+              <div class="upload-icon">▣</div>
+              <div>
+                <div class="upload-name">结算单附件</div>
+                <div class="upload-state" id="settlementState">选填</div>
+              </div>
+            </div>
+            <span class="btn btn-primary">上传</span>
+          </label>
+          <label class="upload-card">
+            <input type="file" id="otherFiles" multiple hidden>
+            <div class="upload-left">
+              <div class="upload-icon">▣</div>
+              <div>
+                <div class="upload-name">其他附件 (如项目立项审批单等)</div>
+                <div class="upload-state" id="otherState">选填</div>
+              </div>
+            </div>
+            <span class="btn btn-normal">上传</span>
+          </label>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-mask" id="pickerModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title" id="pickerTitle">选择对象</div>
+        <button class="modal-close" id="closePicker" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-search" id="payeeSearchArea">
+        <div class="payee-search" id="externalFuzzySearchArea">
+          <div class="search-field" style="grid-column: span 3;">
+            <label for="externalPayeeKeyword">外付对象</label>
+            <input class="control" id="externalPayeeKeyword" data-payee-keyword="external" placeholder="请输入名称、编号、信用代码、所属部门等关键字">
+          </div>
+          <button class="btn btn-primary" id="queryExternalPayees" type="button">查询</button>
+          <button class="btn btn-normal" id="resetExternalPayees" type="button">重置</button>
+        </div>
+        <div class="payee-search hidden" id="personSearchArea">
+          <div class="search-field">
+            <label for="personNameFilter">人员姓名</label>
+            <input class="control" id="personNameFilter" data-payee-filter="personName" placeholder="请输入">
+          </div>
+          <div class="search-field">
+            <label for="personCodeFilter">人员编号</label>
+            <input class="control" id="personCodeFilter" data-payee-filter="personCode" placeholder="请输入">
+          </div>
+          <div class="search-field">
+            <label for="personOrgFilter">所属单位</label>
+            <select class="control" id="personOrgFilter" data-payee-filter="personOrg">
+              <option value="">全部</option>
+              <option>中国检验认证集团</option>
+              <option>中国质量认证中心（CQC）</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="queryPayees" type="button">查询</button>
+          <button class="btn btn-normal" id="resetPayees" type="button">重置</button>
+        </div>
+        <div class="payee-search" id="supplierSearchArea">
+          <div class="search-field">
+            <label for="supplierNameFilter">供应商名称</label>
+            <input class="control" id="supplierNameFilter" data-payee-filter="supplierName" placeholder="请输入">
+          </div>
+          <div class="search-field">
+            <label for="supplierCodeFilter">信用代码</label>
+            <input class="control" id="supplierCodeFilter" data-payee-filter="supplierCode" placeholder="请输入">
+          </div>
+          <div class="search-field">
+            <label for="supplierTypeFilter">供应商类型</label>
+            <select class="control" id="supplierTypeFilter" data-payee-filter="supplierType">
+              <option value="">全部</option>
+              <option>内部供应商</option>
+              <option>外部供应商</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="querySuppliers" type="button">查询</button>
+          <button class="btn btn-normal" id="resetSuppliers" type="button">重置</button>
+        </div>
+      </div>
+      <div class="modal-search hidden" id="contractSearchArea">
+        <div class="contract-search">
+          <div class="search-field">
+            <label for="contractCodeFilter">合同编号</label>
+            <input class="control" id="contractCodeFilter" data-contract-filter="code" placeholder="请输入">
+          </div>
+          <div class="search-field">
+            <label for="contractNameFilter">合同名称</label>
+            <input class="control" id="contractNameFilter" data-contract-filter="name" placeholder="请输入">
+          </div>
+          <div class="search-field">
+            <label for="contractCustomerFilter">客户名称</label>
+            <input class="control" id="contractCustomerFilter" data-contract-filter="customer" placeholder="请输入">
+          </div>
+          <button class="btn btn-primary" id="queryContracts" type="button">查询</button>
+          <button class="btn btn-normal" id="resetContracts" type="button">重置</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="type-filter" id="payeeTypeFilter">
+          <button class="active" type="button" data-filter-type="企业">企业</button>
+          <button type="button" data-filter-type="个人">个人</button>
+        </div>
+        <div class="table-scroll" id="payeeTableWrap">
+          <table class="payee-table">
+            <thead id="payeeTableHead"></thead>
+            <tbody id="payeeTableBody"></tbody>
+          </table>
+        </div>
+        <div class="table-scroll hidden" id="contractTableWrap">
+          <table class="contract-table">
+            <thead>
+              <tr>
+                <th style="width:44px;"></th>
+                <th>合同编号</th>
+                <th>合同名称</th>
+                <th>客户</th>
+                <th>签订日期</th>
+              </tr>
+            </thead>
+            <tbody id="contractTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="contract-footer-meta hidden" id="contractMeta">共 0 条，每页 5 条</div>
+        <div class="contract-footer-meta" id="payeeMeta">共 0 条，每页 5 条</div>
+        <button class="btn btn-normal" id="cancelPicker" type="button">取消</button>
+        <button class="btn btn-primary hidden" id="confirmPicker" type="button">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <datalist id="payeeOptions"></datalist>
+
+  <script>
+    const $ = selector => document.querySelector(selector);
+    const money = value => Number(value || 0).toFixed(2);
+
+    const contracts = [
+      { id: "c1", code: "HT-BJ-2026-0089", name: "2026年度质量体系认证技术服务...", customer: "北京中检技术服务有限公司", signDate: "2026-01-15", remaining: 820000, currency: "CNY", rate: 1 },
+      { id: "c2", code: "HT-SH-2026-0124", name: "博格华纳一期环境评估与认证合同", customer: "博格华纳汽车零部件有限公司", signDate: "2026-02-10", remaining: 96000, currency: "USD", rate: 7.18 },
+      { id: "c3", code: "HT-BJ-2026-0201", name: "信息安全与服务管理体系专项协议", customer: "北京科技有限公司", signDate: "2026-03-05", remaining: 42000, currency: "CNY", rate: 1 },
+      { id: "c4", code: "HT-GZ-2025-0882", name: "2025-2027年实验室认可咨询服...", customer: "广州市华南认证审核中心", signDate: "2025-11-20", remaining: 66000, currency: "EUR", rate: 7.72 },
+      { id: "c5", code: "HT-CD-2026-0045", name: "天府新区供应商二方审核委托合同", customer: "成都天府质量管理咨询服务部", signDate: "2026-01-08", remaining: 320000, currency: "CNY", rate: 1 }
+    ];
+
+    const currencyRates = { CNY: 1, USD: 7.18, EUR: 7.72, HKD: .92, JPY: .05 };
+    const currencies = Object.keys(currencyRates);
+    const departments = ["体系认证一部", "体系认证二部", "工业产品审核部", "环境与职业健康安全审核部", "食品农产品认证审核部"];
+    const externalCostTypes = ["分包", "个人分成", "企业分成", "个人佣金", "企业佣金", "劳务费"];
+    const lockedPersonalTypes = ["个人分成", "个人佣金"];
+    const externalItems = [
+      "劳务费(FSSC1019)", "咨询费(FSSC1022)", "协作费(FSSC103101)", "检验测试费(FSSC1032)",
+      "制样费(FSSC1033)", "报验代理费(FSSC1034)", "认证费(FSSC1035)", "代理注册费(FSSC1036)",
+      "卫生消毒费(FSSC1039)", "计量费用(FSSC1040)", "能力检验费(FSSC1041)", "抽样费(FSSC1042)",
+      "运输装卸搬运费(FSSC1043)", "物料用品费(FSSC1046)", "佣金(FSSC1048)", "项目管理服务费(FSSC1059)",
+      "其他-其他(FSSC99999)"
+    ];
+    const internalItems = ["审核费", "住宿费", "交通费", "补贴费", "其他费用"];
+    const payees = [
+      { type: "企业", id: "e1", name: "北京中检技术服务有限公司", code: "91110108MA01KXXXXX", supplierType: "内部供应商" },
+      { type: "企业", id: "e2", name: "上海某某检测科技有限公司", code: "91310115MA1H2YYYYY", supplierType: "外部供应商" },
+      { type: "企业", id: "e3", name: "广州市华南认证审核中心", code: "91440106MA5A7ZZZZZ", supplierType: "内部供应商" },
+      { type: "企业", id: "e4", name: "深圳市博格华纳零配件制造厂", code: "91440300MA5EXAAAAA", supplierType: "外部供应商" },
+      { type: "企业", id: "e5", name: "成都天府质量管理咨询服务部", code: "92510100MA6BQBBBBB", supplierType: "外部供应商" },
+      { type: "个人", id: "p1", name: "林建国", code: "CCIC-880192", org: "中国检验认证集团", department: "体系审核部" },
+      { type: "个人", id: "p2", name: "陈晓", code: "BW-Q-20381", org: "中国检验认证集团", department: "质量管理部" },
+      { type: "个人", id: "p3", name: "王伟", code: "CCIC-880205", org: "中国检验认证集团", department: "技术服务中心" },
+      { type: "个人", id: "p4", name: "赵梦琪", code: "EXT-A-0912", org: "中国检验认证集团", department: "认证一部" },
+      { type: "个人", id: "p5", name: "刘强", code: "BW-E-10552", org: "中国检验认证集团", department: "工程支持部" }
+    ];
+
+    const state = {
+      incomes: [],
+      externalCosts: [],
+      internalCosts: [],
+      picker: null,
+      payeeFilterType: "企业",
+      selectedPayeeId: "",
+      externalPayeeKeyword: "",
+      payeeFilters: {
+        personName: "",
+        personCode: "",
+        personOrg: "",
+        supplierName: "",
+        supplierCode: "",
+        supplierType: ""
+      },
+      contractFilters: { code: "", name: "", customer: "" },
+      selectedContractId: ""
+    };
+
+    function uid(prefix) {
+      return prefix + Math.random().toString(36).slice(2, 8);
+    }
+
+    function optionList(list, selected, placeholder) {
+      const head = placeholder ? `<option value="">${placeholder}</option>` : "";
+      return head + list.map(item => {
+        const value = typeof item === "string" ? item : item.id;
+        const label = typeof item === "string" ? item : item.name;
+        return `<option value="${value}" ${value === selected ? "selected" : ""}>${label}</option>`;
+      }).join("");
+    }
+
+    function calc(row) {
+      const amount = Number(row.amount || 0);
+      const taxRate = Number(row.taxRate || 0) / 100;
+      const exchangeRate = Number(row.exchangeRate || 0);
+      row.taxAmount = amount * taxRate;
+      row.baseAmount = amount * exchangeRate;
+      row.baseTaxAmount = row.taxAmount * exchangeRate;
+    }
+
+    function newIncome(type = "合同") {
+      const contract = contracts[0];
+      return {
+        id: uid("income-"),
+        sourceType: type,
+        contractId: type === "合同" ? contract.id : "",
+        amount: "",
+        currency: type === "合同" ? contract.currency : "CNY",
+        department: departments[0],
+        taxRate: 6,
+        exchangeRate: type === "合同" ? contract.rate : 1,
+        baseCurrency: "人民币 CNY",
+        subProject: "",
+        taxAmount: 0,
+        baseAmount: 0,
+        baseTaxAmount: 0
+      };
+    }
+
+    function newExternalCost() {
+      return {
+        id: uid("external-"),
+        costType: "分包",
+        item: externalItems[0],
+        payeeType: "企业",
+        payeeName: "",
+        department: departments[0],
+        amount: "",
+        currency: "CNY",
+        baseCurrency: "人民币 CNY",
+        exchangeRate: 1,
+        taxRate: 6,
+        createSubOrder: "创建",
+        remark: "",
+        taxAmount: 0,
+        baseAmount: 0,
+        baseTaxAmount: 0
+      };
+    }
+
+    function newInternalCost() {
+      return {
+        id: uid("internal-"),
+        item: "审核费",
+        payeeName: "审核组成员",
+        department: departments[0],
+        amount: "",
+        currency: "CNY",
+        baseCurrency: "人民币 CNY",
+        exchangeRate: 1,
+        taxRate: 6,
+        remark: "",
+        taxAmount: 0,
+        baseAmount: 0,
+        baseTaxAmount: 0
+      };
+    }
+
+    function getContract(id) {
+      return contracts.find(item => item.id === id) || contracts[0];
+    }
+
+    function payeeOptionLabel(item) {
+      const info = item.type === "个人" ? `${item.code} / ${item.department}` : `${item.code} / ${item.supplierType}`;
+      return `${item.name}（${item.type}｜${info}）`;
+    }
+
+    function payeeSearchText(item) {
+      return [item.name, item.code, item.type, item.supplierType || "", item.org || "", item.department || ""].join(" ").toLowerCase();
+    }
+
+    function matchedPayees(keyword) {
+      const key = String(keyword || "").trim().toLowerCase();
+      return key ? payees.filter(item => payeeSearchText(item).includes(key) || payeeOptionLabel(item).toLowerCase().includes(key)) : payees;
+    }
+
+    function renderPayeeOptions(keyword = "") {
+      $("#payeeOptions").innerHTML = matchedPayees(keyword).map(item => `<option value="${payeeOptionLabel(item)}"></option>`).join("");
+    }
+
+    function findPayeeByInput(value) {
+      const keyword = String(value || "").trim().toLowerCase();
+      if (!keyword) return null;
+      return payees.find(item => payeeOptionLabel(item).toLowerCase() === keyword)
+        || payees.find(item => payeeSearchText(item).includes(keyword));
+    }
+
+    function renderIncomes() {
+      const row = state.incomes[0];
+      calc(row);
+      const index = 0;
+      const isContract = row.sourceType === "合同";
+      const contract = getContract(row.contractId);
+      $("#incomeForm").innerHTML = `
+        <div class="form-item source-row">
+          <label>收入来源类型</label>
+          <div class="source-switch">
+            <label><input type="radio" name="incomeSourceType" data-scope="income" data-field="sourceType" data-index="${index}" value="合同" ${isContract ? "checked" : ""}>合同</label>
+            <label><input type="radio" name="incomeSourceType" data-scope="income" data-field="sourceType" data-index="${index}" value="结算单" ${!isContract ? "checked" : ""}>结算单</label>
+          </div>
+        </div>
+        <div class="income-fields ${isContract ? "contract-mode" : "settlement-mode"}">
+          ${isContract ? `
+            <div class="form-item">
+              <label>关联业务合同</label>
+              <input class="control picker" data-pick-contract="${index}" value="${contract.code} ${contract.name}" readonly placeholder="点击选择合同">
+            </div>
+            <div class="form-item">
+              <label>合同剩余金额</label>
+              <input class="control num" value="${money(contract.remaining)}" readonly>
+            </div>` : ""}
+          <div class="form-item">
+            <label>收入金额</label>
+            <input class="control num" data-scope="income" data-field="amount" data-index="${index}" value="${row.amount}" type="number" min="0">
+          </div>
+          <div class="form-item">
+            <label>币种</label>
+            <select class="control" data-scope="income" data-field="currency" data-index="${index}" ${isContract ? "disabled" : ""}>
+              ${optionList(currencies, row.currency)}
+            </select>
+          </div>
+          <div class="form-item">
+            <label>收入归属部门</label>
+            <select class="control" data-scope="income" data-field="department" data-index="${index}">
+              ${optionList(departments, row.department)}
+            </select>
+          </div>
+          <div class="form-item">
+            <label>税率</label>
+            <div class="percent-field"><input class="control num" data-scope="income" data-field="taxRate" data-index="${index}" value="${row.taxRate}" type="number" min="0" step="0.01"><span class="percent-sign">%</span></div>
+          </div>
+          <div class="form-item">
+            <label>税额</label>
+            <input class="control num" value="${money(row.taxAmount)}" readonly>
+          </div>
+          <div class="form-item">
+            <label>汇率</label>
+            <input class="control num" data-scope="income" data-field="exchangeRate" data-index="${index}" value="${row.exchangeRate}" type="number" min="0" step="0.0001">
+          </div>
+          <div class="form-item">
+            <label>本位币</label>
+            <input class="control" value="${row.baseCurrency}" readonly>
+          </div>
+          <div class="form-item">
+            <label>本位币金额</label>
+            <input class="control num" value="${money(row.baseAmount)}" readonly>
+          </div>
+          <div class="form-item">
+            <label>本位币税额</label>
+            <input class="control num" value="${money(row.baseTaxAmount)}" readonly>
+          </div>
+          <div class="form-item">
+            <label>子项目名称</label>
+            <input class="control" data-scope="income" data-field="subProject" data-index="${index}" value="${row.subProject}" placeholder="请输入">
+          </div>
+        </div>`;
+    }
+
+    function renderExternalCosts() {
+      $("#externalBody").innerHTML = state.externalCosts.map((row, index) => {
+        calc(row);
+        const isSubcontract = row.costType === "分包";
+        return `<tr>
+          <td><select class="control medium" data-scope="external" data-field="costType" data-index="${index}">
+            ${optionList(externalCostTypes, row.costType)}
+          </select></td>
+          <td><select class="control wide" data-scope="external" data-field="item" data-index="${index}">
+            ${optionList(externalItems, row.item)}
+          </select></td>
+          <td><input class="control wide" list="payeeOptions" data-scope="external" data-field="payeeName" data-index="${index}" value="${row.payeeName}" placeholder="输入公司/个人名称、编号或信用代码检索"></td>
+          <td><select class="control medium" data-scope="external" data-field="department" data-index="${index}">
+            ${optionList(departments, row.department)}
+          </select></td>
+          <td><input class="control money-field num" data-scope="external" data-field="amount" data-index="${index}" value="${row.amount}" type="number" min="0"></td>
+          <td><select class="control short" data-scope="external" data-field="currency" data-index="${index}">
+            ${optionList(currencies, row.currency)}
+          </select></td>
+          <td><input class="control medium" value="${row.baseCurrency}" readonly></td>
+          <td><input class="control short num" data-scope="external" data-field="exchangeRate" data-index="${index}" value="${row.exchangeRate}" type="number" min="0" step="0.0001"></td>
+          <td><input class="control money-field num" value="${money(row.baseAmount)}" readonly></td>
+          <td><div class="percent-field"><input class="control num" data-scope="external" data-field="taxRate" data-index="${index}" value="${row.taxRate}" type="number" min="0" step="0.01"><span class="percent-sign">%</span></div></td>
+          <td><input class="control money-field num" value="${money(row.taxAmount)}" readonly></td>
+          <td><input class="control money-field num" value="${money(row.baseTaxAmount)}" readonly></td>
+          <td>${isSubcontract ? `<select class="control medium" data-scope="external" data-field="createSubOrder" data-index="${index}">${optionList(["创建", "不创建"], row.createSubOrder)}</select>` : `<span class="readonly-text">无</span>`}</td>
+          <td><input class="control wide" data-scope="external" data-field="remark" data-index="${index}" value="${row.remark}" placeholder="请输入"></td>
+          <td><button class="btn btn-danger" data-remove="external" data-index="${index}" type="button">删除</button></td>
+        </tr>`;
+      }).join("");
+    }
+
+    function renderInternalCosts() {
+      $("#internalBody").innerHTML = state.internalCosts.map((row, index) => {
+        calc(row);
+        return `<tr>
+          <td><select class="control medium" data-scope="internal" data-field="item" data-index="${index}">
+            ${optionList(internalItems, row.item)}
+          </select></td>
+          <td><input class="control wide" list="payeeOptions" data-scope="internal" data-field="payeeName" data-index="${index}" value="${row.payeeName}" placeholder="输入名称/编码检索"></td>
+          <td><select class="control medium" data-scope="internal" data-field="department" data-index="${index}">
+            ${optionList(departments, row.department)}
+          </select></td>
+          <td><input class="control money-field num" data-scope="internal" data-field="amount" data-index="${index}" value="${row.amount}" type="number" min="0"></td>
+          <td><select class="control short" data-scope="internal" data-field="currency" data-index="${index}">
+            ${optionList(currencies, row.currency)}
+          </select></td>
+          <td><input class="control medium" value="${row.baseCurrency}" readonly></td>
+          <td><input class="control short num" data-scope="internal" data-field="exchangeRate" data-index="${index}" value="${row.exchangeRate}" type="number" min="0" step="0.0001"></td>
+          <td><input class="control money-field num" value="${money(row.baseAmount)}" readonly></td>
+          <td><div class="percent-field"><input class="control num" data-scope="internal" data-field="taxRate" data-index="${index}" value="${row.taxRate}" type="number" min="0" step="0.01"><span class="percent-sign">%</span></div></td>
+          <td><input class="control money-field num" value="${money(row.taxAmount)}" readonly></td>
+          <td><input class="control money-field num" value="${money(row.baseTaxAmount)}" readonly></td>
+          <td><input class="control wide" data-scope="internal" data-field="remark" data-index="${index}" value="${row.remark}" placeholder="请输入"></td>
+          <td><button class="btn btn-danger" data-remove="internal" data-index="${index}" type="button">删除</button></td>
+        </tr>`;
+      }).join("");
+    }
+
+    function updateSummary() {
+      state.incomes.forEach(calc);
+      state.externalCosts.forEach(calc);
+      state.internalCosts.forEach(calc);
+      const sum = (rows, field) => rows.reduce((total, row) => total + Number(row[field] || 0), 0);
+      const incomeBase = sum(state.incomes, "baseAmount");
+      const external = sum(state.externalCosts, "amount");
+      const internal = sum(state.internalCosts, "amount");
+      const costBase = sum(state.externalCosts, "baseAmount") + sum(state.internalCosts, "baseAmount");
+      $("#incomeTotal").textContent = money(sum(state.incomes, "amount"));
+      $("#incomeTaxTotal").textContent = money(sum(state.incomes, "taxAmount"));
+      $("#incomeBaseTotal").textContent = money(incomeBase);
+      $("#incomeBaseTaxTotal").textContent = money(sum(state.incomes, "baseTaxAmount"));
+      $("#externalTotal").textContent = money(external);
+      $("#internalTotal").textContent = money(internal);
+      $("#costBaseTotal").textContent = money(costBase);
+    }
+
+    function renderAll() {
+      renderIncomes();
+      renderExternalCosts();
+      renderInternalCosts();
+      updateSummary();
+      updateAttachmentState();
+    }
+
+    function updateAttachmentState() {
+      const source = state.incomes[0]?.sourceType;
+      const required = source === "结算单";
+      $("#settlementCard").classList.toggle("required", required);
+      if (!$("#settlementFiles").files.length) {
+        $("#settlementState").textContent = required ? "必填" : "选填";
+      }
+    }
+
+    function updateRow(scope, index, field, value) {
+      const rows = scope === "income" ? state.incomes : scope === "external" ? state.externalCosts : state.internalCosts;
+      const row = rows[index];
+      row[field] = value;
+      if (field === "sourceType") {
+        if (value === "合同") {
+          const contract = contracts[0];
+          row.contractId = contract.id;
+          row.currency = contract.currency;
+          row.exchangeRate = contract.rate;
+        } else {
+          row.contractId = "";
+          row.currency = "CNY";
+          row.exchangeRate = 1;
+        }
+      }
+      if (field === "contractId") {
+        const contract = getContract(value);
+        row.currency = contract.currency;
+        row.exchangeRate = contract.rate;
+      }
+      if (field === "currency") row.exchangeRate = currencyRates[value] || 1;
+      if (field === "payeeName") {
+        const payee = findPayeeByInput(value);
+        if (payee) {
+          row.payeeName = payeeOptionLabel(payee);
+          row.payeeType = payee.type;
+        }
+      }
+      if (field === "costType") {
+        if (lockedPersonalTypes.includes(value)) {
+          row.payeeType = "个人";
+          row.payeeName = "";
+        }
+        if (value === "劳务费") row.payeeType = "个人";
+        if (value === "分包") row.createSubOrder = row.createSubOrder || "创建";
+      }
+      renderAll();
+    }
+
+    function removeRow(scope, index) {
+      const rows = scope === "income" ? state.incomes : scope === "external" ? state.externalCosts : state.internalCosts;
+      if (rows.length <= 1) return;
+      rows.splice(index, 1);
+      renderAll();
+    }
+
+    function openPicker(scope, index) {
+      const row = scope === "external" ? state.externalCosts[index] : state.internalCosts[index];
+      state.picker = { mode: "payee", scope, index };
+      const personalOnly = scope === "internal";
+      state.payeeFilterType = personalOnly ? "个人" : "全部";
+      state.selectedPayeeId = "";
+      state.externalPayeeKeyword = "";
+      state.payeeFilters = {
+        personName: "",
+        personCode: "",
+        personOrg: "",
+        supplierName: "",
+        supplierCode: "",
+        supplierType: ""
+      };
+      $("#pickerTitle").textContent = scope === "external" ? "选择外付对象" : "选择人员";
+      $("#payeeSearchArea").classList.remove("hidden");
+      $("#contractSearchArea").classList.add("hidden");
+      $("#payeeTypeFilter").classList.add("hidden");
+      $("#externalFuzzySearchArea").classList.toggle("hidden", scope !== "external");
+      $("#personSearchArea").classList.toggle("hidden", scope !== "internal");
+      $("#supplierSearchArea").classList.add("hidden");
+      document.querySelectorAll("[data-payee-filter]").forEach(input => input.value = "");
+      $("#externalPayeeKeyword").value = "";
+      $("#payeeTableWrap").classList.remove("hidden");
+      $("#contractTableWrap").classList.add("hidden");
+      $("#contractMeta").classList.add("hidden");
+      $("#payeeMeta").classList.remove("hidden");
+      $("#confirmPicker").classList.remove("hidden");
+      $("#confirmPicker").disabled = true;
+      $("#pickerModal").classList.add("show");
+      renderPickerList();
+      const focusTarget = scope === "external" ? $("#externalPayeeKeyword") : $("#personNameFilter");
+      focusTarget.focus();
+    }
+
+    function openContractPicker(index) {
+      state.picker = { mode: "contract", scope: "income", index };
+      state.selectedContractId = state.incomes[index].contractId || "";
+      state.contractFilters = { code: "", name: "", customer: "" };
+      $("#pickerTitle").textContent = "选择业务合同";
+      document.querySelectorAll("[data-contract-filter]").forEach(input => input.value = "");
+      $("#payeeSearchArea").classList.add("hidden");
+      $("#contractSearchArea").classList.remove("hidden");
+      $("#payeeTypeFilter").classList.add("hidden");
+      $("#payeeTableWrap").classList.add("hidden");
+      $("#contractTableWrap").classList.remove("hidden");
+      $("#contractMeta").classList.remove("hidden");
+      $("#payeeMeta").classList.add("hidden");
+      $("#confirmPicker").classList.remove("hidden");
+      $("#pickerModal").classList.add("show");
+      renderPickerList();
+      $("#contractCodeFilter").focus();
+    }
+
+    function renderPickerList() {
+      if (state.picker.mode === "contract") {
+        const data = contracts.filter(item => {
+          const codeHit = !state.contractFilters.code || item.code.toLowerCase().includes(state.contractFilters.code.toLowerCase());
+          const nameHit = !state.contractFilters.name || item.name.toLowerCase().includes(state.contractFilters.name.toLowerCase());
+          const customerHit = !state.contractFilters.customer || item.customer.toLowerCase().includes(state.contractFilters.customer.toLowerCase());
+          return codeHit && nameHit && customerHit;
+        });
+        $("#contractTableBody").innerHTML = data.map(item => `<tr class="${item.id === state.selectedContractId ? "selected" : ""}" data-contract-row="${item.id}">
+          <td><input type="radio" name="contract" value="${item.id}" ${item.id === state.selectedContractId ? "checked" : ""}></td>
+          <td>${item.code}</td>
+          <td>${item.name}</td>
+          <td>${item.customer}</td>
+          <td>${item.signDate}</td>
+        </tr>`).join("") || `<tr><td colspan="5" class="readonly-text">暂无匹配合同</td></tr>`;
+        $("#contractMeta").textContent = `共 ${contracts.length + 7} 条，每页 5 条`;
+        $("#confirmPicker").disabled = !state.selectedContractId;
+        return;
+      }
+      const data = payees.filter(item => {
+        if (state.picker.scope === "external") {
+          const text = [
+            item.type,
+            item.name,
+            item.code,
+            item.supplierType || "",
+            item.org || "",
+            item.department || ""
+          ].join(" ").toLowerCase();
+          return !state.externalPayeeKeyword || text.includes(state.externalPayeeKeyword.toLowerCase());
+        }
+        if (item.type !== state.payeeFilterType) return false;
+        if (state.payeeFilterType === "个人") {
+          const nameHit = !state.payeeFilters.personName || item.name.includes(state.payeeFilters.personName);
+          const codeHit = !state.payeeFilters.personCode || item.code.toLowerCase().includes(state.payeeFilters.personCode.toLowerCase());
+          const orgHit = !state.payeeFilters.personOrg || item.org === state.payeeFilters.personOrg;
+          return nameHit && codeHit && orgHit;
+        }
+        const nameHit = !state.payeeFilters.supplierName || item.name.includes(state.payeeFilters.supplierName);
+        const codeHit = !state.payeeFilters.supplierCode || item.code.toLowerCase().includes(state.payeeFilters.supplierCode.toLowerCase());
+        const typeHit = !state.payeeFilters.supplierType || item.supplierType === state.payeeFilters.supplierType;
+        return nameHit && codeHit && typeHit;
+      });
+      if (state.picker.scope === "external") {
+        $("#payeeTableHead").innerHTML = `<tr>
+          <th style="width:44px;"></th>
+          <th>类型</th>
+          <th>外付对象名称</th>
+          <th>编号/信用代码</th>
+          <th>所属信息</th>
+        </tr>`;
+        $("#payeeTableBody").innerHTML = data.map(item => {
+          const typeClass = item.type === "个人" ? "blue" : "red";
+          const info = item.type === "个人" ? `${item.org} / ${item.department}` : item.supplierType;
+          return `<tr class="${item.id === state.selectedPayeeId ? "selected" : ""}" data-payee-row="${item.id}">
+            <td><input type="radio" name="payee" value="${item.id}" ${item.id === state.selectedPayeeId ? "checked" : ""}></td>
+            <td><span class="status-tag ${typeClass}">${item.type}</span></td>
+            <td>${item.name}</td>
+            <td>${item.code}</td>
+            <td>${info}</td>
+          </tr>`;
+        }).join("") || `<tr><td colspan="5" class="readonly-text">暂无匹配外付对象</td></tr>`;
+        $("#payeeMeta").textContent = "共 170 条，每页 5 条";
+      } else if (state.payeeFilterType === "个人") {
+        $("#payeeTableHead").innerHTML = `<tr>
+          <th style="width:44px;"></th>
+          <th>人员姓名</th>
+          <th>人员编号</th>
+          <th>所属单位</th>
+          <th>所属部门</th>
+        </tr>`;
+        $("#payeeTableBody").innerHTML = data.map(item => `<tr class="${item.id === state.selectedPayeeId ? "selected" : ""}" data-payee-row="${item.id}">
+          <td><input type="radio" name="payee" value="${item.id}" ${item.id === state.selectedPayeeId ? "checked" : ""}></td>
+          <td>${item.name}</td>
+          <td>${item.code}</td>
+          <td>${item.org}</td>
+          <td>${item.department}</td>
+        </tr>`).join("") || `<tr><td colspan="5" class="readonly-text">暂无匹配人员</td></tr>`;
+        $("#payeeMeta").textContent = "共 128 条，每页 5 条";
+      } else {
+        $("#payeeTableHead").innerHTML = `<tr>
+          <th style="width:44px;"></th>
+          <th>供应商名称</th>
+          <th>社会信用代码</th>
+          <th>类型</th>
+        </tr>`;
+        $("#payeeTableBody").innerHTML = data.map(item => `<tr class="${item.id === state.selectedPayeeId ? "selected" : ""}" data-payee-row="${item.id}">
+          <td><input type="radio" name="payee" value="${item.id}" ${item.id === state.selectedPayeeId ? "checked" : ""}></td>
+          <td>${item.name}</td>
+          <td>${item.code}</td>
+          <td><span class="status-tag ${item.supplierType === "内部供应商" ? "blue" : "red"}">${item.supplierType}</span></td>
+        </tr>`).join("") || `<tr><td colspan="4" class="readonly-text">暂无匹配供应商</td></tr>`;
+        $("#payeeMeta").textContent = "共 42 条，每页 5 条";
+      }
+      $("#confirmPicker").disabled = !state.selectedPayeeId;
+    }
+
+    function applySelectedPayee() {
+      if (!state.picker || state.picker.mode !== "payee" || !state.selectedPayeeId) return;
+      const item = payees.find(payee => payee.id === state.selectedPayeeId);
+      const rows = state.picker.scope === "external" ? state.externalCosts : state.internalCosts;
+      rows[state.picker.index].payeeName = item.name;
+      if (state.picker.scope === "external") rows[state.picker.index].payeeType = item.type;
+      closePicker();
+      renderAll();
+    }
+
+    function applySelectedContract() {
+      if (state.picker && state.picker.mode === "payee") {
+        applySelectedPayee();
+        return;
+      }
+      if (!state.picker || state.picker.mode !== "contract" || !state.selectedContractId) return;
+      const contract = getContract(state.selectedContractId);
+      const row = state.incomes[state.picker.index];
+      row.contractId = contract.id;
+      row.currency = contract.currency;
+      row.exchangeRate = contract.rate;
+      closePicker();
+      renderAll();
+    }
+
+    function closePicker() {
+      $("#pickerModal").classList.remove("show");
+      state.picker = null;
+    }
+
+    document.addEventListener("input", event => {
+      const target = event.target;
+      if (target.dataset.scope && target.dataset.field) {
+        const rows = target.dataset.scope === "income" ? state.incomes : target.dataset.scope === "external" ? state.externalCosts : state.internalCosts;
+        rows[Number(target.dataset.index)][target.dataset.field] = target.value;
+        if (target.dataset.field === "payeeName") {
+          const matches = matchedPayees(target.value);
+          renderPayeeOptions(target.value);
+          if (matches.length === 1) {
+            const label = payeeOptionLabel(matches[0]);
+            rows[Number(target.dataset.index)].payeeName = label;
+            rows[Number(target.dataset.index)].payeeType = matches[0].type;
+            target.value = label;
+          }
+        }
+        updateSummary();
+      }
+      if (target.dataset.contractFilter) {
+        state.contractFilters[target.dataset.contractFilter] = target.value.trim();
+      }
+      if (target.dataset.payeeFilter) {
+        state.payeeFilters[target.dataset.payeeFilter] = target.value.trim();
+      }
+      if (target.dataset.payeeKeyword === "external") {
+        state.externalPayeeKeyword = target.value.trim();
+        state.selectedPayeeId = "";
+        renderPickerList();
+      }
+    });
+
+    document.addEventListener("change", event => {
+      const target = event.target;
+      if (target.dataset.scope && target.dataset.field) {
+        updateRow(target.dataset.scope, Number(target.dataset.index), target.dataset.field, target.value);
+      }
+      if (target.name === "payee" && state.picker) {
+        state.selectedPayeeId = target.value;
+        renderPickerList();
+      }
+      if (target.name === "contract" && state.picker) {
+        state.selectedContractId = target.value;
+        renderPickerList();
+      }
+      if (target.dataset.payeeFilter) {
+        state.payeeFilters[target.dataset.payeeFilter] = target.value.trim();
+        renderPickerList();
+      }
+    });
+
+    document.addEventListener("focusout", event => {
+      const target = event.target;
+      if (target.dataset.scope && target.dataset.field === "payeeName") {
+        updateRow(target.dataset.scope, Number(target.dataset.index), target.dataset.field, target.value);
+      }
+    });
+
+    document.addEventListener("click", event => {
+      const remove = event.target.dataset.remove;
+      if (remove) removeRow(remove, Number(event.target.dataset.index));
+      const pickScope = event.target.dataset.pickScope;
+      if (pickScope) openPicker(pickScope, Number(event.target.dataset.index));
+      const contractIndex = event.target.dataset.pickContract;
+      if (contractIndex !== undefined) openContractPicker(Number(contractIndex));
+      const contractRow = event.target.closest("[data-contract-row]");
+      if (contractRow && state.picker && state.picker.mode === "contract") {
+        state.selectedContractId = contractRow.dataset.contractRow;
+        renderPickerList();
+      }
+      const payeeRow = event.target.closest("[data-payee-row]");
+      if (payeeRow && state.picker && state.picker.mode === "payee") {
+        state.selectedPayeeId = payeeRow.dataset.payeeRow;
+        renderPickerList();
+      }
+      const filterType = event.target.dataset.filterType;
+      if (filterType) {
+        state.payeeFilterType = filterType;
+        state.selectedPayeeId = "";
+        $("#pickerTitle").textContent = filterType === "个人" ? "选择人员" : "选择外付对象";
+        $("#personSearchArea").classList.toggle("hidden", filterType !== "个人");
+        $("#supplierSearchArea").classList.toggle("hidden", filterType !== "企业");
+        [...document.querySelectorAll("[data-filter-type]")].forEach(button => {
+          button.classList.toggle("active", button.dataset.filterType === filterType);
+        });
+        renderPickerList();
+      }
+      if (event.target.id === "queryPayees" || event.target.id === "querySuppliers") renderPickerList();
+      if (event.target.id === "queryExternalPayees") renderPickerList();
+      if (event.target.id === "resetExternalPayees") {
+        state.externalPayeeKeyword = "";
+        state.selectedPayeeId = "";
+        $("#externalPayeeKeyword").value = "";
+        renderPickerList();
+      }
+      if (event.target.id === "resetPayees" || event.target.id === "resetSuppliers") {
+        state.selectedPayeeId = "";
+        state.payeeFilters = {
+          personName: "",
+          personCode: "",
+          personOrg: "",
+          supplierName: "",
+          supplierCode: "",
+          supplierType: ""
+        };
+        document.querySelectorAll("[data-payee-filter]").forEach(input => input.value = "");
+        renderPickerList();
+      }
+      if (event.target.id === "queryContracts") renderPickerList();
+      if (event.target.id === "resetContracts") {
+        state.contractFilters = { code: "", name: "", customer: "" };
+        document.querySelectorAll("[data-contract-filter]").forEach(input => input.value = "");
+        renderPickerList();
+      }
+    });
+
+    $("#addExternal").addEventListener("click", () => {
+      state.externalCosts.push(newExternalCost());
+      renderAll();
+    });
+    $("#addInternal").addEventListener("click", () => {
+      state.internalCosts.push(newInternalCost());
+      renderAll();
+    });
+    $("#closePicker").addEventListener("click", closePicker);
+    $("#cancelPicker").addEventListener("click", closePicker);
+    $("#confirmPicker").addEventListener("click", applySelectedContract);
+    $("#pickerModal").addEventListener("click", event => {
+      if (event.target.id === "pickerModal") closePicker();
+    });
+    $("#settlementFiles").addEventListener("change", event => {
+      $("#settlementState").textContent = event.target.files.length ? `已选择 ${event.target.files.length} 个文件` : (state.incomes[0].sourceType === "结算单" ? "必填" : "选填");
+    });
+    $("#otherFiles").addEventListener("change", event => {
+      $("#otherState").textContent = event.target.files.length ? `已选择 ${event.target.files.length} 个文件` : "选填";
+    });
+
+    state.incomes.push(newIncome("合同"));
+    state.externalCosts.push(newExternalCost());
+    state.internalCosts.push(newInternalCost());
+    renderPayeeOptions();
+    renderAll();
+  </script>
+</body>
+</html>
