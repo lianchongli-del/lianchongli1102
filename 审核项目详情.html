@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>审核项目详情</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --success: #059669;
+      --warning: #d97706;
+      --page: #f8fafc;
+      --surface: #fff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --light: #94a3b8;
+      --border: #e2e8f0;
+      --border-soft: #f1f5f9;
+      --shadow: 0 1px 3px rgba(15, 23, 42, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 1280px;
+      color: var(--text);
+      background: var(--page);
+      font: 14px/1.6 "Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      padding: 0 28px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+    }
+
+    .title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    h1 {
+      margin: 0;
+      color: #0f172a;
+      font-size: 20px;
+      font-weight: 650;
+      line-height: 1.2;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 4px;
+      color: var(--primary);
+      background: var(--primary-soft);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .back-link {
+      height: 34px;
+      padding: 0 6px;
+      border: 0;
+      color: #475569;
+      background: transparent;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .page {
+      padding: 16px 28px 36px;
+    }
+
+    .section {
+      margin-bottom: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 50px;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .section-header[data-toggle-section] {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .section-header[data-toggle-section]:hover {
+      background: #f8fafc;
+    }
+
+    .section.collapsed .section-body { display: none; }
+    .section.collapsed .section-header { border-bottom: 0; }
+
+    .collapse-btn {
+      width: 22px;
+      height: 22px;
+      padding: 0;
+      border: 0;
+      border-radius: 4px;
+      color: #64748b;
+      background: transparent;
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .collapse-btn:hover {
+      color: var(--primary);
+      background: #eff6ff;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      color: #0f172a;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 4px;
+      height: 18px;
+      border-radius: 3px;
+      background: var(--primary);
+    }
+
+    .section-note {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .section-body { padding: 18px; }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px 32px;
+    }
+
+    .field-label {
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .field-value {
+      min-height: 24px;
+      color: #334155;
+      font-weight: 500;
+      word-break: break-word;
+    }
+
+    .wide { grid-column: span 2; }
+    .full { grid-column: 1 / -1; }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .summary-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 94px;
+      padding: 16px 18px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .summary-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: #22c55e;
+    }
+
+    .summary-card.total::before { background: var(--primary); }
+
+    .summary-label {
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .summary-value {
+      color: var(--success);
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .summary-card.total .summary-value { color: var(--primary); }
+    .summary-unit {
+      margin-left: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .site-card {
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 46px;
+      padding: 0 16px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .site-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #0f172a;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .site-badge {
+      display: inline-flex;
+      align-items: center;
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 4px;
+      color: #fff;
+      background: var(--primary);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .site-body {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      padding: 16px;
+    }
+
+    .readonly-panel {
+      border: 1px solid var(--border-soft);
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 40px;
+      padding: 0 14px;
+      color: #334155;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border-soft);
+      font-weight: 600;
+    }
+
+    .panel-body { padding: 14px; }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px 22px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .code-tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 0 8px;
+      border: 1px solid #bfdbfe;
+      border-radius: 4px;
+      color: var(--primary);
+      background: var(--primary-soft);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .code-tag.green {
+      border-color: #bbf7d0;
+      color: #047857;
+      background: #ecfdf5;
+    }
+
+    .man-day-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-soft);
+    }
+
+    .adjusted {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      color: #1d4ed8;
+      background: #eff6ff;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      border: 1px solid var(--border-soft);
+      text-align: left;
+      vertical-align: top;
+      color: #334155;
+      font-weight: 500;
+      word-break: break-word;
+    }
+
+    th {
+      color: #475569;
+      background: #f8fafc;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .requirements {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: #475569;
+      background: #f8fafc;
+      line-height: 1.8;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="title-wrap">
+      <button class="back-link" type="button">← 返回</button>
+      <h1>审核项目详情</h1>
+      <span class="tag">初次认证</span>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="section" data-section="base">
+      <div class="section-header" data-toggle-section="base">
+        <h2 class="section-title">基本信息</h2>
+        <button class="collapse-btn" type="button">▴</button>
+      </div>
+      <div class="section-body">
+        <div class="info-grid">
+          <div><div class="field-label">项目编号</div><div class="field-value">XM-2026-06001</div></div>
+          <div><div class="field-label">客户名称</div><div class="field-value">中国气象局</div></div>
+          <div><div class="field-label">审核类型</div><div class="field-value">初次认证</div></div>
+          <div><div class="field-label">认证领域</div><div class="field-value">质量管理体系</div></div>
+          <div><div class="field-label">认证范围</div><div class="field-value">质量管理体系认证范围：产品设计、开发、生产和相关技术服务。</div></div>
+          <div><div class="field-label">业务归属机构</div><div class="field-value">中国质量认证中心（CQC）</div></div>
+          <div><div class="field-label">是否承担交通和住宿费</div><div class="field-value">是</div></div>
+          <div><div class="field-label">合同签署方</div><div class="field-value">中国质量认证中心（CQC）</div></div>
+          <div><div class="field-label">项目实施方</div><div class="field-value">中国检验认证集团北京有限公司</div></div>
+          <div><div class="field-label">计划审核时间</div><div class="field-value">2026-06</div></div>
+          <div><div class="field-label">计划审核人/天</div><div class="field-value">5.5 天</div></div>
+          <div><div class="field-label">当前状态</div><div class="field-value">已完工</div></div>
+          <div class="full">
+            <div class="field-label">客户备注信息或特殊要求</div>
+            <div class="requirements">1. 审核时间需避开每月最后一周（客户需进行月度盘点）；
+2. 审核组需至少包含1名具备轨道交通行业经验的审核员，建议上次的审核组长张三来；
+3. 审核报告需同步提供英文版本。</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">总人天数</h2>
+      </div>
+      <div class="section-body">
+        <div class="summary-grid">
+          <div class="summary-card">
+            <div class="summary-label">总审核准备</div>
+            <div class="summary-value">2.5<span class="summary-unit">人天</span></div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">总第一阶段审核</div>
+            <div class="summary-value">3.0<span class="summary-unit">人天</span></div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">总第二阶段现场审核</div>
+            <div class="summary-value">10.9<span class="summary-unit">人天</span></div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">调整后减少人天数</div>
+            <div class="summary-value">3.4<span class="summary-unit">人天</span></div>
+          </div>
+          <div class="summary-card total">
+            <div class="summary-label">总调整后人天数</div>
+            <div class="summary-value">13.0<span class="summary-unit">人天</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-section="sampling">
+      <div class="section-header" data-toggle-section="sampling">
+        <h2 class="section-title">场所抽样方案</h2>
+        <button class="collapse-btn" type="button">▴</button>
+      </div>
+      <div class="section-body">
+        <article class="site-card">
+          <div class="site-header">
+            <div class="site-title"><span class="site-badge">总部</span>运营地址（中心职能）</div>
+            <span class="section-note">计划审核时间：2024-04</span>
+          </div>
+          <div class="site-body">
+            <div class="readonly-panel">
+              <div class="panel-title">场所信息</div>
+              <div class="panel-body">
+                <div class="mini-grid">
+                  <div><div class="field-label">班次信息</div><div class="field-value">班次：1，08:00-17:30</div></div>
+                  <div><div class="field-label">联系人/电话</div><div class="field-value">张先生/13800138000</div></div>
+                  <div><div class="field-label">地址</div><div class="field-value">北京市海淀区中关村大街1号</div></div>
+                  <div><div class="field-label">涉及产品/过程/活动</div><div class="field-value">软件开发、系统集成</div></div>
+                  <div><div class="field-label">人数(含承包方)</div><div class="field-value">200</div></div>
+                  <div><div class="field-label">有效人数</div><div class="field-value">180</div></div>
+                  <div><div class="field-label">是否发子证</div><div class="field-value">否</div></div>
+                  <div>
+                    <div class="field-label">专业代码</div>
+                    <div class="tag-list"><span class="code-tag">19.01.01</span></div>
+                  </div>
+                  <div>
+                    <div class="field-label">认可机构</div>
+                    <div class="tag-list"><span class="code-tag green">CNAS</span></div>
+                  </div>
+                </div>
+                <div class="man-day-row">
+                  <div><div class="field-label">审核准备</div><div class="field-value">1.0 人天</div></div>
+                  <div><div class="field-label">第一阶段</div><div class="field-value">2.0 人天</div></div>
+                  <div><div class="field-label">二阶段现场</div><div class="field-value">6.9 人天</div></div>
+                  <div><div class="field-label">调整比例</div><div class="field-value">1.0</div></div>
+                </div>
+                <div class="adjusted"><span>调整后</span><span>6.5 人天</span></div>
+              </div>
+            </div>
+
+          </div>
+        </article>
+
+        <article class="site-card">
+          <div class="site-header">
+            <div class="site-title">生产现场一</div>
+            <span class="section-note">计划审核时间：2024-04</span>
+          </div>
+          <div class="site-body">
+            <div class="readonly-panel">
+              <div class="panel-title">场所信息</div>
+              <div class="panel-body">
+                <div class="mini-grid">
+                  <div><div class="field-label">班次信息</div><div class="field-value">班次：1，08:00-17:30；班次：2，18:00-02:00；班次：3，02:00-08:00</div></div>
+                  <div><div class="field-label">联系人/电话</div><div class="field-value">李主管/13900139000</div></div>
+                  <div><div class="field-label">地址</div><div class="field-value">北京市昌平区生产基地</div></div>
+                  <div><div class="field-label">涉及产品/过程/活动</div><div class="field-value">硬件制造、组装测试</div></div>
+                  <div><div class="field-label">人数(含承包方)</div><div class="field-value">80</div></div>
+                  <div><div class="field-label">有效人数</div><div class="field-value">75</div></div>
+                  <div><div class="field-label">是否发子证</div><div class="field-value">是</div></div>
+                  <div>
+                    <div class="field-label">专业代码</div>
+                    <div class="tag-list"><span class="code-tag">19.07.00</span><span class="code-tag">19.10.00</span></div>
+                  </div>
+                  <div>
+                    <div class="field-label">认可机构</div>
+                    <div class="tag-list"><span class="code-tag green">CNAS</span><span class="code-tag green">UKAS</span></div>
+                  </div>
+                </div>
+                <div class="man-day-row">
+                  <div><div class="field-label">审核准备</div><div class="field-value">1.5 人天</div></div>
+                  <div><div class="field-label">第一阶段</div><div class="field-value">1.0 人天</div></div>
+                  <div><div class="field-label">二阶段现场</div><div class="field-value">4.0 人天</div></div>
+                  <div><div class="field-label">调整比例</div><div class="field-value">1.0</div></div>
+                </div>
+                <div class="adjusted"><span>调整后</span><span>6.5 人天</span></div>
+              </div>
+            </div>
+
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+  <script>
+    const collapsed = { base: false, sampling: false };
+
+    function toggleSection(key) {
+      collapsed[key] = !collapsed[key];
+      const section = document.querySelector(`[data-section="${key}"]`);
+      const button = section?.querySelector(".collapse-btn");
+      if (section) section.classList.toggle("collapsed", collapsed[key]);
+      if (button) button.textContent = collapsed[key] ? "▾" : "▴";
+    }
+
+    document.addEventListener("click", event => {
+      const header = event.target.closest("[data-toggle-section]");
+      if (header) toggleSection(header.dataset.toggleSection);
+    });
+  </script>
+</body>
+</html>
