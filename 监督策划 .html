@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -100,6 +101,24 @@
             align-items: stretch;
             margin-bottom: 20px;
         }
+
+        .contract-signer-inline {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .contract-signer-inline .form-label {
+            margin-bottom: 0;
+            white-space: nowrap;
+        }
+
+        .contract-signer-select {
+            width: 280px;
+            min-width: 220px;
+        }
+
         
         .summary-card-item {
             flex: 1;
@@ -1469,10 +1488,21 @@
                     </div>
                 </div>
 
+
                 <div id="samplingContent_initial" class="tab-content">
                     <div class="flex justify-between items-center mb-4">
                         <div class="flex items-center gap-3">
-                            <h3 class="font-semibold text-gray-800">场所抽样方案及实施情况</h3>
+                            <h3 class="font-semibold text-gray-800">场所抽样方案</h3>
+                            <div class="contract-signer-inline">
+                                <select class="form-select contract-signer-select">
+                                <option value="" selected disabled>请选择合同签署方</option>
+                                <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
+                                <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
+                                <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
+                                <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
+                                <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
+                                </select>
+                            </div>
                             <span class="readonly-badge">
                                 <i class="fas fa-lock"></i> 已完成 - 只读
                             </span>
@@ -1982,9 +2012,22 @@
                     </div>
                 </div>
 
+
                 <div id="samplingContent_surv1" class="tab-content">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-semibold text-gray-800">场所抽样方案及实施情况 - 监督一</h3>
+                        <div class="flex items-center gap-3">
+                            <h3 class="font-semibold text-gray-800">场所抽样方案</h3>
+                            <div class="contract-signer-inline">
+                            <select class="form-select contract-signer-select">
+                                <option value="" selected disabled>请选择合同签署方</option>
+                                <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
+                                <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
+                                <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
+                                <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
+                                <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
+                            </select>
+                            </div>
+                        </div>
                         <div class="flex items-center gap-3">
                             <span class="text-sm text-amber-700 bg-amber-50 px-3 py-1 rounded border border-amber-200">
                                 根据抽样规则，本次策划至少选择 1 个场所（共2个场所）
@@ -2473,9 +2516,22 @@
                     </div>
                 </div>
 
+
                 <div id="samplingContent_surv2" class="tab-content">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-semibold text-gray-800">场所抽样方案及实施情况 - 监督二</h3>
+                        <div class="flex items-center gap-3">
+                            <h3 class="font-semibold text-gray-800">场所抽样方案</h3>
+                            <div class="contract-signer-inline">
+                            <select class="form-select contract-signer-select">
+                                <option value="" selected disabled>请选择合同签署方</option>
+                                <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
+                                <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
+                                <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
+                                <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
+                                <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
+                            </select>
+                            </div>
+                        </div>
                         <div class="flex items-center gap-3">
                             <span class="text-sm text-amber-700 bg-amber-50 px-3 py-1 rounded border border-amber-200">
                                 根据抽样规则，本次策划至少选择 1 个场所（共2个场所）
@@ -2964,9 +3020,22 @@
                     </div>
                 </div>
 
+
                 <div id="samplingContent_recert" class="tab-content">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-semibold text-gray-800">场所抽样方案及实施情况 - 再认证</h3>
+                        <div class="flex items-center gap-3">
+                            <h3 class="font-semibold text-gray-800">场所抽样方案</h3>
+                            <div class="contract-signer-inline">
+                            <select class="form-select contract-signer-select">
+                                <option value="" selected disabled>请选择合同签署方</option>
+                                <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
+                                <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
+                                <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
+                                <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
+                                <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
+                            </select>
+                            </div>
+                        </div>
                         <div class="flex items-center gap-3">
                             <span class="text-sm text-amber-700 bg-amber-50 px-3 py-1 rounded border border-amber-200">
                                 根据抽样规则，本次策划需要选择全部场所
@@ -3464,9 +3533,22 @@
                     </div>
                 </div>
 
+
                 <div id="samplingContent_tempaudit" class="tab-content">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-semibold text-gray-800">场所抽样方案及实施情况 - 临时审核</h3>
+                        <div class="flex items-center gap-3">
+                            <h3 class="font-semibold text-gray-800">场所抽样方案</h3>
+                            <div class="contract-signer-inline">
+                            <select class="form-select contract-signer-select">
+                                <option value="" selected disabled>请选择合同签署方</option>
+                                <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
+                                <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
+                                <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
+                                <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
+                                <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
+                            </select>
+                            </div>
+                        </div>
                         <div class="flex items-center gap-3">
                             <span class="text-sm text-amber-700 bg-amber-50 px-3 py-1 rounded border border-amber-200">
                                 根据抽样规则，本次策划至少选择 1 个场所（共2个场所）
@@ -4274,6 +4356,21 @@
         let selectedTemplateIndex = 0;
         let currentTemplateSiteId = '';
         let currentAddSitePhase = '';
+
+        const professionalCodeData = [
+            {code: "19.01.01", category: "办公设备的制造", accreditation: ["CNAS", "UKAS"]},
+            {code: "19.02.00", category: "家用电器的制造", accreditation: ["CNAS"]},
+            {code: "19.03.00", category: "电动机、发电机及变压器的制造", accreditation: ["CNAS", "DAKKS"]},
+            {code: "19.04.00", category: "配电及控制装置的制造", accreditation: ["CNAS"]},
+            {code: "19.05.00", category: "电气照明设备的制造", accreditation: ["CNAS", "UKAS"]},
+            {code: "19.06.00", category: "电子元器件及板卡的制造", accreditation: ["CNAS"]},
+            {code: "19.07.00", category: "计算机及外部设备的制造", accreditation: ["CNAS", "DAKKS", "UKAS"]},
+            {code: "19.08.00", category: "通信设备的制造", accreditation: ["CNAS"]},
+            {code: "19.09.00", category: "消费类电子产品的制造", accreditation: ["CNAS", "UKAS"]},
+            {code: "19.10.00", category: "测量、检测和导航仪器及装置的制造", accreditation: ["CNAS", "DAKKS"]},
+            {code: "19.11.00", category: "电线电缆的制造", accreditation: ["CNAS"]},
+            {code: "19.12.00", category: "电池和蓄电池的制造", accreditation: ["CNAS", "UKAS"]}
+        ];
         
         // 取消状态管理
         const cancelledPhases = {
@@ -4423,6 +4520,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             updateAllPhaseTotals();
             initAdjustmentReasons();
+            initializeProfessionalCodeAccreditation();
         });
 
         // ==================== 调整理由多选组件 ====================
@@ -5256,6 +5354,7 @@
             
             updateAllPhaseTotals();
             initAdjustmentReasons();
+            initializeProfessionalCodeAccreditation();
             
             alert(`已成功添加 ${selectedAvailableSites.length} 个场所到${currentAddSitePhase === 'surv1' ? '监督一' : currentAddSitePhase === 'surv2' ? '监督二' : '临时审核'}`);
             closeAddSiteModal();
@@ -5584,9 +5683,56 @@
             }
         }
 
+        function getProfessionalCodeInfo(code) {
+            return professionalCodeData.find(item => item.code === code);
+        }
+
+        function getSiteProfessionalCodes(siteId) {
+            const box = document.getElementById(`profCodeBox_${siteId}`);
+            if (!box) return [];
+            return Array.from(box.querySelectorAll('.inline-tag[data-code]')).map(tag => tag.dataset.code);
+        }
+
+        function syncAccreditationForSite(siteId) {
+            const box = document.getElementById(`accBox_${siteId}`);
+            if (!box) return;
+
+            const input = box.querySelector('.tag-input');
+            const accCodes = [];
+            getSiteProfessionalCodes(siteId).forEach(code => {
+                const item = getProfessionalCodeInfo(code);
+                (item?.accreditation || []).forEach(acc => {
+                    if (!accCodes.includes(acc)) accCodes.push(acc);
+                });
+            });
+
+            box.querySelectorAll('.inline-tag.accreditation').forEach(tag => tag.remove());
+            accCodes.forEach(acc => {
+                const tag = document.createElement('span');
+                tag.className = 'inline-tag accreditation';
+                tag.dataset.code = acc;
+                tag.textContent = acc;
+                box.insertBefore(tag, input);
+            });
+
+            if (input) {
+                input.value = '';
+                input.disabled = true;
+                input.placeholder = accCodes.length ? '由专业代码自动带入' : '选择专业代码后自动带入';
+                input.removeAttribute('list');
+            }
+        }
+
+        function initializeProfessionalCodeAccreditation() {
+            document.querySelectorAll('[id^="accBox_"]').forEach(box => {
+                const siteId = box.id.replace('accBox_', '');
+                syncAccreditationForSite(siteId);
+            });
+        }
+
         function focusTagInput(container) {
             const input = container.querySelector('.tag-input');
-            if (input) input.focus();
+            if (input && !input.disabled) input.focus();
             container.classList.add('focused');
         }
 
@@ -5611,6 +5757,11 @@
         }
 
         function addTag(siteId, code, type) {
+            if (type === 'acc') {
+                syncAccreditationForSite(siteId);
+                return;
+            }
+
             const boxId = type === 'prof' ? `profCodeBox_${siteId}` : `accBox_${siteId}`;
             const box = document.getElementById(boxId);
             const input = box.querySelector('.tag-input');
@@ -5618,9 +5769,7 @@
             const existing = box.querySelector(`[data-code="${code}"]`);
             if (existing) return;
             
-            const validCodes = type === 'prof' ? 
-                ['19.01.01', '19.02.00', '19.03.00', '19.04.00', '19.05.00', '19.06.00', '19.07.00', '19.08.00', '19.09.00', '19.10.00', '19.11.00', '19.12.00'] : 
-                ['CNAS', 'DAKKS', 'UKAS'];
+            const validCodes = type === 'prof' ? professionalCodeData.map(item => item.code) : ['CNAS', 'DAKKS', 'UKAS'];
             if (!validCodes.includes(code)) return;
             
             const tag = document.createElement('span');
@@ -5629,14 +5778,57 @@
             tag.innerHTML = `${code}<i class="fas fa-times remove-tag" onclick="removeTag(event, '${siteId}', '${code}', '${type}')"></i>`;
             
             box.insertBefore(tag, input);
+            if (type === 'prof') syncAccreditationForSite(siteId);
         }
 
         function removeTag(event, siteId, code, type) {
             event.stopPropagation();
+            if (type === 'acc') return;
+
             const boxId = type === 'prof' ? `profCodeBox_${siteId}` : `accBox_${siteId}`;
             const box = document.getElementById(boxId);
             const tag = box.querySelector(`[data-code="${code}"]`);
             if (tag) tag.remove();
+            if (type === 'prof') syncAccreditationForSite(siteId);
+        }
+
+        function updateAdjustedBreakdown(card, prep, stage1, stage2, ratio) {
+            const adjustedDaysEl = card.querySelector('.adjusted-days');
+            if (!adjustedDaysEl) return;
+
+            let breakdownEl = card.querySelector('.adjusted-breakdown');
+            if (!breakdownEl) {
+                breakdownEl = document.createElement('div');
+                breakdownEl.className = 'adjusted-breakdown grid grid-cols-3 gap-2 mt-2 text-xs text-slate-600';
+                breakdownEl.innerHTML = `
+                    <div class="bg-slate-50 rounded px-2 py-1">
+                        <div class="text-slate-500">审核准备</div>
+                        <div class="font-semibold text-slate-800"><span data-adjusted-type="prep">0.0</span> 人天</div>
+                    </div>
+                    <div class="bg-slate-50 rounded px-2 py-1">
+                        <div class="text-slate-500">第一阶段</div>
+                        <div class="font-semibold text-slate-800"><span data-adjusted-type="stage1">0.0</span> 人天</div>
+                    </div>
+                    <div class="bg-slate-50 rounded px-2 py-1">
+                        <div class="text-slate-500">二阶段现场</div>
+                        <div class="font-semibold text-slate-800"><span data-adjusted-type="stage2">0.0</span> 人天</div>
+                    </div>
+                `;
+
+                const adjustedRow = adjustedDaysEl.closest('.flex');
+                if (adjustedRow) adjustedRow.insertAdjacentElement('afterend', breakdownEl);
+            }
+
+            const values = {
+                prep: prep * ratio,
+                stage1: stage1 * ratio,
+                stage2: stage2 * ratio
+            };
+
+            Object.entries(values).forEach(([type, value]) => {
+                const valueEl = breakdownEl.querySelector(`[data-adjusted-type="${type}"]`);
+                if (valueEl) valueEl.textContent = value.toFixed(1);
+            });
         }
 
         function updateCalculations(siteId) {
@@ -5651,6 +5843,7 @@
             const total = (prep + stage1 + stage2) * ratio;
             const adjustedDaysEl = card.querySelector('.adjusted-days');
             if (adjustedDaysEl) adjustedDaysEl.textContent = total.toFixed(1);
+            updateAdjustedBreakdown(card, prep, stage1, stage2, ratio);
             
             updateAllPhaseTotals();
         }
@@ -5682,6 +5875,7 @@
                         const baseDays = prep + stage1 + stage2;
                         totalBaseDays += baseDays;
                         totalAdjusted += baseDays * ratio;
+                        updateAdjustedBreakdown(card, prep, stage1, stage2, ratio);
                     }
                 });
                 
