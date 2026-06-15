@@ -562,6 +562,77 @@
     .upload-name { color: #0f172a; font-weight: 700; }
     .upload-state { margin-top: 2px; color: #64748b; font-size: 12px; }
 
+    .attachment-files {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .attachment-file {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      max-width: 220px;
+      min-height: 30px;
+      padding: 0 8px;
+      border: 1px solid #93c5fd;
+      border-radius: 4px;
+      color: #1d4ed8;
+      background: #eff6ff;
+    }
+
+    .attachment-file::before {
+      content: "";
+      width: 12px;
+      height: 14px;
+      flex-shrink: 0;
+      border-radius: 2px;
+      background: #2563eb;
+      clip-path: polygon(0 0, 75% 0, 100% 25%, 100% 100%, 0 100%);
+    }
+
+    .attachment-name {
+      min-width: 0;
+      padding: 0;
+      border: 0;
+      overflow: hidden;
+      color: #1d4ed8;
+      background: transparent;
+      cursor: pointer;
+      font-weight: 500;
+      text-align: left;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .attachment-name:hover { text-decoration: underline; }
+
+    .attachment-delete {
+      width: 18px;
+      height: 18px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      color: #1d4ed8;
+      background: transparent;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .attachment-delete:hover {
+      color: #fff;
+      background: #2563eb;
+    }
+
+    .attachment-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
     .type-filter {
       display: inline-flex;
       gap: 4px;
@@ -643,11 +714,13 @@
           <div><div class="info-label">客户名称</div><div class="info-value">中国气象局</div></div>
           <div><div class="info-label">审核类型</div><div class="info-value">初次认证</div></div>
           <div><div class="info-label">认证领域</div><div class="info-value">质量管理体系</div></div>
+          <div><div class="info-label">认证范围</div><div class="info-value">质量管理体系认证范围：产品设计、开发、生产和相关技术服务。</div></div>
           <div><div class="info-label">业务归属机构</div><div class="info-value">中国质量认证中心（CQC）</div></div>
           <div><div class="info-label">是否承担交通和住宿费</div><div class="info-value">是</div></div>
           <div><div class="info-label">合同签署方</div><div class="info-value">中国质量认证中心（CQC）</div></div>
           <div><div class="info-label">项目实施方</div><div class="info-value">中国检验认证集团北京有限公司</div></div>
-          <div><div class="info-label">计划审核日期</div><div class="info-value">2026-06-20 至 2026-06-22</div></div>
+          <div><div class="info-label">计划审核时间</div><div class="info-value">2026-06</div></div>
+          <div><div class="info-label">计划审核人/天</div><div class="info-value">5.5 天</div></div>
           <div><div class="info-label">当前状态</div><div class="info-value">待计费</div></div>
         </div>
       </div>
@@ -749,32 +822,74 @@
       </div>
       <div class="section-body">
         <div class="upload-list">
-          <label class="upload-card" id="settlementCard">
+          <div class="upload-card" id="settlementCard">
             <input type="file" id="settlementFiles" multiple hidden>
             <div class="upload-left">
               <div class="upload-icon">▣</div>
               <div>
                 <div class="upload-name">结算单附件</div>
-                <div class="upload-state" id="settlementState">选填</div>
+                <div class="attachment-files" id="settlementFileList">
+                  <div class="attachment-file">
+                    <button class="attachment-name" type="button" data-preview="项目结算单-20260324.pdf">项目结算单-20260324.pdf</button>
+                    <button class="attachment-delete" type="button" data-delete-attachment aria-label="删除项目结算单-20260324.pdf">×</button>
+                  </div>
+                  <div class="attachment-file">
+                    <button class="attachment-name" type="button" data-preview="收入成本确认表.xlsx">收入成本确认表.xlsx</button>
+                    <button class="attachment-delete" type="button" data-delete-attachment aria-label="删除收入成本确认表.xlsx">×</button>
+                  </div>
+                </div>
               </div>
             </div>
-            <span class="btn btn-primary">上传</span>
-          </label>
-          <label class="upload-card">
+            <div class="attachment-actions">
+              <a class="btn btn-normal" href="data:text/plain;charset=utf-8,%E7%BB%93%E7%AE%97%E5%8D%95%E9%99%84%E4%BB%B6" download="结算单附件.zip">下载</a>
+              <button class="btn btn-primary" type="button" data-upload="settlementFiles">上传</button>
+            </div>
+          </div>
+          <div class="upload-card">
             <input type="file" id="otherFiles" multiple hidden>
             <div class="upload-left">
               <div class="upload-icon">▣</div>
               <div>
                 <div class="upload-name">其他附件 (如项目立项审批单等)</div>
-                <div class="upload-state" id="otherState">选填</div>
+                <div class="attachment-files" id="otherFileList">
+                  <div class="attachment-file">
+                    <button class="attachment-name" type="button" data-preview="立项审批单.docx">立项审批单.docx</button>
+                    <button class="attachment-delete" type="button" data-delete-attachment aria-label="删除立项审批单.docx">×</button>
+                  </div>
+                  <div class="attachment-file">
+                    <button class="attachment-name" type="button" data-preview="客户确认邮件截图.png">客户确认邮件截图.png</button>
+                    <button class="attachment-delete" type="button" data-delete-attachment aria-label="删除客户确认邮件截图.png">×</button>
+                  </div>
+                </div>
               </div>
             </div>
-            <span class="btn btn-normal">上传</span>
-          </label>
+            <div class="attachment-actions">
+              <a class="btn btn-normal" href="data:text/plain;charset=utf-8,%E5%85%B6%E4%BB%96%E9%99%84%E4%BB%B6" download="其他附件.zip">下载</a>
+              <button class="btn btn-primary" type="button" data-upload="otherFiles">上传</button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   </main>
+
+  <div class="modal-mask" id="attachmentPreviewModal">
+    <div class="modal" style="width:min(720px, calc(100vw - 48px));">
+      <div class="modal-header">
+        <div class="modal-title">附件预览</div>
+        <button class="modal-close" id="closeAttachmentPreview" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-body">
+        <div id="attachmentPreviewName" style="margin-bottom:12px;color:#334155;font-weight:600;"></div>
+        <div style="min-height:220px;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;display:flex;align-items:center;justify-content:center;color:#64748b;">
+          当前为附件预览区域，可在实际系统中加载 PDF、Word 或图片内容。
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="attachmentPreviewOk" type="button">知道了</button>
+      </div>
+    </div>
+  </div>
 
   <div class="modal-mask" id="pickerModal">
     <div class="modal">
@@ -1563,6 +1678,25 @@
       $("#submitConfirmModal").classList.remove("show");
     }
 
+    function openAttachmentPreview(name) {
+      $("#attachmentPreviewName").textContent = name;
+      $("#attachmentPreviewModal").classList.add("show");
+    }
+
+    function closeAttachmentPreview() {
+      $("#attachmentPreviewModal").classList.remove("show");
+    }
+
+    function renderSelectedFiles(listId, files) {
+      const list = document.getElementById(listId);
+      if (!list || !files.length) return;
+      list.innerHTML = Array.from(files).map(file => `
+        <div class="attachment-file">
+          <button class="attachment-name" type="button" data-preview="${file.name}">${file.name}</button>
+          <button class="attachment-delete" type="button" data-delete-attachment aria-label="删除${file.name}">×</button>
+        </div>`).join("");
+    }
+
     document.addEventListener("input", event => {
       const target = event.target;
       if (target.dataset.scope && target.dataset.field) {
@@ -1693,11 +1827,26 @@
     $("#submitConfirmModal").addEventListener("click", event => {
       if (event.target.id === "submitConfirmModal") closeSubmitConfirm();
     });
+    $("#closeAttachmentPreview").addEventListener("click", closeAttachmentPreview);
+    $("#attachmentPreviewOk").addEventListener("click", closeAttachmentPreview);
+    $("#attachmentPreviewModal").addEventListener("click", event => {
+      if (event.target.id === "attachmentPreviewModal") closeAttachmentPreview();
+    });
     $("#settlementFiles").addEventListener("change", event => {
-      $("#settlementState").textContent = event.target.files.length ? `已选择 ${event.target.files.length} 个文件` : (state.incomes[0].sourceType === "结算单" ? "必填" : "选填");
+      renderSelectedFiles("settlementFileList", event.target.files);
     });
     $("#otherFiles").addEventListener("change", event => {
-      $("#otherState").textContent = event.target.files.length ? `已选择 ${event.target.files.length} 个文件` : "选填";
+      renderSelectedFiles("otherFileList", event.target.files);
+    });
+
+    document.addEventListener("click", event => {
+      const preview = event.target.closest("[data-preview]")?.dataset.preview;
+      if (preview) openAttachmentPreview(preview);
+      const uploadTarget = event.target.closest("[data-upload]")?.dataset.upload;
+      if (uploadTarget) document.getElementById(uploadTarget)?.click();
+      if (event.target.closest("[data-delete-attachment]")) {
+        event.target.closest(".attachment-file")?.remove();
+      }
     });
 
     state.incomes.push(newIncome("合同"));
