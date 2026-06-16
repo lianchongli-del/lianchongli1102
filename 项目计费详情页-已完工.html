@@ -521,74 +521,6 @@
     .modal-close:hover { background: #f1f5f9; color: #334155; }
     .modal-body { overflow: auto; padding: 18px; }
 
-    .sync-state {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-height: 72px;
-      color: #334155;
-      font-size: 16px;
-      font-weight: 500;
-    }
-
-    .sync-spinner {
-      width: 22px;
-      height: 22px;
-      border: 3px solid #dbeafe;
-      border-top-color: var(--primary);
-      border-radius: 50%;
-      animation: spin .8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .toast {
-      position: fixed;
-      top: 68px;
-      left: 50%;
-      z-index: 70;
-      display: none;
-      transform: translateX(-50%);
-      padding: 10px 18px;
-      border: 1px solid #bbf7d0;
-      border-radius: 6px;
-      color: #047857;
-      background: #ecfdf5;
-      box-shadow: var(--floating-shadow);
-      font-weight: 600;
-    }
-
-    .toast.show { display: block; }
-
-    .history-layout {
-      display: grid;
-      grid-template-columns: 220px minmax(0, 1fr);
-      gap: 16px;
-    }
-
-    .history-list, .history-detail {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .history-item {
-      width: 100%;
-      padding: 12px;
-      border: 0;
-      border-bottom: 1px solid #f1f5f9;
-      background: #fff;
-      text-align: left;
-      cursor: pointer;
-    }
-
-    .history-item:last-child { border-bottom: 0; }
-    .history-item.active { color: var(--primary); background: #eff6ff; }
-    .history-item strong { display: block; color: inherit; }
-    .history-item span { color: #64748b; font-size: 12px; }
-    .history-detail table { min-width: 760px; }
     .before { color: #ef4444; font-weight: 700; }
     .after { color: #10b981; font-weight: 700; }
   </style>
@@ -599,10 +531,6 @@
       <button class="back-link" type="button">← 返回</button>
       <h1>项目详情</h1>
       <span class="tag done" id="billingStatus">已完工</span>
-    </div>
-    <div class="header-actions">
-      <button class="btn btn-normal" id="historyBtn" type="button">变更日志</button>
-      <button class="btn btn-primary" id="syncBtn" type="button">同步主干数据</button>
     </div>
   </header>
 
@@ -616,17 +544,14 @@
       </div>
       <div class="section-body">
         <div class="info-grid">
-          <div><div class="info-label">计费项目编号</div><div class="info-value">XM-2026-06001-1</div></div>
-          <div><div class="info-label">项目编号</div><div class="info-value">XM-2026-06001</div></div>
+          <div><div class="info-label">计费项目编号</div><div class="info-value">1100-Q1-2026-0001-1</div></div>
+          <div><div class="info-label">项目编号</div><div class="info-value">1100-Q1-2026-0001</div></div>
           <div><div class="info-label">客户名称</div><div class="info-value">中国气象局</div></div>
           <div><div class="info-label">审核类型</div><div class="info-value">初次认证</div></div>
           <div><div class="info-label">认证领域</div><div class="info-value">QMS（质量管理体系）</div></div>
-          <div><div class="info-label">认证范围</div><div class="info-value">产品设计、开发、生产和相关技术服务</div></div>
           <div><div class="info-label">业务归属机构</div><div class="info-value">中国质量认证中心（CQC）</div></div>
           <div><div class="info-label">是否承担交通和住宿费</div><div class="info-value">是</div></div>
-          <div><div class="info-label">合同签署方</div><div class="info-value">中国质量认证中心（CQC）</div></div>
-          <div><div class="info-label">计划审核时间</div><div class="info-value">2026-06</div></div>
-          <div><div class="info-label">计划审核人/天</div><div class="info-value">5.5 天</div></div>
+          <div><div class="info-label">创建时间</div><div class="info-value">2026-06-16 09:30</div></div>
         </div>
       </div>
     </section>
@@ -763,52 +688,6 @@
     </div>
   </div>
 
-  <div class="modal-mask" id="historyModal">
-    <div class="modal">
-      <div class="modal-header">
-        <div class="modal-title">变更日志</div>
-        <button class="modal-close" id="closeHistory" type="button" aria-label="关闭">×</button>
-      </div>
-      <div class="modal-body">
-        <div class="history-layout">
-          <div class="history-list" id="historyList"></div>
-          <div class="history-detail">
-            <table>
-              <thead>
-                <tr><th>变更项目</th><th>变更前</th><th>变更后</th></tr>
-              </thead>
-              <tbody id="historyDetail"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" id="historyOk" type="button">知道了</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-mask" id="syncModal">
-    <div class="modal" style="width:min(560px, calc(100vw - 48px));">
-      <div class="modal-header">
-        <div class="modal-title">同步主干数据</div>
-        <button class="modal-close" id="closeSync" type="button" aria-label="关闭">×</button>
-      </div>
-      <div class="modal-body" id="syncBody">
-        <div class="sync-state">
-          <span class="sync-spinner"></span>
-          <span>同步中，请稍候...</span>
-        </div>
-      </div>
-      <div class="modal-footer" id="syncFooter">
-        <button class="btn btn-normal" id="cancelSync" type="button">取消</button>
-        <button class="btn btn-primary" id="confirmSync" type="button">确定</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="toast" id="syncToast">同步成功</div>
-
   <script>
     const $ = selector => document.querySelector(selector);
     const money = value => Number(value || 0).toFixed(2);
@@ -832,7 +711,6 @@
 
     const state = {
       editable: false,
-      activeHistory: "h1",
       original: null,
       collapsed: { base: false, income: false, cost: false },
       income: {
@@ -856,32 +734,6 @@
       internalCosts: [
         { item: "审核费", payeeName: "审核组成员", department: "体系认证二部", amount: 8200, currency: "CNY", baseCurrency: "人民币 CNY", exchangeRate: 1, taxRate: 6, remark: "审核人员费用", taxAmount: 0, baseAmount: 0, baseTaxAmount: 0 },
         { item: "交通费", payeeName: "审核组成员", department: "体系认证二部", amount: 3200, currency: "CNY", baseCurrency: "人民币 CNY", exchangeRate: 1, taxRate: 0, remark: "项目差旅交通", taxAmount: 0, baseAmount: 0, baseTaxAmount: 0 }
-      ],
-      histories: [
-        {
-          id: "h1",
-          title: "收入信息变更",
-          time: "2026-03-24 14:20",
-          operator: "李明",
-          details: [
-            { item: "收入信息 / 收入金额", before: "52000.00", after: "58000.00" },
-            { item: "收入信息 / 税率", before: "3%", after: "6%" },
-            { item: "收入信息 / 子项目名称", before: "质量管理体系认证项目", after: "质量管理体系初次认证" }
-          ]
-        },
-        {
-          id: "h2",
-          title: "成本信息变更",
-          time: "2026-03-24 15:05",
-          operator: "王芳",
-          details: [
-            { item: "外付成本 / 协作费(FSSC103101) / 成本金额", before: "15000.00", after: "18000.00" },
-            { item: "外付成本 / 劳务费(FSSC1019) / 成本金额", before: "4800.00", after: "5200.00" },
-            { item: "内付成本 / 交通费 / 成本金额", before: "2500.00", after: "3200.00" },
-            { item: "内付成本 / 新增一行", before: "无", after: "住宿费 1200.00" },
-            { item: "外付成本 / 减少一行", before: "咨询费(FSSC1022) 2000.00", after: "已删除" }
-          ]
-        }
       ]
     };
 
@@ -1100,26 +952,6 @@
       return { item: "审核费", payeeName: "审核组成员", department: departments[0], amount: 800, currency: "CNY", baseCurrency: "人民币 CNY", exchangeRate: 1, taxRate: 6, remark: "", taxAmount: 0, baseAmount: 0, baseTaxAmount: 0 };
     }
 
-    function renderHistory() {
-      $("#historyList").innerHTML = state.histories.map(item => `
-        <button class="history-item ${item.id === state.activeHistory ? "active" : ""}" data-history="${item.id}" type="button">
-          <strong>${item.title}</strong>
-          <span>${item.time} / ${item.operator}</span>
-        </button>`).join("");
-      const current = state.histories.find(item => item.id === state.activeHistory);
-      $("#historyDetail").innerHTML = current.details.map(row => `
-        <tr><td>${row.item}</td><td class="before">${row.before}</td><td class="after">${row.after}</td></tr>`).join("");
-    }
-
-    function openHistory() {
-      renderHistory();
-      $("#historyModal").classList.add("show");
-    }
-
-    function closeHistory() {
-      $("#historyModal").classList.remove("show");
-    }
-
     function openAttachmentPreview(name) {
       $("#attachmentPreviewName").textContent = name;
       $("#attachmentPreviewModal").classList.add("show");
@@ -1127,40 +959,6 @@
 
     function closeAttachmentPreview() {
       $("#attachmentPreviewModal").classList.remove("show");
-    }
-
-    let syncTimer = null;
-    let toastTimer = null;
-
-    function showSyncToast() {
-      clearTimeout(toastTimer);
-      $("#syncToast").classList.add("show");
-      toastTimer = setTimeout(() => $("#syncToast").classList.remove("show"), 1800);
-    }
-
-    function openSyncConfirm() {
-      clearTimeout(syncTimer);
-      $("#syncBody").innerHTML = `
-        <div class="sync-state">
-          <span class="sync-spinner"></span>
-          <span>同步中，请稍候...</span>
-        </div>`;
-      $("#syncFooter").classList.add("hidden");
-      $("#closeSync").classList.add("hidden");
-      $("#syncModal").classList.add("show");
-      syncTimer = setTimeout(() => {
-        $("#syncModal").classList.remove("show");
-        $("#syncFooter").classList.remove("hidden");
-        $("#closeSync").classList.remove("hidden");
-        showSyncToast();
-      }, 3000);
-    }
-
-    function closeSyncConfirm() {
-      clearTimeout(syncTimer);
-      $("#syncModal").classList.remove("show");
-      $("#syncFooter").classList.remove("hidden");
-      $("#closeSync").classList.remove("hidden");
     }
 
     function toggleSection(key) {
@@ -1171,23 +969,10 @@
       if (button) button.textContent = state.collapsed[key] ? "▾" : "▴";
     }
 
-    $("#syncBtn").addEventListener("click", openSyncConfirm);
-    $("#historyBtn").addEventListener("click", openHistory);
-    $("#closeHistory").addEventListener("click", closeHistory);
-    $("#historyOk").addEventListener("click", closeHistory);
-    $("#historyModal").addEventListener("click", event => {
-      if (event.target.id === "historyModal") closeHistory();
-    });
     $("#closeAttachmentPreview").addEventListener("click", closeAttachmentPreview);
     $("#attachmentPreviewOk").addEventListener("click", closeAttachmentPreview);
     $("#attachmentPreviewModal").addEventListener("click", event => {
       if (event.target.id === "attachmentPreviewModal") closeAttachmentPreview();
-    });
-    $("#closeSync").addEventListener("click", closeSyncConfirm);
-    $("#cancelSync").addEventListener("click", closeSyncConfirm);
-    $("#confirmSync").addEventListener("click", openSyncConfirm);
-    $("#syncModal").addEventListener("click", event => {
-      if (event.target.id === "syncModal") closeSyncConfirm();
     });
     $("#addExternal").addEventListener("click", () => {
       state.externalCosts.push(newExternalCost());
@@ -1227,11 +1012,6 @@
         const rows = removeScope === "external" ? state.externalCosts : state.internalCosts;
         rows.splice(Number(event.target.dataset.index), 1);
         renderAll();
-      }
-      const historyId = event.target.closest("[data-history]")?.dataset.history;
-      if (historyId) {
-        state.activeHistory = historyId;
-        renderHistory();
       }
       const preview = event.target.closest("[data-preview]")?.dataset.preview;
       if (preview) {
