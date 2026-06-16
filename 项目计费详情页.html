@@ -63,16 +63,6 @@
       font-weight: 700;
     }
 
-    .back-link {
-      height: 34px;
-      padding: 0 6px;
-      border: 0;
-      color: #475569;
-      background: transparent;
-      cursor: pointer;
-      font-weight: 500;
-    }
-
     .tag {
       display: inline-flex;
       align-items: center;
@@ -224,9 +214,11 @@
 
     .income-fields {
       display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 10px 12px;
     }
+
+    .income-fields.contract-mode { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .income-fields.settlement-mode { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 
     .source-switch {
       display: inline-flex;
@@ -237,7 +229,7 @@
       background: #f8fafc;
     }
 
-    .source-switch span {
+    .source-switch label {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -246,9 +238,13 @@
       border-radius: 6px;
       color: #475569;
       font-size: 13px;
+      cursor: pointer;
     }
 
-    .source-switch .active {
+    .source-switch input { display: none; }
+
+    .source-switch .active,
+    .source-switch label:has(input:checked) {
       color: #fff;
       background: var(--primary);
     }
@@ -285,6 +281,13 @@
       box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
     }
 
+    .control[readonly], .control:disabled {
+      color: #64748b;
+      background: #f8fafc;
+      cursor: default;
+    }
+
+    .picker { cursor: pointer; background: #fff; }
     .num { text-align: right; }
 
     .percent-field {
@@ -387,6 +390,10 @@
 
     .upload-card.editable { cursor: pointer; }
     .upload-card.editable:hover { border-color: #93c5fd; background: #eff6ff; }
+    .upload-card.required {
+      border-color: #f59e0b;
+      background: #fffbeb;
+    }
 
     .upload-left {
       display: flex;
@@ -537,32 +544,45 @@
     .modal-close:hover { background: #f1f5f9; color: #334155; }
     .modal-body { overflow: auto; padding: 18px; }
 
-    .history-layout {
+    .modal-search { padding: 12px 18px; border-bottom: 1px solid #f1f5f9; }
+
+    .contract-search {
       display: grid;
-      grid-template-columns: 220px minmax(0, 1fr);
-      gap: 16px;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) auto auto;
+      align-items: end;
+      gap: 14px;
+      padding: 16px;
+      background: #f8fafc;
+      border-radius: 6px;
     }
 
-    .history-list, .history-detail {
+    .search-field label {
+      display: block;
+      margin-bottom: 6px;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .contract-table {
+      width: 100%;
+      min-width: 780px;
+    }
+
+    .contract-table tr.selected td { background: #eff6ff; }
+
+    .contract-footer-meta {
+      margin-right: auto;
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    .history-detail {
       border: 1px solid var(--border);
       border-radius: 8px;
       overflow: hidden;
     }
 
-    .history-item {
-      width: 100%;
-      padding: 12px;
-      border: 0;
-      border-bottom: 1px solid #f1f5f9;
-      background: #fff;
-      text-align: left;
-      cursor: pointer;
-    }
-
-    .history-item:last-child { border-bottom: 0; }
-    .history-item.active { color: var(--primary); background: #eff6ff; }
-    .history-item strong { display: block; color: inherit; }
-    .history-item span { color: #64748b; font-size: 12px; }
     .history-detail table { min-width: 760px; }
     .before { color: #ef4444; font-weight: 700; }
     .after { color: #10b981; font-weight: 700; }
@@ -571,15 +591,13 @@
 <body>
   <header class="app-header">
     <div class="title-wrap">
-      <button class="back-link" type="button">← 返回</button>
-      <h1>项目详情</h1>
+      <h1>计费修改</h1>
       <span class="tag mode" id="billingStatus">已计费</span>
     </div>
     <div class="header-actions">
-      <button class="btn btn-normal" id="historyBtn" type="button">变更日志</button>
-      <button class="btn btn-primary" id="finishBtn" type="button">完工</button>
-      <button class="btn btn-normal" id="billingBtn" type="button">修改计费</button>
-      <button class="btn btn-primary hidden" id="submitModifyBtn" type="button">提交修改</button>
+      <button class="btn btn-normal" type="button">返回</button>
+      <button class="btn btn-normal" id="saveModifyBtn" type="button">保存</button>
+      <button class="btn btn-primary" id="submitModifyBtn" type="button">提交</button>
     </div>
   </header>
 
@@ -593,17 +611,14 @@
       </div>
       <div class="section-body">
         <div class="info-grid">
-          <div><div class="info-label">计费项目编号</div><div class="info-value">XM-2026-06001-1</div></div>
-          <div><div class="info-label">项目编号</div><div class="info-value">XM-2026-06001</div></div>
+          <div><div class="info-label">计费项目编号</div><div class="info-value">1100-Q1-2026-0001-1</div></div>
+          <div><div class="info-label">项目编号</div><div class="info-value">1100-Q1-2026-0001</div></div>
           <div><div class="info-label">客户名称</div><div class="info-value">中国气象局</div></div>
           <div><div class="info-label">审核类型</div><div class="info-value">初次认证</div></div>
           <div><div class="info-label">认证领域</div><div class="info-value">QMS（质量管理体系）</div></div>
-          <div><div class="info-label">认证范围</div><div class="info-value">产品设计、开发、生产和相关技术服务</div></div>
           <div><div class="info-label">业务归属机构</div><div class="info-value">中国质量认证中心（CQC）</div></div>
           <div><div class="info-label">是否承担交通和住宿费</div><div class="info-value">是</div></div>
-          <div><div class="info-label">合同签署方</div><div class="info-value">中国质量认证中心（CQC）</div></div>
-          <div><div class="info-label">计划审核时间</div><div class="info-value">2026-06</div></div>
-          <div><div class="info-label">计划审核人/天</div><div class="info-value">5.5 天</div></div>
+          <div><div class="info-label">创建时间</div><div class="info-value">2026-06-16 09:30</div></div>
         </div>
       </div>
     </section>
@@ -756,43 +771,50 @@
     </div>
   </div>
 
-  <div class="modal-mask" id="historyModal">
+  <div class="modal-mask" id="contractPickerModal">
     <div class="modal">
       <div class="modal-header">
-        <div class="modal-title">变更日志</div>
-        <button class="modal-close" id="closeHistory" type="button" aria-label="关闭">×</button>
+        <div class="modal-title">选择业务合同</div>
+        <button class="modal-close" id="closeContractPicker" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-search">
+        <div class="contract-search">
+          <div class="search-field">
+            <label for="contractCodeFilter">合同编号</label>
+            <input class="control" id="contractCodeFilter" data-contract-filter="code" placeholder="请输入">
+          </div>
+          <div class="search-field">
+            <label for="contractNameFilter">合同名称</label>
+            <input class="control" id="contractNameFilter" data-contract-filter="name" placeholder="请输入">
+          </div>
+          <div class="search-field">
+            <label for="contractCustomerFilter">客户名称</label>
+            <input class="control" id="contractCustomerFilter" data-contract-filter="customer" placeholder="请输入">
+          </div>
+          <button class="btn btn-primary" id="queryContracts" type="button">查询</button>
+          <button class="btn btn-normal" id="resetContracts" type="button">重置</button>
+        </div>
       </div>
       <div class="modal-body">
-        <div class="history-layout">
-          <div class="history-list" id="historyList"></div>
-          <div class="history-detail">
-            <table>
-              <thead>
-                <tr><th>变更项目</th><th>变更前</th><th>变更后</th></tr>
-              </thead>
-              <tbody id="historyDetail"></tbody>
-            </table>
-          </div>
+        <div class="table-scroll">
+          <table class="contract-table">
+            <thead>
+              <tr>
+                <th style="width:44px;"></th>
+                <th>合同编号</th>
+                <th>合同名称</th>
+                <th>客户</th>
+                <th>签订日期</th>
+              </tr>
+            </thead>
+            <tbody id="contractTableBody"></tbody>
+          </table>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" id="historyOk" type="button">知道了</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-mask" id="finishModal">
-    <div class="modal" style="width:min(560px, calc(100vw - 48px));">
-      <div class="modal-header">
-        <div class="modal-title">确认完工</div>
-        <button class="modal-close" id="closeFinish" type="button" aria-label="关闭">×</button>
-      </div>
-      <div class="modal-body">
-        <div style="color:#475569;font-size:16px;line-height:1.9;">是否确认将该项目标记为完工？完工后需在主干系统进行激活方可修改收支！</div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-normal" id="cancelFinish" type="button">取消</button>
-        <button class="btn btn-primary" id="confirmFinish" type="button">确定</button>
+        <div class="contract-footer-meta" id="contractMeta">共 0 条，每页 5 条</div>
+        <button class="btn btn-normal" id="cancelContractPicker" type="button">取消</button>
+        <button class="btn btn-primary" id="confirmContractPicker" type="button">确定</button>
       </div>
     </div>
   </div>
@@ -843,9 +865,10 @@
     const internalItems = ["审核费", "住宿费", "交通费", "补贴费", "其他费用"];
 
     const state = {
-      editable: false,
-      activeHistory: "h1",
+      editable: true,
       original: null,
+      selectedContractId: "c1",
+      contractFilters: { code: "", name: "", customer: "" },
       collapsed: { base: false, income: false, cost: false },
       income: {
         sourceType: "合同",
@@ -868,32 +891,6 @@
       internalCosts: [
         { item: "审核费", payeeName: "审核组成员", department: "体系认证二部", amount: 8200, currency: "CNY", baseCurrency: "人民币 CNY", exchangeRate: 1, taxRate: 6, remark: "审核人员费用", taxAmount: 0, baseAmount: 0, baseTaxAmount: 0 },
         { item: "交通费", payeeName: "审核组成员", department: "体系认证二部", amount: 3200, currency: "CNY", baseCurrency: "人民币 CNY", exchangeRate: 1, taxRate: 0, remark: "项目差旅交通", taxAmount: 0, baseAmount: 0, baseTaxAmount: 0 }
-      ],
-      histories: [
-        {
-          id: "h1",
-          title: "收入信息变更",
-          time: "2026-03-24 14:20",
-          operator: "李明",
-          details: [
-            { item: "收入信息 / 收入金额", before: "52000.00", after: "58000.00" },
-            { item: "收入信息 / 税率", before: "3%", after: "6%" },
-            { item: "收入信息 / 子项目名称", before: "质量管理体系认证项目", after: "质量管理体系初次认证" }
-          ]
-        },
-        {
-          id: "h2",
-          title: "成本信息变更",
-          time: "2026-03-24 15:05",
-          operator: "王芳",
-          details: [
-            { item: "外付成本 / 协作费(FSSC103101) / 成本金额", before: "15000.00", after: "18000.00" },
-            { item: "外付成本 / 劳务费(FSSC1019) / 成本金额", before: "4800.00", after: "5200.00" },
-            { item: "内付成本 / 交通费 / 成本金额", before: "2500.00", after: "3200.00" },
-            { item: "内付成本 / 新增一行", before: "无", after: "住宿费 1200.00" },
-            { item: "外付成本 / 减少一行", before: "咨询费(FSSC1022) 2000.00", after: "已删除" }
-          ]
-        }
       ]
     };
 
@@ -914,6 +911,10 @@
       return contracts.find(item => item.id === state.income.contractId) || contracts[0];
     }
 
+    function getContract(id) {
+      return contracts.find(item => item.id === id) || contracts[0];
+    }
+
     function readonly(value) {
       return `<span class="readonly-value">${value || "-"}</span>`;
     }
@@ -931,18 +932,20 @@
     function renderIncome() {
       const row = state.income;
       calc(row);
-      const linkedContract = contract();
+      const isContract = row.sourceType === "合同";
+      const linkedContract = getContract(row.contractId);
       $("#incomeForm").innerHTML = `
         <div class="source-row">
           <span class="field-label">收入来源类型</span>
           <div class="source-switch">
-            <span class="${row.sourceType === "合同" ? "active" : ""}">合同</span>
-            <span class="${row.sourceType === "结算单" ? "active" : ""}">结算单</span>
+            <label class="${isContract ? "active" : ""}"><input type="radio" name="incomeSourceType" data-income-field="sourceType" value="合同" ${isContract ? "checked" : ""}>合同</label>
+            <label class="${!isContract ? "active" : ""}"><input type="radio" name="incomeSourceType" data-income-field="sourceType" value="结算单" ${!isContract ? "checked" : ""}>结算单</label>
           </div>
         </div>
-        <div class="income-fields">
-          <label><span class="field-label">关联业务合同</span>${readonly(`${linkedContract.code} ${linkedContract.name}`)}</label>
-          <label><span class="field-label">合同剩余金额</span>${readonly(money(linkedContract.remaining))}</label>
+        <div class="income-fields ${isContract ? "contract-mode" : "settlement-mode"}">
+          ${isContract ? `
+          <label><span class="field-label">关联业务合同</span><input class="control picker" data-pick-contract value="${linkedContract.code} ${linkedContract.name}" readonly placeholder="点击选择合同"></label>
+          <label><span class="field-label">合同剩余金额</span><input class="control num" value="${money(linkedContract.remaining)}" readonly></label>` : ""}
           <label><span class="field-label">收入金额</span>${editableNumber("amount", row.amount)}</label>
           <label><span class="field-label">币种</span>${state.editable ? `<select class="control" data-income-field="currency">${optionList(currencies, row.currency)}</select>` : readonly(row.currency)}</label>
           <label><span class="field-label">收入归属部门</span>${state.editable ? `<select class="control" data-income-field="department">${optionList(departments, row.department)}</select>` : readonly(row.department)}</label>
@@ -1025,6 +1028,10 @@
       $("#costBaseTotal").textContent = money(sum(state.externalCosts, "baseAmount") + sum(state.internalCosts, "baseAmount"));
     }
 
+    function updateAttachmentState() {
+      $("#settlementCard").classList.toggle("required", state.income.sourceType === "结算单");
+    }
+
     function snapshotBilling() {
       return JSON.parse(JSON.stringify({
         income: state.income,
@@ -1046,6 +1053,8 @@
 
     function collectObjectChanges(before, after, scope, index) {
       const labels = {
+        sourceType: "收入来源类型",
+        contractId: "关联业务合同",
         amount: "金额",
         currency: "币种",
         department: "归属部门",
@@ -1096,19 +1105,6 @@
       ];
     }
 
-    function setMode(editable) {
-      if (editable && !state.editable) {
-        state.original = snapshotBilling();
-      }
-      state.editable = editable;
-      $("#billingStatus").textContent = editable ? "计费修改中" : "已计费";
-      $("#billingStatus").classList.toggle("editing", editable);
-      $("#billingBtn").textContent = editable ? "取消修改" : "修改计费";
-      $("#submitModifyBtn").classList.toggle("hidden", !editable);
-      $("#finishBtn").classList.toggle("hidden", editable);
-      renderAll();
-    }
-
     function renderAttachments() {
       const editable = state.editable;
       document.querySelectorAll(".upload-card").forEach(card => {
@@ -1118,6 +1114,47 @@
       document.querySelectorAll(".upload-action").forEach(action => action.classList.toggle("hidden", !editable));
       document.querySelectorAll(".attachment-delete").forEach(action => action.classList.toggle("hidden", !editable));
       document.querySelectorAll('#settlementFiles, #otherFiles').forEach(input => { input.disabled = !editable; });
+    }
+
+    function renderContractPicker() {
+      const data = contracts.filter(item => {
+        const codeHit = !state.contractFilters.code || item.code.toLowerCase().includes(state.contractFilters.code.toLowerCase());
+        const nameHit = !state.contractFilters.name || item.name.toLowerCase().includes(state.contractFilters.name.toLowerCase());
+        const customerHit = !state.contractFilters.customer || item.customer.toLowerCase().includes(state.contractFilters.customer.toLowerCase());
+        return codeHit && nameHit && customerHit;
+      });
+      $("#contractTableBody").innerHTML = data.map(item => `<tr class="${item.id === state.selectedContractId ? "selected" : ""}" data-contract-row="${item.id}">
+        <td><input type="radio" name="contract" value="${item.id}" ${item.id === state.selectedContractId ? "checked" : ""}></td>
+        <td>${item.code}</td>
+        <td>${item.name}</td>
+        <td>${item.customer}</td>
+        <td>${item.signDate}</td>
+      </tr>`).join("") || `<tr><td colspan="5" style="color:#94a3b8;text-align:center;">暂无匹配合同</td></tr>`;
+      $("#contractMeta").textContent = `共 ${contracts.length + 7} 条，每页 5 条`;
+      $("#confirmContractPicker").disabled = !state.selectedContractId;
+    }
+
+    function openContractPicker() {
+      state.selectedContractId = state.income.contractId || "";
+      state.contractFilters = { code: "", name: "", customer: "" };
+      document.querySelectorAll("[data-contract-filter]").forEach(input => input.value = "");
+      renderContractPicker();
+      $("#contractPickerModal").classList.add("show");
+      $("#contractCodeFilter").focus();
+    }
+
+    function closeContractPicker() {
+      $("#contractPickerModal").classList.remove("show");
+    }
+
+    function applySelectedContract() {
+      if (!state.selectedContractId) return;
+      const selected = getContract(state.selectedContractId);
+      state.income.contractId = selected.id;
+      state.income.currency = selected.currency;
+      state.income.exchangeRate = selected.rate;
+      closeContractPicker();
+      renderAll();
     }
 
     function renderSelectedFiles(listId, files) {
@@ -1137,6 +1174,7 @@
       renderInternalCosts();
       updateSummary();
       renderAttachments();
+      updateAttachmentState();
       document.querySelectorAll(".edit-only").forEach(node => node.classList.toggle("hidden", !state.editable));
     }
 
@@ -1148,26 +1186,6 @@
       return { item: "审核费", payeeName: "审核组成员", department: departments[0], amount: 800, currency: "CNY", baseCurrency: "人民币 CNY", exchangeRate: 1, taxRate: 6, remark: "", taxAmount: 0, baseAmount: 0, baseTaxAmount: 0 };
     }
 
-    function renderHistory() {
-      $("#historyList").innerHTML = state.histories.map(item => `
-        <button class="history-item ${item.id === state.activeHistory ? "active" : ""}" data-history="${item.id}" type="button">
-          <strong>${item.title}</strong>
-          <span>${item.time} / ${item.operator}</span>
-        </button>`).join("");
-      const current = state.histories.find(item => item.id === state.activeHistory);
-      $("#historyDetail").innerHTML = current.details.map(row => `
-        <tr><td>${row.item}</td><td class="before">${row.before}</td><td class="after">${row.after}</td></tr>`).join("");
-    }
-
-    function openHistory() {
-      renderHistory();
-      $("#historyModal").classList.add("show");
-    }
-
-    function closeHistory() {
-      $("#historyModal").classList.remove("show");
-    }
-
     function openAttachmentPreview(name) {
       $("#attachmentPreviewName").textContent = name;
       $("#attachmentPreviewModal").classList.add("show");
@@ -1175,14 +1193,6 @@
 
     function closeAttachmentPreview() {
       $("#attachmentPreviewModal").classList.remove("show");
-    }
-
-    function openFinishConfirm() {
-      $("#finishModal").classList.add("show");
-    }
-
-    function closeFinishConfirm() {
-      $("#finishModal").classList.remove("show");
     }
 
     function openModifyConfirm() {
@@ -1197,6 +1207,12 @@
       $("#modifyModal").classList.remove("show");
     }
 
+    function saveModify() {
+      state.original = snapshotBilling();
+      $("#billingStatus").textContent = "已计费";
+      $("#billingStatus").classList.remove("editing");
+    }
+
     function toggleSection(key) {
       state.collapsed[key] = !state.collapsed[key];
       const section = document.querySelector(`[data-section="${key}"]`);
@@ -1205,32 +1221,18 @@
       if (button) button.textContent = state.collapsed[key] ? "▾" : "▴";
     }
 
-    $("#billingBtn").addEventListener("click", () => setMode(!state.editable));
-    $("#finishBtn").addEventListener("click", openFinishConfirm);
+    $("#saveModifyBtn").addEventListener("click", saveModify);
     $("#submitModifyBtn").addEventListener("click", openModifyConfirm);
-    $("#historyBtn").addEventListener("click", openHistory);
-    $("#closeHistory").addEventListener("click", closeHistory);
-    $("#historyOk").addEventListener("click", closeHistory);
-    $("#historyModal").addEventListener("click", event => {
-      if (event.target.id === "historyModal") closeHistory();
-    });
     $("#closeAttachmentPreview").addEventListener("click", closeAttachmentPreview);
     $("#attachmentPreviewOk").addEventListener("click", closeAttachmentPreview);
     $("#attachmentPreviewModal").addEventListener("click", event => {
       if (event.target.id === "attachmentPreviewModal") closeAttachmentPreview();
     });
-    $("#closeFinish").addEventListener("click", closeFinishConfirm);
-    $("#cancelFinish").addEventListener("click", closeFinishConfirm);
-    $("#confirmFinish").addEventListener("click", closeFinishConfirm);
-    $("#finishModal").addEventListener("click", event => {
-      if (event.target.id === "finishModal") closeFinishConfirm();
-    });
     $("#closeModify").addEventListener("click", closeModifyConfirm);
     $("#cancelModify").addEventListener("click", closeModifyConfirm);
     $("#confirmModify").addEventListener("click", () => {
-      state.original = snapshotBilling();
+      saveModify();
       closeModifyConfirm();
-      setMode(false);
     });
     $("#modifyModal").addEventListener("click", event => {
       if (event.target.id === "modifyModal") closeModifyConfirm();
@@ -1249,8 +1251,29 @@
       if (target.dataset.incomeField) {
         const field = target.dataset.incomeField;
         state.income[field] = target.type === "number" ? Number(target.value || 0) : target.value;
+        if (field === "sourceType") {
+          if (target.value === "合同") {
+            const selected = getContract(state.income.contractId);
+            state.income.contractId = selected.id;
+            state.income.currency = selected.currency;
+            state.income.exchangeRate = selected.rate;
+          } else {
+            state.income.contractId = "";
+            state.income.currency = "CNY";
+            state.income.exchangeRate = 1;
+          }
+        }
+        if (field === "contractId") {
+          const selected = getContract(target.value);
+          state.income.currency = selected.currency;
+          state.income.exchangeRate = selected.rate;
+        }
         if (field === "currency") state.income.exchangeRate = currencyRates[target.value] || 1;
         renderAll();
+      }
+      if (target.name === "contract") {
+        state.selectedContractId = target.value;
+        renderContractPicker();
       }
       if (target.dataset.scope) {
         const rows = target.dataset.scope === "external" ? state.externalCosts : state.internalCosts;
@@ -1259,6 +1282,13 @@
         row[field] = target.type === "number" ? Number(target.value || 0) : target.value;
         if (field === "currency") row.exchangeRate = currencyRates[target.value] || 1;
         renderAll();
+      }
+    });
+
+    document.addEventListener("input", event => {
+      const target = event.target;
+      if (target.dataset.contractFilter) {
+        state.contractFilters[target.dataset.contractFilter] = target.value.trim();
       }
     });
 
@@ -1274,10 +1304,19 @@
         rows.splice(Number(event.target.dataset.index), 1);
         renderAll();
       }
-      const historyId = event.target.closest("[data-history]")?.dataset.history;
-      if (historyId) {
-        state.activeHistory = historyId;
-        renderHistory();
+      if (event.target.closest("[data-pick-contract]")) {
+        openContractPicker();
+      }
+      const contractRow = event.target.closest("[data-contract-row]");
+      if (contractRow) {
+        state.selectedContractId = contractRow.dataset.contractRow;
+        renderContractPicker();
+      }
+      if (event.target.id === "queryContracts") renderContractPicker();
+      if (event.target.id === "resetContracts") {
+        state.contractFilters = { code: "", name: "", customer: "" };
+        document.querySelectorAll("[data-contract-filter]").forEach(input => input.value = "");
+        renderContractPicker();
       }
       const preview = event.target.closest("[data-preview]")?.dataset.preview;
       if (preview) {
@@ -1292,6 +1331,13 @@
       }
     });
 
+    $("#closeContractPicker").addEventListener("click", closeContractPicker);
+    $("#cancelContractPicker").addEventListener("click", closeContractPicker);
+    $("#confirmContractPicker").addEventListener("click", applySelectedContract);
+    $("#contractPickerModal").addEventListener("click", event => {
+      if (event.target.id === "contractPickerModal") closeContractPicker();
+    });
+
     $("#settlementFiles").addEventListener("change", event => {
       renderSelectedFiles("settlementFileList", event.target.files);
     });
@@ -1300,6 +1346,7 @@
     });
 
     renderAll();
+    state.original = snapshotBilling();
   </script>
 </body>
 </html>
