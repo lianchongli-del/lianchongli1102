@@ -399,6 +399,77 @@
     .upload-name { color: #0f172a; font-weight: 700; }
     .upload-state { margin-top: 2px; color: #64748b; font-size: 12px; }
 
+    .attachment-files {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .attachment-file {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      max-width: 220px;
+      min-height: 30px;
+      padding: 0 8px;
+      border: 1px solid #93c5fd;
+      border-radius: 4px;
+      color: #1d4ed8;
+      background: #eff6ff;
+    }
+
+    .attachment-file::before {
+      content: "";
+      width: 12px;
+      height: 14px;
+      flex-shrink: 0;
+      border-radius: 2px;
+      background: #2563eb;
+      clip-path: polygon(0 0, 75% 0, 100% 25%, 100% 100%, 0 100%);
+    }
+
+    .attachment-name {
+      min-width: 0;
+      padding: 0;
+      border: 0;
+      overflow: hidden;
+      color: #1d4ed8;
+      background: transparent;
+      cursor: pointer;
+      font-weight: 500;
+      text-align: left;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .attachment-name:hover { text-decoration: underline; }
+
+    .attachment-delete {
+      width: 18px;
+      height: 18px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      color: #1d4ed8;
+      background: transparent;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .attachment-delete:hover {
+      color: #fff;
+      background: #2563eb;
+    }
+
+    .attachment-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
     .payee-suggest-list {
       position: fixed;
       z-index: 80;
@@ -545,16 +616,17 @@
       </div>
       <div class="section-body">
         <div class="info-grid">
+          <div><div class="info-label">计费项目编号</div><div class="info-value">XM-2026-06001-2</div></div>
           <div><div class="info-label">项目编号</div><div class="info-value">XM-2026-06001</div></div>
           <div><div class="info-label">客户名称</div><div class="info-value">中国气象局</div></div>
           <div><div class="info-label">审核类型</div><div class="info-value">初次认证</div></div>
-          <div><div class="info-label">认证领域</div><div class="info-value">质量管理体系</div></div>
+          <div><div class="info-label">认证领域</div><div class="info-value">QMS（质量管理体系）</div></div>
+          <div><div class="info-label">认证范围</div><div class="info-value">产品设计、开发、生产和相关技术服务</div></div>
           <div><div class="info-label">业务归属机构</div><div class="info-value">中国检验认证集团北京有限公司</div></div>
           <div><div class="info-label">是否承担交通和住宿费</div><div class="info-value">是</div></div>
           <div><div class="info-label">合同签署方</div><div class="info-value">中国质量认证中心（CQC）</div></div>
-          <div><div class="info-label">项目实施方</div><div class="info-value">中国检验认证集团北京有限公司</div></div>
-          <div><div class="info-label">计划审核日期</div><div class="info-value">2026-06-20 至 2026-06-22</div></div>
-          <div><div class="info-label">当前状态</div><div class="info-value">待计费</div></div>
+          <div><div class="info-label">计划审核时间</div><div class="info-value">2026-06</div></div>
+          <div><div class="info-label">计划审核人/天</div><div class="info-value">5.5 天</div></div>
         </div>
       </div>
     </section>
@@ -575,6 +647,24 @@
       <div class="modal-footer">
         <button class="btn btn-normal" id="cancelSubmitConfirm" type="button">取消</button>
         <button class="btn btn-primary" id="confirmSubmit" type="button">确定提交</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask" id="attachmentPreviewModal">
+    <div class="modal" style="width:min(720px, calc(100vw - 48px));">
+      <div class="modal-header">
+        <div class="modal-title">附件预览</div>
+        <button class="modal-close" id="closeAttachmentPreview" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-body">
+        <div id="attachmentPreviewName" style="margin-bottom:12px;color:#334155;font-weight:600;"></div>
+        <div style="min-height:220px;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;display:flex;align-items:center;justify-content:center;color:#64748b;">
+          当前为附件预览区域，可在实际系统中加载 PDF、Word 或图片内容。
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="attachmentPreviewOk" type="button">知道了</button>
       </div>
     </div>
   </div>
@@ -630,7 +720,10 @@
           newInternalCost({ amount: 5200, remark: "审核组人员费用" }),
           newInternalCost({ item: "住宿费", amount: 4200, remark: "审核住宿费用" })
         ],
-        attachments: { settlement: 0, other: 0 }
+        attachments: {
+          settlement: ["北京公司收入成本确认单.pdf", "外付成本转收入说明.docx"],
+          other: ["客户确认邮件截图.png"]
+        }
       },
       pendingSubmit: false
     };
@@ -853,6 +946,23 @@
       renderBilling();
     }
 
+    function openAttachmentPreview(name) {
+      $("#attachmentPreviewName").textContent = name;
+      $("#attachmentPreviewModal").classList.add("show");
+    }
+
+    function closeAttachmentPreview() {
+      $("#attachmentPreviewModal").classList.remove("show");
+    }
+
+    function attachmentFiles(type, files) {
+      return files.map((name, index) => `
+        <div class="attachment-file">
+          <button class="attachment-name" type="button" data-preview="${name}">${name}</button>
+          <button class="attachment-delete" type="button" data-delete-attachment="${type}" data-file-index="${index}" aria-label="删除${name}">×</button>
+        </div>`).join("");
+    }
+
     function renderBilling() {
       const billing = state.billing;
       const summary = costSummary(billing);
@@ -888,7 +998,6 @@
         <section class="section">
           <div class="section-header">
             <h2 class="section-title">附件信息</h2>
-            <span class="readonly-text">选填，无必填校验</span>
           </div>
           <div class="section-body">
             ${attachmentSection(billing)}
@@ -988,28 +1097,34 @@
       const disabled = "";
       return `
         <div class="upload-list">
-          <label class="upload-card">
+          <div class="upload-card">
             <input type="file" data-file="settlement" multiple hidden ${disabled}>
             <div class="upload-left">
               <div class="upload-icon">▣</div>
               <div>
                 <div class="upload-name">结算单附件</div>
-                <div class="upload-state" id="settlementState">${billing.attachments.settlement ? `已选择 ${billing.attachments.settlement} 个文件` : "选填"}</div>
+                <div class="attachment-files" id="settlementFileList">${attachmentFiles("settlement", billing.attachments.settlement)}</div>
               </div>
             </div>
-            <span class="btn btn-primary">上传</span>
-          </label>
-          <label class="upload-card">
+            <div class="attachment-actions">
+              <a class="btn btn-normal" href="data:text/plain;charset=utf-8,%E5%8C%97%E4%BA%AC%E5%85%AC%E5%8F%B8%E9%99%84%E4%BB%B6" download="结算单附件.zip">下载</a>
+              <button class="btn btn-primary" type="button" data-upload-file="settlement">上传</button>
+            </div>
+          </div>
+          <div class="upload-card">
             <input type="file" data-file="other" multiple hidden ${disabled}>
             <div class="upload-left">
               <div class="upload-icon">▣</div>
               <div>
                 <div class="upload-name">其他附件 (如项目立项审批单等)</div>
-                <div class="upload-state" id="otherState">${billing.attachments.other ? `已选择 ${billing.attachments.other} 个文件` : "选填"}</div>
+                <div class="attachment-files" id="otherFileList">${attachmentFiles("other", billing.attachments.other)}</div>
               </div>
             </div>
-            <span class="btn btn-normal">上传</span>
-          </label>
+            <div class="attachment-actions">
+              <a class="btn btn-normal" href="data:text/plain;charset=utf-8,%E5%85%B6%E4%BB%96%E9%99%84%E4%BB%B6" download="其他附件.zip">下载</a>
+              <button class="btn btn-primary" type="button" data-upload-file="other">上传</button>
+            </div>
+          </div>
         </div>`;
     }
 
@@ -1054,9 +1169,8 @@
       const target = event.target;
       if (target.dataset.scope && target.dataset.field) updateRow(target);
       if (target.dataset.file) {
-        state.billing.attachments[target.dataset.file] = target.files.length;
-        const stateId = target.dataset.file === "settlement" ? "#settlementState" : "#otherState";
-        $(stateId).textContent = target.files.length ? `已选择 ${target.files.length} 个文件` : "选填";
+        state.billing.attachments[target.dataset.file] = Array.from(target.files).map(file => file.name);
+        renderBilling();
       }
     });
 
@@ -1090,6 +1204,15 @@
         state.billing.status = "已保存";
         renderBilling();
       }
+      const preview = event.target.closest("[data-preview]")?.dataset.preview;
+      if (preview) openAttachmentPreview(preview);
+      const uploadFile = event.target.closest("[data-upload-file]")?.dataset.uploadFile;
+      if (uploadFile) document.querySelector(`input[data-file="${uploadFile}"]`)?.click();
+      const deleteType = event.target.closest("[data-delete-attachment]")?.dataset.deleteAttachment;
+      if (deleteType) {
+        state.billing.attachments[deleteType].splice(Number(event.target.dataset.fileIndex), 1);
+        renderBilling();
+      }
     });
 
     renderPayeeOptions();
@@ -1099,6 +1222,11 @@
     $("#confirmSubmit").addEventListener("click", confirmSubmitBilling);
     $("#submitConfirmModal").addEventListener("click", event => {
       if (event.target.id === "submitConfirmModal") closeSubmitConfirm();
+    });
+    $("#closeAttachmentPreview").addEventListener("click", closeAttachmentPreview);
+    $("#attachmentPreviewOk").addEventListener("click", closeAttachmentPreview);
+    $("#attachmentPreviewModal").addEventListener("click", event => {
+      if (event.target.id === "attachmentPreviewModal") closeAttachmentPreview();
     });
   </script>
 </body>
