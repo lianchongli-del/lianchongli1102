@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CQC体系认证平台 - 监督审核通知</title>
+    <title>CQC体系认证平台 - 监督审核申请</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -810,18 +810,24 @@
         <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200 flex justify-between items-center sticky z-40">
             <div class="flex items-center space-x-6">
                 <div>
-                    <h3 class="text-lg font-semibold text-slate-900" id="detailTitle">监督审核通知 - JD202403001</h3>
-                    <p class="text-sm text-slate-500 mt-1" id="detailSubtitle">北京某某科技有限公司 | QMS/EMS体系监督 | 审核时间：2026年4月15日-17日</p>
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <h3 class="text-lg font-semibold text-slate-900" id="detailTitle">监督审核通知 - JD202403050001</h3>
+                        <span id="detailStatus" class="status-badge status-pending">
+                            <i class="fas fa-clock"></i>
+                            待确认
+                        </span>
+                    </div>
+                    <p class="text-sm text-slate-500 mt-1" id="detailSubtitle">北京某某科技有限公司 | QMS/EMS体系监督 | 审核时间：2026年4月 | 通知发送日期：2026年3月30日</p>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
-                <span id="detailStatus" class="status-badge status-pending">
-                    <i class="fas fa-clock"></i>
-                    待确认
-                </span>
                 <button onclick="openEmailModal()" class="px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition flex items-center gap-2">
                     <i class="fas fa-envelope text-slate-400"></i>
                     重新发送邮件
+                </button>
+                <button onclick="saveSurvey()" class="px-5 py-2 bg-white border border-blue-500 text-blue-600 rounded-lg hover:bg-blue-50 transition flex items-center gap-2 font-medium">
+                    <i class="fas fa-save"></i>
+                    保存
                 </button>
                 <button onclick="confirmSubmit()" id="confirmSubmitBtn" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-sm transition flex items-center gap-2 font-medium" disabled>
                     <i class="fas fa-check"></i>
@@ -972,12 +978,6 @@
                         <p>若根据变更信息需要变更认证证书的，则还应请客户提交《证书变更申请书》；若客户属于多场所组织且场所发生了变更，则还应提交最新《认证场所清单》。</p>
                     </div>
 
-                    <div class="flex justify-end space-x-3 pt-6 border-t border-slate-200">
-                        <button onclick="saveSurvey()" class="px-8 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium shadow-sm flex items-center gap-2">
-                            <i class="fas fa-save"></i>
-                            保存调查表
-                        </button>
-                    </div>
                 </div>
             </div>
 
