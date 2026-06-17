@@ -1,12 +1,13 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CQC体系认证平台 - 监督审核证书变更驳回</title>
+    <title>CQC体系认证平台 - 监督审核申请</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -171,65 +172,6 @@
         .status-customer-filled { background: #dbeafe; color: #1e40af; border: 1px solid #60a5fa; }
         .status-ready-submit { background: #e0e7ff; color: #3730a3; border: 1px solid #818cf8; }
         .status-submitted { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
-        .status-rejected { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-
-        .back-button {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            color: #475569;
-            background: #ffffff;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
-        }
-
-        .back-button:hover {
-            color: #2563eb;
-            border-color: #bfdbfe;
-            background: #eff6ff;
-        }
-
-        .reject-review-card {
-            border: 1px solid #fca5a5;
-            background: #fef2f2;
-            border-radius: 8px;
-            padding: 14px 20px 18px;
-        }
-
-        .reject-review-title {
-            color: #991b1b;
-            font-size: 14px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            flex-wrap: wrap;
-            margin-bottom: 14px;
-        }
-
-        .reject-review-meta {
-            display: inline-flex;
-            align-items: center;
-            gap: 16px;
-            color: #991b1b;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .reject-review-opinion {
-            border: 1px solid #fca5a5;
-            background: rgba(255, 255, 255, 0.55);
-            border-radius: 6px;
-            padding: 14px 16px;
-            color: #991b1b;
-            line-height: 1.85;
-            font-size: 14px;
-        }
 
         /* 监督审核通知样式 - 仿公文 */
         .notice-document {
@@ -663,6 +605,47 @@
             color: #1d4ed8;
         }
 
+        .standard-multi-select {
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: #ffffff;
+            min-height: 40px;
+            padding: 8px;
+        }
+
+        .standard-multi-select.is-disabled {
+            background: #f8fafc;
+            color: #94a3b8;
+        }
+
+        .standard-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 34px;
+            padding: 7px 8px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #334155;
+            cursor: pointer;
+        }
+
+        .standard-option:hover {
+            background: #f8fafc;
+        }
+
+        .standard-option:has(input:checked) {
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-weight: 600;
+        }
+
+        .standard-option.is-disabled {
+            color: #94a3b8;
+            cursor: not-allowed;
+            background: #f8fafc;
+        }
+
         .certificate-change-panel {
             margin-top: 14px;
             border: 1px solid #dbeafe;
@@ -758,7 +741,7 @@
 
         .site-row {
             display: grid;
-            grid-template-columns: minmax(150px, 1fr) minmax(220px, 1.4fr) minmax(220px, 1.4fr) 110px 118px 36px;
+            grid-template-columns: minmax(150px, 1fr) minmax(220px, 1.3fr) minmax(220px, 1.3fr) 96px 112px 36px;
             gap: 12px;
             align-items: end;
             padding: 12px;
@@ -825,46 +808,46 @@
     <div id="applicationDetailView" class="fade-in space-y-6">
         <!-- 顶部操作栏 -->
         <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200 flex justify-between items-center sticky z-40">
-            <div class="flex items-center space-x-4">
-                <button type="button" onclick="history.back()" class="back-button" title="返回">
-                    <i class="fas fa-arrow-left"></i>
-                </button>
+            <div class="flex items-center space-x-6">
                 <div>
-                    <h3 class="text-lg font-semibold text-slate-900" id="detailTitle">监督审核通知详情 - JD202403001</h3>
-                    <p class="text-sm text-slate-500 mt-1" id="detailSubtitle">北京某某科技有限公司 | QMS/EMS体系监督 | 审核时间：2026年4月15日-17日 | 通知发送日期：2026年3月30日 | 调查表填写人：李明 | 调查表填写日期：2026-04-02</p>
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <h3 class="text-lg font-semibold text-slate-900" id="detailTitle">监督审核通知 - JD202403050001</h3>
+                        <span id="detailStatus" class="status-badge bg-red-100 text-red-700 border border-red-200">
+                            <i class="fas fa-times-circle"></i>
+                            已驳回
+                        </span>
+                    </div>
+                    <p class="text-sm text-slate-500 mt-1" id="detailSubtitle">北京某某科技有限公司 | QMS/EMS体系监督 | 审核时间：2026年4月 | 通知发送日期：2026年3月30日</p>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
-                <span id="detailStatus" class="status-badge status-pending">
-                    <i class="fas fa-clock"></i>
-                    待确认
-                </span>
-                <button onclick="openEmailModal()" class="px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition flex items-center gap-2">
-                    <i class="fas fa-envelope text-slate-400"></i>
-                    重新发送邮件
+                <button onclick="saveSurvey()" class="px-5 py-2 bg-white border border-blue-500 text-blue-600 rounded-lg hover:bg-blue-50 transition flex items-center gap-2 font-medium">
+                    <i class="fas fa-save"></i>
+                    保存
                 </button>
                 <button onclick="confirmSubmit()" id="confirmSubmitBtn" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-sm transition flex items-center gap-2 font-medium" disabled>
-                    <i class="fas fa-paper-plane"></i>
-                    再次提交
+                    <i class="fas fa-check"></i>
+                    确认提交
                 </button>
             </div>
         </div>
 
-        <div class="reject-review-card">
-            <div class="reject-review-title">
-                <span class="inline-flex items-center gap-2">
-                    <i class="fas fa-clipboard-list"></i>
-                    驳回评审信息
-                    <span class="font-normal">以下信息用于说明本次驳回原因。</span>
-                </span>
-                <span class="reject-review-meta">
+        <div class="bg-white shadow rounded-lg p-6 border border-slate-200">
+            <div class="rounded-lg border border-red-200 bg-red-50 p-5 text-red-900">
+            <div class="bg-slate-100 border-l-4 border-blue-500 rounded-md px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-4">
+                    <div class="font-semibold flex items-center gap-2"><i class="fas fa-clipboard-list text-red-700"></i>驳回评审信息</div>
+                    <div class="text-sm">以下信息用于说明本次驳回原因。</div>
+                </div>
+                <div class="flex items-center gap-5 text-sm font-semibold">
                     <span>评审人：王丽</span>
                     <span>评审日期：2026-05-27</span>
-                </span>
+                </div>
             </div>
-            <div class="reject-review-opinion">
-                <div class="font-semibold mb-2">驳回说明</div>
-                <div>申请材料中组织名称变更证明不够完整，认证范围变更后的表述需与营业执照经营范围及主营业务范围保持一致，请补充相关佐证材料，并重新说明变更原因后再次提交。</div>
+            <div class="mt-4 rounded-lg border border-red-200 bg-white/60 p-5">
+                <div class="font-semibold mb-4">评审意见</div>
+                <div class="leading-relaxed">申请材料中客户名称变更证明不够完整，认证范围变更后的表述需与营业执照经营范围保持一致；请补充市场监管部门核准变更材料，并重新说明变更原因后再次提交。</div>
+            </div>
             </div>
         </div>
 
@@ -909,7 +892,7 @@
                         <div class="sub-section-title mb-4">
                             <i class="fas fa-certificate"></i>
                             一、证书变更信息
-                            <span class="text-xs font-normal text-slate-500 ml-2">组织名称、注册地址、适用性声明统一作用于全部证书；认证标准或技术规范按认证领域填写，领域下证书统一修改。</span>
+                            <span class="text-xs font-normal text-slate-500 ml-2">客户名称、注册地址、适用性声明统一作用于全部证书；客户名称、地址、认证范围支持中英文拟变更内容；认证标准或技术规范按认证领域下拉选择。</span>
                         </div>
                         <div id="certificateRows" class="space-y-3"></div>
                     </div>
@@ -1010,12 +993,6 @@
                         <p>若根据变更信息需要变更认证证书的，则还应请客户提交《证书变更申请书》；若客户属于多场所组织且场所发生了变更，则还应提交最新《认证场所清单》。</p>
                     </div>
 
-                    <div class="flex justify-end space-x-3 pt-6 border-t border-slate-200">
-                        <button onclick="saveSurvey()" class="px-8 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium shadow-sm flex items-center gap-2">
-                            <i class="fas fa-save"></i>
-                            保存调查表
-                        </button>
-                    </div>
                 </div>
             </div>
 
@@ -1128,7 +1105,7 @@
                             <tr>
                                 <td class="certificate-index">1</td>
                                 <td class="certificate-number">00123E34569R0S/37000</td>
-                                <td class="certificate-standard">GB/T 24001-2016 / ISO 14001:2015</td>
+                                <td class="certificate-standard">GB/T 24001-2015/ISO 14001:2015</td>
                                 <td class="certificate-date">2020年4月18日</td>
                                 <td class="certificate-date">2026年4月17日</td>
                                 <td class="certificate-scope">软件研发、办公运营及相关环境管理活动</td>
@@ -1136,7 +1113,7 @@
                             <tr>
                                 <td class="certificate-index">2</td>
                                 <td class="certificate-number">00123E34570R0S/37000</td>
-                                <td class="certificate-standard">GB/T 24001-2016 / ISO 14001:2015</td>
+                                <td class="certificate-standard">GB/T 24001-2015/ISO 14001:2015</td>
                                 <td class="certificate-date">2021年6月10日</td>
                                 <td class="certificate-date">2027年6月9日</td>
                                 <td class="certificate-scope">系统集成项目实施现场及相关环境管理活动</td>
@@ -1177,109 +1154,6 @@
     </div>
 </div>
 
-<!-- 重新发送邮件模态框 -->
-<div id="emailModal" class="hidden fixed inset-0 bg-slate-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 backdrop-blur-sm">
-    <div class="relative top-10 mx-auto p-0 border w-3/4 max-w-4xl shadow-2xl rounded-xl bg-white overflow-hidden">
-        <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 bg-slate-50">
-            <h3 class="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                <i class="fas fa-envelope text-blue-500"></i>
-                重新发送邮件
-            </h3>
-            <button onclick="closeEmailModal()" class="text-slate-400 hover:text-slate-600 transition">
-                <i class="fas fa-times text-xl"></i>
-            </button>
-        </div>
-
-        <div class="p-6 email-modal-content">
-            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg mb-6">
-                <p class="text-sm text-blue-800">
-                    <i class="fas fa-info-circle mr-2"></i>
-                    您可以修改收件邮箱后重新发送监督审核通知邮件
-                </p>
-            </div>
-
-            <div class="bg-slate-100 p-4 rounded-lg mb-6 font-mono text-sm space-y-3 border border-slate-200">
-                <div class="flex items-center gap-2">
-                    <span class="text-slate-500 w-20 flex-shrink-0">发件人：</span>
-                    <span>system@cqc.com.cn</span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-slate-500 w-20 flex-shrink-0">收件人：</span>
-                    <input type="email" id="emailRecipient" value="contact@example.com; manager@example.com" 
-                           class="flex-1 bg-white border border-slate-300 rounded px-3 py-1 text-sm font-sans">
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-slate-500 w-20 flex-shrink-0">抄送：</span>
-                    <input type="email" id="emailCc" value="pm@cqc.com.cn" 
-                           class="flex-1 bg-white border border-slate-300 rounded px-3 py-1 text-sm font-sans">
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-slate-500 w-20 flex-shrink-0">主题：</span>
-                    <input type="text" id="emailSubject" value="【重要】关于对贵公司进行管理体系监督审核的通知 - 北京某某科技有限公司" 
-                           class="flex-1 bg-white border border-slate-300 rounded px-3 py-1 text-sm font-sans font-semibold text-slate-800">
-                </div>
-            </div>
-
-            <div class="email-editor-toolbar" aria-label="邮件正文富文本工具栏">
-                <button type="button" onclick="formatEmailBody('bold')" title="加粗"><i class="fas fa-bold"></i></button>
-                <button type="button" onclick="formatEmailBody('italic')" title="斜体"><i class="fas fa-italic"></i></button>
-                <button type="button" onclick="formatEmailBody('underline')" title="下划线"><i class="fas fa-underline"></i></button>
-                <button type="button" onclick="formatEmailBody('foreColor', '#dc2626')" title="红色文字"><i class="fas fa-font text-red-600"></i></button>
-                <button type="button" onclick="formatEmailBody('insertUnorderedList')" title="项目符号"><i class="fas fa-list-ul"></i></button>
-                <button type="button" onclick="formatEmailBody('insertOrderedList')" title="编号列表"><i class="fas fa-list-ol"></i></button>
-                <button type="button" onclick="formatEmailBody('createLink', prompt('请输入链接地址'))" title="插入链接"><i class="fas fa-link"></i></button>
-            </div>
-            <div id="emailBody" contenteditable="true" class="email-editor-body border p-6 bg-white space-y-4 max-h-96 overflow-y-auto border-slate-200">
-                <p class="text-slate-800">尊敬的北京某某科技有限公司：</p>
-                <p class="text-slate-700 leading-relaxed">根据认证规则要求，需对贵公司的质量管理体系（QMS）、环境管理体系（EMS）实施监督审核。</p>
-
-                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 my-4 rounded-r-lg">
-                    <p class="font-semibold text-blue-900 mb-2">审核安排：</p>
-                    <ul class="list-disc list-inside mt-2 text-blue-800 space-y-1 text-sm">
-                        <li>计划审核时间：2026年4月</li>
-                        <li>QMS（质量管理体系）：00123Q34567R0S/37000、00123Q34568R0S/37000</li>
-                        <li>EMS（环境管理体系）：00123E34569R0S/37000、00123E34570R0S/37000</li>
-                    </ul>
-                </div>
-
-                <p class="text-slate-700">请贵公司于 <strong class="text-red-600">2026年4月&nbsp;&nbsp;日前</strong> 完成以下工作：</p>
-                <ol class="list-decimal list-inside space-y-2 ml-4 text-slate-700 text-sm">
-                    <li>填写《获证方情况调查表》
-                        <div class="mt-2 ml-6 space-y-1">
-                            <a href="#" onclick="switchTab('survey'); closeEmailModal(); return false;" class="text-blue-600 hover:underline flex items-center gap-2">
-                                <i class="fas fa-external-link-alt text-xs"></i>
-                                在线填写（推荐）
-                            </a>
-                        </div>
-                    </li>
-                    <li>如有变更事项，请填写《证书变更申请表》</li>
-                    <li>准备相关审核资料</li>
-                    <li>确认现场审核联系人及审核安排</li>
-                    <li class="email-empty-item"><br></li>
-                </ol>
-
-                <p class="mt-4 text-slate-700 font-semibold">附件清单：</p>
-                <ul class="list-disc list-inside ml-4 text-sm text-slate-600 space-y-1 bg-slate-50 p-3 rounded border border-slate-200">
-                    <li>监督审核通知书.pdf</li>
-                    <li>获证方情况调查表.docx / .pdf</li>
-                </ul>
-
-                <p class="mt-6 text-slate-500 text-sm">如有疑问，请联系：张经理 010-12345678</p>
-            </div>
-        </div>
-
-        <div class="flex justify-end space-x-3 p-6 border-t border-slate-200 bg-slate-50">
-            <button onclick="closeEmailModal()" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-white transition font-medium">
-                取消
-            </button>
-            <button onclick="resendEmail()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium shadow-sm flex items-center gap-2">
-                <i class="fas fa-paper-plane"></i>
-                重新发送邮件
-            </button>
-        </div>
-    </div>
-</div>
-
 <!-- Toast提示 -->
 <div id="toast" class="toast">
     <i class="fas fa-check-circle text-green-400 text-xl"></i>
@@ -1289,7 +1163,7 @@
 <script>
 // ===== 全局状态管理 =====
 let currentRole = 'customer_service'; // customer_service, customer
-let applicationStatus = 'rejected_edit'; // pending, rejected_edit, customer_filled, ready_submit, submitted
+let applicationStatus = 'pending'; // pending, customer_filled, ready_submit, submitted
 let isAgentMode = false;
 let evidenceFiles = {};
 let surveyAttachmentFiles = [];
@@ -1299,7 +1173,7 @@ let multiSiteChangeData = {};
 const defaultCertificateSites = [
     {id: 'hq', name: '北京总部', address: '北京市朝阳区xxx路xxx号', scope: 'QMS、EMS认证范围', people: 120},
     {id: 'sh', name: '上海分公司', address: '上海市浦东新区xxx路xxx号', scope: 'QMS认证范围', people: 48},
-    {id: 'gz', name: '广州研发中心', address: '广州市天河区xxx路xxx号', scope: 'EMS认证范围', people: 36}
+    {id: 'gz', name: '广州研发中心', address: '广州市天河区xxx路xxx号', scope: 'QMS认证范围', people: 36}
 ];
 
 const certificateSiteMap = {
@@ -1321,7 +1195,7 @@ const allCertificates = [
 const certificateItems = [
     {
         id: 'orgName',
-        label: '组织名称',
+        label: '客户名称',
         current: '北京某某科技有限公司'
     },
     {
@@ -1357,6 +1231,7 @@ const certificateItems = [
 ];
 
 const unifiedCertificateItemIds = ['orgName', 'registeredAddress', 'soa'];
+const bilingualCertificateItemIds = ['orgName', 'registeredAddress', 'operationAddress', 'certScope'];
 
 const changeItems = [
     {id: 'topManager', label: '最高管理者', current: '李明，总经理，全面负责管理体系运行'},
@@ -1382,6 +1257,7 @@ const changeItems = [
 // ===== 初始化 =====
 document.addEventListener('DOMContentLoaded', function() {
     renderSurveyTables();
+    updateStatusDisplay();
     initEmailEditorSelection();
 
     // 日期默认值
@@ -1391,10 +1267,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if(preferredStartDate) preferredStartDate.value = today;
     if(preferredEndDate) preferredEndDate.value = today;
     const declarationDate = document.getElementById('declarationDate');
-    if(declarationDate) declarationDate.value = '2026-04-02';
-    prefillRejectedSurvey();
-    updateStatusDisplay();
-    switchTab('survey');
+    if(declarationDate) declarationDate.value = today;
 });
 
 // ===== 状态管理 =====
@@ -1421,6 +1294,14 @@ function updateStatusDisplay() {
             surveyText: '客户已填',
             surveyClass: 'bg-blue-100 text-blue-800 border-blue-200'
         },
+        'rejected': {
+            class: 'bg-red-100 text-red-700 border border-red-200',
+            icon: 'fa-times-circle',
+            text: '已驳回',
+            btnDisabled: false,
+            surveyText: '驳回待修改',
+            surveyClass: 'bg-red-100 text-red-800 border-red-200'
+        },
         'ready_submit': {
             class: 'status-ready-submit',
             icon: 'fa-check-circle',
@@ -1428,14 +1309,6 @@ function updateStatusDisplay() {
             btnDisabled: false,
             surveyText: '已填写',
             surveyClass: 'bg-indigo-100 text-indigo-800 border-indigo-200'
-        },
-        'rejected_edit': {
-            class: 'status-rejected',
-            icon: 'fa-times-circle',
-            text: '已驳回',
-            btnDisabled: false,
-            surveyText: '驳回待修改',
-            surveyClass: 'bg-red-100 text-red-800 border-red-200'
         },
         'submitted': {
             class: 'status-submitted',
@@ -1461,23 +1334,23 @@ function updateStatusDisplay() {
     }
 
     surveyBadge.textContent = config.surveyText;
-    surveyBadge.className = `ml-2 px-2 py-0.5 text-xs rounded-full ${applicationStatus === 'submitted' ? 'bg-green-500 text-white' : applicationStatus === 'customer_filled' ? 'bg-blue-500 text-white' : applicationStatus === 'ready_submit' ? 'bg-indigo-500 text-white' : 'bg-red-500 text-white'}`;
+    surveyBadge.className = `ml-2 px-2 py-0.5 text-xs rounded-full ${applicationStatus === 'submitted' ? 'bg-green-500 text-white' : applicationStatus === 'customer_filled' ? 'bg-blue-500 text-white' : 'bg-red-500 text-white'}`;
 
     surveyStatusBadge.textContent = config.surveyText;
     surveyStatusBadge.className = `px-3 py-1 rounded-full text-sm font-medium border ${config.surveyClass}`;
 }
 
 function confirmSubmit() {
-    if(applicationStatus !== 'customer_filled' && applicationStatus !== 'ready_submit' && applicationStatus !== 'rejected_edit') {
+    if(applicationStatus !== 'customer_filled' && applicationStatus !== 'ready_submit' && applicationStatus !== 'rejected') {
         showNotification('请先完成获证方情况调查表', 'error');
         switchTab('survey');
         return;
     }
 
-    if(confirm('确认再次提交监督审核证书变更申请？提交后将重新进入评审流程。')) {
+    if(confirm('确认提交监督审核申请？提交后将转入方案策划管理模块。')) {
         applicationStatus = 'submitted';
         updateStatusDisplay();
-        showNotification('监督审核证书变更申请已再次提交', 'success');
+        showNotification('监督审核申请已确认提交，流转至方案策划管理', 'success');
     }
 }
 
@@ -1495,111 +1368,6 @@ function switchTab(tabName) {
         content.classList.add('hidden');
     });
     document.getElementById(`content-${tabName}`).classList.remove('hidden');
-}
-
-function setEditableValue(id, value) {
-    const field = document.getElementById(id);
-    if(!field) return;
-    field.value = value;
-    field.dispatchEvent(new Event('input', { bubbles: true }));
-    field.dispatchEvent(new Event('change', { bubbles: true }));
-}
-
-function addMockEvidence(id, files) {
-    evidenceFiles[id] = files.map(function(file) {
-        return { file: { name: file.name, size: file.size || 256000, type: file.type || 'application/octet-stream' }, url: '#' };
-    });
-    updateEvidenceUI(id);
-}
-
-function getFirstCertificateGroupId(itemId) {
-    const group = certificateChangeGroups[itemId] && certificateChangeGroups[itemId][0];
-    return group ? group.id : '';
-}
-
-function prefillCertificateItem(itemId, afterValue, reason, files) {
-    const checkbox = document.getElementById('change_' + itemId);
-    if(checkbox && !checkbox.checked) {
-        checkbox.checked = true;
-        toggleCertificateItem(itemId, true);
-    }
-    const groupId = getFirstCertificateGroupId(itemId);
-    setEditableValue('after_' + groupId, afterValue);
-    setEditableValue('desc_' + groupId, reason);
-    if(files && files.length) addMockEvidence(groupId, files);
-}
-
-function prefillChangeItem(itemId, reason, files) {
-    const checkbox = document.getElementById('change_' + itemId);
-    if(checkbox && !checkbox.checked) {
-        checkbox.checked = true;
-        toggleChangeDetail(itemId, true);
-    }
-    setEditableValue('desc_' + itemId, reason);
-    if(files && files.length) addMockEvidence(itemId, files);
-}
-
-function prefillRejectedSurvey() {
-    prefillCertificateItem(
-        'orgName',
-        '北京某某数字科技有限公司',
-        '企业已完成工商名称变更，统一社会信用代码不变，申请全部证书统一更新组织名称。驳回后补充名称变更核准材料编号及办理日期。',
-        [
-            { name: '营业执照副本.pdf', size: 420000, type: 'application/pdf' },
-            { name: '名称变更核准通知书.pdf', size: 360000, type: 'application/pdf' }
-        ]
-    );
-
-    prefillCertificateItem(
-        'certScope',
-        '软件开发、系统集成服务、信息技术运维服务及相关管理活动',
-        '新增驻场运维服务过程，已纳入管理体系文件、过程清单和岗位职责管理；本次根据驳回意见补充与营业执照经营范围保持一致的表述。',
-        [
-            { name: '过程清单.xlsx', size: 216000, type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
-            { name: '服务合同样本.pdf', size: 310000, type: 'application/pdf' }
-        ]
-    );
-
-    const standardCheckbox = document.getElementById('change_certStandard');
-    if(standardCheckbox && !standardCheckbox.checked) {
-        standardCheckbox.checked = true;
-        toggleCertificateItem('certStandard', true);
-    }
-    const standardGroupId = getFirstCertificateGroupId('certStandard');
-    if(standardGroupId) {
-        selectSingleGroupDomain('certStandard', standardGroupId, 'Q', true);
-        const refreshedGroupId = getFirstCertificateGroupId('certStandard');
-        setEditableValue('after_' + refreshedGroupId, 'GB/T 19001-2016 / ISO 9001:2015（按现行标准保持不变，证书内容随组织名称及范围同步换发）');
-        setEditableValue('desc_' + refreshedGroupId, 'QMS领域证书随组织名称和认证范围变更统一换发；标准本身不变。');
-    }
-
-    prefillChangeItem(
-        'topManager',
-        '最高管理者调整为李明，任命文件已明确其对管理体系运行的职责和权限。',
-        [{ name: '最高管理者任命书.pdf', size: 180000, type: 'application/pdf' }]
-    );
-    prefillChangeItem(
-        'contact',
-        '监督审核联系人变更为刘经理，联系电话 0512-66668888，邮箱 liu@example.com。',
-        [{ name: '联系人信息确认单.docx', size: 98000, type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' }]
-    );
-    prefillChangeItem(
-        'organizationCount',
-        '因新增信息技术运维服务团队，组织总人数由 204 人调整为 236 人。',
-        [{ name: '人员花名册.xlsx', size: 240000, type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }]
-    );
-    prefillChangeItem(
-        'systemCoveredCount',
-        '体系覆盖人数调整为 228 人，临时外包人员不计入覆盖人数。',
-        [{ name: '体系覆盖人数说明.pdf', size: 160000, type: 'application/pdf' }]
-    );
-
-    setEditableValue('issueType', 'auto');
-    const urgent = document.getElementById('isUrgent');
-    if(urgent) urgent.checked = false;
-    setEditableValue('customerRepresentative', '李明');
-    setEditableValue('declarationDate', '2026-04-02');
-    updateIssueInfoVisibility();
 }
 
 // ===== 获证方调查表功能 =====
@@ -1621,6 +1389,10 @@ function isDomainCertificateItem(itemId) {
     return itemId === 'certStandard';
 }
 
+function isBilingualCertificateItem(itemId) {
+    return bilingualCertificateItemIds.includes(itemId);
+}
+
 function getCertificateDomains() {
     const domainMap = {};
     allCertificates.forEach(function(cert) {
@@ -1639,10 +1411,53 @@ function getCertificateDomains() {
 function getDomainStandard(domain) {
     const standardMap = {
         Q: 'GB/T 19001-2016 / ISO 9001:2015',
-        E: 'GB/T 24001-2016 / ISO 14001:2015',
+        E: 'GB/T 24001-2015/ISO 14001:2015',
         S: 'GB/T 45001-2020 / ISO 45001:2018'
     };
     return standardMap[domain] || '按证书所属认证领域自动带入';
+}
+
+function getDomainStandardOptions() {
+    return [
+        {domain: 'Q', domainName: '质量管理体系', standard: 'GB/T 19001-2016 / ISO 9001:2015'},
+        {domain: 'Q', domainName: '质量管理体系', standard: 'GB/T 19001-2026 / ISO 9001:2025'},
+        {domain: 'Q', domainName: '质量管理体系', standard: 'GB/T 50430'},
+        {domain: 'Q', domainName: '质量管理体系', standard: 'IATF 16949'},
+        {domain: 'Q', domainName: '质量管理体系', standard: 'AS9100'},
+        {domain: 'Q', domainName: '质量管理体系', standard: 'IRIS / ISO 22163'},
+        {domain: 'Q', domainName: '质量管理体系', standard: 'TL 9000'},
+        {domain: 'E', domainName: '环境管理体系', standard: 'GB/T 24001-2015/ISO 14001:2015'},
+        {domain: 'E', domainName: '环境管理体系', standard: 'GB/T 24001-2026/ISO 14001:2026'}
+    ];
+}
+
+function renderBilingualAfterFields(group, item) {
+    const chinese = escapeHtml(group.afterZh || '');
+    const english = escapeHtml(group.afterEn || '');
+    return '<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">' +
+        '<div><label class="block text-sm font-medium text-slate-700 mb-2">拟变更为（中文） <span class="text-red-500">*</span></label>' +
+        '<textarea id="afterZh_' + group.id + '" maxlength="500" placeholder="请输入变更后的' + escapeHtml(item.label) + '（中文）" oninput="updateCertificateGroupField(\'' + item.id + '\', \'' + group.id + '\', \'afterZh\', this.value)">' + chinese + '</textarea></div>' +
+        '<div><label class="block text-sm font-medium text-slate-700 mb-2">拟变更为（英文）</label>' +
+        '<textarea id="afterEn_' + group.id + '" maxlength="500" placeholder="请输入变更后的' + escapeHtml(item.label) + '（英文，可不填）" oninput="updateCertificateGroupField(\'' + item.id + '\', \'' + group.id + '\', \'afterEn\', this.value)">' + english + '</textarea></div>' +
+        '</div>';
+}
+
+function renderStandardSelect(group, item) {
+    const selectedDomain = group.domainCodes && group.domainCodes[0];
+    const values = group.afterStandards || (group.afterStandard ? [group.afterStandard] : []);
+    const options = getDomainStandardOptions().filter(function(option) {
+        return selectedDomain && option.domain === selectedDomain;
+    }).map(function(option) {
+        return '<label class="standard-option">' +
+            '<input type="checkbox" value="' + escapeHtml(option.standard) + '" ' + (values.includes(option.standard) ? 'checked' : '') + ' onchange="syncStandardSelection(\'' + item.id + '\', \'' + group.id + '\')">' +
+            '<span>' + escapeHtml(option.standard) + '</span>' +
+            '</label>';
+    }).join('');
+    return '<input type="hidden" id="after_' + group.id + '" value="' + escapeHtml(values.join('；')) + '">' +
+        '<div class="standard-multi-select ' + (selectedDomain ? '' : 'is-disabled') + '" id="standardOptions_' + group.id + '">' +
+        (selectedDomain ? options : '<div class="text-sm text-slate-400 px-2 py-1">请先选择变更领域</div>') +
+        '</div>' +
+        '<div class="text-xs text-slate-500 mt-1">可多选。</div>';
 }
 
 function renderCertificateNo(record) {
@@ -1713,104 +1528,92 @@ function getCertificateCurrentText(item, cert) {
     return item.current;
 }
 
-function ensureMultiSiteCertificateData(certId) {
-    if(!multiSiteChangeData[certId]) {
-        multiSiteChangeData[certId] = {
+function ensureMultiSiteData() {
+    if(!multiSiteChangeData.global) {
+        multiSiteChangeData.global = {
             addEnabled: false,
             removeEnabled: false,
             addSites: [],
             removeSiteIds: [],
+            removeSiteDomains: {},
             reason: ''
         };
     }
-    return multiSiteChangeData[certId];
+    return multiSiteChangeData.global;
 }
 
-function getCertificateSites(certId) {
-    const siteIds = certificateSiteMap[certId] || defaultCertificateSites.map(function(site) { return site.id; });
-    return defaultCertificateSites.filter(function(site) {
-        return siteIds.includes(site.id);
-    }).map(function(site) {
-        return Object.assign({}, site, {id: certId + '_' + site.id, originalId: site.id});
+function getSiteDomainCodes(siteId) {
+    if(siteId === 'sh') {
+        return ['Q', 'E'];
+    }
+    if(siteId === 'gz') {
+        return ['Q'];
+    }
+    const codes = new Set();
+    Object.keys(certificateSiteMap).forEach(function(certId) {
+        if((certificateSiteMap[certId] || []).includes(siteId)) {
+            const cert = allCertificates.find(function(entry) { return entry.certId === certId; });
+            if(cert) codes.add(cert.domain);
+        }
+    });
+    return Array.from(codes);
+}
+
+function getMultiSiteDomains() {
+    return getCertificateDomains().filter(function(domain) {
+        return getDomainStandardOptions().some(function(option) { return option.domain === domain.domain; });
+    });
+}
+
+function getAllCurrentSites() {
+    return defaultCertificateSites.map(function(site) {
+        return Object.assign({}, site, {domainCodes: getSiteDomainCodes(site.id)});
     });
 }
 
 function renderMultiSiteCertificateChanges() {
     const container = document.getElementById('certForms_multiSite');
     if(!container) return;
-    const multiSiteCertificates = getMultiSiteCertificates();
-    multiSiteCertificates.forEach(function(cert) {
-        ensureMultiSiteCertificateData(cert.certId);
-    });
-    container.innerHTML = '<div class="text-xs text-slate-500 mb-3">子证不填写分支机构/常设多场所；每本主证先展示当前关联场所，如需调整请勾选“新增场所”或“减少场所”。</div>' +
-        (multiSiteCertificates.length ? multiSiteCertificates.map(renderMultiSiteCertificatePanel).join('') : '<div class="text-center text-xs text-slate-400 py-4 bg-slate-50 rounded-lg border border-dashed border-slate-200">当前仅有子证，无分支机构/常设多场所内容。</div>');
-}
-
-function getMultiSiteCertificates() {
-    return allCertificates.filter(function(cert) {
-        return !cert.isSubCertificate;
-    });
-}
-
-function renderMultiSiteCertificatePanel(cert) {
-    const data = ensureMultiSiteCertificateData(cert.certId);
-    const currentSites = getCertificateSites(cert.certId);
-    const addRows = data.addSites.length
-        ? data.addSites.map(function(site) { return renderAddedSiteRow(cert.certId, site); }).join('')
-        : '<div class="text-center text-xs text-slate-400 py-4 bg-slate-50 rounded-lg border border-dashed border-slate-200">暂无新增场所，请点击“添加场所”</div>';
-    const siteTooltip = renderCurrentSiteTooltip(currentSites);
-    const removeRows = currentSites.map(function(site) {
-        const isHeadquarters = site.originalId === 'hq';
-        const checked = data.removeSiteIds.includes(site.id);
-        return '<label class="remove-site-option ' + (isHeadquarters ? 'is-disabled' : '') + '">' +
-            '<input type="checkbox" class="mt-1" value="' + escapeHtml(site.id) + '" ' + (checked ? 'checked' : '') + (isHeadquarters ? ' disabled' : '') + ' onchange="syncRemoveSites(\'' + cert.certId + '\')">' +
-            '<div class="min-w-0">' +
-            '<div class="font-semibold text-slate-800">' + escapeHtml(site.name) + '</div>' +
-            '<div class="text-xs text-slate-500 mt-1">' + escapeHtml(site.address) + '</div>' +
-            '<div class="text-xs text-blue-700 mt-1">' + escapeHtml(site.scope) + '</div>' +
-            '<div class="text-xs text-slate-500 mt-1">人数：' + escapeHtml(String(site.people)) + '</div>' +
-            (isHeadquarters ? '<div class="text-xs text-red-500 mt-1">总部场所不可删除</div>' : '') +
-            '</div>' +
-            '</label>';
-    }).join('');
-
-    return '<div class="site-change-card" id="multiSiteCert_' + cert.certId + '">' +
+    const data = ensureMultiSiteData();
+    const addRows = renderAddSiteDomainGroups(data);
+    const currentSites = getAllCurrentSites();
+    const removeRows = currentSites.map(renderRemoveSiteOption).join('');
+    container.innerHTML = '<div class="site-change-card" id="multiSiteGlobal">' +
         '<div class="change-group-header">' +
-        '<div>' +
-        '<div class="flex flex-wrap items-center gap-2">' +
-        '<span class="text-sm font-semibold text-slate-900">' + renderCertificateNo(cert) + '</span>' +
-        siteTooltip +
-        '</div>' +
-        '<div class="text-xs text-slate-500 mt-1">' + escapeHtml(cert.domainName) + '</div>' +
-        '</div>' +
+        '<div><div class="text-sm font-semibold text-slate-900">场所增删信息</div></div>' +
         '<div class="flex flex-wrap gap-2 text-xs">' +
         '<span class="px-2 py-1 rounded-full bg-green-50 text-green-700 border border-green-200">新增场所 ' + data.addSites.length + '</span>' +
-        '<span class="px-2 py-1 rounded-full bg-red-50 text-red-700 border border-red-200">减少场所 ' + data.removeSiteIds.length + '</span>' +
+        '<span class="px-2 py-1 rounded-full bg-red-50 text-red-700 border border-red-200">删除场所 ' + data.removeSiteIds.length + '</span>' +
         '</div>' +
         '</div>' +
         '<div class="site-change-section">' +
         '<div class="flex flex-wrap gap-4 text-sm">' +
-        '<label class="inline-flex items-center gap-2 cursor-pointer"><input type="checkbox" ' + (data.addEnabled ? 'checked' : '') + ' onchange="toggleMultiSiteAction(\'' + cert.certId + '\', \'addEnabled\', this.checked)">新增场所</label>' +
-        '<label class="inline-flex items-center gap-2 cursor-pointer"><input type="checkbox" ' + (data.removeEnabled ? 'checked' : '') + ' onchange="toggleMultiSiteAction(\'' + cert.certId + '\', \'removeEnabled\', this.checked)">减少场所</label>' +
+        '<label class="inline-flex items-center gap-2 cursor-pointer"><input type="checkbox" ' + (data.addEnabled ? 'checked' : '') + ' onchange="toggleMultiSiteAction(\'addEnabled\', this.checked)">新增场所</label>' +
+        '<label class="inline-flex items-center gap-2 cursor-pointer"><input type="checkbox" ' + (data.removeEnabled ? 'checked' : '') + ' onchange="toggleMultiSiteAction(\'removeEnabled\', this.checked)">删除场所</label>' +
         '</div>' +
         '</div>' +
         (data.addEnabled ? '<div class="site-change-section">' +
         '<div class="flex items-center justify-between gap-3 mb-3">' +
         '<div class="font-semibold text-slate-800 text-sm"><i class="fas fa-plus-circle text-green-500 mr-2"></i>新增场所信息</div>' +
-        '<button type="button" class="px-3 py-1.5 bg-white border border-blue-500 text-blue-600 rounded-lg text-xs hover:bg-blue-50 transition inline-flex items-center gap-2" onclick="addMultiSiteRow(\'' + cert.certId + '\')"><i class="fas fa-plus"></i>添加场所</button>' +
         '</div>' +
-        '<div id="addSites_' + cert.certId + '">' + addRows + '</div>' +
+        '<div id="addSites_multiSite">' + addRows + '</div>' +
         '</div>' : '') +
         (data.removeEnabled ? '<div class="site-change-section">' +
-        '<div class="font-semibold text-slate-800 text-sm mb-3"><i class="fas fa-minus-circle text-red-500 mr-2"></i>选择要减少的场所（可多选）</div>' +
-        '<div class="remove-site-grid" id="removeSites_' + cert.certId + '">' + removeRows + '</div>' +
-        '<div class="mt-3 flex gap-4 text-xs"><button type="button" class="text-blue-600 hover:text-blue-700" onclick="setAllRemoveSites(\'' + cert.certId + '\', true)">全选</button><button type="button" class="text-blue-600 hover:text-blue-700" onclick="setAllRemoveSites(\'' + cert.certId + '\', false)">取消全选</button></div>' +
+        '<div class="font-semibold text-slate-800 text-sm mb-3"><i class="fas fa-minus-circle text-red-500 mr-2"></i>选择要删除的场所（可多选）</div>' +
+        '<div class="remove-site-grid" id="removeSites_multiSite">' + removeRows + '</div>' +
+        '<div class="mt-3 flex gap-4 text-xs"><button type="button" class="text-blue-600 hover:text-blue-700" onclick="setAllRemoveSites(true)">全选</button><button type="button" class="text-blue-600 hover:text-blue-700" onclick="setAllRemoveSites(false)">取消全选</button></div>' +
         '</div>' : '') +
         ((data.addEnabled || data.removeEnabled) ? '<div class="site-change-section">' +
-        '<label class="block text-sm font-medium text-slate-700 mb-2">变更情况和原因描述</label>' +
-        '<textarea id="desc_multiSite_' + cert.certId + '" maxlength="500" placeholder="请描述本证书场所新增或减少的情况和原因" oninput="syncMultiSiteReason(\'' + cert.certId + '\')">' + escapeHtml(data.reason || '') + '</textarea>' +
+        '<label class="block text-sm font-medium text-slate-700 mb-2">变更情况和原因描述 <span class="text-red-500">*</span></label>' +
+        '<textarea id="desc_multiSite" maxlength="500" placeholder="请描述场所新增或删除的情况和原因" oninput="syncMultiSiteReason()">' + escapeHtml(data.reason || '') + '</textarea>' +
         '</div>' : '') +
+        '<div class="site-change-section">' +
+        '<div class="font-semibold text-slate-800 text-sm mb-3"><i class="fas fa-paperclip text-blue-500 mr-2"></i>相关证据附件</div>' +
+        renderEvidenceCell('multiSite') +
+        '</div>' +
         '</div>';
+    enableEvidenceUpload('multiSite');
+    updateEvidenceUI('multiSite');
 }
 
 function renderCurrentSiteTooltip(sites) {
@@ -1830,43 +1633,95 @@ function renderCurrentSiteTooltip(sites) {
         '</span>';
 }
 
-function renderAddedSiteRow(certId, site) {
-    return '<div class="site-row" data-site-row="' + site.id + '">' +
-        '<div><label class="block text-xs font-medium text-slate-600 mb-1">场所名称</label><input type="text" value="' + escapeHtml(site.name || '') + '" placeholder="请输入场所名称" oninput="updateMultiSiteField(\'' + certId + '\', \'' + site.id + '\', \'name\', this.value)"></div>' +
-        '<div><label class="block text-xs font-medium text-slate-600 mb-1">地址</label><input type="text" value="' + escapeHtml(site.address || '') + '" placeholder="请输入地址" oninput="updateMultiSiteField(\'' + certId + '\', \'' + site.id + '\', \'address\', this.value)"></div>' +
-        '<div><label class="block text-xs font-medium text-slate-600 mb-1">产品/服务范围</label><input type="text" value="' + escapeHtml(site.scope || '') + '" placeholder="请输入产品/服务范围" oninput="updateMultiSiteField(\'' + certId + '\', \'' + site.id + '\', \'scope\', this.value)"></div>' +
-        '<div><label class="block text-xs font-medium text-slate-600 mb-1">人数</label><input type="number" min="0" value="' + escapeHtml(String(site.people || 0)) + '" oninput="updateMultiSiteField(\'' + certId + '\', \'' + site.id + '\', \'people\', this.value)"></div>' +
-        '<div><label class="block text-xs font-medium text-slate-600 mb-1">是否发子证</label><select onchange="updateMultiSiteField(\'' + certId + '\', \'' + site.id + '\', \'isSubCertificate\', this.value)"><option value="no" ' + ((site.isSubCertificate || 'no') === 'no' ? 'selected' : '') + '>否</option><option value="yes" ' + (site.isSubCertificate === 'yes' ? 'selected' : '') + '>是</option></select></div>' +
-        '<button type="button" class="icon-action-btn text-red-600 hover:text-red-700 hover:border-red-300 hover:bg-red-50" title="删除" onclick="removeMultiSiteRow(\'' + certId + '\', \'' + site.id + '\')"><i class="fas fa-trash-alt"></i></button>' +
+function renderSiteDomainSelector(site, fieldPrefix) {
+    const selected = site.domainCodes || [];
+    return '<div><label class="block text-xs font-medium text-slate-600 mb-1">适用领域 <span class="text-red-500">*</span></label>' +
+        '<div class="certificate-selector mt-0">' +
+        getMultiSiteDomains().map(function(domain) {
+            const checked = selected.includes(domain.domain);
+            return '<label class="certificate-option"><input type="checkbox" value="' + domain.domain + '" ' + (checked ? 'checked' : '') + ' onchange="updateMultiSiteDomains(\'' + site.id + '\', \'' + fieldPrefix + '\')">' + escapeHtml(domain.domainName) + '</label>';
+        }).join('') +
+        '</div></div>';
+}
+
+function renderAddSiteDomainGroups(data) {
+    return getMultiSiteDomains().map(function(domain) {
+        const rows = (data.addSites || []).filter(function(site) {
+            return (site.domainCodes || []).includes(domain.domain);
+        });
+        return '<div class="site-change-section mt-0 first:border-t-0 first:pt-0">' +
+            '<div class="flex items-center justify-between gap-3 mb-3">' +
+            '<div class="text-sm font-semibold text-slate-800">' + escapeHtml(domain.domainName) + '</div>' +
+            '<button type="button" class="px-3 py-1.5 bg-white border border-blue-500 text-blue-600 rounded-lg text-xs hover:bg-blue-50 transition inline-flex items-center gap-2" onclick="addMultiSiteRow(\'' + domain.domain + '\')"><i class="fas fa-plus"></i>添加</button>' +
+            '</div>' +
+            (rows.length ? rows.map(renderAddedSiteRow).join('') : '<div class="text-center text-xs text-slate-400 py-4 bg-slate-50 rounded-lg border border-dashed border-slate-200">暂无' + escapeHtml(domain.domainName) + '新增场所</div>') +
+            '</div>';
+    }).join('');
+}
+
+function renderRemoveSiteOption(site) {
+    const data = ensureMultiSiteData();
+    const isHeadquarters = site.id === 'hq';
+    const checked = data.removeSiteIds.includes(site.id);
+    const selectedDomains = data.removeSiteDomains[site.id] || [];
+    const domainNames = getMultiSiteDomains().filter(function(domain) {
+        return (site.domainCodes || []).includes(domain.domain);
+    }).map(function(domain) { return domain.domainName; }).join('、') || '暂无领域';
+    return '<div class="remove-site-option ' + (isHeadquarters ? 'is-disabled' : '') + '">' +
+        '<input type="checkbox" class="mt-1" value="' + escapeHtml(site.id) + '" ' + (checked ? 'checked' : '') + (isHeadquarters ? ' disabled' : '') + ' onchange="syncRemoveSites()">' +
+        '<div class="min-w-0 flex-1">' +
+        '<div class="font-semibold text-slate-800">' + escapeHtml(site.name) + '</div>' +
+        '<div class="text-xs text-slate-500 mt-1">' + escapeHtml(site.address) + '</div>' +
+        '<div class="text-xs text-blue-700 mt-1">' + escapeHtml(site.scope) + '</div>' +
+        '<div class="text-xs text-slate-500 mt-1">现有领域：' + escapeHtml(domainNames) + '；人数：' + escapeHtml(String(site.people)) + '</div>' +
+        (checked ? '<div class="mt-3"><div class="text-xs font-medium text-slate-600 mb-1">删除领域 <span class="text-red-500">*</span></div><div class="certificate-selector mt-0">' + getMultiSiteDomains().filter(function(domain) { return (site.domainCodes || []).includes(domain.domain); }).map(function(domain) {
+            const domainChecked = selectedDomains.includes(domain.domain);
+            return '<span class="certificate-option"><input type="checkbox" value="' + domain.domain + '" ' + (domainChecked ? 'checked' : '') + ' onchange="updateMultiSiteDomains(\'' + site.id + '\', \'remove\')">' + escapeHtml(domain.domainName) + '</span>';
+        }).join('') + '</div></div>' : '') +
+        (isHeadquarters ? '<div class="text-xs text-red-500 mt-1">总部场所不可删除</div>' : '') +
+        '</div>' +
         '</div>';
 }
 
-function addMultiSiteRow(certId) {
-    const data = ensureMultiSiteCertificateData(certId);
+function renderAddedSiteRow(site) {
+    return '<div class="site-row" data-site-row="' + site.id + '">' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">场所名称</label><input type="text" value="' + escapeHtml(site.name || '') + '" placeholder="请输入场所名称" oninput="updateMultiSiteField(\'' + site.id + '\', \'name\', this.value)"></div>' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">地址</label><input type="text" value="' + escapeHtml(site.address || '') + '" placeholder="请输入地址" oninput="updateMultiSiteField(\'' + site.id + '\', \'address\', this.value)"></div>' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">产品/服务范围</label><input type="text" value="' + escapeHtml(site.scope || '') + '" placeholder="请输入产品/服务范围" oninput="updateMultiSiteField(\'' + site.id + '\', \'scope\', this.value)"></div>' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">人数</label><input type="number" min="0" value="' + escapeHtml(String(site.people || 0)) + '" oninput="updateMultiSiteField(\'' + site.id + '\', \'people\', this.value)"></div>' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">是否发子证</label><select onchange="updateMultiSiteField(\'' + site.id + '\', \'isSubCertificate\', this.value)"><option value="no" ' + ((site.isSubCertificate || 'no') === 'no' ? 'selected' : '') + '>否</option><option value="yes" ' + (site.isSubCertificate === 'yes' ? 'selected' : '') + '>是</option></select></div>' +
+        '<button type="button" class="icon-action-btn text-red-600 hover:text-red-700 hover:border-red-300 hover:bg-red-50" title="删除" onclick="removeMultiSiteRow(\'' + site.id + '\')"><i class="fas fa-trash-alt"></i></button>' +
+        '</div>';
+}
+
+function addMultiSiteRow(domainCode) {
+    const data = ensureMultiSiteData();
     data.addEnabled = true;
     data.addSites.push({
         id: 'site_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
         name: '',
         address: '',
         scope: '',
+        domainCodes: domainCode ? [domainCode] : [],
         people: 0,
         isSubCertificate: 'no'
     });
     renderMultiSiteCertificateChanges();
 }
 
-function toggleMultiSiteAction(certId, field, checked) {
-    const data = ensureMultiSiteCertificateData(certId);
+function toggleMultiSiteAction(field, checked) {
+    const data = ensureMultiSiteData();
     data[field] = checked;
     if(field === 'addEnabled' && !checked) {
         data.addSites = [];
     }
     if(field === 'removeEnabled' && !checked) {
         data.removeSiteIds = [];
+        data.removeSiteDomains = {};
     }
     if(field === 'removeEnabled' && checked) {
         data.removeSiteIds = (data.removeSiteIds || []).filter(function(siteId) {
-            return !siteId.endsWith('_hq');
+            return siteId !== 'hq';
         });
     }
     if(!data.addEnabled && !data.removeEnabled) {
@@ -1875,93 +1730,120 @@ function toggleMultiSiteAction(certId, field, checked) {
     renderMultiSiteCertificateChanges();
 }
 
-function removeMultiSiteRow(certId, siteId) {
-    const data = ensureMultiSiteCertificateData(certId);
+function removeMultiSiteRow(siteId) {
+    const data = ensureMultiSiteData();
     data.addSites = data.addSites.filter(function(site) {
         return site.id !== siteId;
     });
     renderMultiSiteCertificateChanges();
 }
 
-function updateMultiSiteField(certId, siteId, field, value) {
-    const data = ensureMultiSiteCertificateData(certId);
+function updateMultiSiteField(siteId, field, value) {
+    const data = ensureMultiSiteData();
     const site = data.addSites.find(function(entry) { return entry.id === siteId; });
     if(!site) return;
     site[field] = field === 'people' ? Number(value || 0) : value;
 }
 
-function syncRemoveSites(certId) {
-    const data = ensureMultiSiteCertificateData(certId);
-    data.removeEnabled = true;
-    data.removeSiteIds = Array.from(document.querySelectorAll('#removeSites_' + certId + ' input[type="checkbox"]:checked:not(:disabled)')).map(function(input) {
+function updateMultiSiteDomains(siteId, type) {
+    const selector = type === 'remove' ? '.remove-site-option input[value="' + siteId + '"]' : '[data-site-row="' + siteId + '"]';
+    const container = type === 'remove'
+        ? Array.from(document.querySelectorAll('.remove-site-option')).find(function(option) {
+            const input = option.querySelector('input[type="checkbox"][value="' + siteId + '"]');
+            return !!input;
+        })
+        : document.querySelector(selector);
+    if(!container) return;
+    const domains = Array.from(container.querySelectorAll('.certificate-selector input[type="checkbox"]:checked')).map(function(input) {
         return input.value;
+    });
+    const data = ensureMultiSiteData();
+    if(type === 'remove') {
+        data.removeSiteDomains[siteId] = domains;
+        return;
+    }
+    const site = data.addSites.find(function(entry) { return entry.id === siteId; });
+    if(site) site.domainCodes = domains;
+}
+
+function syncRemoveSites() {
+    const data = ensureMultiSiteData();
+    data.removeEnabled = true;
+    data.removeSiteIds = Array.from(document.querySelectorAll('#removeSites_multiSite > .remove-site-option > input[type="checkbox"]:checked:not(:disabled)')).map(function(input) {
+        return input.value;
+    });
+    getAllCurrentSites().forEach(function(site) {
+        if(data.removeSiteIds.includes(site.id) && !data.removeSiteDomains[site.id]) {
+            data.removeSiteDomains[site.id] = [];
+        }
+        if(!data.removeSiteIds.includes(site.id)) {
+            delete data.removeSiteDomains[site.id];
+        }
     });
     renderMultiSiteCertificateChanges();
 }
 
-function setAllRemoveSites(certId, checked) {
-    const data = ensureMultiSiteCertificateData(certId);
+function setAllRemoveSites(checked) {
+    const data = ensureMultiSiteData();
     data.removeEnabled = true;
-    data.removeSiteIds = checked ? getCertificateSites(certId).filter(function(site) {
-        return site.originalId !== 'hq';
+    data.removeSiteIds = checked ? getAllCurrentSites().filter(function(site) {
+        return site.id !== 'hq';
     }).map(function(site) { return site.id; }) : [];
+    data.removeSiteDomains = {};
+    if(checked) {
+        getAllCurrentSites().forEach(function(site) {
+            if(site.id !== 'hq') data.removeSiteDomains[site.id] = [];
+        });
+    }
     renderMultiSiteCertificateChanges();
 }
 
-function syncMultiSiteReason(certId) {
-    const data = ensureMultiSiteCertificateData(certId);
-    const textarea = document.getElementById('desc_multiSite_' + certId);
+function syncMultiSiteReason() {
+    const data = ensureMultiSiteData();
+    const textarea = document.getElementById('desc_multiSite');
     data.reason = textarea ? textarea.value : '';
 }
 
 function hasMultiSiteChanges() {
-    return getMultiSiteCertificates().some(function(cert) {
-        const data = multiSiteChangeData[cert.certId];
-        return data && (data.addEnabled || data.removeEnabled);
-    });
+    const data = ensureMultiSiteData();
+    return data.addEnabled || data.removeEnabled;
 }
 
 function validateMultiSiteChanges() {
     const checked = document.getElementById('change_multiSite');
     if(!checked || !checked.checked) return true;
     if(!hasMultiSiteChanges()) {
-        showNotification('分支机构/常设多场所需至少新增或减少一个场所', 'error');
+        showNotification('分支机构/常设多场所需至少新增或删除一个场所', 'error');
         return false;
     }
-    const invalidAddSite = getMultiSiteCertificates().some(function(cert) {
-        const data = multiSiteChangeData[cert.certId];
-        if(!data || !data.addEnabled) return false;
-        return (data.addSites || []).some(function(site) {
-            return !String(site.name || '').trim() || !String(site.address || '').trim() || !String(site.scope || '').trim();
-        });
+    const data = ensureMultiSiteData();
+    const invalidAddSite = data.addEnabled && (data.addSites || []).some(function(site) {
+        return !String(site.name || '').trim() || !String(site.address || '').trim() || !String(site.scope || '').trim() || !(site.domainCodes || []).length;
     });
     if(invalidAddSite) {
-        showNotification('新增场所需填写场所名称、地址和产品/服务范围', 'error');
+        showNotification('新增场所需填写场所名称、地址、产品/服务范围并选择领域', 'error');
         return false;
     }
-    const missingReason = getMultiSiteCertificates().some(function(cert) {
-        const data = multiSiteChangeData[cert.certId];
-        if(!data || (!data.addEnabled && !data.removeEnabled)) return false;
-        return !String(data.reason || '').trim();
-    });
+    const missingReason = !String(data.reason || '').trim();
     if(missingReason) {
-        showNotification('有场所增减的证书需填写变更情况和原因描述', 'error');
+        showNotification('有场所增删时需填写变更情况和原因描述', 'error');
         return false;
     }
-    const missingAddSite = getMultiSiteCertificates().some(function(cert) {
-        const data = multiSiteChangeData[cert.certId];
-        return data && data.addEnabled && (!data.addSites || data.addSites.length === 0);
-    });
+    const missingAddSite = data.addEnabled && (!data.addSites || data.addSites.length === 0);
     if(missingAddSite) {
-        showNotification('已选择新增场所的证书需至少添加一条场所信息', 'error');
+        showNotification('已选择新增场所时需至少添加一条场所信息', 'error');
         return false;
     }
-    const missingRemoveSite = getMultiSiteCertificates().some(function(cert) {
-        const data = multiSiteChangeData[cert.certId];
-        return data && data.removeEnabled && (!data.removeSiteIds || data.removeSiteIds.length === 0);
-    });
+    const missingRemoveSite = data.removeEnabled && (!data.removeSiteIds || data.removeSiteIds.length === 0);
     if(missingRemoveSite) {
-        showNotification('已选择减少场所的证书需至少勾选一个现有关联场所', 'error');
+        showNotification('已选择删除场所时需至少勾选一个现有场所', 'error');
+        return false;
+    }
+    const missingRemoveDomain = data.removeEnabled && (data.removeSiteIds || []).some(function(siteId) {
+        return !(data.removeSiteDomains[siteId] || []).length;
+    });
+    if(missingRemoveDomain) {
+        showNotification('删除场所需选择对应领域', 'error');
         return false;
     }
     return true;
@@ -2061,14 +1943,17 @@ function renderCertificateGroups(itemId) {
 }
 
 function renderUnifiedCertificateChangeGroup(item, group) {
+    const afterContent = isBilingualCertificateItem(item.id)
+        ? renderBilingualAfterFields(group, item)
+        : '<div><label class="block text-sm font-medium text-slate-700 mb-2">拟变更为 <span class="text-red-500">*</span></label>' +
+          '<textarea id="after_' + group.id + '" maxlength="500" placeholder="请输入统一变更后的' + escapeHtml(item.label) + '"></textarea></div>';
     return '<div class="certificate-change-panel" id="row_' + group.id + '">' +
         '<div class="change-group-header">' +
         '<div class="text-sm font-semibold text-slate-800">统一变更内容</div>' +
         '<div class="text-xs text-slate-500">适用于当前全部证书</div>' +
         '</div>' +
         '<div class="grid grid-cols-1 xl:grid-cols-2 gap-4">' +
-        '<div><label class="block text-sm font-medium text-slate-700 mb-2">拟变更为 <span class="text-red-500">*</span></label>' +
-        '<textarea id="after_' + group.id + '" maxlength="500" placeholder="请输入统一变更后的' + escapeHtml(item.label) + '"></textarea></div>' +
+        '<div>' + afterContent + '</div>' +
         '<div><label class="block text-sm font-medium text-slate-700 mb-2">变更情况和原因描述 <span class="text-red-500">*</span></label>' +
         '<textarea id="desc_' + group.id + '" maxlength="500" placeholder="请描述本项统一变更的情况和原因"></textarea></div>' +
         '</div>' +
@@ -2097,7 +1982,7 @@ function renderDomainCertificateChangeGroup(item, group, index) {
         '</div>' +
         '<div class="grid grid-cols-1 xl:grid-cols-3 gap-4 mt-4">' +
         '<div><label class="block text-sm font-medium text-slate-700 mb-2">拟变更为 <span class="text-red-500">*</span></label>' +
-        '<textarea id="after_' + group.id + '" maxlength="500" placeholder="请输入所选领域统一变更后的认证标准或技术规范"></textarea></div>' +
+        renderStandardSelect(group, item) + '</div>' +
         '<div class="xl:col-span-2"><label class="block text-sm font-medium text-slate-700 mb-2">变更情况和原因描述 <span class="text-red-500">*</span></label>' +
         '<textarea id="desc_' + group.id + '" maxlength="500" placeholder="请描述所选领域认证标准或技术规范变更的情况和原因"></textarea></div>' +
         '</div>' +
@@ -2106,6 +1991,12 @@ function renderDomainCertificateChangeGroup(item, group, index) {
 }
 
 function renderCertificateChangeGroup(item, group, index) {
+    const afterContent = isBilingualCertificateItem(item.id)
+        ? renderBilingualAfterFields(group, item)
+        : '<div><label class="block text-sm font-medium text-slate-700 mb-2">拟变更为 <span class="text-red-500">*</span></label>' +
+          '<textarea id="after_' + group.id + '" maxlength="500" placeholder="请输入本组证书变更后的内容"></textarea></div>';
+    const fieldGridClass = isBilingualCertificateItem(item.id) ? 'grid grid-cols-1 xl:grid-cols-2 gap-4 mt-4' : 'grid grid-cols-1 xl:grid-cols-3 gap-4 mt-4';
+    const descClass = isBilingualCertificateItem(item.id) ? '' : 'xl:col-span-2';
     const visibleCerts = allCertificates;
     const selectableCerts = visibleCerts.filter(function(cert) {
         return !isCertificateSelectedInOtherGroup(item.id, group.id, cert.certId);
@@ -2131,14 +2022,31 @@ function renderCertificateChangeGroup(item, group, index) {
                 '</label>';
         }).join('') +
         '</div>' +
-        '<div class="grid grid-cols-1 xl:grid-cols-3 gap-4 mt-4">' +
-        '<div><label class="block text-sm font-medium text-slate-700 mb-2">拟变更为 <span class="text-red-500">*</span></label>' +
-        '<textarea id="after_' + group.id + '" maxlength="500" placeholder="请输入本组证书变更后的内容"></textarea></div>' +
-        '<div class="xl:col-span-2"><label class="block text-sm font-medium text-slate-700 mb-2">变更情况和原因描述 <span class="text-red-500">*</span></label>' +
+        '<div class="' + fieldGridClass + '">' +
+        '<div>' + afterContent + '</div>' +
+        '<div class="' + descClass + '"><label class="block text-sm font-medium text-slate-700 mb-2">变更情况和原因描述 <span class="text-red-500">*</span></label>' +
         '<textarea id="desc_' + group.id + '" maxlength="500" placeholder="请描述本组证书相同的变更情况和原因"></textarea></div>' +
         '</div>' +
         '<div class="mt-4">' + renderEvidenceCell(group.id) + '</div>' +
         '</div>';
+}
+
+function updateCertificateGroupField(itemId, groupId, field, value) {
+    const group = (certificateChangeGroups[itemId] || []).find(function(entry) { return entry.id === groupId; });
+    if(!group) return;
+    group[field] = value;
+}
+
+function syncStandardSelection(itemId, groupId) {
+    const group = (certificateChangeGroups[itemId] || []).find(function(entry) { return entry.id === groupId; });
+    if(!group) return;
+    const container = document.getElementById('standardOptions_' + groupId);
+    group.afterStandards = Array.from((container || document).querySelectorAll('input[type="checkbox"]:checked')).map(function(input) {
+        return input.value;
+    }).filter(Boolean);
+    group.afterStandard = group.afterStandards.join('；');
+    const hidden = document.getElementById('after_' + groupId);
+    if(hidden) hidden.value = group.afterStandard;
 }
 
 function addCertificateChangeGroup(itemId) {
@@ -2171,6 +2079,8 @@ function selectSingleGroupDomain(itemId, groupId, domainCode, checked) {
     }).map(function(cert) {
         return cert.certId;
     }) : [];
+    group.afterStandard = '';
+    group.afterStandards = [];
     renderCertificateGroups(itemId);
 }
 
@@ -2186,6 +2096,8 @@ function syncGroupDomains(itemId, groupId) {
     }).map(function(cert) {
         return cert.certId;
     });
+    group.afterStandard = '';
+    group.afterStandards = [];
     renderCertificateGroups(itemId);
 }
 
@@ -2388,9 +2300,14 @@ function saveSurvey() {
 
     const incomplete = changedIds.find(function(id) {
         const desc = (document.getElementById('desc_' + id) || {}).value || '';
-        const after = (document.getElementById('after_' + id) || {}).value || '';
-        const isCertificateItem = !!document.getElementById('after_' + id);
-        return !desc.trim() || (isCertificateItem && !after.trim());
+        const afterField = document.getElementById('after_' + id);
+        const after = afterField && afterField.multiple
+            ? Array.from(afterField.selectedOptions || []).map(function(option) { return option.value; }).filter(Boolean).join('；')
+            : ((afterField || {}).value || '');
+        const afterZh = (document.getElementById('afterZh_' + id) || {}).value || '';
+        const hasCertificateAfter = !!afterField || !!document.getElementById('afterZh_' + id);
+        const hasAfterValue = document.getElementById('afterZh_' + id) ? afterZh.trim() : after.trim();
+        return !desc.trim() || (hasCertificateAfter && !hasAfterValue);
     });
 
     if(incomplete) {
@@ -2629,6 +2546,96 @@ function showNotification(message, type = 'success') {
         toast.classList.remove('show');
     }, 3000);
 }
+
+function applyRejectedSurveyPrefill() {
+    function checkItem(itemId) {
+        const checkbox = document.getElementById('change_' + itemId);
+        if(checkbox && !checkbox.checked) {
+            checkbox.checked = true;
+            toggleCertificateItem(itemId, true);
+        }
+    }
+    function fill(id, value) {
+        const el = document.getElementById(id);
+        if(el) {
+            el.value = value;
+            el.dispatchEvent(new Event('input', {bubbles: true}));
+            el.dispatchEvent(new Event('change', {bubbles: true}));
+        }
+    }
+    function mockFiles(id, files) {
+        evidenceFiles[id] = files.map(function(file) {
+            return {file: file, uploadedAt: new Date().toISOString()};
+        });
+        updateEvidenceUI(id);
+    }
+
+    applicationStatus = 'rejected';
+    checkItem('orgName');
+    checkItem('certScope');
+    checkItem('certStandard');
+    checkItem('multiSite');
+
+    const orgGroup = certificateChangeGroups.orgName && certificateChangeGroups.orgName[0];
+    if(orgGroup) {
+        fill('after_' + orgGroup.id, '北京某某数字科技有限公司');
+        fill('afterEn_' + orgGroup.id, 'Beijing Moumou Digital Technology Co., Ltd.');
+        fill('desc_' + orgGroup.id, '企业已完成工商名称变更，统一社会信用代码不变，本次补充名称变更核准材料编号及办理日期后重新提交。');
+        mockFiles(orgGroup.id, [
+            {name: '营业执照副本.pdf', size: 420000, type: 'application/pdf'},
+            {name: '名称变更核准通知书.pdf', size: 360000, type: 'application/pdf'}
+        ]);
+    }
+
+    const scopeGroup = certificateChangeGroups.certScope && certificateChangeGroups.certScope[0];
+    if(scopeGroup) {
+        fill('after_' + scopeGroup.id, '软件开发、系统集成服务、信息技术运维服务及相关管理活动');
+        fill('afterEn_' + scopeGroup.id, 'Software development, system integration services, IT operation and maintenance services and related management activities');
+        fill('desc_' + scopeGroup.id, '根据驳回意见补充认证范围与营业执照经营范围的对应说明，新增驻场运维服务过程已纳入管理体系文件和岗位职责管理。');
+        mockFiles(scopeGroup.id, [
+            {name: '过程清单.xlsx', size: 216000, type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'},
+            {name: '服务合同样本.pdf', size: 310000, type: 'application/pdf'}
+        ]);
+    }
+
+    const standardGroup = certificateChangeGroups.certStandard && certificateChangeGroups.certStandard[0];
+    if(standardGroup) {
+        standardGroup.domainCodes = ['Q'];
+        renderCertificateGroups('certStandard');
+        fill('desc_' + standardGroup.id, 'QMS领域证书随客户名称和认证范围变更同步换发，标准本身不变。');
+        mockFiles(standardGroup.id, [{name: '标准适用性说明.pdf', size: 168000, type: 'application/pdf'}]);
+    }
+
+    const multiData = ensureMultiSiteData();
+    multiData.addEnabled = true;
+    multiData.removeEnabled = true;
+    multiData.addSites = [{
+        id: 'reject_site_suzhou',
+        name: '苏州项目实施中心',
+        address: '苏州市工业园区示例路66号',
+        scope: '项目实施服务',
+        domainCodes: ['Q'],
+        people: 28,
+        isSubCertificate: 'yes'
+    }];
+    multiData.removeSiteIds = ['gz'];
+    multiData.removeSiteDomains = {gz: ['Q']};
+    multiData.reason = '项目交付重心迁移，广州研发中心不再纳入认证范围，新增苏州项目实施中心并补充最新认证场所清单。';
+    renderMultiSiteCertificateChanges();
+    mockFiles('multiSite', [{name: '认证场所清单.xlsx', size: 245000, type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}]);
+
+    const issueType = document.getElementById('issueType');
+    if(issueType) issueType.value = 'auto';
+    const representative = document.getElementById('customerRepresentative');
+    if(representative) representative.value = '刘经理';
+    const declarationDate = document.getElementById('declarationDate');
+    if(declarationDate) declarationDate.value = '2026-05-28';
+    updateStatusDisplay();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(applyRejectedSurveyPrefill, 0);
+});
 </script>
 
 </body>
