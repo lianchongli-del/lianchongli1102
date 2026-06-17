@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -144,8 +145,6 @@
 
         .compare-content.before-text {
             color: #64748b;
-            text-decoration: line-through;
-            text-decoration-color: #cbd5e1;
         }
 
         .compare-content.after-text {
@@ -419,7 +418,7 @@
                                 <tr>
                                     <td class="text-center">1</td>
                                     <td class="font-mono">00123E34569R0S/37000</td>
-                                    <td>GB/T 24001-2016 / ISO 14001:2015</td>
+                                    <td>GB/T 24001-2015/ISO 14001:2015</td>
                                     <td>2020年4月18日</td>
                                     <td>2026年4月17日</td>
                                     <td>软件研发、办公运营及相关环境管理活动</td>
@@ -427,7 +426,7 @@
                                 <tr>
                                     <td class="text-center">2</td>
                                     <td class="font-mono">00123E34570R0S/37000</td>
-                                    <td>GB/T 24001-2016 / ISO 14001:2015</td>
+                                    <td>GB/T 24001-2015/ISO 14001:2015</td>
                                     <td>2021年6月10日</td>
                                     <td>2027年6月9日</td>
                                     <td>系统集成项目实施现场及相关环境管理活动</td>
@@ -505,7 +504,7 @@
                                             <td class="px-5 py-4 font-mono text-slate-900">00123E34569R0S/37000</td>
                                             <td class="px-5 py-4">中国质量认证中心</td>
                                             <td class="px-5 py-4">环境管理体系</td>
-                                            <td class="px-5 py-4">GB/T 24001-2016 / ISO 14001:2015</td>
+                                            <td class="px-5 py-4">GB/T 24001-2015/ISO 14001:2015</td>
                                             <td class="px-5 py-4">2020/04/18</td>
                                             <td class="px-5 py-4">2023/04/18</td>
                                             <td class="px-5 py-4">2026/04/17</td>
@@ -515,7 +514,7 @@
                                             <td class="px-5 py-4 font-mono text-slate-900">00123E34570R0S/37000</td>
                                             <td class="px-5 py-4">中国质量认证中心</td>
                                             <td class="px-5 py-4">环境管理体系</td>
-                                            <td class="px-5 py-4">GB/T 24001-2016 / ISO 14001:2015</td>
+                                            <td class="px-5 py-4">GB/T 24001-2015/ISO 14001:2015</td>
                                             <td class="px-5 py-4">2021/06/10</td>
                                             <td class="px-5 py-4">2024/06/10</td>
                                             <td class="px-5 py-4">2027/06/09</td>
@@ -532,28 +531,33 @@
                                     <i class="fas fa-file-signature text-blue-600"></i>
                                     <h2 class="font-semibold text-slate-900">二、证书变更信息</h2>
                                 </div>
-                                <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">4项变更</span>
+                                <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded">6项变更</span>
                             </div>
                             <div class="p-6 space-y-5">
                                 <div class="change-compare-card">
                                     <div class="change-compare-header">
-                                        <span class="change-badge modified">组织名称</span>
-                                        <span class="font-medium text-slate-900">全部证书统一修改</span>
+                                        <span class="change-badge modified">客户名称</span>
                                     </div>
                                     <div class="change-compare-body">
                                         <div class="compare-section before">
                                             <div class="compare-label"><i class="fas fa-history text-slate-400"></i>原认证信息</div>
-                                            <div class="compare-content before-text">北京某某科技有限公司</div>
+                                            <div class="compare-content before-text">
+                                                <div><span class="text-slate-500 font-normal">中文：</span>北京某某科技有限公司</div>
+                                                <div class="mt-1"><span class="text-slate-500 font-normal">英文：</span>Beijing Moumou Technology Co., Ltd.</div>
+                                            </div>
                                         </div>
                                         <div class="compare-section after">
                                             <div class="compare-label"><i class="fas fa-arrow-right text-green-500"></i>拟变更为</div>
-                                            <div class="compare-content after-text">北京某某数字科技有限公司</div>
+                                            <div class="compare-content after-text">
+                                                <div><span class="text-slate-500 font-normal">中文：</span>北京某某数字科技有限公司</div>
+                                                <div class="mt-1"><span class="text-slate-500 font-normal">英文：</span>Beijing Moumou Digital Technology Co., Ltd.</div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="px-4 py-3 border-t border-slate-200 bg-white grid grid-cols-1 xl:grid-cols-[1fr_auto] gap-3">
                                         <div>
                                             <div class="compare-label mb-1"><i class="fas fa-message text-slate-400"></i>变更情况和原因描述</div>
-                                            <div class="text-sm text-slate-700 leading-relaxed">企业已完成工商名称变更，统一社会信用代码不变，申请全部证书统一更新组织名称。</div>
+                                            <div class="text-sm text-slate-700 leading-relaxed">企业已完成工商名称变更，统一社会信用代码不变，申请全部证书统一更新客户名称。</div>
                                         </div>
                                         <div class="flex flex-wrap gap-2 items-start xl:justify-end">
                                             <span class="attachment-chip"><i class="fas fa-paperclip text-slate-400"></i>营业执照副本.pdf</span>
@@ -564,19 +568,50 @@
 
                                 <div class="change-compare-card">
                                     <div class="change-compare-header">
+                                        <span class="change-badge modified">注册地址</span>
+                                    </div>
+                                    <div class="change-compare-body">
+                                        <div class="compare-section before">
+                                            <div class="compare-label"><i class="fas fa-history text-slate-400"></i>原认证信息</div>
+                                            <div class="compare-content before-text">
+                                                <div><span class="text-slate-500 font-normal">中文：</span>北京市海淀区示例路88号</div>
+                                                <div class="mt-1"><span class="text-slate-500 font-normal">英文：</span>No.88 Shili Road, Haidian District, Beijing</div>
+                                            </div>
+                                        </div>
+                                        <div class="compare-section after">
+                                            <div class="compare-label"><i class="fas fa-arrow-right text-green-500"></i>拟变更为</div>
+                                            <div class="compare-content after-text">
+                                                <div><span class="text-slate-500 font-normal">中文：</span>北京市海淀区数字产业园18号</div>
+                                                <div class="mt-1"><span class="text-slate-500 font-normal">英文：</span>No.18 Digital Industrial Park, Haidian District, Beijing</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="px-4 py-3 border-t border-slate-200 bg-white">
+                                        <div class="compare-label mb-1"><i class="fas fa-message text-slate-400"></i>变更情况和原因描述</div>
+                                        <div class="text-sm text-slate-700 leading-relaxed">注册地址已完成工商登记信息更新，申请全部证书统一更新注册地址。</div>
+                                    </div>
+                                </div>
+
+                                <div class="change-compare-card">
+                                    <div class="change-compare-header">
                                         <span class="change-badge modified">认证范围</span>
-                                        <span class="font-medium text-slate-900">适用证书</span>
                                         <span class="cert-badge"><i class="fas fa-certificate text-blue-400"></i>00123Q34568R0S/37000</span>
                                         <span class="cert-badge"><i class="fas fa-certificate text-blue-400"></i>00123E34569R0S/37000</span>
                                     </div>
                                     <div class="change-compare-body">
                                         <div class="compare-section before">
                                             <div class="compare-label"><i class="fas fa-history text-slate-400"></i>变更前</div>
-                                            <div class="compare-content before-text">软件开发、系统集成服务及相关管理活动</div>
+                                            <div class="compare-content before-text">
+                                                <div><span class="text-slate-500 font-normal">中文：</span>软件开发、系统集成服务及相关管理活动</div>
+                                                <div class="mt-1"><span class="text-slate-500 font-normal">英文：</span>Software development, system integration services and related management activities</div>
+                                            </div>
                                         </div>
                                         <div class="compare-section after">
                                             <div class="compare-label"><i class="fas fa-arrow-right text-green-500"></i>拟变更为</div>
-                                            <div class="compare-content after-text">软件开发、系统集成服务、信息技术运维服务及相关管理活动</div>
+                                            <div class="compare-content after-text">
+                                                <div><span class="text-slate-500 font-normal">中文：</span>软件开发、系统集成服务、信息技术运维服务及相关管理活动</div>
+                                                <div class="mt-1"><span class="text-slate-500 font-normal">英文：</span>Software development, system integration services, IT operation and maintenance services and related management activities</div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="px-4 py-3 border-t border-slate-200 bg-white grid grid-cols-1 xl:grid-cols-[1fr_auto] gap-3">
@@ -594,17 +629,22 @@
                                 <div class="change-compare-card">
                                     <div class="change-compare-header">
                                         <span class="change-badge modified">运营地址</span>
-                                        <span class="font-medium text-slate-900">适用证书</span>
                                         <span class="cert-badge"><i class="fas fa-certificate text-blue-400"></i>00123E34569R0S/37000</span>
                                     </div>
                                     <div class="change-compare-body">
                                         <div class="compare-section before">
                                             <div class="compare-label"><i class="fas fa-history text-slate-400"></i>变更前</div>
-                                            <div class="compare-content before-text">北京市海淀区示例路88号</div>
+                                            <div class="compare-content before-text">
+                                                <div><span class="text-slate-500 font-normal">中文：</span>北京市海淀区示例路88号</div>
+                                                <div class="mt-1"><span class="text-slate-500 font-normal">英文：</span>No.88 Shili Road, Haidian District, Beijing</div>
+                                            </div>
                                         </div>
                                         <div class="compare-section after">
                                             <div class="compare-label"><i class="fas fa-arrow-right text-green-500"></i>拟变更为</div>
-                                            <div class="compare-content after-text">北京市海淀区示例路88号、客户现场驻场运维服务点</div>
+                                            <div class="compare-content after-text">
+                                                <div><span class="text-slate-500 font-normal">中文：</span>北京市海淀区示例路88号、客户现场驻场运维服务点</div>
+                                                <div class="mt-1"><span class="text-slate-500 font-normal">英文：</span>No.88 Shili Road, Haidian District, Beijing, and on-site O&M service locations at customer premises</div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="px-4 py-3 border-t border-slate-200 bg-white">
@@ -615,27 +655,67 @@
 
                                 <div class="change-compare-card">
                                     <div class="change-compare-header">
-                                        <span class="change-badge modified">分支机构/常设多场所</span>
-                                        <span class="font-medium text-slate-900">适用证书</span>
-                                        <span class="cert-badge"><i class="fas fa-certificate text-blue-400"></i>00123E34569R0S/37000</span>
+                                        <span class="change-badge modified">认证标准或技术规范</span>
+                                        <span class="cert-badge"><i class="fas fa-layer-group text-blue-400"></i>质量管理体系</span>
+                                        <span class="cert-badge"><i class="fas fa-layer-group text-blue-400"></i>环境管理体系</span>
                                     </div>
                                     <div class="change-compare-body">
                                         <div class="compare-section before">
                                             <div class="compare-label"><i class="fas fa-history text-slate-400"></i>原认证信息</div>
-                                            <div class="compare-content before-text">关联场所：北京总部、广州研发中心</div>
+                                            <div class="compare-content before-text">
+                                                <div>质量管理体系：GB/T 19001-2016 / ISO 9001:2015</div>
+                                                <div class="mt-1">环境管理体系：GB/T 24001-2015/ISO 14001:2015</div>
+                                            </div>
                                         </div>
                                         <div class="compare-section after">
-                                            <div class="compare-label"><i class="fas fa-arrow-right text-green-500"></i>拟变更为</div>
-                                            <div class="compare-content after-text">新增：苏州项目实施中心（是否发子证：是）；减少：广州研发中心；总部场所保留</div>
+                                            <div class="compare-label"><i class="fas fa-arrow-right text-green-500"></i>拟变更为（多选）</div>
+                                            <div class="compare-content after-text">
+                                                <div>质量管理体系：GB/T 19001-2026 / ISO 9001:2025、GB/T 50430</div>
+                                                <div class="mt-1">环境管理体系：GB/T 24001-2026/ISO 14001:2026</div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="px-4 py-3 border-t border-slate-200 bg-white grid grid-cols-1 xl:grid-cols-[1fr_auto] gap-3">
                                         <div>
                                             <div class="compare-label mb-1"><i class="fas fa-message text-slate-400"></i>变更情况和原因描述</div>
-                                            <div class="text-sm text-slate-700 leading-relaxed">项目交付重心迁移，广州研发中心不再纳入本证书认证范围；新增苏州项目实施中心并申请发子证。</div>
+                                            <div class="text-sm text-slate-700 leading-relaxed">依据客户体系升级及适用标准更新，申请在对应管理体系下调整认证标准或技术规范。</div>
+                                        </div>
+                                        <div class="flex flex-wrap gap-2 items-start xl:justify-end">
+                                            <span class="attachment-chip"><i class="fas fa-paperclip text-slate-400"></i>标准转换说明.pdf</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="change-compare-card">
+                                    <div class="change-compare-header">
+                                        <span class="change-badge modified">分支机构/常设多场所</span>
+                                    </div>
+                                    <div class="change-compare-body">
+                                        <div class="compare-section before">
+                                            <div class="compare-label"><i class="fas fa-history text-slate-400"></i>原认证信息</div>
+                                            <div class="compare-content before-text">
+                                                <div>北京总部：QMS、EMS</div>
+                                                <div class="mt-1">上海分公司：QMS、EMS</div>
+                                                <div class="mt-1">广州研发中心：QMS</div>
+                                            </div>
+                                        </div>
+                                        <div class="compare-section after">
+                                            <div class="compare-label"><i class="fas fa-arrow-right text-green-500"></i>拟变更为</div>
+                                            <div class="compare-content after-text">
+                                                <div>新增质量管理体系场所：苏州项目实施中心，地址：苏州市工业园区示例路66号，范围：软件项目实施服务，人数：28，是否发子证：是</div>
+                                                <div class="mt-2">新增环境管理体系场所：南京运维服务中心，地址：南京市建邺区示例路18号，范围：运维服务及办公运营，人数：16，是否发子证：否</div>
+                                                <div class="mt-2">删除场所：广州研发中心，删除领域：质量管理体系</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="px-4 py-3 border-t border-slate-200 bg-white grid grid-cols-1 xl:grid-cols-[1fr_auto] gap-3">
+                                        <div>
+                                            <div class="compare-label mb-1"><i class="fas fa-message text-slate-400"></i>变更情况和原因描述</div>
+                                            <div class="text-sm text-slate-700 leading-relaxed">项目交付和运维服务布局调整，新增苏州、南京场所并删除广州研发中心，相关场所活动已纳入体系控制。</div>
                                         </div>
                                         <div class="flex flex-wrap gap-2 items-start xl:justify-end">
                                             <span class="attachment-chip"><i class="fas fa-paperclip text-slate-400"></i>认证场所清单.xlsx</span>
+                                            <span class="attachment-chip"><i class="fas fa-paperclip text-slate-400"></i>场所变更说明.pdf</span>
                                         </div>
                                     </div>
                                 </div>
