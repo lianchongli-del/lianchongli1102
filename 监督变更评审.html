@@ -1,11 +1,12 @@
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>监督变更评审（单领域） - 中检华南认证业务管理系统</title>
+    <title>监督变更评审 - 中检华南认证业务管理系统</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -132,8 +133,6 @@
         
         .compare-content.before-text {
             color: #64748b;
-            text-decoration: line-through;
-            text-decoration-color: #cbd5e1;
         }
         
         .compare-content.after-text {
@@ -426,7 +425,7 @@
                     </button>
                     <div class="h-6 w-px bg-slate-300"></div>
                     <div class="flex items-center gap-3">
-                        <h1 class="text-lg font-bold text-slate-900">监督变更评审（单领域）</h1>
+                        <h1 class="text-lg font-bold text-slate-900">监督变更评审</h1>
                         <span class="px-2 py-1 rounded text-xs font-medium bg-amber-100 text-amber-700 border border-amber-200">待评审</span>
                         <span class="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">EMS</span>
                         <span class="px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-700 border border-purple-200">监督变更</span>
@@ -489,7 +488,6 @@
                     <div><span class="text-slate-500">监督申请号：</span><span class="font-mono font-semibold text-slate-900">JD202604220006</span></div>
                     <div><span class="text-slate-500">涉及证书：</span><span class="font-semibold text-slate-900">环境管理体系 / 2份证书</span></div>
                     <div><span class="text-slate-500">企业名称：</span><span class="font-semibold text-slate-900">彩晶光电科技(昆山)有限公司</span></div>
-                    <div><span class="text-slate-500">审核类型：</span><span class="font-semibold text-slate-900">监督审核</span></div>
                     <div><span class="text-slate-500">签发类型：</span><span class="font-semibold text-slate-900">自动签发</span></div>
                     <div><span class="text-slate-500">是否加急：</span><span class="font-semibold text-slate-900">否</span></div>
                 </div>
@@ -546,8 +544,8 @@
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-3">是否结合监督审核进行？<span class="text-red-500">*</span></label>
                         <div class="grid grid-cols-1 gap-4">
-                            <label class="radio-card selected" id="combineAuditCard" onclick="selectAuditMode('combine')">
-                                <input type="radio" name="auditMode" value="combine" class="text-blue-600 mt-1" onchange="handleAuditModeChange(this.value)" checked>
+                            <label class="radio-card selected disabled cursor-not-allowed opacity-70" id="combineAuditCard">
+                                <input type="radio" name="auditMode" value="combine" class="text-blue-600 mt-1" checked disabled>
                                 <div class="flex-1">
                                     <div class="font-medium text-slate-900">与监督审核结合</div>
                                     <div class="text-xs text-slate-500 mt-1">监督变更评审只能与本次监督审核合并进行</div>
@@ -567,50 +565,6 @@
                                 <p class="text-xs text-amber-700 mt-1">如勾选，审核方案将包含一阶段审核内容</p>
                             </div>
                         </label>
-                    </div>
-
-                    <!-- 单独审核时显示：现场审核类型 -->
-                    <div id="siteAuditTypeSection" class="conditional-block hidden">
-                        <label class="block text-sm font-medium text-slate-700 mb-3">现场审核类型<span class="text-red-500">*</span></label>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <label class="radio-card" id="hasSiteCard" onclick="selectSiteType('hasSite')">
-                                <input type="radio" name="siteType" value="hasSite" class="text-blue-600 mt-1" onchange="handleSiteTypeChange(this.value)">
-                                <div class="flex-1">
-                                    <div class="font-medium text-slate-900">有现场审核</div>
-                                    <div class="text-xs text-slate-500 mt-1">需要安排现场审核活动</div>
-                                </div>
-                            </label>
-
-                            <label class="radio-card" id="noSiteCard" onclick="selectSiteType('noSite')">
-                                <input type="radio" name="siteType" value="noSite" class="text-blue-600 mt-1" onchange="handleSiteTypeChange(this.value)">
-                                <div class="flex-1">
-                                    <div class="font-medium text-slate-900">无现场审核</div>
-                                    <div class="text-xs text-slate-500 mt-1">仅进行文件评审，不安排现场</div>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- 有现场审核时显示：选择文审或一阶段 -->
-                    <div id="auditStageSection" class="conditional-block hidden">
-                        <label class="block text-sm font-medium text-slate-700 mb-3">审核阶段选择<span class="text-red-500">*</span></label>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <label class="radio-card" id="docReviewCard" onclick="selectAuditStage('docReview')">
-                                <input type="radio" name="auditStage" value="docReview" class="text-blue-600 mt-1" onchange="handleAuditStageChange(this.value)">
-                                <div class="flex-1">
-                                    <div class="font-medium text-slate-900">文件评审（文审）</div>
-                                    <div class="text-xs text-slate-500 mt-1">仅进行文件审查，不实施现场一阶段</div>
-                                </div>
-                            </label>
-
-                            <label class="radio-card" id="stage1Card" onclick="selectAuditStage('stage1')">
-                                <input type="radio" name="auditStage" value="stage1" class="text-blue-600 mt-1" onchange="handleAuditStageChange(this.value)">
-                                <div class="flex-1">
-                                    <div class="font-medium text-slate-900">一阶段审核</div>
-                                    <div class="text-xs text-slate-500 mt-1">实施现场一阶段审核</div>
-                                </div>
-                            </label>
-                        </div>
                     </div>
 
                 </div>
@@ -662,12 +616,6 @@
                         </div>
                     </div>
 
-                    <div class="border-t border-slate-200 pt-4 mt-4">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" class="rounded text-blue-600 w-4 h-4" checked>
-                            <span class="text-sm text-slate-700">已核实变更内容符合认证规则要求</span>
-                        </label>
-                    </div>
                 </div>
             </div>
 
@@ -814,14 +762,12 @@
         const certificateProfCodes = Object.fromEntries(reviewCertificates.map(cert => [cert.id, []]));
         const applicationChangeItems = [
             {
-                item: '组织名称',
+                item: '客户名称',
                 groups: [
                     {
                         certIds: reviewCertificates.map(cert => cert.id),
-                        applyLabel: '统一变更内容',
-                        applyText: '适用于当前全部证书',
-                        before: '彩晶光电科技(昆山)有限公司',
-                        after: '彩晶智能光电科技(昆山)有限公司',
+                        before: '<div><span class="text-slate-500 font-normal">中文：</span>彩晶光电科技(昆山)有限公司</div><div class="mt-1"><span class="text-slate-500 font-normal">英文：</span>Color Crystal Optoelectronics Technology (Kunshan) Co., Ltd.</div>',
+                        after: '<div><span class="text-slate-500 font-normal">中文：</span>彩晶智能光电科技(昆山)有限公司</div><div class="mt-1"><span class="text-slate-500 font-normal">英文：</span>Color Crystal Intelligent Optoelectronics Technology (Kunshan) Co., Ltd.</div>',
                         reason: '企业完成工商名称变更，统一社会信用代码不变。',
                         attachments: ['营业执照副本复印件.pdf', '名称变更核准通知书.pdf']
                     }
@@ -832,10 +778,8 @@
                 groups: [
                     {
                         certIds: ['e_cert_1', 'e_cert_2'],
-                        applyLabel: '统一变更内容',
-                        applyText: '适用于当前领域证书',
-                        before: 'GB/T 24001-2016 / ISO 14001:2015',
-                        after: 'GB/T 24001-2016 / ISO 14001:2015；适用 CNAS-CC01:2015 相关要求',
+                        before: 'GB/T 24001-2015/ISO 14001:2015',
+                        after: 'GB/T 24001-2015/ISO 14001:2015；GB/T 24001-2026/ISO 14001:2026',
                         reason: '环境管理体系监督周期补充引用技术规范，标准主体不变。',
                         attachments: []
                     }
@@ -846,15 +790,15 @@
                 groups: [
                     {
                         certIds: ['e_cert_1'],
-                        before: '数码相机的制造，摄像模组的制造，印刷电路板零组件的制造及相关管理活动',
-                        after: '数码相机的制造，摄像模组的制造，印刷电路板零组件的制造，智能家居监控设备的制造及相关管理活动',
+                        before: '<div><span class="text-slate-500 font-normal">中文：</span>数码相机的制造，摄像模组的制造，印刷电路板零组件的制造及相关管理活动</div><div class="mt-1"><span class="text-slate-500 font-normal">英文：</span>Manufacture of digital cameras, camera modules, printed circuit board components and related management activities</div>',
+                        after: '<div><span class="text-slate-500 font-normal">中文：</span>数码相机的制造，摄像模组的制造，印刷电路板零组件的制造，智能家居监控设备的制造及相关管理活动</div><div class="mt-1"><span class="text-slate-500 font-normal">英文：</span>Manufacture of digital cameras, camera modules, printed circuit board components, smart home monitoring devices and related management activities</div>',
                         reason: '新增生产线的环境因素已识别并纳入运行控制。',
                         attachments: ['环境因素清单.xlsx']
                     },
                     {
                         certIds: ['e_cert_2'],
-                        before: '软件研发、系统集成项目实施现场及相关环境管理活动',
-                        after: '软件研发、系统集成项目实施现场、驻场运维服务及相关环境管理活动',
+                        before: '<div><span class="text-slate-500 font-normal">中文：</span>软件研发、系统集成项目实施现场及相关环境管理活动</div><div class="mt-1"><span class="text-slate-500 font-normal">英文：</span>Software R&D, system integration project implementation sites and related environmental management activities</div>',
+                        after: '<div><span class="text-slate-500 font-normal">中文：</span>软件研发、系统集成项目实施现场、驻场运维服务及相关环境管理活动</div><div class="mt-1"><span class="text-slate-500 font-normal">英文：</span>Software R&D, system integration project implementation sites, on-site O&M services and related environmental management activities</div>',
                         reason: '项目现场新增驻场运维服务，办公和差旅环境因素已纳入监督审核范围。',
                         attachments: []
                     }
@@ -865,15 +809,15 @@
                 groups: [
                     {
                         certIds: ['e_cert_1'],
-                        before: '中国江苏省昆山综合保税区第三大道77号',
-                        after: '中国江苏省苏州市昆山市玉山镇南淞路299号',
+                        before: '<div><span class="text-slate-500 font-normal">中文：</span>中国江苏省昆山综合保税区第三大道77号</div><div class="mt-1"><span class="text-slate-500 font-normal">英文：</span>No.77 Third Avenue, Kunshan Comprehensive Bonded Zone, Jiangsu, China</div>',
+                        after: '<div><span class="text-slate-500 font-normal">中文：</span>中国江苏省苏州市昆山市玉山镇南淞路299号</div><div class="mt-1"><span class="text-slate-500 font-normal">英文：</span>No.299 Nansong Road, Yushan Town, Kunshan, Suzhou, Jiangsu, China</div>',
                         reason: '制造及仓储运营场所整体搬迁，相关环境因素和应急设施已重新识别。',
                         attachments: ['新址平面布置图.jpg', '场所变更说明.docx']
                     },
                     {
                         certIds: ['e_cert_2'],
-                        before: '北京总部、上海项目实施现场',
-                        after: '北京总部、上海项目实施现场、苏州项目实施中心',
+                        before: '<div><span class="text-slate-500 font-normal">中文：</span>北京总部、上海项目实施现场</div><div class="mt-1"><span class="text-slate-500 font-normal">英文：</span>Beijing headquarters and Shanghai project implementation site</div>',
+                        after: '<div><span class="text-slate-500 font-normal">中文：</span>北京总部、上海项目实施现场、苏州项目实施中心</div><div class="mt-1"><span class="text-slate-500 font-normal">英文：</span>Beijing headquarters, Shanghai project implementation site and Suzhou project implementation center</div>',
                         reason: '监督周期新增苏州项目实施中心，现场环境管理活动纳入审核范围。',
                         attachments: ['多场所清单.xlsx']
                     }
@@ -884,8 +828,8 @@
                 groups: [
                     {
                         certIds: ['e_cert_2'],
-                        before: '关联场所：北京总部、广州研发中心',
-                        after: '新增：苏州项目实施中心（是否发子证：是）；减少：广州研发中心',
+                        before: '<div>北京总部：EMS</div><div class="mt-1">广州研发中心：EMS</div>',
+                        after: '<div>新增场所：苏州项目实施中心，地址：苏州市工业园区示例路66号，范围：项目实施服务，人数：28，是否发子证：是</div><div class="mt-2">删除场所：广州研发中心</div>',
                         reason: '项目交付重心迁移，广州研发中心不再纳入本次监督覆盖范围；总部场所保留。',
                         attachments: ['认证场所清单.xlsx']
                     }
@@ -988,15 +932,9 @@
         // 重置所有审核相关区域
         function resetAuditSections() {
             const hasStage1Section = document.getElementById('hasStage1Section');
-            const siteAuditTypeSection = document.getElementById('siteAuditTypeSection');
-            const auditStageSection = document.getElementById('auditStageSection');
             
             hasStage1Section.classList.add('hidden');
             hasStage1Section.classList.remove('show');
-            siteAuditTypeSection.classList.add('hidden');
-            siteAuditTypeSection.classList.remove('show');
-            auditStageSection.classList.add('hidden');
-            auditStageSection.classList.remove('show');
         }
 
         function getReviewCertificate(certId) {
@@ -1031,7 +969,9 @@
             }).join('');
 
             const renderChangeGroup = (item, group, itemIndex, groupIndex, options = {}) => {
-                const showCerts = !group.applyText || options.forceCerts;
+                const isMultiSiteItem = item.item === '分支机构/常设多场所';
+                const hideGroupHeader = isMultiSiteItem || ((group.certIds || []).length === reviewCertificates.length);
+                const showCerts = (!group.applyLabel || options.forceCerts) && !hideGroupHeader;
                 const certBadges = showCerts && group.certIds ? renderCertBadges(group.certIds) : '';
                 const attachmentHtml = (group.attachments || []).map((file, fileIndex) => {
                     const fileId = getAttachmentFileId(itemIndex, groupIndex, fileIndex);
@@ -1053,16 +993,15 @@
                         </button>
                     </div>`;
                 }).join('');
-                const groupHeaderHtml = group.applyText
-                    ? `<span class="px-2 py-1 rounded text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100">${group.applyLabel || '统一变更内容'}</span>
-                        <span class="font-medium text-slate-900">${group.applyText}</span>`
+                const groupHeaderHtml = (group.applyLabel || hideGroupHeader)
+                    ? ''
                     : `<span class="px-2 py-1 rounded text-xs font-semibold bg-slate-100 text-slate-600">第 ${groupIndex + 1} 组</span>
-                        <span class="font-medium text-slate-900">适用证书</span>
                         <div class="flex flex-wrap gap-2 ml-2">${certBadges}</div>`;
+                const groupHeaderBlock = groupHeaderHtml
+                    ? `<div class="change-compare-header">${groupHeaderHtml}</div>`
+                    : '';
                 return `<div class="change-compare-card">
-                    <div class="change-compare-header">
-                        ${groupHeaderHtml}
-                    </div>
+                    ${groupHeaderBlock}
                     <div class="change-compare-body">
                         <div class="compare-section before">
                             <div class="compare-label"><i class="fas fa-history text-slate-400"></i>变更前</div>
@@ -1085,7 +1024,7 @@
 
             const renderCertificateItem = (item, itemIndex, groupsToRender = item.groups) => {
                 const groups = groupsToRender.map((group, groupIndex) => {
-                    const showCerts = !group.applyText;
+                    const showCerts = !group.applyLabel;
                     return renderChangeGroup(item, group, itemIndex, groupIndex, {forceCerts: showCerts});
                 }).join('');
                 return `<section class="border border-slate-200 rounded-xl overflow-hidden bg-white">
@@ -1117,12 +1056,8 @@
                     .filter(Boolean)
                     .join('');
                 return `<div id="${getDomainAnchorId(domain)}" class="border border-slate-200 rounded-xl overflow-hidden bg-slate-50 scroll-mt-28">
-                    <div class="px-5 py-4 border-b border-slate-200 bg-white flex flex-wrap items-center justify-between gap-3">
-                        <div>
-                            <div class="font-semibold text-slate-900">${domain}</div>
-                            <div class="text-xs text-slate-500 mt-1">${domainCerts.length} 本证书 · ${domainCerts[0]?.standard || ''}</div>
-                        </div>
-                        <div class="flex flex-wrap gap-2">${renderCertBadges(domainCerts.map(cert => cert.id))}</div>
+                    <div class="px-5 py-4 border-b border-slate-200 bg-white">
+                        <div class="font-semibold text-slate-900">${domain}</div>
                     </div>
                     <div class="p-5 space-y-5">${domainItems}</div>
                 </div>`;
@@ -1219,6 +1154,7 @@
 
         // 审核方式逻辑控制
         function selectAuditMode(mode) {
+            mode = 'combine';
             // 移除所有选中样式和 checked 状态
             document.querySelectorAll('input[name="auditMode"]').forEach(radio => {
                 radio.closest('.radio-card').classList.remove('selected');
@@ -1236,19 +1172,14 @@
         }
 
         function handleAuditModeChange(value) {
+            value = 'combine';
             selectedAuditMode = value;
             const hasStage1Section = document.getElementById('hasStage1Section');
-            const siteAuditTypeSection = document.getElementById('siteAuditTypeSection');
-            const auditStageSection = document.getElementById('auditStageSection');
             const hasStage1Check = document.getElementById('hasStage1Check');
             
             // 先全部隐藏并重置
             hasStage1Section.classList.add('hidden');
             hasStage1Section.classList.remove('show');
-            siteAuditTypeSection.classList.add('hidden');
-            siteAuditTypeSection.classList.remove('show');
-            auditStageSection.classList.add('hidden');
-            auditStageSection.classList.remove('show');
             
             if (value === 'combine') {
                 // 切换到结合监督：显示"是否有审核一阶段"
@@ -1267,14 +1198,6 @@
                     radio.checked = false;
                 });
                 
-            } else if (value === 'separate') {
-                // 切换到单独审核：显示"现场审核类型"
-                siteAuditTypeSection.classList.remove('hidden');
-                siteAuditTypeSection.classList.add('show');
-                
-                // 清理结合监督的选择
-                hasStage1 = false;
-                if (hasStage1Check) hasStage1Check.checked = false;
             }
         }
 
@@ -1301,24 +1224,6 @@
 
         function handleSiteTypeChange(value) {
             selectedSiteType = value;
-            const auditStageSection = document.getElementById('auditStageSection');
-            
-            if (selectedAuditMode === 'separate' && value === 'hasSite') {
-                // 单独审核 + 有现场：显示审核阶段选择
-                auditStageSection.classList.remove('hidden');
-                auditStageSection.classList.add('show');
-            } else {
-                // 其他情况：隐藏审核阶段选择
-                auditStageSection.classList.add('hidden');
-                auditStageSection.classList.remove('show');
-                
-                // 清理审核阶段选择
-                selectedAuditStage = null;
-                document.querySelectorAll('input[name="auditStage"]').forEach(radio => {
-                    radio.closest('.radio-card').classList.remove('selected');
-                    radio.checked = false;
-                });
-            }
         }
 
         function selectAuditStage(stage) {
@@ -1559,7 +1464,7 @@
                     ? `<div class="mt-3 grid grid-cols-1 xl:grid-cols-2 gap-3 text-sm">
                             <div class="rounded-lg border border-slate-200 bg-white p-3">
                                 <div class="text-[11px] text-slate-500 mb-1 flex items-center gap-1"><i class="fas fa-history"></i>变更前认证范围</div>
-                                <div class="text-slate-500 leading-relaxed line-through decoration-slate-300">${cert.scopeBefore}</div>
+                                <div class="text-slate-500 leading-relaxed">${cert.scopeBefore}</div>
                             </div>
                             <div class="rounded-lg border border-green-200 bg-green-50 p-3">
                                 <div class="text-[11px] text-green-700 mb-1 flex items-center gap-1"><i class="fas fa-arrow-right"></i>变更后认证范围</div>
@@ -1604,7 +1509,6 @@
                                 <div class="font-semibold text-slate-900">${cert.certNo}</div>
                                 <span class="px-2 py-0.5 rounded-full text-xs border ${scopeChanged ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-slate-100 text-slate-600 border-slate-200'}">${scopeChanged ? '认证范围已变更' : '认证范围不变'}</span>
                             </div>
-                            <div class="text-xs text-slate-500 mt-1">${cert.domain} · ${cert.standard}</div>
                         </div>
                         <button onclick="openProfCodeModal('${cert.id}')" class="px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-lg text-sm font-medium transition-colors inline-flex items-center gap-2">
                             <i class="fas fa-list-check"></i>
@@ -1622,12 +1526,8 @@
             container.innerHTML = domainNames.map(domain => {
                 const certs = reviewCertificates.filter(cert => cert.domain === domain);
                 return `<section class="border border-slate-200 rounded-xl overflow-hidden bg-white">
-                    <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
-                        <div>
-                            <div class="font-semibold text-slate-900">${domain}</div>
-                            <div class="text-xs text-slate-500 mt-1">${certs.length} 本证书 · 按证书分别选择专业代码</div>
-                        </div>
-                        <span class="text-xs text-slate-500 bg-white border border-slate-200 rounded-full px-2.5 py-1">${certs.reduce((sum, cert) => sum + (certificateProfCodes[cert.id] || []).length, 0)} 个代码</span>
+                    <div class="bg-slate-50 px-4 py-3 border-b border-slate-200">
+                        <div class="font-semibold text-slate-900">${domain}</div>
                     </div>
                     <div class="p-4 space-y-4">${certs.map(renderCertProfCard).join('')}</div>
                 </section>`;
@@ -1797,18 +1697,6 @@
             // 验证必填项
             if (!selectedAuditMode) {
                 showToast('请选择审核方式', 'error');
-                document.getElementById('section-audit').scrollIntoView({ behavior: 'smooth' });
-                return;
-            }
-            
-            if (selectedAuditMode === 'separate' && !selectedSiteType) {
-                showToast('请选择现场审核类型', 'error');
-                document.getElementById('section-audit').scrollIntoView({ behavior: 'smooth' });
-                return;
-            }
-            
-            if (selectedAuditMode === 'separate' && selectedSiteType === 'hasSite' && !selectedAuditStage) {
-                showToast('请选择审核阶段', 'error');
                 document.getElementById('section-audit').scrollIntoView({ behavior: 'smooth' });
                 return;
             }
