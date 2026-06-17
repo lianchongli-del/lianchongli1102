@@ -1,4 +1,5 @@
-﻿
+
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -688,6 +689,45 @@
             padding: 14px;
         }
 
+        .standard-multi-select {
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: #ffffff;
+            min-height: 40px;
+            padding: 8px;
+        }
+
+        .standard-multi-select.is-disabled {
+            background: #f8fafc;
+            color: #94a3b8;
+        }
+
+        .standard-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 34px;
+            padding: 7px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .standard-option:hover {
+            background: #f8fafc;
+        }
+
+        .standard-option:has(input:checked) {
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-weight: 600;
+        }
+
+        .standard-option.is-disabled {
+            color: #94a3b8;
+            cursor: not-allowed;
+            background: #f8fafc;
+        }
+
         .selected-cert-list {
             display: flex;
             flex-wrap: wrap;
@@ -825,21 +865,244 @@
             background: #fef2f2;
         }
 
+        .notice-modal-document .notice-document {
+            max-width: none;
+            box-shadow: none;
+            border: 0;
+            margin: 0;
+        }
+
+        .notice-modal-document .notice-body {
+            max-height: none;
+        }
+
 
     
         .application-iframe-wrap {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            overflow: hidden;
+            background: transparent;
+            border: 0;
+            border-radius: 0;
+            overflow: visible;
         }
         .application-iframe {
             width: 100%;
-            height: calc(100vh - 230px);
-            min-height: 760px;
+            height: calc(100vh - 260px);
+            min-height: 820px;
             border: 0;
             display: block;
             background: #f8fafc;
+        }
+
+        .detail-toolbar {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            gap: 16px;
+        }
+
+        .detail-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .detail-action-btn {
+            min-height: 40px;
+            white-space: nowrap;
+        }
+
+        .workflow-header {
+            display: block;
+            align-items: center;
+            padding: 0;
+        }
+
+        .workflow-step-shell {
+            padding: 0 18px;
+        }
+
+        .workflow-steps {
+            display: flex;
+            align-items: stretch;
+            gap: 22px;
+            padding: 0;
+        }
+
+        .workflow-step {
+            display: flex;
+            flex: 1 1 0;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #fff;
+            color: #64748b;
+            text-align: left;
+            transition: all .18s ease;
+        }
+
+        .workflow-step:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            right: -18px;
+            top: 50%;
+            width: 10px;
+            height: 10px;
+            border-top: 2px solid #cbd5e1;
+            border-right: 2px solid #cbd5e1;
+            transform: translateY(-50%) rotate(45deg);
+        }
+
+        .workflow-step:hover {
+            border-color: #93c5fd;
+            background: #eff6ff;
+        }
+
+        .workflow-step.active {
+            border-color: #2563eb;
+            background: #eff6ff;
+            color: #1d4ed8;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, .12);
+        }
+
+        .workflow-index {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            background: #e2e8f0;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 700;
+            flex: 0 0 auto;
+        }
+
+        .workflow-step.active .workflow-index {
+            background: #2563eb;
+            color: #fff;
+        }
+
+        .workflow-main {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .workflow-desc {
+            display: block;
+            margin-top: 2px;
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.3;
+        }
+
+        .workflow-footer {
+            position: sticky;
+            bottom: 0;
+            z-index: 35;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 12px 20px;
+            border: 1px solid #e2e8f0;
+            border-top: 0;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+            border-radius: 0 0 12px 12px;
+        }
+
+        .workflow-nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 0 0 auto;
+        }
+
+        .workflow-nav-btn {
+            min-height: 36px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.18s ease;
+            white-space: nowrap;
+        }
+
+        .workflow-nav-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .workflow-panel {
+            padding-top: 0 !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            background: transparent !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        .workflow-panel.application-step {
+            padding-bottom: 0 !important;
+        }
+
+        #content-survey textarea,
+        #content-survey input[type="text"] {
+            width: 100%;
+        }
+
+        #content-survey .change-card-body textarea {
+            min-height: 76px;
+            resize: vertical;
+        }
+
+        @media (max-width: 1280px) {
+            .detail-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .detail-actions {
+                justify-content: flex-start;
+            }
+            .workflow-steps {
+                flex-wrap: wrap;
+            }
+            .workflow-header {
+                grid-template-columns: 1fr;
+            }
+            .workflow-nav-actions {
+                justify-content: flex-end;
+            }
+            .workflow-step {
+                min-width: calc(50% - 11px);
+            }
+            .detail-action-btn {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .workflow-step {
+                min-width: 100%;
+            }
+            .workflow-step:not(:last-child)::after {
+                display: none;
+            }
+            .detail-actions {
+                gap: 8px;
+            }
+            .detail-action-btn {
+                font-size: 13px;
+            }
         }
     </style>
 </head>
@@ -849,44 +1112,85 @@
 
 <div class="full-width-container mx-auto">
     <!-- 再认证审核申请详情页 -->
-    <div id="applicationDetailView" class="fade-in space-y-6">
+    <div id="applicationDetailView" class="fade-in space-y-1">
         <!-- 顶部操作栏 -->
-        <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200 flex justify-between items-center sticky z-40">
+        <div class="detail-toolbar bg-white p-5 rounded-lg shadow-sm border border-slate-200 flex justify-between items-center">
             <div class="flex items-center space-x-6">
                 <div>
-                    <h3 class="text-lg font-semibold text-slate-900" id="detailTitle">再认证审核申请 - JD202403001</h3>
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <h3 class="text-lg font-semibold text-slate-900" id="detailTitle">再认证审核通知-SQ202606170001</h3>
+                        <span id="detailStatus" class="status-badge status-pending">
+                            <i class="fas fa-clock"></i>
+                            待确认
+                        </span>
+                    </div>
                     <p class="text-sm text-slate-500 mt-1" id="detailSubtitle">北京某某科技有限公司 | QMS/EMS体系再认证</p>
                 </div>
             </div>
-            <div class="flex items-center space-x-3">
-                <span id="detailStatus" class="status-badge status-pending">
-                    <i class="fas fa-clock"></i>
-                    待确认
-                </span>
-                <button onclick="openEmailModal()" class="px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition flex items-center gap-2">
+            <div class="detail-actions">
+                <button onclick="openEmailModal()" class="detail-action-btn px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition flex items-center gap-2">
                     <i class="fas fa-envelope text-slate-400"></i>
                     重新发送邮件
                 </button>
-                <button onclick="saveApplication()" id="saveApplicationBtn" class="px-5 py-2 bg-white border border-blue-500 text-blue-600 rounded-lg hover:bg-blue-50 shadow-sm transition flex items-center gap-2 font-medium">
+                <button onclick="openNoticeModal()" class="detail-action-btn px-4 py-2 bg-white border border-blue-500 text-blue-600 rounded-lg hover:bg-blue-50 transition flex items-center gap-2">
+                    <i class="fas fa-bell text-blue-500"></i>
+                    再认证审核通知
+                </button>
+                <button onclick="saveApplication()" id="saveApplicationBtn" class="detail-action-btn px-5 py-2 bg-white border border-blue-500 text-blue-600 rounded-lg hover:bg-blue-50 shadow-sm transition flex items-center gap-2 font-medium">
                     <i class="fas fa-save"></i>
                     保存
                 </button>
-                <button onclick="confirmSubmit()" id="confirmSubmitBtn" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-sm transition flex items-center gap-2 font-medium" disabled>
+                <button onclick="confirmSubmit()" id="confirmSubmitBtn" class="detail-action-btn px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-sm transition flex items-center gap-2 font-medium" disabled>
                     <i class="fas fa-check"></i>
                     确认提交
                 </button>
             </div>
         </div>
 
+        <div class="workflow-step-shell mt-1">
+            <div class="workflow-header">
+                <nav class="workflow-steps" aria-label="再认证审核申请步骤">
+                    <button type="button" class="workflow-step active" data-workflow-step="1" onclick="switchWorkflowStep(1)">
+                        <span class="workflow-index">1</span>
+                        <span>
+                            <span class="workflow-main">调查和变更</span>
+                            <span class="workflow-desc">获证方情况调查和变更申请表</span>
+                        </span>
+                    </button>
+                    <button type="button" class="workflow-step" data-workflow-step="2" onclick="switchWorkflowStep(2)">
+                        <span class="workflow-index">2</span>
+                        <span>
+                            <span class="workflow-main">基础申请信息</span>
+                            <span class="workflow-desc">申请单、客户、组织/人员及其他内容</span>
+                        </span>
+                    </button>
+                    <button type="button" class="workflow-step" data-workflow-step="3" onclick="switchWorkflowStep(3)">
+                        <span class="workflow-index">3</span>
+                        <span>
+                            <span class="workflow-main">认证需求信息</span>
+                            <span class="workflow-desc">认证领域需求、组织管理体系整合程度</span>
+                        </span>
+                    </button>
+                    <button type="button" class="workflow-step" data-workflow-step="4" onclick="switchWorkflowStep(4)">
+                        <span class="workflow-index">4</span>
+                        <span>
+                            <span class="workflow-main">专项与附件</span>
+                            <span class="workflow-desc">IS/ITS专项信息、附件信息</span>
+                        </span>
+                    </button>
+                </nav>
+            </div>
+        </div>
+
         <!-- Tab导航 -->
-        <div class="bg-white border-b border-slate-200 rounded-t-lg">
+        <div class="hidden bg-white border-b border-slate-200 rounded-t-lg">
             <nav class="flex space-x-1 px-6 overflow-x-auto" aria-label="Tabs">
-                <button onclick="switchTab('notice')" id="tab-notice" class="tab-active py-4 px-4 inline-flex items-center text-sm font-medium whitespace-nowrap transition-colors hover:text-blue-600">
+                <button onclick="switchTab('notice')" id="tab-notice" class="hidden py-4 px-4 inline-flex items-center text-sm font-medium whitespace-nowrap transition-colors hover:text-blue-600">
                     <i class="fas fa-bell mr-2"></i>
                     再认证审核通知
                     <span class="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full" style="display:none">已发送</span>
                 </button>
-                <button onclick="switchTab('survey')" id="tab-survey" class="text-slate-500 hover:text-slate-700 py-4 px-4 inline-flex items-center text-sm font-medium whitespace-nowrap transition-colors border-b-2 border-transparent hover:border-slate-300">
+                <button onclick="switchTab('survey')" id="tab-survey" class="tab-active py-4 px-4 inline-flex items-center text-sm font-medium whitespace-nowrap transition-colors hover:text-blue-600">
                     <i class="fas fa-clipboard-list mr-2"></i>
                     获证方情况调查和变更申请表
                     <span id="surveyBadge" class="ml-2 px-2 py-0.5 bg-amber-100 text-amber-700 text-xs rounded-full" style="display:none">待填写</span>
@@ -899,10 +1203,10 @@
         </div>
 
         <!-- Tab内容容器 -->
-        <div class="bg-white shadow rounded-b-lg p-6 min-h-[600px] border-x border-b border-slate-200">
+        <div id="workflowPanel" class="workflow-panel bg-white shadow px-6 pb-6 min-h-[600px] border-x border-b border-slate-200">
 
             <!-- 1. 获证方情况调查表（按 MSF11-23 文档转换） -->
-            <div id="content-survey" class="tab-content hidden">
+            <div id="content-survey" class="tab-content">
                 <div class="hidden flex justify-between items-start mb-6">
                     <div>
                         <h3 class="text-lg font-semibold text-slate-900">获证方情况调查和变更申请表</h3>
@@ -922,7 +1226,7 @@
                         <div class="sub-section-title mb-4">
                             <i class="fas fa-certificate"></i>
                             一、证书变更信息
-                            <span class="text-xs font-normal text-slate-500 ml-2">组织名称、注册地址、适用性声明统一作用于全部证书；认证标准或技术规范按认证领域填写，领域下证书统一修改。</span>
+                            <span class="text-xs font-normal text-slate-500 ml-2">客户名称、注册地址、适用性声明统一作用于全部证书；客户名称、地址、认证范围支持中英文拟变更内容；认证标准或技术规范按认证领域下拉选择。</span>
                         </div>
                         <div id="certificateRows" class="space-y-3"></div>
                     </div>
@@ -971,6 +1275,30 @@
                                     </div>
                                 </div>
                             </label>
+                        </div>
+                    </div>
+
+                    <div id="issueInfoSection" class="hidden border rounded-lg p-5 border-slate-200">
+                        <div class="sub-section-title mb-4">
+                            <i class="fas fa-file-signature"></i>
+                            签发信息
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-[220px_180px] gap-4 items-end">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2 required">签发类型</label>
+                                <select id="issueType" name="issueType" required class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all">
+                                    <option value="">请选择</option>
+                                    <option value="auto">自动</option>
+                                    <option value="manual">手动</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">是否加急</label>
+                                <label class="h-9 px-3 flex items-center gap-2 border border-slate-300 rounded-lg bg-white cursor-pointer hover:bg-slate-50 transition-all">
+                                    <input type="checkbox" id="isUrgent" name="isUrgent" class="rounded text-blue-600 focus:ring-blue-500">
+                                    <span class="text-sm text-slate-700">加急处理</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
 
@@ -1024,7 +1352,7 @@
             </div>
 
             <!-- 2. 再认证审核通知（按MSF11-24格式） -->
-            <div id="content-notice" class="tab-content">
+            <div id="content-notice" class="tab-content hidden">
                 <div class="hidden flex justify-between items-start mb-6">
                     <div>
                         <h3 class="text-lg font-semibold text-slate-900">再认证审核通知</h3>
@@ -1201,6 +1529,19 @@
                 </div>
             </div>
         </div>
+        <div class="workflow-footer">
+            <div class="text-sm text-slate-500" id="workflowStepHint">第 1 步 / 共 4 步</div>
+            <div class="flex items-center gap-3">
+                <button type="button" id="workflowPrevBtn" onclick="switchWorkflowStep(currentWorkflowStep - 1)" class="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fas fa-arrow-left"></i>
+                    上一步
+                </button>
+                <button type="button" id="workflowNextBtn" onclick="switchWorkflowStep(currentWorkflowStep + 1)" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-sm transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    下一步
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -1315,6 +1656,22 @@
                 重新发送邮件
             </button>
         </div>
+    </div>
+</div>
+
+<!-- 再认证审核通知弹窗 -->
+<div id="noticeModal" class="hidden fixed inset-0 bg-slate-900/60 overflow-y-auto h-full w-full z-50 backdrop-blur-sm">
+    <div class="relative top-8 mx-auto p-0 border w-[92%] max-w-6xl shadow-2xl rounded-xl bg-white overflow-hidden mb-10">
+        <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 bg-slate-50">
+            <h3 class="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                <i class="fas fa-bell text-blue-500"></i>
+                再认证审核通知
+            </h3>
+            <button onclick="closeNoticeModal()" class="text-slate-400 hover:text-slate-600 transition" title="关闭">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <div id="noticeModalBody" class="notice-modal-document p-6 bg-white max-h-[78vh] overflow-y-auto"></div>
     </div>
 </div>
 
@@ -1641,6 +1998,114 @@
             backdrop-filter: blur(12px);
             background: rgba(255, 255, 255, 0.95);
             border-bottom: 1px solid #e2e8f0;
+        }
+
+        .recert-step-header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: rgba(248, 250, 252, 0.96);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .step-tabs {
+            display: flex;
+            align-items: stretch;
+            gap: 22px;
+            padding: 10px 0 12px;
+        }
+
+        .step-tab {
+            display: flex;
+            flex: 1 1 0;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #fff;
+            color: #64748b;
+            text-align: left;
+            transition: all .18s ease;
+        }
+
+        .step-tab:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            right: -18px;
+            top: 50%;
+            width: 10px;
+            height: 10px;
+            border-top: 2px solid #cbd5e1;
+            border-right: 2px solid #cbd5e1;
+            transform: translateY(-50%) rotate(45deg);
+        }
+
+        .step-tab:hover {
+            border-color: #93c5fd;
+            background: #eff6ff;
+        }
+
+        .step-tab.active {
+            border-color: #2563eb;
+            background: #eff6ff;
+            color: #1d4ed8;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, .12);
+        }
+
+        .step-index {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 999px;
+            background: #e2e8f0;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 700;
+            flex: 0 0 auto;
+        }
+
+        .step-tab.active .step-index {
+            background: #2563eb;
+            color: #fff;
+        }
+
+        .step-main {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .step-desc {
+            display: block;
+            margin-top: 2px;
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.3;
+        }
+
+        .step-actions {
+            position: sticky;
+            bottom: 0;
+            z-index: 30;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #e2e8f0;
+        }
+
+        @media (max-width: 1024px) {
+            .step-tabs {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .step-tab:not(:last-child)::after { display: none; }
         }
 
         .quick-nav-item {
@@ -2466,14 +2931,60 @@
 </head>
 <body class="text-slate-800 bg-slate-50">
 
+    <div class="recert-step-header">
+        <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
+            <nav class="step-tabs" aria-label="再认证申请填写步骤">
+                <button type="button" class="step-tab active" data-step-target="1">
+                    <span class="step-index">1</span>
+                    <span>
+                        <span class="step-main">调查和变更</span>
+                        <span class="step-desc">获证方情况调查和变更申请表</span>
+                    </span>
+                </button>
+                <button type="button" class="step-tab" data-step-target="2">
+                    <span class="step-index">2</span>
+                    <span>
+                        <span class="step-main">基础申请信息</span>
+                        <span class="step-desc">申请单、客户、组织/人员及其他内容</span>
+                    </span>
+                </button>
+                <button type="button" class="step-tab" data-step-target="3">
+                    <span class="step-index">3</span>
+                    <span>
+                        <span class="step-main">认证需求信息</span>
+                        <span class="step-desc">认证领域需求、组织管理体系整合程度</span>
+                    </span>
+                </button>
+                <button type="button" class="step-tab" data-step-target="4">
+                    <span class="step-index">4</span>
+                    <span>
+                        <span class="step-main">专项与附件</span>
+                        <span class="step-desc">IS/ITS专项信息、附件信息</span>
+                    </span>
+                </button>
+            </nav>
+        </div>
+    </div>
+
     <!-- 主体布局：表单内容区 -->
     <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-32">
 
         <!-- 表单内容区 -->
         <div class="w-full space-y-6" id="mainFormContainer">
 
+            <div id="section-survey-step" data-step="1" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">1</div>
+                        <h3 class="font-semibold text-slate-900">获证方情况调查和变更申请表</h3>
+                    </div>
+                    <span class="text-xs px-2 py-1 rounded-full bg-amber-100 text-amber-700">第一步</span>
+                </div>
+                <div id="recertSurveyStepContent" class="p-6 space-y-6"></div>
+            </div>
+
             <!-- 1. 申请单信息 - 移除认证类型 -->
-            <div id="section-basic" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div id="section-basic" data-step="2" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleSection(this)">
                     <div class="flex items-center gap-2">
                         <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">1</div>
@@ -2505,7 +3016,7 @@
             </div>
 
             <!-- 2. 客户基本信息 -->
-            <div id="section-customer" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div id="section-customer" data-step="2" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleSection(this)">
                     <div class="flex items-center gap-2">
                         <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">2</div>
@@ -2518,11 +3029,8 @@
                     <div class="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
                         <div class="flex items-center justify-between mb-2">
                             <label class="block text-xs font-medium text-slate-700 required">客户名称</label>
-                            <button onclick="openCustomerModal()" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition-colors shadow-sm">
-                                <i class="fas fa-search mr-1"></i>选择客户
-                            </button>
                         </div>
-                        <input type="text" id="customerName" readonly class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg cursor-not-allowed" placeholder="请点击右侧按钮选择客户">
+                        <input type="text" id="customerName" readonly class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg cursor-not-allowed" placeholder="客户信息由再认证项目带入">
                     </div>
 
                     <!-- 英文名称 -->
@@ -2605,11 +3113,11 @@
                     <div class="bg-slate-50 rounded-lg p-4 border border-slate-200">
                         <div class="flex items-center gap-3 mb-3">
                             <div class="flex-1">
-                                <input type="text" id="contractNo" readonly placeholder="请先选择客户，然后选择关联合同" 
+                                <input type="text" id="contractNo" readonly placeholder="请选择关联合同" 
                                        class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg cursor-not-allowed text-slate-500">
                             </div>
-                            <button onclick="openContractModal()" id="contractSelectBtn" disabled
-                                    class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:bg-slate-300 disabled:cursor-not-allowed flex items-center gap-2">
+                            <button onclick="openContractModal()" id="contractSelectBtn"
+                                    class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-2">
                                 <i class="fas fa-search"></i>
                                 选择合同
                             </button>
@@ -2618,7 +3126,7 @@
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
-                        <p class="text-xs text-slate-500">选择客户后，系统将显示该客户关联的合同列表</p>
+                        <p class="text-xs text-slate-500">客户信息已带入，可直接选择该客户关联的合同</p>
                     </div>
 
                     <!-- 工作语言 -->
@@ -2649,7 +3157,7 @@
             </div>
 
             <!-- 3. 认证体系需求信息 - 重构认证类型和批量添加 -->
-            <div id="section-system" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div id="section-system" data-step="3" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
                     <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center gap-2">
@@ -2659,90 +3167,6 @@
                         <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full" id="systemCount">已添加 0 个认证领域</span>
                     </div>
                     <p class="text-xs text-slate-500">支持添加多个认证领域，不可重复添加同一体系</p>
-                </div>
-
-                <!-- 悬浮添加栏 - 批量多选 -->
-                <div class="sticky-add-bar p-4">
-                    <div class="flex gap-3 items-end">
-                        <div class="flex-1 relative">
-                            <label class="block text-xs font-medium text-slate-700 mb-1">批量选择认证体系</label>
-                            <div class="relative">
-                                <button onclick="toggleBatchSelect()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white text-left flex items-center justify-between hover:border-blue-500 transition-all">
-                                    <span id="batchSelectText">请选择认证体系（支持多选）</span>
-                                    <i class="fas fa-chevron-down text-slate-400"></i>
-                                </button>
-                                <!-- 批量选择下拉 -->
-                                <div id="batchSelectDropdown" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
-                                    <div class="p-2 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-                                        <span class="text-xs font-medium text-slate-600">点击选择多个体系</span>
-                                        <button onclick="confirmBatchAdd()" class="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors">
-                                            确认添加
-                                        </button>
-                                    </div>
-                                    <div class="batch-select-dropdown">
-                                        <div class="system-option" data-system="QMS" onclick="toggleSystemOption(this)">
-                                            <input type="checkbox" class="rounded text-blue-600 mr-2">
-                                            <span class="text-sm">QMS（质量管理体系）</span>
-                                        </div>
-                                        <div class="system-option" data-system="EMS" onclick="toggleSystemOption(this)">
-                                            <input type="checkbox" class="rounded text-blue-600 mr-2">
-                                            <span class="text-sm">EMS（环境管理体系）</span>
-                                        </div>
-                                        <div class="system-option" data-system="OHSMS" onclick="toggleSystemOption(this)">
-                                            <input type="checkbox" class="rounded text-blue-600 mr-2">
-                                            <span class="text-sm">OHSMS（职业健康安全管理体系）</span>
-                                        </div>
-                                        <div class="system-option" data-system="FSMS" onclick="toggleSystemOption(this)">
-                                            <input type="checkbox" class="rounded text-blue-600 mr-2">
-                                            <span class="text-sm">FSMS（食品安全管理体系）</span>
-                                        </div>
-                                        <div class="system-option" data-system="HACCP" onclick="toggleSystemOption(this)">
-                                            <input type="checkbox" class="rounded text-blue-600 mr-2">
-                                            <span class="text-sm">HACCP（危害分析与关键控制点）</span>
-                                        </div>
-                                        <div class="system-option" data-system="ISMS" onclick="toggleSystemOption(this)">
-                                            <input type="checkbox" class="rounded text-blue-600 mr-2">
-                                            <span class="text-sm">ISMS（信息安全管理体系）</span>
-                                        </div>
-                                        <div class="system-option" data-system="ITSMS" onclick="toggleSystemOption(this)">
-                                            <input type="checkbox" class="rounded text-blue-600 mr-2">
-                                            <span class="text-sm">ITSMS（信息技术服务管理体系）</span>
-                                        </div>
-                                        <div class="system-option" data-system="EnMS" onclick="toggleSystemOption(this)">
-                                            <input type="checkbox" class="rounded text-blue-600 mr-2">
-                                            <span class="text-sm">EnMS（能源管理体系）</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <button onclick="addSystem()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md shadow-blue-200 transition-all active:scale-95 flex items-center gap-2">
-                            <i class="fas fa-plus"></i>
-                            添加
-                        </button>
-                    </div>
-                    <!-- 已选体系标签 -->
-                    <div id="selectedSystemsTags" class="flex flex-wrap gap-2 mt-2 hidden">
-                        <!-- 动态生成已选标签 -->
-                    </div>
-                </div>
-
-                <!-- 批量操作栏 -->
-                <div id="batchActionsBar" class="batch-actions">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <label class="flex items-center gap-2 cursor-pointer hover:bg-slate-100 p-1 rounded transition-colors">
-                                <input type="checkbox" id="selectAllSystems" onchange="toggleSelectAll(this.checked)" class="rounded text-blue-600 focus:ring-blue-500">
-                                <span class="text-sm text-slate-700 font-medium">全选</span>
-                            </label>
-                            <span class="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full" id="selectedCount">已选择 0 项</span>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="batchDelete()" class="px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-1 border border-red-200">
-                                <i class="fas fa-trash-alt"></i>删除选中
-                            </button>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- 已选体系详情区域 -->
@@ -2765,7 +3189,7 @@
             </div>
 
             <!-- 4. 组织管理体系的整合程度 -->
-            <div id="section-integration" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden">
+            <div id="section-integration" data-step="3" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleSection(this)">
                     <div class="flex items-center gap-2">
                         <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">4</div>
@@ -2797,7 +3221,7 @@
                     </div>
                 </div>
             </div><!-- 5. 组织/人员及其他认证信息 -->
-            <div id="section-org" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div id="section-org" data-step="2" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleSection(this)">
                     <div class="flex items-center gap-2">
                         <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">5</div>
@@ -3080,85 +3504,6 @@
                         </div>
                     </div>
 
-                    <!-- 生产/服务班次情况 - 横向布局 -->
-                    <div id="productionInfoSection" class="border-t border-slate-100 pt-4">
-                        <div class="sub-section-title">
-                            <i class="fas fa-clock"></i>
-                            生产（服务）班次情况
-                        </div>
-                        <label class="flex items-center gap-2 cursor-pointer mb-4">
-                            <input type="checkbox" id="enableProductionInfo" class="rounded text-blue-600 focus:ring-blue-500 transition-all" onchange="toggleProductionInfo(this.checked)">
-                            <span class="text-sm font-medium text-slate-700">填写生产（服务）班次情况</span>
-                        </label>
-                        <div id="productionInfoFields" class="hidden">
-                        <div class="flex items-center gap-4 mb-4">
-                            <span class="text-sm text-slate-600">共</span>
-                            <select id="shiftCount" class="w-20 px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" onchange="updateShiftTimeInputs(this.value)">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                            <span class="text-sm text-slate-600">班次</span>
-                        </div>
-
-                        <!-- 横向班次时间 -->
-                        <div id="shiftTimesContainer" class="space-y-2 bg-slate-50 p-4 rounded-lg border border-slate-200">
-                            <!-- 动态生成班次时间输入 -->
-                        </div>
-
-                        <div class="mt-4">
-                            <label class="block text-xs font-medium text-slate-700 mb-2 required">各班次的过程、控制方法是否相同？</label>
-                            <div class="flex gap-4">
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="shiftSame" value="yes" class="text-blue-600" onchange="toggleField('shiftDifferentDesc', false)">
-                                    <span class="text-sm text-slate-700">相同</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="shiftSame" value="no" class="text-blue-600" onchange="toggleField('shiftDifferentDesc', true)">
-                                    <span class="text-sm text-slate-700">不同</span>
-                                </label>
-                            </div>
-                            <div id="shiftDifferentDesc" class="conditional-field mt-2">
-                                <textarea maxlength="500" rows="2" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none" placeholder="请说明各班次情况"></textarea>
-                            </div>
-                        </div>
-                        <div id="shiftSameConfig" class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-medium text-slate-700 mb-1">轮班数</label>
-                                <input type="number" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-700 mb-1">参与轮班的人数</label>
-                                <input type="number" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0">
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-
-                    <!-- 生产线情况 -->
-                    <div id="productionLineSection" class="border-t border-slate-100 pt-4 hidden">
-                        <div class="sub-section-title">
-                            <i class="fas fa-industry"></i>
-                            生产线情况
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
-                            <div>
-                                <label class="block text-xs font-medium text-slate-700 mb-1 required">生产线总数</label>
-                                <input type="number" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-700 mb-1">相同生产线数量</label>
-                                <input type="number" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-700 mb-1">涉及人数</label>
-                                <input type="number" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0">
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- 作息时间 -->
                     <div class="border-t border-slate-100 pt-4">
                         <div class="sub-section-title">
@@ -3253,7 +3598,7 @@
             </div>
 
             <!-- 6. 应附文件和材料 - 条件化显示 -->
-            <div id="section-attachment" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div id="section-attachment" data-step="4" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleSection(this)">
                     <div class="flex items-center gap-2">
                         <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">6</div>
@@ -3375,7 +3720,7 @@
             
 
             <!-- 8. 其他内容 -->
-            <div id="section-other" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div id="section-other" data-step="2" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleSection(this)">
                     <div class="flex items-center gap-2">
                         <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">8</div>
@@ -3738,6 +4083,83 @@
             }
         };
 
+        let currentStep = 1;
+
+        function populateRecertSurveyStep() {
+            const target = document.getElementById('recertSurveyStepContent');
+            if (!target) return;
+            try {
+                const parentDoc = window.parent && window.parent.document;
+                const source = parentDoc ? parentDoc.getElementById('onlineForm') : null;
+                if (source) {
+                    target.innerHTML = source.innerHTML;
+                    const clonedIssueInfo = target.querySelector('#issueInfoSection');
+                    if (clonedIssueInfo) clonedIssueInfo.remove();
+                    window.saveSurvey = function() {
+                        if (window.parent && typeof window.parent.saveSurvey === 'function') {
+                            window.parent.saveSurvey();
+                        }
+                    };
+                    window.toggleDateChange = function(show) {
+                        const form = document.getElementById('dateAdjustForm');
+                        if (form) form.classList.toggle('hidden', !show);
+                    };
+                    window.toggleChangeDetail = function(field, show) {
+                        const card = document.getElementById('card_' + field);
+                        const body = document.getElementById('body_' + field);
+                        const desc = document.getElementById('desc_' + field);
+                        const fileInput = document.getElementById('file_' + field);
+                        const uploadBtn = document.getElementById('uploadBtn_' + field);
+                        if (card) card.classList.toggle('is-open', show);
+                        if (body) body.classList.toggle('hidden', !show);
+                        if (desc) desc.disabled = !show;
+                        if (fileInput) fileInput.disabled = !show;
+                        if (uploadBtn) uploadBtn.disabled = !show;
+                    };
+                    window.toggleCertificateItem = function(itemId, show) {
+                        const card = document.getElementById('card_' + itemId);
+                        const body = document.getElementById('body_' + itemId);
+                        if (card) card.classList.toggle('is-open', show);
+                        if (body) body.classList.toggle('hidden', !show);
+                    };
+                    window.toggleAgentMode = function() {
+                        if (window.parent && typeof window.parent.toggleAgentMode === 'function') {
+                            window.parent.toggleAgentMode();
+                        }
+                    };
+                    window.handleEvidenceUpload = function() {
+                        alert('附件请在外层“获证方情况调查和变更申请表”页签中上传。');
+                    };
+                    window.closeEvidencePreview = function() {};
+                    return;
+                }
+            } catch (error) {
+                console.warn('未能复用外层调查表内容', error);
+            }
+            target.innerHTML = '<div class="p-5 rounded-lg border border-amber-200 bg-amber-50 text-sm text-amber-800">获证方情况调查和变更申请表内容暂未加载，请返回调查表页签查看。</div>';
+        }
+
+        function goStep(step) {
+            const maxStep = 4;
+            currentStep = Math.min(Math.max(step, 1), maxStep);
+            document.querySelectorAll('[data-step]').forEach(section => {
+                section.classList.toggle('hidden', String(section.dataset.step) !== String(currentStep));
+            });
+            document.querySelectorAll('.step-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.stepTarget === String(currentStep));
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function initStepTabs() {
+            document.querySelectorAll('.step-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    goStep(Number(this.dataset.stepTarget));
+                });
+            });
+            goStep(2);
+        }
+
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
             generateAppNo();
@@ -3751,6 +4173,7 @@
             applyDefaultInputPlaceholders();
             initRecertificationApplication();
             toggleAutoIssueMethod(document.getElementById('issueType')?.value || '');
+            initStepTabs();
         });
 
         function toggleAutoIssueMethod(value) {
@@ -3776,7 +4199,7 @@
         }
 
         function lockRecertCustomerAndSystems() {
-            document.querySelectorAll('[onclick*="openCustomerModal"], [onclick*="openContractModal"], [onclick*="clearContract"], [onclick*="addSystem"], [onclick*="toggleBatchSelect"], [onclick*="confirmBatchAdd"], [onclick*="batchDelete"], [onclick*="deleteSystem"]').forEach(btn => {
+            document.querySelectorAll('[onclick*="openCustomerModal"], [onclick*="addSystem"], [onclick*="toggleBatchSelect"], [onclick*="confirmBatchAdd"], [onclick*="batchDelete"], [onclick*="deleteSystem"]').forEach(btn => {
                 btn.disabled = true;
                 btn.classList.add('opacity-50', 'cursor-not-allowed');
                 btn.removeAttribute('onclick');
@@ -3786,7 +4209,7 @@
                 input.disabled = true;
             });
 
-            ['customerName', 'contractNo'].forEach(lockField);
+            ['customerName'].forEach(lockField);
         }
 
         function fillRecertSystemCards() {
@@ -3969,6 +4392,7 @@
         // 批量选择相关函数
         function toggleBatchSelect() {
             const dropdown = document.getElementById('batchSelectDropdown');
+            if (!dropdown) return;
             dropdown.classList.toggle('hidden');
         }
 
@@ -3992,9 +4416,11 @@
 
         function updateBatchSelectTags() {
             const container = document.getElementById('selectedSystemsTags');
+            const text = document.getElementById('batchSelectText');
+            if (!container || !text) return;
             if (batchSelectedSystems.length === 0) {
                 container.classList.add('hidden');
-                document.getElementById('batchSelectText').textContent = '请选择认证体系（支持多选）';
+                text.textContent = '请选择认证体系（支持多选）';
                 return;
             }
 
@@ -4011,8 +4437,7 @@
                 `;
             }).join('');
 
-            document.getElementById('batchSelectText').textContent = 
-                batchSelectedSystems.length > 0 ? `已选择 ${batchSelectedSystems.length} 个体系` : '请选择认证体系（支持多选）';
+            text.textContent = batchSelectedSystems.length > 0 ? `已选择 ${batchSelectedSystems.length} 个体系` : '请选择认证体系（支持多选）';
         }
 
         function clearBatchSystemSelection() {
@@ -4111,7 +4536,8 @@
                 opt.classList.remove('selected');
             });
             updateBatchSelectTags();
-            document.getElementById('batchSelectDropdown').classList.add('hidden');
+            const dropdown = document.getElementById('batchSelectDropdown');
+            if (dropdown) dropdown.classList.add('hidden');
 
             showToast(`成功添加 ${addedCount} 个认证领域`);
             
@@ -4130,7 +4556,7 @@
                 id: uniqueId,
                 index: systemCounter,
                 selected: false,
-                certType: 'initial' // 默认初次认证
+                certType: 'recertification'
             });
 
             renderSystemCard(systemKey, uniqueId, systemCounter);
@@ -4212,7 +4638,6 @@
             card.innerHTML = `
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-3">
-                        <input type="checkbox" class="rounded text-blue-600 focus:ring-blue-500 mr-2" onchange="toggleSystemSelection('${uniqueId}', this.checked)">
                         <div class="w-10 h-10 rounded-lg bg-${sys.color}-100 text-${sys.color}-600 flex items-center justify-center">
                             <i class="fas ${sys.icon}"></i>
                         </div>
@@ -4221,19 +4646,14 @@
                             <div class="text-xs text-slate-500">${systemKey}</div>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <button onclick="deleteSystem('${uniqueId}')" class="text-xs text-red-600 hover:bg-red-50 px-2 py-1 rounded transition-colors">
-                            <i class="fas fa-trash-alt"></i> 删除
-                        </button>
-                    </div>
                 </div>
 
                 <div class="space-y-4">
-                    <!-- 初次认证固定标识 -->
+                    <!-- 再认证固定标识 -->
                     <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
                         <div class="flex items-center justify-between">
-                            <span class="text-sm font-medium text-blue-700"><i class="fas fa-certificate mr-2"></i>认证类型：初次认证</span>
-                            <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">首次申请</span>
+                            <span class="text-sm font-medium text-blue-700"><i class="fas fa-certificate mr-2"></i>认证类型：再认证</span>
+                            <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">再认证</span>
                         </div>
                     </div>
 
@@ -4600,8 +5020,9 @@
             updateShiftTimeInputs(1);
         }
 
-        function updateShiftTimeInputs(count) {
-            const container = document.getElementById('shiftTimesContainer');
+        function updateShiftTimeInputs(count, containerId = 'shiftTimesContainer') {
+            const container = document.getElementById(containerId);
+            if (!container) return;
             let html = '';
             for (let i = 1; i <= count; i++) {
                 const startHour = i === 1 ? '08' : (i === 2 ? '16' : '00');
@@ -4637,6 +5058,21 @@
                 `;
             }
             container.innerHTML = html;
+            const scopeId = containerId.startsWith('shiftTimes_') ? containerId.replace('shiftTimes_', '') : null;
+            if (scopeId) updateLocationShiftConditionVisibility(scopeId, Number(count));
+        }
+
+        function updateLocationShiftConditionVisibility(scopeId, count) {
+            const section = document.getElementById(`shiftSameSection_${scopeId}`);
+            if (!section) return;
+            const shouldShow = Number(count) >= 2;
+            section.classList.toggle('hidden', !shouldShow);
+            if (!shouldShow) {
+                document.querySelectorAll(`input[name="shiftSame_${scopeId}"]`).forEach(radio => {
+                    radio.checked = false;
+                });
+            }
+            toggleLocationShiftSame(scopeId, !shouldShow || document.querySelector(`input[name="shiftSame_${scopeId}"][value="no"]`)?.checked);
         }
 
         function validateShiftTime(select) {
@@ -4654,6 +5090,162 @@
             if (endTime <= startTime && endTime !== 0) {
                 showToast('结束时间必须晚于开始时间', 'warning');
             }
+        }
+
+        function renderLocationProductionInfoFields(scopeId) {
+            const hiddenForInfoTech = hasOnlyInfoTechSystems() ? 'hidden' : '';
+            return `
+                <div class="location-production-section mt-4 border-t border-slate-100 pt-4 ${hiddenForInfoTech}">
+                    <div class="flex items-center justify-between gap-3 mb-3">
+                        <h5 class="font-medium text-slate-800 text-xs flex items-center gap-2">
+                            <i class="fas fa-clock text-blue-500"></i>生产（服务）班次情况
+                        </h5>
+                        <button type="button" onclick="copyLocationProductionInfoToSameName('${scopeId}')" class="px-2 py-1 text-xs text-blue-600 border border-blue-200 rounded hover:bg-blue-50 transition-colors">
+                            <i class="fas fa-copy mr-1"></i>复制到同名场所
+                        </button>
+                    </div>
+                    <div id="productionInfoFields_${scopeId}" class="space-y-3">
+                        <div class="flex flex-wrap items-end gap-3">
+                            <span class="h-9 inline-flex items-center text-xs text-slate-600">共</span>
+                            <select data-prod-field="shiftCount" class="w-20 px-2 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-1 focus:ring-blue-500 bg-white" onchange="updateShiftTimeInputs(this.value, 'shiftTimes_${scopeId}')">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                            <span class="h-9 inline-flex items-center text-xs text-slate-600">班次</span>
+                        </div>
+                        <div id="shiftTimes_${scopeId}" class="space-y-2 bg-slate-50 p-3 rounded-lg border border-slate-200"></div>
+                        <div id="shiftSameSection_${scopeId}" class="hidden">
+                            <label class="block text-xs font-medium text-slate-700 mb-2 required">各班次的过程、控制方法是否相同？</label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-700">
+                                    <input type="radio" name="shiftSame_${scopeId}" value="yes" class="text-blue-600" onchange="toggleLocationShiftSame('${scopeId}', false)">
+                                    <span>相同</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-700">
+                                    <input type="radio" name="shiftSame_${scopeId}" value="no" class="text-blue-600" onchange="toggleLocationShiftSame('${scopeId}', true)">
+                                    <span>不同</span>
+                                </label>
+                            </div>
+                            <div id="shiftSameFields_${scopeId}" class="hidden mt-2 grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1 required">轮班</label>
+                                    <input type="number" data-prod-field="shiftRotation" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1 required">参与轮班的人数</label>
+                                    <input type="number" data-prod-field="shiftRotationPeople" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0">
+                                </div>
+                            </div>
+                            <div id="shiftDifferentDesc_${scopeId}" class="conditional-field mt-2">
+                                <textarea data-prod-field="shiftDifferentDesc" maxlength="500" rows="2" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none" placeholder="请说明各班次情况"></textarea>
+                            </div>
+                        </div>
+                        <div class="border-t border-slate-100 pt-3">
+                            <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-700 mb-3">
+                                <input type="checkbox" data-prod-field="productionLineEnabled" class="rounded text-blue-600 focus:ring-blue-500" onchange="toggleLocationProductionLine('${scopeId}', this.checked)">
+                                <span>填写生产线情况</span>
+                            </label>
+                            <div id="productionLineFields_${scopeId}" class="hidden grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1 required">生产线总数</label>
+                                    <input type="number" data-prod-field="lineTotal" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">相同生产线数量</label>
+                                    <input type="number" data-prod-field="sameLineCount" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-700 mb-1">涉及人数</label>
+                                    <input type="number" data-prod-field="linePeople" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleLocationProductionInfo(scopeId, show) {
+            const fields = document.getElementById(`productionInfoFields_${scopeId}`);
+            if (fields) fields.classList.toggle('hidden', !show);
+            if (show) updateShiftTimeInputs(1, `shiftTimes_${scopeId}`);
+        }
+
+        function toggleLocationShiftSame(scopeId, isDifferent) {
+            const section = document.getElementById(`shiftSameSection_${scopeId}`);
+            const desc = document.getElementById(`shiftDifferentDesc_${scopeId}`);
+            const sameFields = document.getElementById(`shiftSameFields_${scopeId}`);
+            const sameChecked = document.querySelector(`input[name="shiftSame_${scopeId}"][value="yes"]`)?.checked;
+            const sectionVisible = section && !section.classList.contains('hidden');
+            if (desc) desc.classList.toggle('active', isDifferent);
+            if (sameFields) sameFields.classList.toggle('hidden', !sectionVisible || isDifferent || !sameChecked);
+        }
+
+        function toggleLocationProductionLine(scopeId, show) {
+            const fields = document.getElementById(`productionLineFields_${scopeId}`);
+            if (fields) fields.classList.toggle('hidden', !show);
+        }
+
+        function copyLocationProductionInfoToSameName(scopeId) {
+            const source = document.getElementById(scopeId);
+            if (!source) return;
+            const locationName = source.dataset.locName;
+            const targets = Array.from(document.querySelectorAll('.location-card'))
+                .filter(card => card.id !== scopeId && card.dataset.locName === locationName);
+            if (targets.length === 0) {
+                showToast('未找到其他领域下的同名场所', 'info');
+                return;
+            }
+
+            const shiftCount = source.querySelector('[data-prod-field="shiftCount"]')?.value || '1';
+            const shiftSame = source.querySelector(`input[name="shiftSame_${scopeId}"]:checked`)?.value || '';
+            const differentDesc = source.querySelector('[data-prod-field="shiftDifferentDesc"]')?.value || '';
+            const sameShiftValues = {
+                shiftRotation: source.querySelector('[data-prod-field="shiftRotation"]')?.value || '',
+                shiftRotationPeople: source.querySelector('[data-prod-field="shiftRotationPeople"]')?.value || ''
+            };
+            const productionLineEnabled = !!source.querySelector('[data-prod-field="productionLineEnabled"]')?.checked;
+            const lineValues = {
+                lineTotal: source.querySelector('[data-prod-field="lineTotal"]')?.value || '',
+                sameLineCount: source.querySelector('[data-prod-field="sameLineCount"]')?.value || '',
+                linePeople: source.querySelector('[data-prod-field="linePeople"]')?.value || ''
+            };
+            const sourceShiftSelects = Array.from(source.querySelectorAll(`#shiftTimes_${scopeId} select`)).map(select => select.value);
+
+            targets.forEach(target => {
+                const targetScopeId = target.id;
+                const targetShiftCount = target.querySelector('[data-prod-field="shiftCount"]');
+                if (targetShiftCount) targetShiftCount.value = shiftCount;
+                updateShiftTimeInputs(shiftCount, `shiftTimes_${targetScopeId}`);
+                const targetShiftSelects = Array.from(target.querySelectorAll(`#shiftTimes_${targetScopeId} select`));
+                sourceShiftSelects.forEach((value, index) => {
+                    if (targetShiftSelects[index]) targetShiftSelects[index].value = value;
+                });
+
+                target.querySelectorAll(`input[name="shiftSame_${targetScopeId}"]`).forEach(radio => {
+                    radio.checked = radio.value === shiftSame;
+                });
+                const targetDesc = target.querySelector('[data-prod-field="shiftDifferentDesc"]');
+                if (targetDesc) targetDesc.value = differentDesc;
+                toggleLocationShiftSame(targetScopeId, shiftSame === 'no');
+                Object.entries(sameShiftValues).forEach(([field, value]) => {
+                    const input = target.querySelector(`[data-prod-field="${field}"]`);
+                    if (input) input.value = value;
+                });
+
+                const targetLineSwitch = target.querySelector('[data-prod-field="productionLineEnabled"]');
+                if (targetLineSwitch) targetLineSwitch.checked = productionLineEnabled;
+                toggleLocationProductionLine(targetScopeId, productionLineEnabled);
+                Object.entries(lineValues).forEach(([field, value]) => {
+                    const input = target.querySelector(`[data-prod-field="${field}"]`);
+                    if (input) input.value = value;
+                });
+            });
+
+            showToast(`已复制到 ${targets.length} 个同名场所`);
         }
 
         function validateSystemAuditDates(uniqueId, isEnergySystem) {
@@ -4712,6 +5304,9 @@
             const productionSection = document.getElementById('productionInfoSection');
             const productionSwitch = document.getElementById('enableProductionInfo');
             if (productionSection) productionSection.classList.toggle('hidden', hasOnlyInfoTechSystems());
+            document.querySelectorAll('.location-production-section').forEach(section => {
+                section.classList.toggle('hidden', hasOnlyInfoTechSystems());
+            });
             if (hasOnlyInfoTechSystems() && productionSwitch) {
                 productionSwitch.checked = false;
                 toggleProductionInfo(false);
@@ -5097,7 +5692,7 @@
                     id: uniqueId,
                     index: systemCounter,
                     selected: false,
-                    certType: 'initial',
+                    certType: 'recertification',
                     fromContract: true,
                     contractNo: linkedContract.no
                 });
@@ -5146,17 +5741,17 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button onclick="showContractLockTip()" class="text-xs text-amber-600 hover:bg-amber-50 px-2 py-1 rounded transition-colors flex items-center gap-1" title="该领域来自关联合同，不能删除">
+                        <span class="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded flex items-center gap-1" title="该领域来自关联合同，不能删除">
                             <i class="fas fa-lock"></i> 锁定
-                        </button>
+                        </span>
                     </div>
                 </div>
 
                 <div class="space-y-4">
                     <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
                         <div class="flex items-center justify-between">
-                            <span class="text-sm font-medium text-blue-700"><i class="fas fa-certificate mr-2"></i>认证类型：初次认证</span>
-                            <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">首次申请</span>
+                            <span class="text-sm font-medium text-blue-700"><i class="fas fa-certificate mr-2"></i>认证类型：再认证</span>
+                            <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">再认证</span>
                         </div>
                     </div>
 
@@ -5306,13 +5901,14 @@
         function updateBatchSelectState() {
             const batchBtn = document.querySelector('[onclick="toggleBatchSelect()"]');
             const addBtn = document.querySelector('[onclick="addSystem()"]');
+            const batchText = document.getElementById('batchSelectText');
 
             if (linkedContract) {
                 // 有关联合同时，禁用批量添加
                 if (batchBtn) {
                     batchBtn.disabled = true;
                     batchBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                    document.getElementById('batchSelectText').textContent = '已关联合同，无法手动添加';
+                    if (batchText) batchText.textContent = '已关联合同，无法手动添加';
                 }
                 if (addBtn) {
                     addBtn.disabled = true;
@@ -5323,7 +5919,7 @@
                 if (batchBtn) {
                     batchBtn.disabled = false;
                     batchBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                    document.getElementById('batchSelectText').textContent = '请选择认证体系（支持多选）';
+                    if (batchText) batchText.textContent = '请选择认证体系（支持多选）';
                 }
                 if (addBtn) {
                     addBtn.disabled = false;
@@ -5391,8 +5987,14 @@
         function updateBatchActions() {
             const bar = document.getElementById('batchActionsBar');
             const selectedCount = selectedSystems.filter(s => s.selected).length;
+            const selectedCountEl = document.getElementById('selectedCount');
 
-            document.getElementById('selectedCount').textContent = `已选择 ${selectedCount} 项`;
+            if (selectedCountEl) selectedCountEl.textContent = `已选择 ${selectedCount} 项`;
+            if (bar) {
+                bar.classList.add('hidden');
+                bar.classList.remove('active');
+            }
+            return;
 
             if (selectedSystems.length > 0) {
                 bar.classList.add('active');
@@ -5481,10 +6083,10 @@
 
             if (selectedSystems.length > 1) {
                 section.classList.remove('hidden');
-                navItem.classList.remove('hidden');
+                if (navItem) navItem.classList.remove('hidden');
             } else {
                 section.classList.add('hidden');
-                navItem.classList.add('hidden');
+                if (navItem) navItem.classList.add('hidden');
             }
         }
 
@@ -6542,6 +7144,7 @@ function initAttachments() {
             const typeLabel = type === 'service' ? '服务点' : (type === 'temp' ? '临时场所' : '固定场所');
             const typeClass = type === 'service' ? 'bg-violet-100 text-violet-700' : (type === 'temp' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700');
             const typeIcon = type === 'service' ? 'fa-headset' : (type === 'temp' ? 'fa-map-pin' : 'fa-building');
+            const productionScopeId = cardId;
             div.innerHTML = `
                 <div class="flex items-start justify-between mb-3">
                     <div class="flex items-center gap-3">
@@ -6564,12 +7167,8 @@ function initAttachments() {
                         <label class="block text-[10px] font-medium text-slate-500 mb-1 required">涉及的产品、过程、活动/工程项目进展情况</label>
                         <input type="text" placeholder="500字以内" maxlength="500" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
                     </div>
-                    <div class="col-span-3">
-                        <label class="block text-[10px] font-medium text-slate-500 mb-1">班次时间</label>
-                        <input type="text" placeholder="如：08:00-17:00" maxlength="500" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
-                    </div>
-                    <div class="col-span-1">
-                        <label class="block text-[10px] font-medium text-slate-500 mb-1">人数</label>
+                    <div class="col-span-2">
+                        <label class="block text-[10px] font-medium text-slate-500 mb-1">场所人数</label>
                         <input type="number" placeholder="0" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
                     </div>
                     <div class="col-span-2">
@@ -6591,11 +7190,11 @@ function initAttachments() {
                             <input type="text" placeholder="联系人姓名" class="manual-location-contact hidden flex-1 min-w-0 px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
                         </div>
                     </div>
-                    <div class="col-span-2">
+                    <div class="col-span-3">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">电话</label>
                         <input type="tel" placeholder="电话" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
                     </div>
-                    <div class="col-span-1">
+                    <div class="col-span-2">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">是否出子证</label>
                         <select class="w-full px-1 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white" title="是否出子证">
                             <option value="no">否</option>
@@ -6603,8 +7202,10 @@ function initAttachments() {
                         </select>
                     </div>
                 </div>
+                ${renderLocationProductionInfoFields(productionScopeId)}
             `;
             container.appendChild(div);
+            updateShiftTimeInputs(1, `shiftTimes_${productionScopeId}`);
 
             // 标记为多场所
             if (!options.locked) {
@@ -6737,11 +7338,12 @@ let surveyAttachmentFiles = [];
 let certificateChangeGroups = {};
 let multiSiteChangeData = {};
 let paymentNoticeSaved = false;
+let currentWorkflowStep = 1;
 
 const defaultCertificateSites = [
     {id: 'hq', name: '北京总部', address: '北京市朝阳区xxx路xxx号', scope: 'QMS、EMS认证范围', people: 120},
     {id: 'sh', name: '上海分公司', address: '上海市浦东新区xxx路xxx号', scope: 'QMS认证范围', people: 48},
-    {id: 'gz', name: '广州研发中心', address: '广州市天河区xxx路xxx号', scope: 'EMS认证范围', people: 36}
+    {id: 'gz', name: '广州研发中心', address: '广州市天河区xxx路xxx号', scope: 'QMS认证范围', people: 36}
 ];
 
 const certificateSiteMap = {
@@ -6763,7 +7365,7 @@ const allCertificates = [
 const certificateItems = [
     {
         id: 'orgName',
-        label: '组织名称',
+        label: '客户名称',
         current: '北京某某科技有限公司'
     },
     {
@@ -6799,6 +7401,7 @@ const certificateItems = [
 ];
 
 const unifiedCertificateItemIds = ['orgName', 'registeredAddress', 'soa'];
+const bilingualCertificateItemIds = ['orgName', 'registeredAddress', 'operationAddress', 'certScope'];
 
 const changeItems = [
     {id: 'topManager', label: '最高管理者', current: '李明，总经理，全面负责管理体系运行'},
@@ -6827,6 +7430,8 @@ document.addEventListener('DOMContentLoaded', function() {
     updateStatusDisplay();
     updatePaymentNoticeStatus();
     initEmailEditorSelection();
+    initRecertApplicationFrame();
+    switchWorkflowStep(1);
 
     // 日期默认值
     const today = new Date().toISOString().split('T')[0];
@@ -6918,6 +7523,84 @@ function saveApplication() {
     showNotification('已保存当前再认证审核申请', 'success');
 }
 
+function setRecertFrameStep(step) {
+    const frame = document.getElementById('recertApplicationFrame');
+    if(!frame) return;
+
+    const applyStep = function() {
+        const doc = frame.contentDocument;
+        const win = frame.contentWindow;
+        if(doc) {
+            const header = doc.querySelector('.recert-step-header');
+            if(header) header.style.display = 'none';
+            const mainWrap = doc.querySelector('#mainFormContainer')?.parentElement;
+            if(mainWrap) mainWrap.style.paddingTop = '0px';
+        }
+        if(win && typeof win.goStep === 'function') {
+            win.goStep(step);
+        }
+    };
+
+    if(frame.dataset.loaded === 'true' && frame.contentWindow && typeof frame.contentWindow.goStep === 'function') {
+        applyStep();
+    } else {
+        frame.addEventListener('load', applyStep, { once: true });
+        initRecertApplicationFrame();
+    }
+}
+
+function switchWorkflowStep(step) {
+    const nextStep = Math.min(Math.max(Number(step) || 1, 1), 4);
+    currentWorkflowStep = nextStep;
+
+    document.querySelectorAll('.workflow-step').forEach(btn => {
+        btn.classList.toggle('active', Number(btn.dataset.workflowStep) === nextStep);
+    });
+
+    const surveyContent = document.getElementById('content-survey');
+    const applicationContent = document.getElementById('content-application');
+    const workflowPanel = document.getElementById('workflowPanel');
+    if(surveyContent) surveyContent.classList.toggle('hidden', nextStep !== 1);
+    if(applicationContent) applicationContent.classList.toggle('hidden', nextStep === 1);
+    if(workflowPanel) workflowPanel.classList.toggle('application-step', nextStep > 1);
+
+    if(nextStep > 1) {
+        initRecertApplicationFrame();
+        setRecertFrameStep(nextStep);
+    }
+
+    const prevBtn = document.getElementById('workflowPrevBtn');
+    const nextBtn = document.getElementById('workflowNextBtn');
+    const confirmBtn = document.getElementById('confirmSubmitBtn');
+    const hint = document.getElementById('workflowStepHint');
+    if(prevBtn) prevBtn.classList.toggle('hidden', nextStep === 1);
+    if(nextBtn) nextBtn.classList.toggle('hidden', nextStep === 4);
+    if(confirmBtn && applicationStatus !== 'submitted') {
+        confirmBtn.disabled = nextStep !== 4;
+        confirmBtn.classList.toggle('opacity-50', nextStep !== 4);
+        confirmBtn.classList.toggle('cursor-not-allowed', nextStep !== 4);
+        confirmBtn.classList.toggle('hover:bg-blue-700', nextStep === 4);
+    }
+    if(hint) hint.textContent = `第 ${nextStep} 步 / 共 4 步`;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function openNoticeModal() {
+    const modal = document.getElementById('noticeModal');
+    const modalBody = document.getElementById('noticeModalBody');
+    const noticeDocument = document.querySelector('#content-notice .notice-document');
+    if(modalBody && noticeDocument) {
+        modalBody.innerHTML = '';
+        modalBody.appendChild(noticeDocument.cloneNode(true));
+    }
+    modal.classList.remove('hidden');
+}
+
+function closeNoticeModal() {
+    document.getElementById('noticeModal').classList.add('hidden');
+}
+
 // ===== Tab切换 =====
 function initRecertApplicationFrame() {
     const frame = document.getElementById('recertApplicationFrame');
@@ -6927,10 +7610,17 @@ function initRecertApplicationFrame() {
         const doc = frame.contentDocument;
         const win = frame.contentWindow;
         if(!doc || !win || typeof win.initRecertificationApplication !== 'function') return;
+        const header = doc.querySelector('.recert-step-header');
+        if(header) header.style.display = 'none';
+        const mainWrap = doc.querySelector('#mainFormContainer')?.parentElement;
+        if(mainWrap) mainWrap.style.paddingTop = '0px';
         const cards = doc.querySelectorAll('#selectedSystemsContainer .system-card');
         const hasLockedRecertData = doc.body && doc.body.textContent.includes('客户与领域已锁定');
         if(cards.length === 0 || !hasLockedRecertData) {
             win.initRecertificationApplication();
+        }
+        if(currentWorkflowStep > 1 && typeof win.goStep === 'function') {
+            win.goStep(currentWorkflowStep);
         }
     }, { once: true });
     frame.srcdoc = source.textContent.replace(/<\\\/script/gi, '</script');
@@ -6938,6 +7628,14 @@ function initRecertApplicationFrame() {
 }
 
 function switchTab(tabName) {
+    if(tabName === 'survey') {
+        switchWorkflowStep(1);
+        return;
+    }
+    if(tabName === 'application') {
+        switchWorkflowStep(2);
+        return;
+    }
     document.querySelectorAll('nav button').forEach(btn => {
         btn.classList.remove('tab-active');
         btn.classList.add('text-slate-500', 'border-b-2', 'border-transparent');
@@ -6971,6 +7669,10 @@ function isDomainCertificateItem(itemId) {
     return itemId === 'certStandard';
 }
 
+function isBilingualCertificateItem(itemId) {
+    return bilingualCertificateItemIds.includes(itemId);
+}
+
 function getCertificateDomains() {
     const domainMap = {};
     allCertificates.forEach(function(cert) {
@@ -6993,6 +7695,49 @@ function getDomainStandard(domain) {
         S: 'GB/T 45001-2020 / ISO 45001:2018'
     };
     return standardMap[domain] || '按证书所属认证领域自动带入';
+}
+
+function getDomainStandardOptions() {
+    return [
+        {domain: 'Q', domainName: '质量管理体系', standard: 'GB/T 19001-2016 / ISO 9001:2015'},
+        {domain: 'Q', domainName: '质量管理体系', standard: 'GB/T 19001-2026 / ISO 9001:2025'},
+        {domain: 'Q', domainName: '质量管理体系', standard: 'GB/T 50430'},
+        {domain: 'Q', domainName: '质量管理体系', standard: 'IATF 16949'},
+        {domain: 'Q', domainName: '质量管理体系', standard: 'AS9100'},
+        {domain: 'Q', domainName: '质量管理体系', standard: 'IRIS / ISO 22163'},
+        {domain: 'Q', domainName: '质量管理体系', standard: 'TL 9000'},
+        {domain: 'E', domainName: '环境管理体系', standard: 'GB/T 24001-2016 / ISO 14001:2015'},
+        {domain: 'E', domainName: '环境管理体系', standard: 'GB/T 24001-2026 / ISO 14001:2026'}
+    ];
+}
+
+function renderBilingualAfterFields(group, item) {
+    const chinese = escapeHtml(group.afterZh || '');
+    const english = escapeHtml(group.afterEn || '');
+    return '<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">' +
+        '<div><label class="block text-sm font-medium text-slate-700 mb-2">拟变更为（中文） <span class="text-red-500">*</span></label>' +
+        '<textarea id="afterZh_' + group.id + '" maxlength="500" placeholder="请输入变更后的' + escapeHtml(item.label) + '（中文）" oninput="updateCertificateGroupField(\'' + item.id + '\', \'' + group.id + '\', \'afterZh\', this.value)">' + chinese + '</textarea></div>' +
+        '<div><label class="block text-sm font-medium text-slate-700 mb-2">拟变更为（英文）</label>' +
+        '<textarea id="afterEn_' + group.id + '" maxlength="500" placeholder="请输入变更后的' + escapeHtml(item.label) + '（英文，可不填）" oninput="updateCertificateGroupField(\'' + item.id + '\', \'' + group.id + '\', \'afterEn\', this.value)">' + english + '</textarea></div>' +
+        '</div>';
+}
+
+function renderStandardSelect(group, item) {
+    const selectedDomain = group.domainCodes && group.domainCodes[0];
+    const values = group.afterStandards || (group.afterStandard ? [group.afterStandard] : []);
+    const options = getDomainStandardOptions().filter(function(option) {
+        return selectedDomain && option.domain === selectedDomain;
+    }).map(function(option) {
+        return '<label class="standard-option">' +
+            '<input type="checkbox" value="' + escapeHtml(option.standard) + '" ' + (values.includes(option.standard) ? 'checked' : '') + ' onchange="syncStandardSelection(\'' + item.id + '\', \'' + group.id + '\')">' +
+            '<span>' + escapeHtml(option.standard) + '</span>' +
+            '</label>';
+    }).join('');
+    return '<input type="hidden" id="after_' + group.id + '" value="' + escapeHtml(values.join('；')) + '">' +
+        '<div class="standard-multi-select ' + (selectedDomain ? '' : 'is-disabled') + '" id="standardOptions_' + group.id + '">' +
+        (selectedDomain ? options : '<div class="text-sm text-slate-400 px-2 py-1">请先选择变更领域</div>') +
+        '</div>' +
+        '<div class="text-xs text-slate-500 mt-1">可多选。</div>';
 }
 
 function renderCertificateNo(record) {
@@ -7063,104 +7808,92 @@ function getCertificateCurrentText(item, cert) {
     return item.current;
 }
 
-function ensureMultiSiteCertificateData(certId) {
-    if(!multiSiteChangeData[certId]) {
-        multiSiteChangeData[certId] = {
+function ensureMultiSiteData() {
+    if(!multiSiteChangeData.global) {
+        multiSiteChangeData.global = {
             addEnabled: false,
             removeEnabled: false,
             addSites: [],
             removeSiteIds: [],
+            removeSiteDomains: {},
             reason: ''
         };
     }
-    return multiSiteChangeData[certId];
+    return multiSiteChangeData.global;
 }
 
-function getCertificateSites(certId) {
-    const siteIds = certificateSiteMap[certId] || defaultCertificateSites.map(function(site) { return site.id; });
-    return defaultCertificateSites.filter(function(site) {
-        return siteIds.includes(site.id);
-    }).map(function(site) {
-        return Object.assign({}, site, {id: certId + '_' + site.id, originalId: site.id});
+function getSiteDomainCodes(siteId) {
+    if(siteId === 'sh') {
+        return ['Q', 'E'];
+    }
+    if(siteId === 'gz') {
+        return ['Q'];
+    }
+    const codes = new Set();
+    Object.keys(certificateSiteMap).forEach(function(certId) {
+        if((certificateSiteMap[certId] || []).includes(siteId)) {
+            const cert = allCertificates.find(function(entry) { return entry.certId === certId; });
+            if(cert) codes.add(cert.domain);
+        }
+    });
+    return Array.from(codes);
+}
+
+function getMultiSiteDomains() {
+    return getCertificateDomains().filter(function(domain) {
+        return getDomainStandardOptions().some(function(option) { return option.domain === domain.domain; });
+    });
+}
+
+function getAllCurrentSites() {
+    return defaultCertificateSites.map(function(site) {
+        return Object.assign({}, site, {domainCodes: getSiteDomainCodes(site.id)});
     });
 }
 
 function renderMultiSiteCertificateChanges() {
     const container = document.getElementById('certForms_multiSite');
     if(!container) return;
-    const multiSiteCertificates = getMultiSiteCertificates();
-    multiSiteCertificates.forEach(function(cert) {
-        ensureMultiSiteCertificateData(cert.certId);
-    });
-    container.innerHTML = '<div class="text-xs text-slate-500 mb-3">子证不填写分支机构/常设多场所；每本主证先展示当前关联场所，如需调整请勾选“新增场所”或“减少场所”。</div>' +
-        (multiSiteCertificates.length ? multiSiteCertificates.map(renderMultiSiteCertificatePanel).join('') : '<div class="text-center text-xs text-slate-400 py-4 bg-slate-50 rounded-lg border border-dashed border-slate-200">当前仅有子证，无分支机构/常设多场所内容。</div>');
-}
-
-function getMultiSiteCertificates() {
-    return allCertificates.filter(function(cert) {
-        return !cert.isSubCertificate;
-    });
-}
-
-function renderMultiSiteCertificatePanel(cert) {
-    const data = ensureMultiSiteCertificateData(cert.certId);
-    const currentSites = getCertificateSites(cert.certId);
-    const addRows = data.addSites.length
-        ? data.addSites.map(function(site) { return renderAddedSiteRow(cert.certId, site); }).join('')
-        : '<div class="text-center text-xs text-slate-400 py-4 bg-slate-50 rounded-lg border border-dashed border-slate-200">暂无新增场所，请点击“添加场所”</div>';
-    const siteTooltip = renderCurrentSiteTooltip(currentSites);
-    const removeRows = currentSites.map(function(site) {
-        const isHeadquarters = site.originalId === 'hq';
-        const checked = data.removeSiteIds.includes(site.id);
-        return '<label class="remove-site-option ' + (isHeadquarters ? 'is-disabled' : '') + '">' +
-            '<input type="checkbox" class="mt-1" value="' + escapeHtml(site.id) + '" ' + (checked ? 'checked' : '') + (isHeadquarters ? ' disabled' : '') + ' onchange="syncRemoveSites(\'' + cert.certId + '\')">' +
-            '<div class="min-w-0">' +
-            '<div class="font-semibold text-slate-800">' + escapeHtml(site.name) + '</div>' +
-            '<div class="text-xs text-slate-500 mt-1">' + escapeHtml(site.address) + '</div>' +
-            '<div class="text-xs text-blue-700 mt-1">' + escapeHtml(site.scope) + '</div>' +
-            '<div class="text-xs text-slate-500 mt-1">人数：' + escapeHtml(String(site.people)) + '</div>' +
-            (isHeadquarters ? '<div class="text-xs text-red-500 mt-1">总部场所不可删除</div>' : '') +
-            '</div>' +
-            '</label>';
-    }).join('');
-
-    return '<div class="site-change-card" id="multiSiteCert_' + cert.certId + '">' +
+    const data = ensureMultiSiteData();
+    const addRows = renderAddSiteDomainGroups(data);
+    const currentSites = getAllCurrentSites();
+    const removeRows = currentSites.map(renderRemoveSiteOption).join('');
+    container.innerHTML = '<div class="site-change-card" id="multiSiteGlobal">' +
         '<div class="change-group-header">' +
-        '<div>' +
-        '<div class="flex flex-wrap items-center gap-2">' +
-        '<span class="text-sm font-semibold text-slate-900">' + renderCertificateNo(cert) + '</span>' +
-        siteTooltip +
-        '</div>' +
-        '<div class="text-xs text-slate-500 mt-1">' + escapeHtml(cert.domainName) + '</div>' +
-        '</div>' +
+        '<div><div class="text-sm font-semibold text-slate-900">场所增删信息</div></div>' +
         '<div class="flex flex-wrap gap-2 text-xs">' +
         '<span class="px-2 py-1 rounded-full bg-green-50 text-green-700 border border-green-200">新增场所 ' + data.addSites.length + '</span>' +
-        '<span class="px-2 py-1 rounded-full bg-red-50 text-red-700 border border-red-200">减少场所 ' + data.removeSiteIds.length + '</span>' +
+        '<span class="px-2 py-1 rounded-full bg-red-50 text-red-700 border border-red-200">删除场所 ' + data.removeSiteIds.length + '</span>' +
         '</div>' +
         '</div>' +
         '<div class="site-change-section">' +
         '<div class="flex flex-wrap gap-4 text-sm">' +
-        '<label class="inline-flex items-center gap-2 cursor-pointer"><input type="checkbox" ' + (data.addEnabled ? 'checked' : '') + ' onchange="toggleMultiSiteAction(\'' + cert.certId + '\', \'addEnabled\', this.checked)">新增场所</label>' +
-        '<label class="inline-flex items-center gap-2 cursor-pointer"><input type="checkbox" ' + (data.removeEnabled ? 'checked' : '') + ' onchange="toggleMultiSiteAction(\'' + cert.certId + '\', \'removeEnabled\', this.checked)">减少场所</label>' +
+        '<label class="inline-flex items-center gap-2 cursor-pointer"><input type="checkbox" ' + (data.addEnabled ? 'checked' : '') + ' onchange="toggleMultiSiteAction(\'addEnabled\', this.checked)">新增场所</label>' +
+        '<label class="inline-flex items-center gap-2 cursor-pointer"><input type="checkbox" ' + (data.removeEnabled ? 'checked' : '') + ' onchange="toggleMultiSiteAction(\'removeEnabled\', this.checked)">删除场所</label>' +
         '</div>' +
         '</div>' +
         (data.addEnabled ? '<div class="site-change-section">' +
         '<div class="flex items-center justify-between gap-3 mb-3">' +
         '<div class="font-semibold text-slate-800 text-sm"><i class="fas fa-plus-circle text-green-500 mr-2"></i>新增场所信息</div>' +
-        '<button type="button" class="px-3 py-1.5 bg-white border border-blue-500 text-blue-600 rounded-lg text-xs hover:bg-blue-50 transition inline-flex items-center gap-2" onclick="addMultiSiteRow(\'' + cert.certId + '\')"><i class="fas fa-plus"></i>添加场所</button>' +
         '</div>' +
-        '<div id="addSites_' + cert.certId + '">' + addRows + '</div>' +
+        '<div id="addSites_multiSite">' + addRows + '</div>' +
         '</div>' : '') +
         (data.removeEnabled ? '<div class="site-change-section">' +
-        '<div class="font-semibold text-slate-800 text-sm mb-3"><i class="fas fa-minus-circle text-red-500 mr-2"></i>选择要减少的场所（可多选）</div>' +
-        '<div class="remove-site-grid" id="removeSites_' + cert.certId + '">' + removeRows + '</div>' +
-        '<div class="mt-3 flex gap-4 text-xs"><button type="button" class="text-blue-600 hover:text-blue-700" onclick="setAllRemoveSites(\'' + cert.certId + '\', true)">全选</button><button type="button" class="text-blue-600 hover:text-blue-700" onclick="setAllRemoveSites(\'' + cert.certId + '\', false)">取消全选</button></div>' +
+        '<div class="font-semibold text-slate-800 text-sm mb-3"><i class="fas fa-minus-circle text-red-500 mr-2"></i>选择要删除的场所（可多选）</div>' +
+        '<div class="remove-site-grid" id="removeSites_multiSite">' + removeRows + '</div>' +
+        '<div class="mt-3 flex gap-4 text-xs"><button type="button" class="text-blue-600 hover:text-blue-700" onclick="setAllRemoveSites(true)">全选</button><button type="button" class="text-blue-600 hover:text-blue-700" onclick="setAllRemoveSites(false)">取消全选</button></div>' +
         '</div>' : '') +
         ((data.addEnabled || data.removeEnabled) ? '<div class="site-change-section">' +
-        '<label class="block text-sm font-medium text-slate-700 mb-2">变更情况和原因描述</label>' +
-        '<textarea id="desc_multiSite_' + cert.certId + '" maxlength="500" placeholder="请描述本证书场所新增或减少的情况和原因" oninput="syncMultiSiteReason(\'' + cert.certId + '\')">' + escapeHtml(data.reason || '') + '</textarea>' +
+        '<label class="block text-sm font-medium text-slate-700 mb-2">变更情况和原因描述 <span class="text-red-500">*</span></label>' +
+        '<textarea id="desc_multiSite" maxlength="500" placeholder="请描述场所新增或删除的情况和原因" oninput="syncMultiSiteReason()">' + escapeHtml(data.reason || '') + '</textarea>' +
         '</div>' : '') +
+        '<div class="site-change-section">' +
+        '<div class="font-semibold text-slate-800 text-sm mb-3"><i class="fas fa-paperclip text-blue-500 mr-2"></i>相关证据附件</div>' +
+        renderEvidenceCell('multiSite') +
+        '</div>' +
         '</div>';
+    enableEvidenceUpload('multiSite');
+    updateEvidenceUI('multiSite');
 }
 
 function renderCurrentSiteTooltip(sites) {
@@ -7180,43 +7913,95 @@ function renderCurrentSiteTooltip(sites) {
         '</span>';
 }
 
-function renderAddedSiteRow(certId, site) {
-    return '<div class="site-row" data-site-row="' + site.id + '">' +
-        '<div><label class="block text-xs font-medium text-slate-600 mb-1">场所名称</label><input type="text" value="' + escapeHtml(site.name || '') + '" placeholder="请输入场所名称" oninput="updateMultiSiteField(\'' + certId + '\', \'' + site.id + '\', \'name\', this.value)"></div>' +
-        '<div><label class="block text-xs font-medium text-slate-600 mb-1">地址</label><input type="text" value="' + escapeHtml(site.address || '') + '" placeholder="请输入地址" oninput="updateMultiSiteField(\'' + certId + '\', \'' + site.id + '\', \'address\', this.value)"></div>' +
-        '<div><label class="block text-xs font-medium text-slate-600 mb-1">产品/服务范围</label><input type="text" value="' + escapeHtml(site.scope || '') + '" placeholder="请输入产品/服务范围" oninput="updateMultiSiteField(\'' + certId + '\', \'' + site.id + '\', \'scope\', this.value)"></div>' +
-        '<div><label class="block text-xs font-medium text-slate-600 mb-1">人数</label><input type="number" min="0" value="' + escapeHtml(String(site.people || 0)) + '" oninput="updateMultiSiteField(\'' + certId + '\', \'' + site.id + '\', \'people\', this.value)"></div>' +
-        '<div><label class="block text-xs font-medium text-slate-600 mb-1">是否发子证</label><select onchange="updateMultiSiteField(\'' + certId + '\', \'' + site.id + '\', \'isSubCertificate\', this.value)"><option value="no" ' + ((site.isSubCertificate || 'no') === 'no' ? 'selected' : '') + '>否</option><option value="yes" ' + (site.isSubCertificate === 'yes' ? 'selected' : '') + '>是</option></select></div>' +
-        '<button type="button" class="icon-action-btn text-red-600 hover:text-red-700 hover:border-red-300 hover:bg-red-50" title="删除" onclick="removeMultiSiteRow(\'' + certId + '\', \'' + site.id + '\')"><i class="fas fa-trash-alt"></i></button>' +
+function renderSiteDomainSelector(site, fieldPrefix) {
+    const selected = site.domainCodes || [];
+    return '<div><label class="block text-xs font-medium text-slate-600 mb-1">适用领域 <span class="text-red-500">*</span></label>' +
+        '<div class="certificate-selector mt-0">' +
+        getMultiSiteDomains().map(function(domain) {
+            const checked = selected.includes(domain.domain);
+            return '<label class="certificate-option"><input type="checkbox" value="' + domain.domain + '" ' + (checked ? 'checked' : '') + ' onchange="updateMultiSiteDomains(\'' + site.id + '\', \'' + fieldPrefix + '\')">' + escapeHtml(domain.domainName) + '</label>';
+        }).join('') +
+        '</div></div>';
+}
+
+function renderAddSiteDomainGroups(data) {
+    return getMultiSiteDomains().map(function(domain) {
+        const rows = (data.addSites || []).filter(function(site) {
+            return (site.domainCodes || []).includes(domain.domain);
+        });
+        return '<div class="site-change-section mt-0 first:border-t-0 first:pt-0">' +
+            '<div class="flex items-center justify-between gap-3 mb-3">' +
+            '<div class="text-sm font-semibold text-slate-800">' + escapeHtml(domain.domainName) + '</div>' +
+            '<button type="button" class="px-3 py-1.5 bg-white border border-blue-500 text-blue-600 rounded-lg text-xs hover:bg-blue-50 transition inline-flex items-center gap-2" onclick="addMultiSiteRow(\'' + domain.domain + '\')"><i class="fas fa-plus"></i>添加</button>' +
+            '</div>' +
+            (rows.length ? rows.map(renderAddedSiteRow).join('') : '<div class="text-center text-xs text-slate-400 py-4 bg-slate-50 rounded-lg border border-dashed border-slate-200">暂无' + escapeHtml(domain.domainName) + '新增场所</div>') +
+            '</div>';
+    }).join('');
+}
+
+function renderRemoveSiteOption(site) {
+    const data = ensureMultiSiteData();
+    const isHeadquarters = site.id === 'hq';
+    const checked = data.removeSiteIds.includes(site.id);
+    const selectedDomains = data.removeSiteDomains[site.id] || [];
+    const domainNames = getMultiSiteDomains().filter(function(domain) {
+        return (site.domainCodes || []).includes(domain.domain);
+    }).map(function(domain) { return domain.domainName; }).join('、') || '暂无领域';
+    return '<div class="remove-site-option ' + (isHeadquarters ? 'is-disabled' : '') + '">' +
+        '<input type="checkbox" class="mt-1" value="' + escapeHtml(site.id) + '" ' + (checked ? 'checked' : '') + (isHeadquarters ? ' disabled' : '') + ' onchange="syncRemoveSites()">' +
+        '<div class="min-w-0 flex-1">' +
+        '<div class="font-semibold text-slate-800">' + escapeHtml(site.name) + '</div>' +
+        '<div class="text-xs text-slate-500 mt-1">' + escapeHtml(site.address) + '</div>' +
+        '<div class="text-xs text-blue-700 mt-1">' + escapeHtml(site.scope) + '</div>' +
+        '<div class="text-xs text-slate-500 mt-1">现有领域：' + escapeHtml(domainNames) + '；人数：' + escapeHtml(String(site.people)) + '</div>' +
+        (checked ? '<div class="mt-3"><div class="text-xs font-medium text-slate-600 mb-1">删除领域 <span class="text-red-500">*</span></div><div class="certificate-selector mt-0">' + getMultiSiteDomains().filter(function(domain) { return (site.domainCodes || []).includes(domain.domain); }).map(function(domain) {
+            const domainChecked = selectedDomains.includes(domain.domain);
+            return '<span class="certificate-option"><input type="checkbox" value="' + domain.domain + '" ' + (domainChecked ? 'checked' : '') + ' onchange="updateMultiSiteDomains(\'' + site.id + '\', \'remove\')">' + escapeHtml(domain.domainName) + '</span>';
+        }).join('') + '</div></div>' : '') +
+        (isHeadquarters ? '<div class="text-xs text-red-500 mt-1">总部场所不可删除</div>' : '') +
+        '</div>' +
         '</div>';
 }
 
-function addMultiSiteRow(certId) {
-    const data = ensureMultiSiteCertificateData(certId);
+function renderAddedSiteRow(site) {
+    return '<div class="site-row" data-site-row="' + site.id + '">' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">场所名称</label><input type="text" value="' + escapeHtml(site.name || '') + '" placeholder="请输入场所名称" oninput="updateMultiSiteField(\'' + site.id + '\', \'name\', this.value)"></div>' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">地址</label><input type="text" value="' + escapeHtml(site.address || '') + '" placeholder="请输入地址" oninput="updateMultiSiteField(\'' + site.id + '\', \'address\', this.value)"></div>' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">产品/服务范围</label><input type="text" value="' + escapeHtml(site.scope || '') + '" placeholder="请输入产品/服务范围" oninput="updateMultiSiteField(\'' + site.id + '\', \'scope\', this.value)"></div>' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">人数</label><input type="number" min="0" value="' + escapeHtml(String(site.people || 0)) + '" oninput="updateMultiSiteField(\'' + site.id + '\', \'people\', this.value)"></div>' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">是否发子证</label><select onchange="updateMultiSiteField(\'' + site.id + '\', \'isSubCertificate\', this.value)"><option value="no" ' + ((site.isSubCertificate || 'no') === 'no' ? 'selected' : '') + '>否</option><option value="yes" ' + (site.isSubCertificate === 'yes' ? 'selected' : '') + '>是</option></select></div>' +
+        '<button type="button" class="icon-action-btn text-red-600 hover:text-red-700 hover:border-red-300 hover:bg-red-50" title="删除" onclick="removeMultiSiteRow(\'' + site.id + '\')"><i class="fas fa-trash-alt"></i></button>' +
+        '</div>';
+}
+
+function addMultiSiteRow(domainCode) {
+    const data = ensureMultiSiteData();
     data.addEnabled = true;
     data.addSites.push({
         id: 'site_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
         name: '',
         address: '',
         scope: '',
+        domainCodes: domainCode ? [domainCode] : [],
         people: 0,
         isSubCertificate: 'no'
     });
     renderMultiSiteCertificateChanges();
 }
 
-function toggleMultiSiteAction(certId, field, checked) {
-    const data = ensureMultiSiteCertificateData(certId);
+function toggleMultiSiteAction(field, checked) {
+    const data = ensureMultiSiteData();
     data[field] = checked;
     if(field === 'addEnabled' && !checked) {
         data.addSites = [];
     }
     if(field === 'removeEnabled' && !checked) {
         data.removeSiteIds = [];
+        data.removeSiteDomains = {};
     }
     if(field === 'removeEnabled' && checked) {
         data.removeSiteIds = (data.removeSiteIds || []).filter(function(siteId) {
-            return !siteId.endsWith('_hq');
+            return siteId !== 'hq';
         });
     }
     if(!data.addEnabled && !data.removeEnabled) {
@@ -7225,93 +8010,120 @@ function toggleMultiSiteAction(certId, field, checked) {
     renderMultiSiteCertificateChanges();
 }
 
-function removeMultiSiteRow(certId, siteId) {
-    const data = ensureMultiSiteCertificateData(certId);
+function removeMultiSiteRow(siteId) {
+    const data = ensureMultiSiteData();
     data.addSites = data.addSites.filter(function(site) {
         return site.id !== siteId;
     });
     renderMultiSiteCertificateChanges();
 }
 
-function updateMultiSiteField(certId, siteId, field, value) {
-    const data = ensureMultiSiteCertificateData(certId);
+function updateMultiSiteField(siteId, field, value) {
+    const data = ensureMultiSiteData();
     const site = data.addSites.find(function(entry) { return entry.id === siteId; });
     if(!site) return;
     site[field] = field === 'people' ? Number(value || 0) : value;
 }
 
-function syncRemoveSites(certId) {
-    const data = ensureMultiSiteCertificateData(certId);
-    data.removeEnabled = true;
-    data.removeSiteIds = Array.from(document.querySelectorAll('#removeSites_' + certId + ' input[type="checkbox"]:checked:not(:disabled)')).map(function(input) {
+function updateMultiSiteDomains(siteId, type) {
+    const selector = type === 'remove' ? '.remove-site-option input[value="' + siteId + '"]' : '[data-site-row="' + siteId + '"]';
+    const container = type === 'remove'
+        ? Array.from(document.querySelectorAll('.remove-site-option')).find(function(option) {
+            const input = option.querySelector('input[type="checkbox"][value="' + siteId + '"]');
+            return !!input;
+        })
+        : document.querySelector(selector);
+    if(!container) return;
+    const domains = Array.from(container.querySelectorAll('.certificate-selector input[type="checkbox"]:checked')).map(function(input) {
         return input.value;
+    });
+    const data = ensureMultiSiteData();
+    if(type === 'remove') {
+        data.removeSiteDomains[siteId] = domains;
+        return;
+    }
+    const site = data.addSites.find(function(entry) { return entry.id === siteId; });
+    if(site) site.domainCodes = domains;
+}
+
+function syncRemoveSites() {
+    const data = ensureMultiSiteData();
+    data.removeEnabled = true;
+    data.removeSiteIds = Array.from(document.querySelectorAll('#removeSites_multiSite > .remove-site-option > input[type="checkbox"]:checked:not(:disabled)')).map(function(input) {
+        return input.value;
+    });
+    getAllCurrentSites().forEach(function(site) {
+        if(data.removeSiteIds.includes(site.id) && !data.removeSiteDomains[site.id]) {
+            data.removeSiteDomains[site.id] = [];
+        }
+        if(!data.removeSiteIds.includes(site.id)) {
+            delete data.removeSiteDomains[site.id];
+        }
     });
     renderMultiSiteCertificateChanges();
 }
 
-function setAllRemoveSites(certId, checked) {
-    const data = ensureMultiSiteCertificateData(certId);
+function setAllRemoveSites(checked) {
+    const data = ensureMultiSiteData();
     data.removeEnabled = true;
-    data.removeSiteIds = checked ? getCertificateSites(certId).filter(function(site) {
-        return site.originalId !== 'hq';
+    data.removeSiteIds = checked ? getAllCurrentSites().filter(function(site) {
+        return site.id !== 'hq';
     }).map(function(site) { return site.id; }) : [];
+    data.removeSiteDomains = {};
+    if(checked) {
+        getAllCurrentSites().forEach(function(site) {
+            if(site.id !== 'hq') data.removeSiteDomains[site.id] = [];
+        });
+    }
     renderMultiSiteCertificateChanges();
 }
 
-function syncMultiSiteReason(certId) {
-    const data = ensureMultiSiteCertificateData(certId);
-    const textarea = document.getElementById('desc_multiSite_' + certId);
+function syncMultiSiteReason() {
+    const data = ensureMultiSiteData();
+    const textarea = document.getElementById('desc_multiSite');
     data.reason = textarea ? textarea.value : '';
 }
 
 function hasMultiSiteChanges() {
-    return getMultiSiteCertificates().some(function(cert) {
-        const data = multiSiteChangeData[cert.certId];
-        return data && (data.addEnabled || data.removeEnabled);
-    });
+    const data = ensureMultiSiteData();
+    return data.addEnabled || data.removeEnabled;
 }
 
 function validateMultiSiteChanges() {
     const checked = document.getElementById('change_multiSite');
     if(!checked || !checked.checked) return true;
     if(!hasMultiSiteChanges()) {
-        showNotification('分支机构/常设多场所需至少新增或减少一个场所', 'error');
+        showNotification('分支机构/常设多场所需至少新增或删除一个场所', 'error');
         return false;
     }
-    const invalidAddSite = getMultiSiteCertificates().some(function(cert) {
-        const data = multiSiteChangeData[cert.certId];
-        if(!data || !data.addEnabled) return false;
-        return (data.addSites || []).some(function(site) {
-            return !String(site.name || '').trim() || !String(site.address || '').trim() || !String(site.scope || '').trim();
-        });
+    const data = ensureMultiSiteData();
+    const invalidAddSite = data.addEnabled && (data.addSites || []).some(function(site) {
+        return !String(site.name || '').trim() || !String(site.address || '').trim() || !String(site.scope || '').trim() || !(site.domainCodes || []).length;
     });
     if(invalidAddSite) {
-        showNotification('新增场所需填写场所名称、地址和产品/服务范围', 'error');
+        showNotification('新增场所需填写场所名称、地址、产品/服务范围并选择领域', 'error');
         return false;
     }
-    const missingReason = getMultiSiteCertificates().some(function(cert) {
-        const data = multiSiteChangeData[cert.certId];
-        if(!data || (!data.addEnabled && !data.removeEnabled)) return false;
-        return !String(data.reason || '').trim();
-    });
+    const missingReason = !String(data.reason || '').trim();
     if(missingReason) {
-        showNotification('有场所增减的证书需填写变更情况和原因描述', 'error');
+        showNotification('有场所增删时需填写变更情况和原因描述', 'error');
         return false;
     }
-    const missingAddSite = getMultiSiteCertificates().some(function(cert) {
-        const data = multiSiteChangeData[cert.certId];
-        return data && data.addEnabled && (!data.addSites || data.addSites.length === 0);
-    });
+    const missingAddSite = data.addEnabled && (!data.addSites || data.addSites.length === 0);
     if(missingAddSite) {
-        showNotification('已选择新增场所的证书需至少添加一条场所信息', 'error');
+        showNotification('已选择新增场所时需至少添加一条场所信息', 'error');
         return false;
     }
-    const missingRemoveSite = getMultiSiteCertificates().some(function(cert) {
-        const data = multiSiteChangeData[cert.certId];
-        return data && data.removeEnabled && (!data.removeSiteIds || data.removeSiteIds.length === 0);
-    });
+    const missingRemoveSite = data.removeEnabled && (!data.removeSiteIds || data.removeSiteIds.length === 0);
     if(missingRemoveSite) {
-        showNotification('已选择减少场所的证书需至少勾选一个现有关联场所', 'error');
+        showNotification('已选择删除场所时需至少勾选一个现有场所', 'error');
+        return false;
+    }
+    const missingRemoveDomain = data.removeEnabled && (data.removeSiteIds || []).some(function(siteId) {
+        return !(data.removeSiteDomains[siteId] || []).length;
+    });
+    if(missingRemoveDomain) {
+        showNotification('删除场所需选择对应领域', 'error');
         return false;
     }
     return true;
@@ -7390,14 +8202,17 @@ function renderCertificateGroups(itemId) {
 }
 
 function renderUnifiedCertificateChangeGroup(item, group) {
+    const afterContent = isBilingualCertificateItem(item.id)
+        ? renderBilingualAfterFields(group, item)
+        : '<div><label class="block text-sm font-medium text-slate-700 mb-2">拟变更为 <span class="text-red-500">*</span></label>' +
+          '<textarea id="after_' + group.id + '" maxlength="500" placeholder="请输入统一变更后的' + escapeHtml(item.label) + '"></textarea></div>';
     return '<div class="certificate-change-panel" id="row_' + group.id + '">' +
         '<div class="change-group-header">' +
         '<div class="text-sm font-semibold text-slate-800">统一变更内容</div>' +
         '<div class="text-xs text-slate-500">适用于当前全部证书</div>' +
         '</div>' +
         '<div class="grid grid-cols-1 xl:grid-cols-2 gap-4">' +
-        '<div><label class="block text-sm font-medium text-slate-700 mb-2">拟变更为 <span class="text-red-500">*</span></label>' +
-        '<textarea id="after_' + group.id + '" maxlength="500" placeholder="请输入统一变更后的' + escapeHtml(item.label) + '"></textarea></div>' +
+        '<div>' + afterContent + '</div>' +
         '<div><label class="block text-sm font-medium text-slate-700 mb-2">变更情况和原因描述 <span class="text-red-500">*</span></label>' +
         '<textarea id="desc_' + group.id + '" maxlength="500" placeholder="请描述本项统一变更的情况和原因"></textarea></div>' +
         '</div>' +
@@ -7426,7 +8241,7 @@ function renderDomainCertificateChangeGroup(item, group, index) {
         '</div>' +
         '<div class="grid grid-cols-1 xl:grid-cols-3 gap-4 mt-4">' +
         '<div><label class="block text-sm font-medium text-slate-700 mb-2">拟变更为 <span class="text-red-500">*</span></label>' +
-        '<textarea id="after_' + group.id + '" maxlength="500" placeholder="请输入所选领域统一变更后的认证标准或技术规范"></textarea></div>' +
+        renderStandardSelect(group, item) + '</div>' +
         '<div class="xl:col-span-2"><label class="block text-sm font-medium text-slate-700 mb-2">变更情况和原因描述 <span class="text-red-500">*</span></label>' +
         '<textarea id="desc_' + group.id + '" maxlength="500" placeholder="请描述所选领域认证标准或技术规范变更的情况和原因"></textarea></div>' +
         '</div>' +
@@ -7435,6 +8250,12 @@ function renderDomainCertificateChangeGroup(item, group, index) {
 }
 
 function renderCertificateChangeGroup(item, group, index) {
+    const afterContent = isBilingualCertificateItem(item.id)
+        ? renderBilingualAfterFields(group, item)
+        : '<div><label class="block text-sm font-medium text-slate-700 mb-2">拟变更为 <span class="text-red-500">*</span></label>' +
+          '<textarea id="after_' + group.id + '" maxlength="500" placeholder="请输入本组证书变更后的内容"></textarea></div>';
+    const fieldGridClass = isBilingualCertificateItem(item.id) ? 'grid grid-cols-1 xl:grid-cols-2 gap-4 mt-4' : 'grid grid-cols-1 xl:grid-cols-3 gap-4 mt-4';
+    const descClass = isBilingualCertificateItem(item.id) ? '' : 'xl:col-span-2';
     const visibleCerts = allCertificates;
     const selectableCerts = visibleCerts.filter(function(cert) {
         return !isCertificateSelectedInOtherGroup(item.id, group.id, cert.certId);
@@ -7460,14 +8281,31 @@ function renderCertificateChangeGroup(item, group, index) {
                 '</label>';
         }).join('') +
         '</div>' +
-        '<div class="grid grid-cols-1 xl:grid-cols-3 gap-4 mt-4">' +
-        '<div><label class="block text-sm font-medium text-slate-700 mb-2">拟变更为 <span class="text-red-500">*</span></label>' +
-        '<textarea id="after_' + group.id + '" maxlength="500" placeholder="请输入本组证书变更后的内容"></textarea></div>' +
-        '<div class="xl:col-span-2"><label class="block text-sm font-medium text-slate-700 mb-2">变更情况和原因描述 <span class="text-red-500">*</span></label>' +
+        '<div class="' + fieldGridClass + '">' +
+        '<div>' + afterContent + '</div>' +
+        '<div class="' + descClass + '"><label class="block text-sm font-medium text-slate-700 mb-2">变更情况和原因描述 <span class="text-red-500">*</span></label>' +
         '<textarea id="desc_' + group.id + '" maxlength="500" placeholder="请描述本组证书相同的变更情况和原因"></textarea></div>' +
         '</div>' +
         '<div class="mt-4">' + renderEvidenceCell(group.id) + '</div>' +
         '</div>';
+}
+
+function updateCertificateGroupField(itemId, groupId, field, value) {
+    const group = (certificateChangeGroups[itemId] || []).find(function(entry) { return entry.id === groupId; });
+    if(!group) return;
+    group[field] = value;
+}
+
+function syncStandardSelection(itemId, groupId) {
+    const group = (certificateChangeGroups[itemId] || []).find(function(entry) { return entry.id === groupId; });
+    if(!group) return;
+    const container = document.getElementById('standardOptions_' + groupId);
+    group.afterStandards = Array.from((container || document).querySelectorAll('input[type="checkbox"]:checked')).map(function(input) {
+        return input.value;
+    }).filter(Boolean);
+    group.afterStandard = group.afterStandards.join('；');
+    const hidden = document.getElementById('after_' + groupId);
+    if(hidden) hidden.value = group.afterStandard;
 }
 
 function addCertificateChangeGroup(itemId) {
@@ -7711,8 +8549,10 @@ function saveSurvey() {
     const incomplete = changedIds.find(function(id) {
         const desc = (document.getElementById('desc_' + id) || {}).value || '';
         const after = (document.getElementById('after_' + id) || {}).value || '';
-        const isCertificateItem = !!document.getElementById('after_' + id);
-        return !desc.trim() || (isCertificateItem && !after.trim());
+        const afterZh = (document.getElementById('afterZh_' + id) || {}).value || '';
+        const hasCertificateAfter = !!after || !!document.getElementById('after_' + id) || !!document.getElementById('afterZh_' + id);
+        const hasAfterValue = document.getElementById('afterZh_' + id) ? afterZh.trim() : after.trim();
+        return !desc.trim() || (hasCertificateAfter && !hasAfterValue);
     });
 
     if(incomplete) {
