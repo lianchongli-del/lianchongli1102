@@ -1083,6 +1083,12 @@
                 workUnit: "辽宁公司", region: "东北区域", type: "专职", 
                 codes: { QMS: ["19.01.01", "19.07.00"], EMS: ["19.03.00"] }, 
                 isBusy: false, busyPeriod: null, remainingDays: 112 
+            },            { 
+                name: "刘娜", phone: "13800138007", cqc: "CQC40876", 
+                qualification: "技术专家", registrationNumbers: ["TE-2024-0188"], defaultRole: "技术专家", 
+                workUnit: "辽宁公司", region: "东北区域", type: "兼职", 
+                codes: { QMS: ["19.01.01", "19.07.00"], EMS: ["19.03.00"] }, 
+                isBusy: false, busyPeriod: null, remainingDays: 96 
             },
             { 
                 name: "沈书华", phone: "13683124756", cqc: "CQC08017", 
@@ -1135,6 +1141,23 @@
 
         function formatRegistration(person) {
             return getPersonnelCredentialInfo(person).registrationNumbers;
+        }
+
+        function isTechnicalExpert(person) {
+            return person.role === '技术专家' || person.defaultRole === '技术专家' || formatQualification(person).includes('技术专家');
+        }
+
+        function renderRoleSelect(person, onchange, minWidth = '80px') {
+            if (isTechnicalExpert(person)) {
+                person.role = '技术专家';
+                return `<select class="editable-field py-1" style="min-width: ${minWidth};" disabled><option value="技术专家" selected>技术专家</option></select>`;
+            }
+            return `
+                        <select class="editable-field py-1" style="min-width: ${minWidth};" onchange="${onchange}">
+                            <option value="组长" ${person.role === '组长' ? 'selected' : ''}>组长</option>
+                            <option value="分组长" ${person.role === '分组长' ? 'selected' : ''}>分组长</option>
+                            <option value="组员" ${person.role === '组员' || !person.role || person.role === '技术专家' ? 'selected' : ''}>组员</option>
+                        </select>`;
         }
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
@@ -1700,12 +1723,7 @@
                     <td>${idx + 1}</td>
                     <td class="font-medium text-slate-900">${person.name}</td>
                     <td>
-                        <select class="editable-field py-1" style="min-width: 80px;" onchange="updatePersonRole('${siteId}', '${person.cqc}', this.value)">
-                            <option value="组长" ${person.role === '组长' ? 'selected' : ''}>组长</option>
-                            <option value="分组长" ${person.role === '分组长' ? 'selected' : ''}>分组长</option>
-                            <option value="组员" ${person.role === '组员' || !person.role ? 'selected' : ''}>组员</option>
-                            <option value="技术专家" ${person.role === '技术专家' ? 'selected' : ''}>技术专家</option>
-                        </select>
+                        ${renderRoleSelect(person, `updatePersonRole('${siteId}', '${person.cqc}', this.value)`, '80px')}
                     </td>
                     <td class="text-xs">${formatQualification(person)}</td>
                     <td class="font-mono text-xs">${formatRegistration(person)}</td>
@@ -1815,12 +1833,7 @@
                     <td>${idx + 1}</td>
                     <td class="font-medium text-slate-900">${person.name}</td>
                     <td>
-                        <select class="editable-field py-1" style="min-width: 92px;" onchange="updateStageTwoRole(${idx}, this.value)">
-                            <option value="组长" ${person.role === '组长' ? 'selected' : ''}>组长</option>
-                            <option value="分组长" ${person.role === '分组长' ? 'selected' : ''}>分组长</option>
-                            <option value="组员" ${person.role === '组员' || !person.role ? 'selected' : ''}>组员</option>
-                            <option value="技术专家" ${person.role === '技术专家' ? 'selected' : ''}>技术专家</option>
-                        </select>
+                        ${renderRoleSelect(person, `updateStageTwoRole(${idx}, this.value)`, '92px')}
                     </td>
                     <td class="text-xs">${formatQualification(person)}</td>
                     <td class="font-mono text-xs">${formatRegistration(person)}</td>
@@ -1859,7 +1872,7 @@
         }
 
         function updateStageTwoRole(idx, role) {
-            if (stageTwoPrearrangePersonnel[idx]) stageTwoPrearrangePersonnel[idx].role = role;
+            if (stageTwoPrearrangePersonnel[idx]) stageTwoPrearrangePersonnel[idx].role = isTechnicalExpert(stageTwoPrearrangePersonnel[idx]) ? '技术专家' : role;
         }
 
         function updateStageTwoDate(idx, type, value) {
@@ -2330,11 +2343,7 @@
                     <td>${idx + 1}</td>
                     <td class="font-medium text-slate-900">${person.name}</td>
                     <td>
-                        <select class="editable-field py-1" style="min-width: 80px;" onchange="updateNonVenueRole(${idx}, this.value)">
-                            <option value="组长" ${person.role === '组长' ? 'selected' : ''}>组长</option>
-                            <option value="组员" ${person.role === '组员' || !person.role ? 'selected' : ''}>组员</option>
-                            <option value="技术专家" ${person.role === '技术专家' ? 'selected' : ''}>技术专家</option>
-                        </select>
+                        ${renderRoleSelect(person, `updateNonVenueRole(${idx}, this.value)`, '80px')}
                     </td>
                     <td class="text-xs">${formatQualification(person)}</td>
                     <td class="font-mono text-xs">${formatRegistration(person)}</td>
@@ -2438,7 +2447,7 @@
         function updatePersonRole(siteId, cqc, role) {
             const list = sitePersonnelMap.get(siteId) || [];
             const person = list.find(p => p.cqc === cqc);
-            if (person) { person.role = role; updateLeadAuditorOptions(); }
+            if (person) { if (isTechnicalExpert(person)) role = '技术专家'; person.role = role; updateLeadAuditorOptions(); }
         }
         
         function updateSitePersonDate(siteId, cqc, type, value) {
@@ -2462,7 +2471,7 @@
         }
         
         function updateNonVenueRole(idx, role) {
-            assignedPersonnel[idx].role = role;
+            if (assignedPersonnel[idx]) assignedPersonnel[idx].role = isTechnicalExpert(assignedPersonnel[idx]) ? '技术专家' : role;
             updateLeadAuditorOptions();
         }
         
@@ -2611,6 +2620,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
