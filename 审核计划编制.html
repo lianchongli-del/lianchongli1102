@@ -1,4 +1,5 @@
-﻿
+
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -482,6 +483,8 @@
         }
 
         .activity-row {
+            position: relative;
+            z-index: 1;
             display: grid;
             grid-template-columns: 40px 120px 140px 220px 1fr 160px 100px;
             gap: 12px;
@@ -499,11 +502,16 @@
             border-bottom: none;
         }
 
-        /* 人员选择器 - 修复：确保z-index足够高且不被裁剪 */
+        
+        .activity-row.dropdown-active {
+            z-index: 1000;
+        }
+
+/* 人员选择器 - 修复：确保z-index足够高且不被裁剪 */
         .auditor-select-container {
             position: relative;
             width: 100%;
-            z-index: 1;
+            z-index: 2;
         }
 
         .auditor-tags {
@@ -523,7 +531,12 @@
             border-color: #3b82f6;
         }
 
-        .auditor-tag {
+        
+        .auditor-select-container.dropdown-active {
+            z-index: 1001;
+        }
+
+.auditor-tag {
             display: inline-flex;
             align-items: center;
             gap: 4px;
@@ -555,7 +568,7 @@
 
         .auditor-dropdown {
             position: absolute;
-            top: 100%;
+            top: calc(100% + 8px);
             left: 0;
             right: 0;
             background: white;
@@ -563,10 +576,10 @@
             border-radius: 8px;
             max-height: 200px;
             overflow-y: auto;
-            z-index: 9999; /* 修复：提高z-index确保在最上层 */
+            z-index: 1002;
             display: none;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            margin-top: 4px;
+            margin-top: 0;
         }
 
         .auditor-dropdown.show {
@@ -632,7 +645,8 @@
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
-        }
+        }
+
 .auditor-color {
             width: 8px;
             height: 8px;
@@ -1584,13 +1598,23 @@
             document.querySelectorAll('.auditor-dropdown').forEach(d => {
                 if (d.id !== `dropdown-${rowId}`) d.classList.remove('show');
             });
+            document.querySelectorAll('.activity-row.dropdown-active, .auditor-select-container.dropdown-active').forEach(el => {
+                el.classList.remove('dropdown-active');
+            });
             
             const dropdown = document.getElementById(`dropdown-${rowId}`);
+            const row = document.querySelector(`[data-row-id="${rowId}"]`);
+            const container = dropdown?.closest('.auditor-select-container');
             dropdown.classList.toggle('show');
+            const isOpen = dropdown.classList.contains('show');
+            row?.classList.toggle('dropdown-active', isOpen);
+            container?.classList.toggle('dropdown-active', isOpen);
             
             const closeDropdown = (e) => {
                 if (!e.target.closest(`#tags-${rowId}`) && !e.target.closest(`#dropdown-${rowId}`)) {
                     dropdown.classList.remove('show');
+                    row?.classList.remove('dropdown-active');
+                    container?.classList.remove('dropdown-active');
                     document.removeEventListener('click', closeDropdown);
                 }
             };
@@ -1836,6 +1860,8 @@
     </script>
 </body>
 </html>
+
+
 
 
 
