@@ -449,9 +449,6 @@
                     <i class="fas fa-link text-blue-600"></i>
                     <h3 class="font-semibold text-slate-900">关联审核项目</h3>
                 </div>
-                <button onclick="selectProjects()" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs font-medium shadow-sm shadow-blue-200 transition-all">
-                    <i class="fas fa-plus mr-1"></i>选择项目
-                </button>
             </div>
             <div class="p-6">
                 <div class="overflow-x-auto">
@@ -461,63 +458,36 @@
                                 <th style="width: 50px">序号</th>
                                 <th>项目编号</th>
                                 <th>客户名称</th>
-                                <th>项目类型</th>
-                                <!-- 修改：拆分为3个字段 -->
-                                <th>认证领域</th>
-                                <th>范围</th>
-                                <th>认可机构</th>
-                                <th>认证标准</th>
-                                <th>风险等级</th>
-                                <th>有效人数</th>
                                 <th>审核类型</th>
+                                <th>认证领域</th>
                                 <th>审核阶段</th>
-                                <th>是否现场</th>
-                                <th style="width: 140px">操作</th>
+                                <th>场所数量</th>
+                                <th style="width: 120px">操作</th>
                             </tr>
                         </thead>
                         <tbody id="projectTable">
                             <tr>
                                 <td>1</td>
-                                <td>PRJ-2024-00189-01</td>
+                                <td>1100-Q1-2026-0002</td>
                                 <td>北京市地铁运营有限公司</td>
                                 <td>初次认证</td>
-                                <!-- 修改：拆分为3个字段 -->
                                 <td>QMS</td>
-                                <td>轨道交通运营服务</td>
-                                <td>CNAS</td>
-                                <td>GB/T 19001-2016</td>
-                                <td>中</td>
-                                <td>200</td>
-                                <td>初审</td>
                                 <td>一阶段</td>
-                                <td>是</td>
+                                <td>4</td>
                                 <td>
-                                    <button onclick="viewPlan()" class="text-blue-600 hover:text-blue-800 mr-2 text-xs font-medium">查看策划方案</button>
-                                    <button onclick="removeProject(this)" class="text-red-500 hover:text-red-700">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    <button onclick="viewPlan()" class="text-blue-600 hover:text-blue-800 text-xs font-medium">查看策划方案</button>
                                 </td>
                             </tr>
                             <tr>
                                 <td>2</td>
-                                <td>PRJ-2024-00189-02</td>
+                                <td>1100-E1-2026-0003</td>
                                 <td>北京市地铁运营有限公司</td>
-                                <td>初次认证</td>
-                                <!-- 修改：拆分为3个字段 -->
+                                <td>再认证</td>
                                 <td>EMS</td>
-                                <td>城市轨道交通运营环境管理</td>
-                                <td>UKAS</td>
-                                <td>GB/T 24001-2016</td>
-                                <td>高</td>
-                                <td>180</td>
-                                <td>初审</td>
                                 <td>一阶段</td>
-                                <td>是</td>
+                                <td>4</td>
                                 <td>
-                                    <button onclick="viewPlan()" class="text-blue-600 hover:text-blue-800 mr-2 text-xs font-medium">查看策划方案</button>
-                                    <button onclick="removeProject(this)" class="text-red-500 hover:text-red-700">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    <button onclick="viewPlan()" class="text-blue-600 hover:text-blue-800 text-xs font-medium">查看策划方案</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -930,37 +900,30 @@
                             <th style="width: 40px"><input type="checkbox" id="selectAllProjects" onclick="toggleSelectAllProjects(this)" checked></th>
                             <th>项目编号</th>
                             <th>客户名称</th>
-                            <th>项目类型</th>
-                            <!-- 修改：拆分为3个字段 -->
+                            <th>审核类型</th>
                             <th>认证领域</th>
-                            <th>范围</th>
-                            <th>认可机构</th>
                             <th>审核阶段</th>
-                            <th>是否现场</th>
+                            <th>场所数量</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td><input type="checkbox" class="project-checkbox" checked></td>
-                            <td>PRJ-2024-00189-03</td>
+                            <td>1100-S1-2026-0004</td>
                             <td>北京市地铁运营有限公司</td>
                             <td>初次认证</td>
                             <td>OHSMS</td>
-                            <td>轨道交通职业健康安全管理</td>
-                            <td>CNAS</td>
                             <td>一阶段</td>
-                            <td>是</td>
+                            <td>4</td>
                         </tr>
                         <tr>
                             <td><input type="checkbox" class="project-checkbox" checked></td>
-                            <td>PRJ-2024-00189-04</td>
+                            <td>1100-R1-2026-0005</td>
                             <td>北京市地铁运营有限公司</td>
-                            <td>初次认证</td>
+                            <td>再认证</td>
                             <td>ISMS</td>
-                            <td>地铁运营信息安全管理</td>
-                            <td>ANAB</td>
                             <td>一阶段</td>
-                            <td>是</td>
+                            <td>4</td>
                         </tr>
                     </tbody>
                 </table>
@@ -1594,7 +1557,7 @@
             const unassignedDays = totalDays;
             
             // 证书份数HTML
-            const certCopiesHtml = venue.certCopies ? `<span class="sub-cert-tag"><i class="fas fa-certificate mr-1"></i>证书${venue.certCopies}份</span>` : '';
+            const certCopiesHtml = venue.certCopies ? `<span class="sub-cert-tag">证书${venue.certCopies}份</span>` : '';
             
             card.innerHTML = `
                 <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between rounded-t-xl">
@@ -2535,10 +2498,6 @@
             closeProjectModal();
         }
         
-        function removeProject(btn) {
-            if (confirm('确定删除该关联项目吗？')) btn.closest('tr').remove();
-        }
-
         function toggleCustomerRequirements() {
             document.getElementById('customer-special-requirements')?.classList.toggle('collapsed');
         }
