@@ -498,7 +498,7 @@
                     <div class="grid grid-cols-3 gap-4">
                         <div>
                             <label class="block text-xs font-medium text-slate-700 mb-1">审核组长 <span class="text-red-500">*</span></label>
-                            <select class="editable-field" id="leadAuditorSelect">
+                            <select class="editable-field" id="leadAuditorSelect" onchange="refreshAllSiteCards()">
                                 <option value="">请选择审核组长</option>
                             </select>
                         </div>
@@ -875,17 +875,76 @@
             return person.role === '技术专家' || person.defaultRole === '技术专家' || formatQualification(person).includes('技术专家');
         }
 
-        function renderRoleSelect(person, onchange, minWidth = '80px') {
+        function normalizeSingleLeader(list = []) {
+            let hasLeader = false;
+            list.forEach(person => {
+                if (isTechnicalExpert(person)) {
+                    person.role = '技术专家';
+                    return;
+                }
+                if (person.role === '组长') {
+                    if (hasLeader) person.role = '组员';
+                    else hasLeader = true;
+                }
+            });
+        }
+
+        function hasOtherLeader(peers = [], person) {
+            return peers.some(item => item.cqc !== person.cqc && item.role === '组长');
+        }
+
+        function renderRoleSelect(person, onchange, minWidth = '80px', peers = []) {
             if (isTechnicalExpert(person)) {
                 person.role = '技术专家';
                 return `<select class="editable-field py-1" style="min-width: ${minWidth};" disabled><option value="技术专家" selected>技术专家</option></select>`;
             }
+            const leaderDisabled = person.role !== '组长' && hasOtherLeader(peers, person) ? 'disabled' : '';
             return `
                         <select class="editable-field py-1" style="min-width: ${minWidth};" onchange="${onchange}">
-                            <option value="组长" ${person.role === '组长' ? 'selected' : ''}>组长</option>
+                            <option value="组长" ${person.role === '组长' ? 'selected' : ''} ${leaderDisabled}>组长</option>
                             <option value="分组长" ${person.role === '分组长' ? 'selected' : ''}>分组长</option>
                             <option value="组员" ${person.role === '组员' || !person.role || person.role === '技术专家' ? 'selected' : ''}>组员</option>
                         </select>`;
+        }
+
+        function getLeadAuditorCqc() {
+            return document.getElementById('leadAuditorSelect')?.value || '';
+        }
+
+        function renderSiteRoleSelect(person, onchange, minWidth = '80px') {
+            if (isTechnicalExpert(person)) {
+                person.role = '技术专家';
+                return `<select class="editable-field py-1" style="min-width: ${minWidth};" disabled><option value="技术专家" selected>技术专家</option></select>`;
+            }
+            if (person.cqc === getLeadAuditorCqc()) {
+                person.role = '组长';
+                return `<select class="editable-field py-1" style="min-width: ${minWidth};" disabled><option value="组长" selected>组长</option></select>`;
+            }
+            if (!['分组长', '组员'].includes(person.role)) person.role = '组员';
+            return `
+                        <select class="editable-field py-1" style="min-width: ${minWidth};" onchange="${onchange}">
+                            <option value="分组长" ${person.role === '分组长' ? 'selected' : ''}>分组长</option>
+                            <option value="组员" ${person.role === '组员' || !person.role ? 'selected' : ''}>组员</option>
+                        </select>`;
+        }
+
+        function renderNonVenueRoleSelect(person, onchange, minWidth = '80px', peers = []) {
+            if (isTechnicalExpert(person)) {
+                person.role = '技术专家';
+                return `<select class="editable-field py-1" style="min-width: ${minWidth};" disabled><option value="技术专家" selected>技术专家</option></select>`;
+            }
+            if (!['组长', '组员'].includes(person.role)) person.role = '组员';
+            const leaderDisabled = person.role !== '组长' && hasOtherLeader(peers, person) ? 'disabled' : '';
+            return `
+                        <select class="editable-field py-1" style="min-width: ${minWidth};" onchange="${onchange}">
+                            <option value="组长" ${person.role === '组长' ? 'selected' : ''} ${leaderDisabled}>组长</option>
+                            <option value="组员" ${person.role === '组员' || !person.role ? 'selected' : ''}>组员</option>
+                        </select>`;
+        }
+
+        function refreshAllSiteCards() {
+            sitePersonnelMap.forEach((_, siteId) => refreshSiteCard(siteId));
+            updateLeadAuditorOptions();
         }
         // 初始化 - 默认显示场所模式
         document.addEventListener('DOMContentLoaded', function() {
@@ -1076,7 +1135,7 @@
             else allPersonnel = assignedPersonnel;
             
             const uniquePersonnel = allPersonnel.filter((p, idx, self) => idx === self.findIndex(t => t.cqc === p.cqc));
-            const leadAuditors = uniquePersonnel.filter(p => p.role === '组长' || p.defaultRole === '组长');
+            const leadAuditors = uniquePersonnel.filter(p => !isTechnicalExpert(p));
             
             let html = '<option value="">请选择审核组长</option>';
             leadAuditors.forEach(p => {
@@ -1244,12 +1303,13 @@
         
         function renderPersonnelRows(personnelList, siteId) {
             if (!personnelList || personnelList.length === 0) return '';
+            normalizeSingleLeader(personnelList);
             return personnelList.map((person, idx) => `
                 <tr data-person-id="${person.cqc}">
                     <td>${idx + 1}</td>
                     <td class="font-medium text-slate-900">${person.name}</td>
                     <td>
-                        ${renderRoleSelect(person, `updatePersonRole('${siteId}', '${person.cqc}', this.value)`, '80px')}
+                        ${renderSiteRoleSelect(person, `updatePersonRole('${siteId}', '${person.cqc}', this.value)`, '80px')}
                     </td>
                     <td class="text-xs">${formatQualification(person)}</td>
                     <td class="font-mono text-xs">${formatRegistration(person)}</td>
@@ -1630,6 +1690,7 @@
         }
         
         function renderNonVenuePersonnel() {
+            normalizeSingleLeader(assignedPersonnel);
             const tbody = document.getElementById('nonVenuePersonnelBody');
             const table = document.getElementById('nonVenueTable');
             const emptyState = document.getElementById('nonVenueEmptyState');
@@ -1648,7 +1709,7 @@
                     <td>${idx + 1}</td>
                     <td class="font-medium text-slate-900">${person.name}</td>
                     <td>
-                        ${renderRoleSelect(person, `updateNonVenueRole(${idx}, this.value)`, '80px')}
+                        ${renderNonVenueRoleSelect(person, `updateNonVenueRole(${idx}, this.value)`, '80px', assignedPersonnel)}
                     </td>
                     <td class="text-xs">${formatQualification(person)}</td>
                     <td class="font-mono text-xs">${formatRegistration(person)}</td>
@@ -1754,7 +1815,14 @@
         function updatePersonRole(siteId, cqc, role) {
             const list = sitePersonnelMap.get(siteId) || [];
             const person = list.find(p => p.cqc === cqc);
-            if (person) { if (isTechnicalExpert(person)) role = '技术专家'; person.role = role; updateLeadAuditorOptions(); }
+            if (person) {
+                if (isTechnicalExpert(person)) role = '技术专家';
+                else if (person.cqc === getLeadAuditorCqc()) role = '组长';
+                else if (role === '组长') role = '组员';
+                person.role = role;
+                updateLeadAuditorOptions();
+                refreshSiteCard(siteId);
+            }
         }
         
         function updateSitePersonDate(siteId, cqc, type, value) {
@@ -1778,8 +1846,19 @@
         }
         
         function updateNonVenueRole(idx, role) {
-            if (assignedPersonnel[idx]) assignedPersonnel[idx].role = isTechnicalExpert(assignedPersonnel[idx]) ? '技术专家' : role;
+            const person = assignedPersonnel[idx];
+            if (person) {
+                role = isTechnicalExpert(person) ? '技术专家' : role;
+                if (!isTechnicalExpert(person) && role === '分组长') role = '组员';
+                if (role === '组长' && hasOtherLeader(assignedPersonnel, person)) {
+                    alert('组长只能设置 1 人');
+                    renderNonVenuePersonnel();
+                    return;
+                }
+                person.role = role;
+            }
             updateLeadAuditorOptions();
+            renderNonVenuePersonnel();
         }
         
         function validateFullTimeAuditor() {
@@ -1898,6 +1977,9 @@
     </script>
 </body>
 </html>
+
+
+
 
 
 
