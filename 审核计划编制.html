@@ -1,0 +1,1850 @@
+﻿
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>审核计划编制</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: #f8fafc !important;
+        }
+        .main-container {
+            width: auto !important;
+            margin: 0 auto;
+            padding: 24px !important;
+        }
+        .form-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            scroll-margin-top: 20px;
+        }
+
+        .form-section:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 20px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 15px;
+        }
+
+        .section-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .form-grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .form-grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .form-grid-4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #475569;
+            line-height: 1.4;
+        }
+
+        .form-label.required::after {
+            content: '*';
+            color: #dc2626;
+            margin-left: 4px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            padding: 8px 12px;
+            font-size: 13px;
+            line-height: 20px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: white;
+            transition: all 0.2s;
+            width: 100%;
+            box-sizing: border-box;
+            min-height: 36px;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-input:read-only, .form-input.disabled, .form-select:disabled {
+            background: #f3f4f6 !important;
+            cursor: not-allowed;
+            color: #6b7280;
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        /* 班次时间样式 */
+        .shift-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .shift-row {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            align-items: center;
+            gap: 18px;
+            padding: 14px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #ffffff;
+        }
+
+        .shift-label {
+            font-size: 13px;
+            color: #334155;
+            font-weight: 600;
+        }
+
+        .shift-time-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            color: #0f172a;
+        }
+        .time-select {
+            width: 70px;
+            padding: 6px 8px;
+            font-size: 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .time-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .shift-separator {
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        .shift-duration {
+            font-size: 12px;
+            color: #059669;
+            font-weight: 500;
+            min-width: 80px;
+        }
+
+        /* 新版审核准则样式 - 现代化复选框卡片 */
+        .criteria-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .criteria-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 0;
+            transition: all 0.2s ease;
+            overflow: hidden;
+        }
+
+        .criteria-item:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .criteria-item.active {
+            border-color: #3b82f6;
+            background: #fafafa;
+        }
+
+        .criteria-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .criteria-header:hover {
+            background: #f8fafc;
+        }
+
+        .criteria-checkbox-wrapper {
+            position: relative;
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .criteria-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            appearance: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            background: white;
+        }
+
+        .criteria-checkbox:checked {
+            background: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .criteria-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 2px;
+            width: 5px;
+            height: 9px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .criteria-label-text {
+            flex: 1;
+            font-size: 13px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .criteria-auto-tag {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .criteria-expand-icon {
+            color: #9ca3af;
+            transition: transform 0.3s;
+            font-size: 12px;
+        }
+
+        .criteria-item.expanded .criteria-expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .criteria-content-area {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            background: #f8fafc;
+        }
+
+        .criteria-item.expanded .criteria-content-area {
+            max-height: 500px;
+            padding: 0 16px 16px 48px;
+        }
+
+        .criteria-standards-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 12px 16px 16px 48px;
+            background: #f8fafc;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .standard-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            border: 1px solid;
+            background: white;
+        }
+
+        .standard-qms { color: #1d4ed8; border-color: #bfdbfe; background: #eff6ff; }
+        .standard-ems { color: #15803d; border-color: #bbf7d0; background: #f0fdf4; }
+        .standard-ohsms { color: #b45309; border-color: #fcd34d; background: #fffbeb; }
+
+        .criteria-input-field {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        /* 场所卡片样式 - 修复：移除overflow:hidden防止下拉框被裁剪 */
+        .site-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .site-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .site-type-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .tag-hq { 
+            background: #dcfce7; 
+            color: #166534; 
+            border: 1px solid #86efac; 
+        }
+        
+        .tag-site { 
+            background: #dbeafe; 
+            color: #1e40af; 
+            border: 1px solid #93c5fd; 
+        }
+
+        .site-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .site-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .site-scopes {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .scope-badge {
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            border: 1px solid;
+        }
+
+        .site-info-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 2fr 1fr;
+            gap: 16px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .site-info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .site-info-label {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .site-info-value {
+            font-size: 13px;
+            color: #334155;
+            font-weight: 500;
+        }
+
+        .site-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .assigned-days {
+            background: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            font-size: 13px;
+            color: #374151;
+        }
+
+        .assigned-days strong {
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+        .site-content {
+            padding: 20px;
+            position: relative;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #94a3b8;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px dashed #cbd5e1;
+        }
+
+        .empty-state i {
+            font-size: 32px;
+            margin-bottom: 8px;
+            color: #cbd5e1;
+        }
+
+        /* 活动表格样式 - 修复：移除overflow:hidden */
+        .activity-table-wrapper {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-top: 16px;
+        }
+
+        .activity-header {
+            display: grid;
+            grid-template-columns: 40px 120px 140px 220px 1fr 160px 100px;
+            gap: 12px;
+            align-items: center;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .activity-row {
+            display: grid;
+            grid-template-columns: 40px 120px 140px 220px 1fr 160px 100px;
+            gap: 12px;
+            align-items: center;
+            padding: 10px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.2s;
+        }
+
+        .activity-row:hover {
+            background: #f8fafc;
+        }
+
+        .activity-row:last-child {
+            border-bottom: none;
+        }
+
+        /* 人员选择器 - 修复：确保z-index足够高且不被裁剪 */
+        .auditor-select-container {
+            position: relative;
+            width: 100%;
+            z-index: 1;
+        }
+
+        .auditor-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            min-height: 32px;
+            padding: 4px 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            cursor: pointer;
+            background: white;
+            align-items: center;
+        }
+
+        .auditor-tags:hover {
+            border-color: #3b82f6;
+        }
+
+        .auditor-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            border-radius: 4px;
+            font-size: 12px;
+            border: 1px solid #bfdbfe;
+        }
+
+        .auditor-tag .remove {
+            cursor: pointer;
+            font-weight: bold;
+            color: #60a5fa;
+            width: 14px;
+            height: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .auditor-tag .remove:hover {
+            background: #fecaca;
+            color: #dc2626;
+        }
+
+        .auditor-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 9999; /* 修复：提高z-index确保在最上层 */
+            display: none;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            margin-top: 4px;
+        }
+
+        .auditor-dropdown.show {
+            display: block;
+        }
+
+        .auditor-option {
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .auditor-option:hover {
+            background: #eff6ff;
+        }
+        .auditor-head-hint {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .auditor-hint-button {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #cbd5e1;
+            border-radius: 50%;
+            background: #ffffff;
+            color: #64748b;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            cursor: help;
+        }
+
+        .auditor-hint-tooltip {
+            position: absolute;
+            left: 0;
+            top: calc(100% + 8px);
+            min-width: 210px;
+            padding: 8px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #334155;
+            font-size: 12px;
+            line-height: 1.6;
+            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-4px);
+            transition: all 0.16s ease;
+            z-index: 30;
+            font-weight: 400;
+        }
+
+        .auditor-head-hint:hover .auditor-hint-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+.auditor-color {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* 统计栏 */
+        .stats-bar {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 20px;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-radius: 8px;
+            border: 1px solid #bfdbfe;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .stat-label {
+            color: #475569;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            color: #1e40af;
+        }
+
+        .stat-value.warning {
+            color: #dc2626;
+        }
+
+        /* 范围信息行 */
+        .range-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid #e2e8f0;
+            font-size: 13px;
+        }
+
+        .range-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .tag-center { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        .tag-site { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+
+        /* 按钮样式 */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-default {
+            background: white;
+            border-color: #d1d5db;
+            color: #374151;
+        }
+
+        .btn-default:hover {
+            border-color: #9ca3af;
+            background: #f9fafb;
+        }
+
+        .btn-danger {
+            color: #dc2626;
+            background: white;
+            border-color: #fca5a5;
+        }
+
+        .btn-danger:hover {
+            background: #fef2f2;
+            border-color: #dc2626;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-xs {
+            padding: 4px 8px;
+            font-size: 11px;
+        }
+
+        /* 表格样式 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .data-table th {
+            background: #f8fafc;
+            color: #475569;
+            font-weight: 600;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #374151;
+        }
+
+        .data-table tr:hover {
+            background: #f8fafc;
+        }
+
+        /* 人员标签 */
+        .personnel-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-right: 4px;
+            font-weight: 500;
+        }
+
+        .tag-leader { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+        .tag-member { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+        .tag-fulltime { background: #f3e8ff; color: #7c3aed; border: 1px solid #ddd6fe; }
+        .tag-parttime { background: #fce7f3; color: #be185d; border: 1px solid #fbcfe8; }
+
+        /* 隐藏文件输入 */
+        .hidden-file-input {
+            display: none;
+        }
+
+        /* 提示框 */
+        .tip-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #1e40af;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .combined-info-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* 提交按钮区域 */
+        .submit-section {
+            margin-top: 24px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+
+    <!-- 主内容区 -->
+    <main class="main-container space-y-6">
+
+        <!-- 1. 审核类型 -->
+        <div id="section-type" class="form-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <div class="section-icon bg-blue-100 text-blue-600">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    审核类型
+                </div>
+            </div>
+            <div class="p-5">
+                <div class="tip-box">
+                    <i class="fas fa-info-circle"></i>
+                    <span class="font-medium">初次认证（二阶段）</span>
+                    <span class="text-slate-300">|</span>
+                    <span class="font-medium text-blue-700">QMS</span>
+                    <span class="font-medium text-green-700">EMS</span>
+                    <span class="text-slate-300">|</span>
+                    <span class="font-medium">监督审核</span>
+                    <span class="font-medium text-amber-700">OHSMS</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. 审核目的 -->
+        <div id="section-purpose" class="form-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-title">
+                    <div class="section-icon bg-green-100 text-green-600">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    审核目的
+                </div>
+                <i class="fas fa-chevron-down text-slate-400 transition-transform"></i>
+            </div>
+            <div class="p-5 space-y-4">
+                <div class="form-field">
+                    <label class="form-label">初次认证</label>
+                    <textarea class="form-textarea">评价客户管理体系的实施情况，包括有效性，以确定是否推荐认证；</textarea>
+                </div>
+                <div class="form-field">
+                    <label class="form-label">监督</label>
+                    <textarea class="form-textarea">评价客户管理体系的持续符合性和有效性，以确定是否推荐保持认证；</textarea>
+                </div>
+                <div class="form-field">
+                    <label class="form-label">其他</label>
+                    <textarea class="form-textarea" placeholder="请输入其他审核目的"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. 审核范围 -->
+        <div id="section-scope" class="form-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-title">
+                    <div class="section-icon bg-purple-100 text-purple-600">
+                        <i class="fas fa-sitemap"></i>
+                    </div>
+                    审核范围
+                </div>
+                <i class="fas fa-chevron-down text-slate-400 transition-transform"></i>
+            </div>
+            <div class="p-5">
+                <div class="space-y-3">
+                    <div class="combined-info-row">
+                        <span class="text-slate-600">北京市西城区北礼士路甲38号</span>
+                        <span class="text-slate-300">|</span>
+                        <span class="range-tag tag-center">中心职能</span>
+                        <span class="text-slate-300">|</span>
+                        <span class="font-medium text-blue-700">QMS(31.04.01,31.04.02,31.04.05)：轨道交通运营服务</span>
+                        <span class="font-medium text-green-700">EMS(31.04.01)：城市轨道交通运营环境管理</span>
+                        <span class="font-medium text-amber-700">OHSMS(31.04.01)：轨道交通职业健康安全管理</span>
+                        <span class="text-slate-300">|</span>
+                        <span>自</span>
+                        <input type="month" class="form-input" style="width: 140px;" value="2023-04">
+                        <span>至</span>
+                        <input type="date" class="form-input" style="width: 150px;" value="2024-04-18">
+                    </div>
+                    <div class="combined-info-row">
+                        <span class="text-slate-600">北京市东城区建国门南大街5号</span>
+                        <span class="text-slate-300">|</span>
+                        <span class="font-medium text-green-700">EMS：城市轨道交通运营环境管理</span>
+                        <span class="text-slate-300">|</span>
+                        <span>自</span>
+                        <input type="month" class="form-input" style="width: 140px;" value="2023-04">
+                        <span>至</span>
+                        <input type="date" class="form-input" style="width: 150px;" value="2024-04-18">
+                    </div>
+                    <div class="combined-info-row">
+                        <span class="text-slate-600">北京市朝阳区望京北路9号</span>
+                        <span class="text-slate-300">|</span>
+                        <span class="font-medium text-amber-700">OHSMS：轨道交通职业健康安全管理</span>
+                        <span class="text-slate-300">|</span>
+                        <span>自</span>
+                        <input type="month" class="form-input" style="width: 140px;" value="2023-04">
+                        <span>至</span>
+                        <input type="date" class="form-input" style="width: 150px;" value="2024-04-18">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. 审核准则 - 重构为现代化交互形式 -->
+        <div id="section-criteria" class="form-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-title">
+                    <div class="section-icon bg-indigo-100 text-indigo-600">
+                        <i class="fas fa-check-square"></i>
+                    </div>
+                    审核准则
+                </div>
+                <i class="fas fa-chevron-down text-slate-400 transition-transform"></i>
+            </div>
+            <div class="p-5">
+                <div class="criteria-container">
+                    <div class="criteria-item expanded active" style="border-color: #3b82f6;">
+                        <div class="criteria-header" onclick="toggleCriteriaItem(this.parentElement, event)">
+                            <div class="criteria-checkbox-wrapper">
+                                <input type="checkbox" class="criteria-checkbox" checked disabled id="criteria-standard">
+                            </div>
+                            <span class="criteria-label-text" style="color: #1e40af; font-weight: 600;">管理体系标准</span>
+                        </div>
+                        <div class="criteria-standards-grid">
+                            <span class="standard-tag standard-qms">QMS：GB/T 19001-2016/ISO 9001:2015</span>
+                            <span class="standard-tag standard-ems">EMS：GB/T 24001-2016/ISO 14001:2015</span>
+                            <span class="standard-tag standard-ohsms">OHSMS：GB/T 45001-2020/ISO 45001:2018</span>
+                        </div>
+                    </div>
+
+                    <div class="criteria-item active" id="criteria-item-file">
+                        <div class="criteria-header" onclick="toggleCriteriaCheckbox('criteria-file')">
+                            <div class="criteria-checkbox-wrapper">
+                                <input type="checkbox" class="criteria-checkbox" id="criteria-file" checked onchange="toggleCriteriaField('file')">
+                            </div>
+                            <span class="criteria-label-text">客户管理体系文件</span>
+                        </div>
+                    </div>
+
+                    <div class="criteria-item active" id="criteria-item-law">
+                        <div class="criteria-header" onclick="toggleCriteriaCheckbox('criteria-law')">
+                            <div class="criteria-checkbox-wrapper">
+                                <input type="checkbox" class="criteria-checkbox" id="criteria-law" checked onchange="toggleCriteriaField('law')">
+                            </div>
+                            <span class="criteria-label-text">适用法律法规</span>
+                        </div>
+                    </div>
+
+                    <div class="criteria-item" id="criteria-item-special">
+                        <div class="criteria-header" onclick="toggleCriteriaCheckbox('criteria-special')">
+                            <div class="criteria-checkbox-wrapper">
+                                <input type="checkbox" class="criteria-checkbox" id="criteria-special" onchange="toggleCriteriaField('special')">
+                            </div>
+                            <span class="criteria-label-text">客户特殊要求</span>
+                            <i class="fas fa-chevron-down criteria-expand-icon"></i>
+                        </div>
+                        <div class="criteria-content-area">
+                            <input type="text" class="form-input criteria-input-field" id="input-special" placeholder="请输入客户提出的特殊要求内容">
+                        </div>
+                    </div>
+
+                    <div class="criteria-item" id="criteria-item-other">
+                        <div class="criteria-header" onclick="toggleCriteriaCheckbox('criteria-other')">
+                            <div class="criteria-checkbox-wrapper">
+                                <input type="checkbox" class="criteria-checkbox" id="criteria-other" onchange="toggleCriteriaField('other')">
+                            </div>
+                            <span class="criteria-label-text">其他审核准则</span>
+                            <i class="fas fa-chevron-down criteria-expand-icon"></i>
+                        </div>
+                        <div class="criteria-content-area">
+                            <input type="text" class="form-input criteria-input-field" id="input-other" placeholder="请输入其他审核准则说明">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. 班次和时间 -->
+        <div id="section-shift" class="form-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-title">
+                    <div class="section-icon bg-amber-100 text-amber-600">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    班次和班次时间
+                </div>
+                <i class="fas fa-chevron-down text-slate-400 transition-transform"></i>
+            </div>
+            <div class="p-5">
+                <div class="shift-list bg-slate-50 rounded-lg p-4 border border-slate-200">
+                    <div class="shift-row"><span class="shift-label">总部</span><div class="shift-time-group"><span class="text-sm text-slate-700">第1班次：08:00-17:30</span></div></div>
+                    <div class="shift-row"><span class="shift-label">运营一分公司</span><div class="shift-time-group"><span class="text-sm text-slate-700">第1班次：08:00-17:30；第2班次：18:00-02:00</span></div></div>
+                    <div class="shift-row"><span class="shift-label">运营二分公司</span><div class="shift-time-group"><span class="text-sm text-slate-700">第1班次：08:30-17:30</span></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. 审核日期 -->
+        <div id="section-date" class="form-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <div class="section-icon bg-rose-100 text-rose-600">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    审核日期
+                </div>
+            </div>
+            <div class="p-5">
+                <div class="form-grid form-grid-2">
+                    <div class="form-field">
+                        <label class="form-label">审核日期</label>
+                        <div class="flex items-center gap-2">
+                            <input type="date" class="form-input" style="width: 140px;" value="2024-04-15">
+                            <span class="text-slate-500">至</span>
+                            <input type="date" class="form-input" style="width: 140px;" value="2024-04-18">
+                            <span class="text-sm text-slate-600 ml-2">共 <span class="font-bold text-slate-900 text-lg">4</span> 天</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. 审核组 -->
+        <div id="section-team" class="form-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-title">
+                    <div class="section-icon bg-cyan-100 text-cyan-600">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    审核组
+                </div>
+                <i class="fas fa-chevron-down text-slate-400 transition-transform"></i>
+            </div>
+            <div class="p-5">
+                <table class="data-table">
+                    <thead>
+                        <tr><th style="width: 100px;">姓名</th><th style="width: 100px;">组内身份</th><th style="width: 180px;">资格</th><th>注册编号</th><th style="width: 120px;">CQC编号</th><th style="width: 140px;">联系电话</th><th style="width: 100px;">专兼职</th><th style="width: 200px;">审核日期区间</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="font-medium text-slate-900">武荣刚</td><td><span class="personnel-tag tag-leader">组长</span></td><td>QMS高级，EMS正式</td><td class="font-mono text-xs">QMS:N1-2022-6028373，EMS:N1-2021-3011028</td><td class="font-mono text-xs">CQC21458</td><td>13661227694</td><td><span class="personnel-tag tag-fulltime">专职</span></td><td>2024-04-15 至 2024-04-18</td></tr>
+                        <tr><td class="font-medium text-slate-900">王洪伟</td><td><span class="personnel-tag tag-member">组员</span></td><td>QMS高级，EMS实习</td><td class="font-mono text-xs">QMS:N1-2021-5012345，EMS:N0-2024-0081266</td><td class="font-mono text-xs">CQC10852</td><td>13800138001</td><td><span class="personnel-tag tag-parttime">兼职</span></td><td>2024-04-15 至 2024-04-16</td></tr>
+                        <tr><td class="font-medium text-slate-900">张丽</td><td><span class="personnel-tag tag-member">组员</span></td><td>EMS正式，QMS实习</td><td class="font-mono text-xs">EMS:N1-2020-3012345，QMS:N0-2024-0065290</td><td class="font-mono text-xs">CQC30521</td><td>13800138002</td><td><span class="personnel-tag tag-fulltime">专职</span></td><td>2024-04-16 至 2024-04-17</td></tr>
+                        <tr><td class="font-medium text-slate-900">刘娜</td><td><span class="personnel-tag tag-member">组员</span></td><td>QMS正式，EMS正式，OHSMS正式，技术专家</td><td class="font-mono text-xs">QMS:N1-2021-5018826，EMS:N1-2020-3017642，OHSMS:N1-2022-7013095</td><td class="font-mono text-xs">CQC40876</td><td>13800138003</td><td><span class="personnel-tag tag-parttime">兼职</span></td><td>2024-04-16 至 2024-04-18</td></tr>
+                        <tr><td class="font-medium text-slate-900">陈明</td><td><span class="personnel-tag tag-member">组员</span></td><td>QMS正式，EMS正式</td><td class="font-mono text-xs">QMS:N1-2022-5012345，EMS:N1-2022-4010987</td><td class="font-mono text-xs">CQC51209</td><td>13800138004</td><td><span class="personnel-tag tag-fulltime">专职</span></td><td>2024-04-17 至 2024-04-18</td></tr>
+                        <tr><td class="font-medium text-slate-900">赵强</td><td><span class="personnel-tag tag-member">组员</span></td><td>QMS正式，EMS实习</td><td class="font-mono text-xs">QMS:N1-2023-6012345，EMS:N0-2024-0098712</td><td class="font-mono text-xs">CQC60988</td><td>13800138005</td><td><span class="personnel-tag tag-parttime">兼职</span></td><td>2024-04-15 至 2024-04-18</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 8. 审核活动安排 - 按场所分组 -->
+        <div id="section-activity" class="form-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <div class="section-icon bg-violet-100 text-violet-600">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    审核活动安排
+                </div>
+            </div>
+            
+            <div class="p-5">
+                <!-- 全局统计栏 -->
+                <div class="stats-bar mb-6">
+                    <div class="stat-item"><span class="stat-label">审核组已安排时长统计：</span></div>
+                    <div class="stat-item"><span class="auditor-color" style="background: #3b82f6;"></span><span class="stat-label">武荣刚:</span><span class="stat-value" id="stat-wurg">0</span><span class="text-slate-400 text-xs">/32h</span></div>
+                    <div class="stat-item"><span class="auditor-color" style="background: #10b981;"></span><span class="stat-label">王洪伟:</span><span class="stat-value" id="stat-whw">0</span><span class="text-slate-400 text-xs">/16h</span></div>
+                    <div class="stat-item"><span class="auditor-color" style="background: #f59e0b;"></span><span class="stat-label">张丽:</span><span class="stat-value" id="stat-zhangli">0</span><span class="text-slate-400 text-xs">/16h</span></div>
+                    <div class="stat-item"><span class="auditor-color" style="background: #8b5cf6;"></span><span class="stat-label">刘娜:</span><span class="stat-value" id="stat-liuna">0</span><span class="text-slate-400 text-xs">/16h</span></div>
+                    <div class="stat-item"><span class="auditor-color" style="background: #06b6d4;"></span><span class="stat-label">陈明:</span><span class="stat-value" id="stat-chenming">0</span><span class="text-slate-400 text-xs">/16h</span></div>
+                    <div class="stat-item"><span class="auditor-color" style="background: #ef4444;"></span><span class="stat-label">赵强:</span><span class="stat-value" id="stat-zhaoqiang">0</span><span class="text-slate-400 text-xs">/16h</span></div>
+                </div>
+
+                <!-- 总部场所 -->
+                <div class="site-card" data-site-id="hq">
+                    <div class="site-header">
+                        <div class="site-title">
+                            <span class="site-type-tag tag-hq">总部</span>
+                            <span class="site-name">北京市地铁运营有限公司（总部）</span>
+                            <div class="site-scopes">
+                                <span class="scope-badge standard-qms">QMS</span>
+                                <span class="scope-badge standard-ems">EMS</span>
+                            </div>
+                        </div>
+                        <div class="site-info-grid">
+                            <div class="site-info-item">
+                                <span class="site-info-label">场所地址</span>
+                                <span class="site-info-value">北京市西城区北礼士路甲38号</span>
+                            </div>
+                            <div class="site-info-item">
+                                <span class="site-info-label">有效人数</span>
+                                <span class="site-info-value">200人</span>
+                            </div>
+                            <div class="site-info-item">
+                                <span class="site-info-label">审核日期区间</span>
+                                <span class="site-info-value">2024-04-15 至 2024-04-18</span>
+                            </div>
+                            <div class="site-info-item">
+                                <span class="site-info-label">已分配人天</span>
+                                <div class="assigned-days">
+                                    <strong id="site-days-hq">0.0</strong> 人天
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="site-content">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-sm font-semibold text-slate-700">审核活动明细</h4>
+                            <div class="flex gap-2">
+                                <input type="file" id="excelUpload-hq" accept=".xlsx,.xls" class="hidden-file-input" onchange="handleSiteExcelUpload(event, 'hq')">
+                                <button class="btn btn-default btn-sm" onclick="document.getElementById('excelUpload-hq').click()">
+                                    <i class="fas fa-file-excel"></i>导入Excel
+                                </button>
+                                <button class="btn btn-primary btn-sm" onclick="addActivityRow('hq')">
+                                    <i class="fas fa-plus"></i>新增活动
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-table-wrapper">
+                            <div class="activity-header">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" class="select-all-site criteria-checkbox" style="width: 18px; height: 18px;" onchange="toggleSiteSelectAll('hq')">
+                                </div>
+                                <div>日期</div>
+                                <div>时间</div>
+                                <div class="auditor-head-hint">审核人员<button type="button" class="auditor-hint-button" aria-label="可安排人员"><i class="fas fa-user-check"></i></button><span class="auditor-hint-tooltip">可安排人员：武荣刚、王洪伟、陈明</span></div>
+                                <div>拟审核的过程或活动及相关的标准条款</div>
+                                <div>涉及的部门/场所</div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <button type="button" class="btn btn-danger btn-xs batch-delete-site" data-site="hq" onclick="batchDeleteSiteRows('hq')" style="opacity: 0.5; cursor: not-allowed;" disabled>
+                                        <i class="fas fa-trash-alt"></i>批量删除
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="site-activity-container" id="activityContainer-hq">
+                                <!-- 动态生成活动行 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 场所1 -->
+                <div class="site-card" data-site-id="site1">
+                    <div class="site-header">
+                        <div class="site-title">
+                            <span class="site-type-tag tag-site">场所</span>
+                            <span class="site-name">北京市地铁运营有限公司运营一分公司</span>
+                            <div class="site-scopes">
+                                <span class="scope-badge standard-qms">QMS</span>
+                            </div>
+                        </div>
+                        <div class="site-info-grid">
+                            <div class="site-info-item">
+                                <span class="site-info-label">场所地址</span>
+                                <span class="site-info-value">北京市东城区建国门南大街5号</span>
+                            </div>
+                            <div class="site-info-item">
+                                <span class="site-info-label">有效人数</span>
+                                <span class="site-info-value">180人</span>
+                            </div>
+                            <div class="site-info-item">
+                                <span class="site-info-label">审核日期区间</span>
+                                <span class="site-info-value">2024-04-16 至 2024-04-17</span>
+                            </div>
+                            <div class="site-info-item">
+                                <span class="site-info-label">已分配人天</span>
+                                <div class="assigned-days">
+                                    <strong id="site-days-site1">0.0</strong> 人天
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="site-content">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-sm font-semibold text-slate-700">审核活动明细</h4>
+                            <div class="flex gap-2">
+                                <input type="file" id="excelUpload-site1" accept=".xlsx,.xls" class="hidden-file-input" onchange="handleSiteExcelUpload(event, 'site1')">
+                                <button class="btn btn-default btn-sm" onclick="document.getElementById('excelUpload-site1').click()">
+                                    <i class="fas fa-file-excel"></i>导入Excel
+                                </button>
+                                <button class="btn btn-primary btn-sm" onclick="addActivityRow('site1')">
+                                    <i class="fas fa-plus"></i>新增活动
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-table-wrapper">
+                            <div class="activity-header">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" class="select-all-site criteria-checkbox" style="width: 18px; height: 18px;" onchange="toggleSiteSelectAll('site1')">
+                                </div>
+                                <div>日期</div>
+                                <div>时间</div>
+                                <div class="auditor-head-hint">审核人员<button type="button" class="auditor-hint-button" aria-label="可安排人员"><i class="fas fa-user-check"></i></button><span class="auditor-hint-tooltip">可安排人员：张丽、刘娜、赵强</span></div>
+                                <div>拟审核的过程或活动及相关的标准条款</div>
+                                <div>涉及的部门/场所</div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <button type="button" class="btn btn-danger btn-xs batch-delete-site" data-site="site1" onclick="batchDeleteSiteRows('site1')" style="opacity: 0.5; cursor: not-allowed;" disabled>
+                                        <i class="fas fa-trash-alt"></i>批量删除
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="site-activity-container" id="activityContainer-site1">
+                                <!-- 动态生成活动行 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 场所2 -->
+                <div class="site-card" data-site-id="site2">
+                    <div class="site-header">
+                        <div class="site-title">
+                            <span class="site-type-tag tag-site">场所</span>
+                            <span class="site-name">北京市地铁运营有限公司运营二分公司</span>
+                            <div class="site-scopes">
+                                <span class="scope-badge standard-ohsms">OHSMS</span>
+                                <span class="scope-badge standard-ems">EMS</span>
+                            </div>
+                        </div>
+                        <div class="site-info-grid">
+                            <div class="site-info-item">
+                                <span class="site-info-label">场所地址</span>
+                                <span class="site-info-value">北京市朝阳区望京北路9号</span>
+                            </div>
+                            <div class="site-info-item">
+                                <span class="site-info-label">有效人数</span>
+                                <span class="site-info-value">150人</span>
+                            </div>
+                            <div class="site-info-item">
+                                <span class="site-info-label">审核日期区间</span>
+                                <span class="site-info-value">2024-04-17 至 2024-04-18</span>
+                            </div>
+                            <div class="site-info-item">
+                                <span class="site-info-label">已分配人天</span>
+                                <div class="assigned-days">
+                                    <strong id="site-days-site2">0.0</strong> 人天
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="site-content">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-sm font-semibold text-slate-700">审核活动明细</h4>
+                            <div class="flex gap-2">
+                                <input type="file" id="excelUpload-site2" accept=".xlsx,.xls" class="hidden-file-input" onchange="handleSiteExcelUpload(event, 'site2')">
+                                <button class="btn btn-default btn-sm" onclick="document.getElementById('excelUpload-site2').click()">
+                                    <i class="fas fa-file-excel"></i>导入Excel
+                                </button>
+                                <button class="btn btn-primary btn-sm" onclick="addActivityRow('site2')">
+                                    <i class="fas fa-plus"></i>新增活动
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-table-wrapper">
+                            <div class="activity-header">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" class="select-all-site criteria-checkbox" style="width: 18px; height: 18px;" onchange="toggleSiteSelectAll('site2')">
+                                </div>
+                                <div>日期</div>
+                                <div>时间</div>
+                                <div class="auditor-head-hint">审核人员<button type="button" class="auditor-hint-button" aria-label="可安排人员"><i class="fas fa-user-check"></i></button><span class="auditor-hint-tooltip">可安排人员：武荣刚、刘娜、陈明、赵强</span></div>
+                                <div>拟审核的过程或活动及相关的标准条款</div>
+                                <div>涉及的部门/场所</div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <button type="button" class="btn btn-danger btn-xs batch-delete-site" data-site="site2" onclick="batchDeleteSiteRows('site2')" style="opacity: 0.5; cursor: not-allowed;" disabled>
+                                        <i class="fas fa-trash-alt"></i>批量删除
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="site-activity-container" id="activityContainer-site2">
+                                <!-- 动态生成活动行 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // 审核组人员数据
+        const auditTeam = [
+            { id: 'wurg', name: '武荣刚', maxHours: 32, color: '#3b82f6', current: 0 },
+            { id: 'whw', name: '王洪伟', maxHours: 16, color: '#10b981', current: 0 },
+            { id: 'zhangli', name: '张丽', maxHours: 16, color: '#f59e0b', current: 0 },
+            { id: 'liuna', name: '刘娜', maxHours: 16, color: '#8b5cf6', current: 0 },
+            { id: 'chenming', name: '陈明', maxHours: 16, color: '#06b6d4', current: 0 },
+            { id: 'zhaoqiang', name: '赵强', maxHours: 16, color: '#ef4444', current: 0 }
+        ];
+        // 每个场所仅展示上一审核任务已下发到该场所的人员
+        const siteAuditorAssignments = {
+            hq: ['wurg', 'whw', 'chenming'],
+            site1: ['zhangli', 'liuna', 'zhaoqiang'],
+            site2: ['wurg', 'liuna', 'chenming', 'zhaoqiang']
+        };
+
+        // 场所数据
+        const sitesData = {
+            hq: { name: '总部', type: '总部', address: '北京市西城区北礼士路甲38号', scopes: ['QMS', 'EMS'], staff: 200 },
+            site1: { name: '运营一分公司', type: '场所', address: '北京市东城区建国门南大街5号', scopes: ['QMS'], staff: 180 },
+            site2: { name: '运营二分公司', type: '场所', address: '北京市朝阳区望京北路9号', scopes: ['OHSMS', 'EMS'], staff: 150 }
+        };
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            addActivityRow('hq', { date: '2024-04-15', startTime: '09:00', endTime: '11:00', auditors: ['wurg'], process: '管理体系范围、方针目标及职责权限', dept: '最高管理者/中心职能' });
+            addActivityRow('hq', { date: '2024-04-15', startTime: '13:30', endTime: '15:30', auditors: ['whw'], process: 'QMS过程控制与文件记录', dept: '质量管理部/中心职能' });
+            addActivityRow('site1', { date: '2024-04-16', startTime: '09:00', endTime: '11:00', auditors: ['zhangli'], process: 'EMS运行控制及合规性评价', dept: '运营一分公司' });
+            addActivityRow('site1', { date: '2024-04-16', startTime: '13:30', endTime: '15:30', auditors: ['liuna'], process: '职业健康安全风险管控', dept: '运营一分公司' });
+            addActivityRow('site2', { date: '2024-04-17', startTime: '09:00', endTime: '11:00', auditors: ['chenming'], process: '环境因素识别与运行绩效监视', dept: '运营二分公司' });
+            addActivityRow('site2', { date: '2024-04-17', startTime: '13:30', endTime: '15:30', auditors: ['zhaoqiang'], process: '现场应急准备与响应', dept: '运营二分公司' });
+        });
+
+        // 班次行生成
+        function updateShiftRows() {
+            const count = parseInt(document.getElementById('shiftCount').value);
+            const container = document.getElementById('shiftContainer');
+            const existingRows = container.querySelectorAll('.shift-row');
+            const currentCount = existingRows.length;
+            
+            let hourOptions = '';
+            for (let i = 0; i < 24; i++) {
+                hourOptions += `<option value="${i}">${String(i).padStart(2, '0')}</option>`;
+            }
+            
+            let minuteOptions = `
+                <option value="0">00</option>
+                <option value="15">15</option>
+                <option value="30">30</option>
+                <option value="45">45</option>
+            `;
+            
+            if (count > currentCount) {
+                for (let i = currentCount + 1; i <= count; i++) {
+                    const row = document.createElement('div');
+                    row.className = 'shift-row';
+                    row.dataset.shift = i;
+                    row.innerHTML = `
+                        <span class="shift-label">第${i}班次</span>
+                        <div class="shift-time-group">
+                            <select class="time-select hour-select" onchange="calculateShiftDuration(${i})">
+                                ${hourOptions}
+                            </select>
+                            <span class="shift-separator">:</span>
+                            <select class="time-select minute-select" onchange="calculateShiftDuration(${i})">
+                                ${minuteOptions}
+                            </select>
+                            <span class="shift-separator">-</span>
+                            <select class="time-select hour-select" onchange="calculateShiftDuration(${i})">
+                                ${hourOptions}
+                            </select>
+                            <span class="shift-separator">:</span>
+                            <select class="time-select minute-select" onchange="calculateShiftDuration(${i})">
+                                ${minuteOptions}
+                            </select>
+                        </div>
+                        <span class="shift-duration" id="shift${i}Duration">0小时0分钟</span>
+                    `;
+                    container.appendChild(row);
+                }
+            } else if (count < currentCount) {
+                for (let i = currentCount - 1; i >= count; i--) {
+                    existingRows[i].remove();
+                }
+            }
+            
+            for (let i = 1; i <= count; i++) {
+                const row = document.querySelector(`.shift-row[data-shift="${i}"]`);
+                if (row) {
+                    const selects = row.querySelectorAll('select');
+                    selects[0].value = 8;
+                    selects[2].value = 17;
+                    calculateShiftDuration(i);
+                }
+            }
+        }
+
+        function calculateShiftDuration(shiftNum) {
+            const row = document.querySelector(`.shift-row[data-shift="${shiftNum}"]`);
+            if (!row) return;
+            
+            const selects = row.querySelectorAll('select');
+            const startH = parseInt(selects[0].value) || 0;
+            const startM = parseInt(selects[1].value) || 0;
+            const endH = parseInt(selects[2].value) || 0;
+            const endM = parseInt(selects[3].value) || 0;
+            
+            let start = startH * 60 + startM;
+            let end = endH * 60 + endM;
+            
+            if (end < start) end += 24 * 60;
+            
+            const duration = end - start;
+            const hours = Math.floor(duration / 60);
+            const mins = duration % 60;
+            
+            const display = document.getElementById(`shift${shiftNum}Duration`);
+            if (display) {
+                display.textContent = `${hours}小时${mins}分钟`;
+            }
+        }
+
+        function toggleCriteriaCheckbox(checkboxId) {
+            event.stopPropagation();
+            const checkbox = document.getElementById(checkboxId);
+            checkbox.checked = !checkbox.checked;
+            toggleCriteriaField(checkboxId.replace('criteria-', ''));
+        }
+
+        function toggleCriteriaItem(item, event) {
+            if (item.id === 'criteria-item-standard') return;
+            
+            item.classList.toggle('expanded');
+            
+            if (event && !event.target.closest('.criteria-checkbox-wrapper')) {
+                const checkbox = item.querySelector('.criteria-checkbox');
+                if (!checkbox.disabled) {
+                    checkbox.checked = !checkbox.checked;
+                    const type = checkbox.id.replace('criteria-', '');
+                    const input = document.getElementById(`input-${type}`);
+                    if (input) {
+                        if (checkbox.checked) {
+                            input.parentElement.style.maxHeight = '200px';
+                            input.parentElement.style.padding = '0 16px 16px 48px';
+                            item.classList.add('active');
+                        } else {
+                            input.parentElement.style.maxHeight = '0';
+                            input.parentElement.style.padding = '0 16px 0 48px';
+                            input.value = '';
+                            item.classList.remove('active');
+                        }
+                    }
+                }
+            }
+        }
+
+        function toggleCriteriaField(type) {
+            const checkbox = document.getElementById(`criteria-${type}`);
+            const item = document.getElementById(`criteria-item-${type}`);
+            const input = document.getElementById(`input-${type}`);
+            
+            if (checkbox.checked) {
+                item.classList.add('expanded', 'active');
+            } else {
+                item.classList.remove('expanded', 'active');
+                input.value = '';
+            }
+        }
+
+        function addActivityRow(siteId, data = null) {
+            const container = document.getElementById(`activityContainer-${siteId}`);
+            const rowId = `${siteId}_act_${Date.now()}`;
+            
+            const div = document.createElement('div');
+            div.className = 'activity-row';
+            div.dataset.rowId = rowId;
+            div.dataset.site = siteId;
+            
+            const date = data?.date || '2024-04-15';
+            const startTime = data?.startTime || '09:00';
+            const endTime = data?.endTime || '12:00';
+                        const allowedAuditorIds = siteAuditorAssignments[siteId] || auditTeam.map(t => t.id);
+            const allowedAuditors = allowedAuditorIds.map(id => auditTeam.find(a => a.id === id)).filter(Boolean);
+            const auditors = (data?.auditors || []).filter(aid => allowedAuditorIds.includes(aid));
+            const process = data?.process || '';
+            const dept = data?.dept || '';
+
+            div.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <input type="checkbox" class="row-checkbox criteria-checkbox" style="width: 18px; height: 18px;" data-row-id="${rowId}" data-site="${siteId}" onchange="updateSiteBatchDeleteBtn('${siteId}')">
+                </div>
+                <div>
+                    <input type="date" class="form-input" value="${date}" min="2024-04-15" max="2024-04-18" style="width: 110px;" onchange="updateAuditStats()">
+                </div>
+                <div class="flex items-center gap-1">
+                    <select class="form-select time-select" style="width: 65px;" onchange="updateAuditStats()">
+                        ${generateTimeOptions(startTime)}
+                    </select>
+                    <span class="text-slate-400">-</span>
+                    <select class="form-select time-select" style="width: 65px;" onchange="updateAuditStats()">
+                        ${generateTimeOptions(endTime)}
+                    </select>
+                </div>
+                <div class="auditor-select-container">
+                    <div class="auditor-tags" onclick="showAuditorDropdown('${rowId}')" id="tags-${rowId}">
+                        ${auditors.map(aid => {
+                            const auditor = allowedAuditors.find(a => a.id === aid);
+                            return auditor ? `<span class="auditor-tag" data-id="${aid}">${auditor.name}<span class="remove" onclick="removeAuditor('${rowId}', '${aid}', event)">×</span></span>` : '';
+                        }).join('') || '<span class="text-slate-400 text-xs px-1">点击选择人员...</span>'}
+                    </div>
+                    <div class="auditor-dropdown" id="dropdown-${rowId}">
+                        ${allowedAuditors.map(t => `
+                            <div class="auditor-option" onclick="selectAuditor('${rowId}', '${t.id}')">
+                                <span class="auditor-color" style="background: ${t.color};"></span>
+                                <span>${t.name} (${t.maxHours}h)</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div>
+                    <input type="text" class="form-input" value="${process}" placeholder="如：组织环境 4.1-4.4" style="width: 100%;">
+                </div>
+                <div>
+                    <input type="text" class="form-input" value="${dept}" placeholder="如：管理层/中心职能" style="width: 100%;">
+                </div>
+                <div>
+                    <button type="button" class="btn btn-danger btn-xs" onclick="removeActivityRow('${rowId}', '${siteId}')">
+                        <i class="fas fa-trash"></i>删除
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(div);
+            updateAuditStats();
+        }
+
+        function generateTimeOptions(selectedTime = '09:00') {
+            let html = '';
+            for (let h = 0; h < 24; h++) {
+                for (let m of ['00', '15', '30', '45']) {
+                    const time = `${String(h).padStart(2, '0')}:${m}`;
+                    const selected = time === selectedTime ? 'selected' : '';
+                    html += `<option value="${time}" ${selected}>${time}</option>`;
+                }
+            }
+            return html;
+        }
+
+        function showAuditorDropdown(rowId) {
+            // 先关闭所有其他下拉框
+            document.querySelectorAll('.auditor-dropdown').forEach(d => {
+                if (d.id !== `dropdown-${rowId}`) d.classList.remove('show');
+            });
+            
+            const dropdown = document.getElementById(`dropdown-${rowId}`);
+            dropdown.classList.toggle('show');
+            
+            const closeDropdown = (e) => {
+                if (!e.target.closest(`#tags-${rowId}`) && !e.target.closest(`#dropdown-${rowId}`)) {
+                    dropdown.classList.remove('show');
+                    document.removeEventListener('click', closeDropdown);
+                }
+            };
+            setTimeout(() => document.addEventListener('click', closeDropdown), 0);
+        }
+
+        function selectAuditor(rowId, auditorId) {
+            const tagsContainer = document.getElementById(`tags-${rowId}`);
+            const row = document.querySelector(`[data-row-id="${rowId}"]`);
+            const allowedAuditorIds = siteAuditorAssignments[row?.dataset.site] || auditTeam.map(t => t.id);
+            if (!allowedAuditorIds.includes(auditorId)) return;
+            const auditor = auditTeam.find(a => a.id === auditorId);
+            
+            if (tagsContainer.querySelector(`[data-id="${auditorId}"]`)) return;
+            
+            const placeholder = tagsContainer.querySelector('.text-slate-400');
+            if (placeholder) placeholder.remove();
+            
+            const tag = document.createElement('span');
+            tag.className = 'auditor-tag';
+            tag.dataset.id = auditorId;
+            tag.innerHTML = `${auditor.name}<span class="remove" onclick="removeAuditor('${rowId}', '${auditorId}', event)">×</span>`;
+            tagsContainer.appendChild(tag);
+            
+            updateAuditStats();
+        }
+
+        function removeAuditor(rowId, auditorId, event) {
+            event.stopPropagation();
+            const tagsContainer = document.getElementById(`tags-${rowId}`);
+            const tag = tagsContainer.querySelector(`[data-id="${auditorId}"]`);
+            if (tag) tag.remove();
+            
+            if (tagsContainer.children.length === 0) {
+                tagsContainer.innerHTML = '<span class="text-slate-400 text-xs px-1">点击选择人员...</span>';
+            }
+            
+            updateAuditStats();
+        }
+
+        function removeActivityRow(rowId, siteId) {
+            const row = document.querySelector(`[data-row-id="${rowId}"]`);
+            if (row) {
+                row.remove();
+                updateAuditStats();
+                updateSiteBatchDeleteBtn(siteId);
+            }
+        }
+
+        function updateAuditStats() {
+            auditTeam.forEach(t => t.current = 0);
+            const siteStats = { hq: 0, site1: 0, site2: 0 };
+            
+            document.querySelectorAll('.activity-row').forEach(row => {
+                const siteId = row.dataset.site;
+                const timeSelects = row.querySelectorAll('.time-select');
+                const start = timeSelects[0]?.value;
+                const end = timeSelects[1]?.value;
+                
+                if (start && end) {
+                    const [sh, sm] = start.split(':').map(Number);
+                    const [eh, em] = end.split(':').map(Number);
+                    let duration = (eh * 60 + em) - (sh * 60 + sm);
+                    if (duration < 0) duration += 24 * 60;
+                    const hours = duration / 60;
+                    
+                    const tags = row.querySelectorAll('.auditor-tag');
+                    tags.forEach(tag => {
+                        const auditorId = tag.dataset.id;
+                        const auditor = auditTeam.find(a => a.id === auditorId);
+                        if (auditor) {
+                            auditor.current += hours;
+                            siteStats[siteId] += hours;
+                        }
+                    });
+                }
+            });
+            
+            auditTeam.forEach(t => {
+                const el = document.getElementById(`stat-${t.id}`);
+                if (el) {
+                    el.textContent = t.current.toFixed(1);
+                    el.className = 'stat-value ' + (t.current > t.maxHours ? 'warning' : '');
+                }
+            });
+            
+            Object.keys(siteStats).forEach(siteId => {
+                const el = document.getElementById(`site-days-${siteId}`);
+                if (el) {
+                    el.textContent = (siteStats[siteId] / 8).toFixed(1);
+                }
+            });
+        }
+
+        function handleSiteExcelUpload(event, siteId) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+                    
+                    const container = document.getElementById(`activityContainer-${siteId}`);
+                    container.innerHTML = '';
+                    
+                    jsonData.forEach(row => {
+                        const auditors = (row['审核人员'] || '').split(/[，,]/).map(s => {
+                            const name = s.trim();
+                            const found = auditTeam.find(a => a.name === name);
+                            return found ? found.id : '';
+                        }).filter(id => id);
+                        
+                        addActivityRow(siteId, {
+                            date: row['日期'] || '2024-04-15',
+                            startTime: row['开始时间'] || '09:00',
+                            endTime: row['结束时间'] || '12:00',
+                            auditors: auditors,
+                            process: row['过程或活动'] || '',
+                            dept: row['部门/场所'] || ''
+                        });
+                    });
+                    
+                    updateAuditStats();
+                    showToast(`成功导入 ${jsonData.length} 条记录到${sitesData[siteId].name}`);
+                } catch (err) {
+                    showToast('Excel解析失败，请检查文件格式', 'error');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+            event.target.value = '';
+        }
+
+        function toggleSection(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.fa-chevron-down');
+            
+            if (content.style.maxHeight === '0px') {
+                content.style.maxHeight = '2000px';
+                content.style.overflow = 'visible';
+                content.style.padding = '';
+                if (icon) icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.style.maxHeight = '0px';
+                content.style.overflow = 'hidden';
+                content.style.padding = '0 20px';
+                if (icon) icon.style.transform = 'rotate(-90deg)';
+            }
+        }
+
+        function savePlan() {
+            showToast('审核计划已保存为草稿');
+        }
+
+        function submitPlan() {
+            const rows = document.querySelectorAll('.activity-row');
+            if (rows.length === 0) {
+                showToast('请至少添加一条审核活动', 'error');
+                document.getElementById('section-activity').scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+            
+            const exceeded = auditTeam.filter(t => t.current > t.maxHours);
+            if (exceeded.length > 0) {
+                showToast(`${exceeded.map(e => e.name).join(',')} 的审核时长已超出最大可用时间`, 'error');
+                return;
+            }
+            
+            if (confirm('确定要提交审核计划吗？提交后将进入审批流程。')) {
+                showToast('审核计划已提交');
+            }
+        }
+
+        function toggleSiteSelectAll(siteId) {
+            const checkbox = document.querySelector(`.site-card[data-site-id="${siteId}"] .select-all-site`);
+            const rowCheckboxes = document.querySelectorAll(`#activityContainer-${siteId} .row-checkbox`);
+            
+            rowCheckboxes.forEach(cb => {
+                cb.checked = checkbox.checked;
+            });
+            
+            updateSiteBatchDeleteBtn(siteId);
+        }
+
+        function updateSiteBatchDeleteBtn(siteId) {
+            const checkedBoxes = document.querySelectorAll(`#activityContainer-${siteId} .row-checkbox:checked`);
+            const btn = document.querySelector(`.batch-delete-site[data-site="${siteId}"]`);
+            
+            if (checkedBoxes.length > 0) {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+                btn.innerHTML = `<i class="fas fa-trash-alt"></i>批量删除(${checkedBoxes.length})`;
+            } else {
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+                btn.innerHTML = `<i class="fas fa-trash-alt"></i>批量删除`;
+            }
+        }
+
+        function batchDeleteSiteRows(siteId) {
+            const checkedBoxes = document.querySelectorAll(`#activityContainer-${siteId} .row-checkbox:checked`);
+            
+            if (checkedBoxes.length === 0) {
+                showToast('请先选择要删除的活动', 'warning');
+                return;
+            }
+            
+            if (confirm(`确定要删除选中的 ${checkedBoxes.length} 条活动记录吗？`)) {
+                checkedBoxes.forEach(cb => {
+                    const rowId = cb.dataset.rowId;
+                    const row = document.querySelector(`[data-row-id="${rowId}"]`);
+                    if (row) row.remove();
+                });
+                
+                document.querySelector(`.site-card[data-site-id="${siteId}"] .select-all-site`).checked = false;
+                updateSiteBatchDeleteBtn(siteId);
+                updateAuditStats();
+                
+                showToast(`已成功删除 ${checkedBoxes.length} 条活动记录`);
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            const bgColor = type === 'error' ? 'bg-red-600' : type === 'warning' ? 'bg-amber-500' : 'bg-green-600';
+            const icon = type === 'error' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-check-circle';
+            
+            toast.className = `fixed top-24 left-1/2 transform -translate-x-1/2 ${bgColor} text-white px-6 py-3 rounded-lg shadow-2xl z-50 flex items-center gap-2 transition-all duration-300 opacity-0`;
+            toast.innerHTML = `<i class="fas ${icon}"></i><span>${message}</span>`;
+            
+            document.body.appendChild(toast);
+            setTimeout(() => toast.classList.remove('opacity-0'), 10);
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
