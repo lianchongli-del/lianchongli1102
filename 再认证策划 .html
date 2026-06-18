@@ -979,24 +979,102 @@
 
         /* 证书编辑弹窗样式 */
         .cert-edit-modal .modal-content {
-            width: 1200px;
-            max-width: 95%;
-            max-height: 90vh;
+            width: 1120px;
+            max-width: calc(100vw - 48px);
+            max-height: 92vh;
+            overflow: hidden;
+        }
+
+        .cert-edit-modal .modal-header {
+            padding: 14px 20px;
+            background: var(--color-bg-white);
+        }
+
+        .cert-edit-modal .card-title {
+            font-size: 16px;
+            color: var(--color-text-primary);
+        }
+
+        .cert-edit-modal .modal-body {
+            max-height: calc(92vh - 116px) !important;
+            padding: 18px 20px 22px;
+            background: var(--color-bg);
+        }
+
+        .cert-edit-modal .modal-footer {
+            padding: 12px 20px;
+            background: var(--color-bg-white);
+        }
+
+        .cert-edit-modal .form-row {
+            margin-bottom: 10px;
+        }
+
+        .cert-edit-modal .form-label {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .cert-edit-modal .form-input,
+        .cert-edit-modal .form-select,
+        .cert-edit-modal .form-textarea {
+            min-height: 34px;
+            padding: 6px 9px;
+            font-size: 13px;
+            border-radius: var(--radius-sm);
+            background: var(--color-bg-white);
+        }
+
+        .cert-edit-modal .form-textarea {
+            min-height: 74px;
+            resize: vertical;
+            line-height: 1.45;
         }
 
         .cert-section-title {
-            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--color-text-secondary);
-            margin: 16px 0 12px 0;
-            padding-bottom: 8px;
+            margin: 18px 0 12px 0;
+            padding: 0 0 8px 0;
             border-bottom: 1px solid var(--color-border);
+        }
+
+        .cert-section-index {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: var(--radius-sm);
+            background: var(--color-primary-light);
+            color: var(--color-primary);
+            font-size: 12px;
+            font-weight: 700;
+            flex: 0 0 auto;
+        }
+
+        .cert-section-panel {
+            padding: 14px 16px 16px;
+            margin-bottom: 14px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            background: var(--color-bg-white);
+        }
+
+        .cert-section-panel > .cert-section-title:first-child {
+            margin-top: 0;
         }
 
         .cert-form-grid-2 {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 12px 16px;
         }
 
         .cert-form-grid-3 {
@@ -1007,17 +1085,147 @@
 
         .radio-group {
             display: flex;
-            gap: 16px;
+            flex-wrap: wrap;
+            gap: 8px;
             align-items: center;
         }
 
         .radio-label {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
+            min-height: 30px;
+            padding: 4px 9px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            background: var(--color-bg-white);
             cursor: pointer;
             font-size: 13px;
             color: var(--color-text-body);
+        }
+
+        .radio-label:hover {
+            border-color: var(--color-primary-hover);
+            background: var(--color-primary-light);
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2px;
+            width: 360px;
+            max-width: 100%;
+            padding: 4px 0;
+        }
+
+        .checkbox-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 30px;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            color: var(--color-text-body);
+            cursor: pointer;
+        }
+
+        .checkbox-label:hover {
+            background: var(--color-border-light);
+        }
+
+        .scope-extra-panel {
+            margin-top: 12px;
+        }
+
+        .cert-subsection-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 14px 0 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--color-border);
+            color: var(--color-text-primary);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .scope-extra-toolbar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 8px;
+        }
+
+        .cert-edit-modal .data-table {
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            border-collapse: separate;
+            border-spacing: 0;
+            overflow: hidden;
+            background: var(--color-bg-white);
+            font-size: 12px;
+        }
+
+        .cert-edit-modal .data-table th {
+            background: #F8FAFC;
+            padding: 7px 8px;
+            color: var(--color-text-secondary);
+            font-size: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .cert-edit-modal .data-table td {
+            padding: 6px 8px;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--color-border-light);
+        }
+
+        .cert-edit-modal .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .cert-edit-modal .data-table th:first-child,
+        .cert-edit-modal .data-table td:first-child {
+            text-align: center;
+        }
+
+        .cert-edit-modal .data-table .form-input,
+        .cert-edit-modal .data-table .form-select {
+            min-height: 30px;
+            font-size: 12px;
+            padding: 5px 7px;
+        }
+
+        .cert-row-index {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: var(--radius-sm);
+            background: var(--color-bg-gray);
+            color: var(--color-text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .cert-icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: var(--radius-sm);
+            border: 1px solid transparent;
+            color: var(--color-text-muted);
+            transition: all 0.15s ease;
+        }
+
+        .cert-icon-btn:hover {
+            background: var(--color-danger-light);
+            border-color: #FECACA;
+            color: var(--color-danger);
         }
 
         .form-select {
@@ -4033,6 +4241,7 @@
                     <tr>
                         <th style="width: 60px">序号</th>
                         <th>认证范围</th>
+                        <th style="width: 180px">认证标准</th>
                         <th style="width: 120px">认证证书标志</th>
                         <th style="width: 100px">是否有子证</th>
                         <th style="width: 150px">操作</th>
@@ -4064,10 +4273,11 @@
             </div>
             <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                 <!-- 1-5 客户信息（自动带入，支持修改） -->
-                <div class="cert-section-title">1-5. 客户基本信息</div>
+                <div class="cert-section-panel">
+                <div class="cert-section-title"><span class="cert-section-index">1</span><span>客户基本信息</span></div>
                 <div class="cert-form-grid-2">
                     <div class="form-row">
-                        <label class="form-label">1. 客户名称 <span class="text-red-500">*</span></label>
+                        <label class="form-label">客户名称 <span class="text-red-500">*</span></label>
                         <input type="text" class="form-input" id="certEdit_customerName" value="华信环境监测技术中心" oninput="syncMainCertSiteFromCustomerInfo()">
                     </div>
                     <div class="form-row">
@@ -4078,7 +4288,7 @@
 
                 <div class="cert-form-grid-2">
                     <div class="form-row">
-                        <label class="form-label">2. 注册地址 <span class="text-red-500">*</span></label>
+                        <label class="form-label">注册地址 <span class="text-red-500">*</span></label>
                         <input type="text" class="form-input" id="certEdit_regAddress" value="北京市海淀区中关村大街1号">
                     </div>
                     <div class="form-row">
@@ -4089,7 +4299,7 @@
 
                 <div class="cert-form-grid-2">
                     <div class="form-row">
-                        <label class="form-label">3. 运营地址 <span class="text-red-500">*</span></label>
+                        <label class="form-label">运营地址 <span class="text-red-500">*</span></label>
                         <input type="text" class="form-input" id="certEdit_certAddress" value="北京市海淀区中关村大街1号" oninput="syncMainCertSiteFromCustomerInfo()">
                     </div>
                     <div class="form-row">
@@ -4100,17 +4310,19 @@
 
                 <div class="cert-form-grid-2">
                     <div class="form-row">
-                        <label class="form-label">4. 法人代表或负责人 <span class="text-red-500">*</span></label>
+                        <label class="form-label">法人代表或负责人 <span class="text-red-500">*</span></label>
                         <input type="text" class="form-input" id="certEdit_legalRep" value="张先生">
                     </div>
                     <div class="form-row">
-                        <label class="form-label">5. 统一社会信用代码或注册编号(境外组织) <span class="text-red-500">*</span></label>
+                        <label class="form-label">统一社会信用代码或注册编号(境外组织) <span class="text-red-500">*</span></label>
                         <input type="text" class="form-input" id="certEdit_creditCode" value="91110108XXXXXXXXXX" oninput="syncMainCertSiteFromCustomerInfo()">
                     </div>
                 </div>
+                </div>
 
                 <!-- 6. 认证范围 -->
-                <div class="cert-section-title">6. 认证范围</div>
+                <div class="cert-section-panel">
+                <div class="cert-section-title"><span class="cert-section-index">2</span><span>认证范围</span></div>
                 <div class="form-row">
                     <label class="form-label">认证范围（中文） <span class="text-red-500">*</span></label>
                     <textarea class="form-textarea" id="certEdit_scope" rows="3" placeholder="请输入完整的认证范围，包括全部产品和服务及其活动..." oninput="syncMainCertSiteFromCustomerInfo()"></textarea>
@@ -4119,22 +4331,67 @@
                     <label class="form-label">认证范围（英文）</label>
                     <textarea class="form-textarea" id="certEdit_scopeEn" rows="3" placeholder="English scope..."></textarea>
                 </div>
+                <div id="certFoodScopePanel" class="scope-extra-panel">
+                    <div class="cert-subsection-title">HACCP/FSMS 认证证书覆盖范围（F/H适用）</div>
+                    <div class="scope-extra-toolbar">
+                        <button onclick="addCertFoodScopeRow()" class="btn btn-default btn-sm">
+                            <i class="fas fa-plus"></i> 新增覆盖范围
+                        </button>
+                    </div>
+                    <table class="data-table" id="certFoodScopeTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px">序号</th>
+                                <th>产品名称</th>
+                                <th>生产场所/车间</th>
+                                <th>产品类型</th>
+                                <th style="width: 130px">年产量（吨）</th>
+                                <th style="width: 130px">年产值(万元)</th>
+                                <th style="width: 80px">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="certFoodScopeTableBody"></tbody>
+                    </table>
+                </div>
+                <div class="form-row" style="margin-top: 12px;">
+                    <label class="cert-subsection-title" for="certEdit_soaInfo">SoA版本和发布日期（ISMS适用）</label>
+                    <input type="text" class="form-input" id="certEdit_soaInfo" placeholder="如：SoA V1.0，发布日期：2026-06-18">
+                </div>
+                </div>
 
                 <!-- 7. 认证标准 -->
-                <div class="form-row" style="margin-top: 12px;">
-                    <label class="form-label">7. 认证标准 <span class="text-red-500">*</span></label>
-                    <select class="form-select" id="certEdit_standard">
-                        <option value="ISO 9001:2015">ISO 9001:2015</option>
-                        <option value="ISO 14001:2015">ISO 14001:2015</option>
-                        <option value="ISO 45001:2018">ISO 45001:2018</option>
-                        <option value="ISO 22000:2018">ISO 22000:2018</option>
-                        <option value="ISO/IEC 27001:2022">ISO/IEC 27001:2022</option>
-                    </select>
+                <div class="cert-section-panel">
+                <div class="cert-section-title"><span class="cert-section-index">3</span><span>认证标准与证书标志选择</span></div>
+                <div class="form-row">
+                    <label class="form-label">认证标准 <span class="text-red-500">*</span></label>
+                    <div class="checkbox-grid" id="certEdit_standardGroup">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="certStandard" value="GB/T 19001-2016 / ISO 9001:2015" checked> GB/T 19001-2016 / ISO 9001:2015
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="certStandard" value="GB/T 19001-2026 / ISO 9001:2025"> GB/T 19001-2026 / ISO 9001:2025
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="certStandard" value="GB/T 50430"> GB/T 50430
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="certStandard" value="IATF 16949"> IATF 16949
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="certStandard" value="AS9100"> AS9100
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="certStandard" value="IRIS / ISO 22163"> IRIS / ISO 22163
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="certStandard" value="TL 9000"> TL 9000
+                        </label>
+                    </div>
                 </div>
 
                 <!-- 8. 认证证书标志（放置在6下方，与10同行，改为单选） -->
                 <div class="form-row" style="margin-top: 12px;">
-                    <label class="form-label">8. 认证证书标志</label>
+                    <label class="form-label">认证证书标志</label>
                     <div class="radio-group">
                         <label class="radio-label">
                             <input type="radio" name="certMark" value="CNAS" checked> CNAS标志
@@ -4150,28 +4407,32 @@
                         </label>
                     </div>
                 </div>
+                </div>
 
                 <!-- 7. 是否有证书附件（默认有，不可修改） -->
-                <div class="cert-section-title">9-10. 证书附件与子证书</div>
+                <div class="cert-section-panel">
+                <div class="cert-section-title"><span class="cert-section-index">4</span><span>证书附件与子证书</span></div>
                 <div class="cert-form-grid-2">
                     <div class="form-row">
-                        <label class="form-label">9. 是否有证书附件</label>
+                        <label class="form-label">是否有证书附件</label>
                         <select class="form-select" id="certEdit_hasAttachment" disabled>
                             <option value="yes">是</option>
                             <option value="no">否</option>
                         </select>
                     </div>
                     <div class="form-row">
-                        <label class="form-label">10. 是否有子证书</label>
+                        <label class="form-label">是否有子证书</label>
                         <select class="form-select" id="certEdit_hasSubCert" disabled>
                             <option value="yes">是</option>
                             <option value="no">否</option>
                         </select>
                     </div>
                 </div>
+                </div>
 
                 <!-- 9. 证书附件【多场所】表格 -->
-                <div class="cert-section-title">11 证书附件【多场所】</div>
+                <div class="cert-section-panel">
+                <div class="cert-section-title"><span class="cert-section-index">5</span><span>证书附件【多场所】</span></div>
                 
                 <table class="data-table" id="certSitesTable">
                     <thead>
@@ -4189,9 +4450,11 @@
                         <!-- 动态填充：1行中心职能+4行多场所 -->
                     </tbody>
                 </table>
+                </div>
 
                 <!-- 12 证书附件【产品信息】 -->
-                <div class="cert-section-title" style="margin-top: 20px;">12. 证书附件【产品信息】（如适用）</div>
+                <div class="cert-section-panel">
+                <div class="cert-section-title"><span class="cert-section-index">6</span><span>证书附件【产品信息】（如适用）</span></div>
                 
                 <div class="flex justify-end mb-2">
                     <button onclick="addCertProductRow()" class="btn btn-default btn-sm">
@@ -4212,6 +4475,7 @@
                         <!-- 初始为空或示例 -->
                     </tbody>
                 </table>
+                </div>
 
             </div>
             <div class="modal-footer">
@@ -4747,10 +5011,9 @@
 
         function getAllSitesInfo() {
             const sitesInfo = [];
-            const phasePrefix = currentPhase === 'recert' ? 'site_recert_' :
+            const phasePrefix = currentPhase === 'initial' ? 'site_' : 
                                currentPhase === 'surv1' ? 'site_surv1_' :
-                               currentPhase === 'surv2' ? 'site_surv2_' :
-                               currentPhase === 'recert_next' ? 'site_recert_next_' : 'site_recert_';
+                               currentPhase === 'surv2' ? 'site_surv2_' : 'site_recert_';
             
             document.querySelectorAll(`[id^="${phasePrefix}"]`).forEach(card => {
                 if (card.classList.contains('site-card')) {
@@ -4846,6 +5109,123 @@
             if (productsInput) productsInput.value = getCertMainSiteProducts();
         }
 
+        function normalizeCertStandards(standard) {
+            const standardMap = {
+                'ISO 9001:2015': 'GB/T 19001-2016 / ISO 9001:2015',
+                'ISO 9001:2025': 'GB/T 19001-2026 / ISO 9001:2025'
+            };
+            if (Array.isArray(standard)) return standard.map(item => standardMap[item] || item).filter(Boolean);
+            if (typeof standard === 'string' && standard.trim()) {
+                return standard.split(/[,，、]/).map(item => standardMap[item.trim()] || item.trim()).filter(Boolean);
+            }
+            return ['GB/T 19001-2016 / ISO 9001:2015'];
+        }
+
+        function getSelectedCertStandards() {
+            const standards = Array.from(document.querySelectorAll('input[name="certStandard"]:checked')).map(input => input.value);
+            return standards.length ? standards : ['GB/T 19001-2016 / ISO 9001:2015'];
+        }
+
+        function setSelectedCertStandards(standard) {
+            const standards = normalizeCertStandards(standard);
+            document.querySelectorAll('input[name="certStandard"]').forEach(input => {
+                input.checked = standards.includes(input.value);
+            });
+        }
+
+        function formatCertStandards(standard) {
+            return normalizeCertStandards(standard).join('，');
+        }
+
+        function shouldShowFoodScopePanel() {
+            return true;
+        }
+
+        function updateCertFoodScopeVisibility() {
+            const panel = document.getElementById('certFoodScopePanel');
+            if (!panel) return;
+            panel.classList.toggle('hidden-section', !shouldShowFoodScopePanel());
+        }
+
+        function renderCertFoodScopeTable(rows = []) {
+            const tbody = document.getElementById('certFoodScopeTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            if (!rows.length) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-gray-400">暂无覆盖范围信息</td></tr>';
+                return;
+            }
+
+            rows.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="cert-row-index">${index + 1}</span></td>
+                    <td><input type="text" class="form-input cert-food-product-input" value="${row.productName || ''}" placeholder="产品名称"></td>
+                    <td><input type="text" class="form-input cert-food-place-input" value="${row.productionPlace || ''}" placeholder="生产场所/车间"></td>
+                    <td><input type="text" class="form-input cert-food-type-input" value="${row.productType || ''}" placeholder="产品类型"></td>
+                    <td><input type="text" class="form-input cert-food-output-input" value="${row.annualOutput || ''}" placeholder="吨"></td>
+                    <td><input type="text" class="form-input cert-food-value-input" value="${row.annualValue || ''}" placeholder="万元"></td>
+                    <td>
+                        <button onclick="deleteCertFoodScopeRow(this)" class="cert-icon-btn" title="删除">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function addCertFoodScopeRow(row = {}) {
+            const tbody = document.getElementById('certFoodScopeTableBody');
+            if (!tbody) return;
+            if (tbody.children.length === 1 && tbody.children[0].textContent.includes('暂无')) {
+                tbody.innerHTML = '';
+            }
+            renderCertFoodScopeTable([
+                ...getCertFoodScopeRows(),
+                {
+                    productName: row.productName || '',
+                    productionPlace: row.productionPlace || '',
+                    productType: row.productType || '',
+                    annualOutput: row.annualOutput || '',
+                    annualValue: row.annualValue || ''
+                }
+            ]);
+        }
+
+        function deleteCertFoodScopeRow(btn) {
+            btn.closest('tr')?.remove();
+            refreshCertFoodScopeRowNumbers();
+            const tbody = document.getElementById('certFoodScopeTableBody');
+            if (tbody && tbody.children.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-gray-400">暂无覆盖范围信息</td></tr>';
+            }
+        }
+
+        function refreshCertFoodScopeRowNumbers() {
+            document.querySelectorAll('#certFoodScopeTableBody tr').forEach((row, index) => {
+                const indexEl = row.querySelector('.cert-row-index');
+                if (indexEl) indexEl.textContent = index + 1;
+            });
+        }
+
+        function getCertFoodScopeRows() {
+            const rows = [];
+            document.querySelectorAll('#certFoodScopeTableBody tr').forEach(row => {
+                if (row.cells.length <= 1) return;
+                const inputs = row.querySelectorAll('input');
+                rows.push({
+                    productName: inputs[0]?.value || '',
+                    productionPlace: inputs[1]?.value || '',
+                    productType: inputs[2]?.value || '',
+                    annualOutput: inputs[3]?.value || '',
+                    annualValue: inputs[4]?.value || ''
+                });
+            });
+            return rows;
+        }
+
         function autoFillCertSites(sitesInfo) {
             const tbody = document.getElementById('certSitesTableBody');
             tbody.innerHTML = '';
@@ -4886,7 +5266,7 @@
                 </select>`;
                 
                 tr.innerHTML = `
-                    <td>${index + 1}</td>
+                    <td><span class="cert-row-index">${index + 1}</span></td>
                     <td><input type="text" class="form-input cert-site-name-input" value="${site.name || ''}" ${isMain ? 'readonly style="background:#f5f5f5; cursor:not-allowed;"' : ''}></td>
                     <td><textarea class="form-input cert-site-code-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.code || ''}</textarea></td>
                     <td><textarea class="form-input cert-site-address-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.address || ''}</textarea></td>
@@ -4932,6 +5312,7 @@
                 tr.innerHTML = `
                     <td>${index + 1}</td>
                     <td>${item.scope || '-'}</td>
+                    <td>${formatCertStandards(item.standards || item.standard)}</td>
                     <td>${item.certMark || 'CNAS'}</td>
                     <td>${item.hasSubCert === 'yes' ? '是' : '否'}</td>
                     <td>
@@ -4966,7 +5347,8 @@
                     document.getElementById('certEdit_creditCode').value = data.creditCode || '';
                     document.getElementById('certEdit_scope').value = data.scope || '';
                     document.getElementById('certEdit_scopeEn').value = data.scopeEn || '';
-                    document.getElementById('certEdit_standard').value = data.standard || 'ISO 9001:2015';
+                    document.getElementById('certEdit_soaInfo').value = data.soaInfo || [data.soaVersion, data.soaDate].filter(Boolean).join('，');
+                    setSelectedCertStandards(data.standards || data.standard || 'GB/T 19001-2016 / ISO 9001:2015');
                     
                     const markRadios = document.querySelectorAll('input[name="certMark"]');
                     markRadios.forEach(radio => {
@@ -4974,6 +5356,8 @@
                     });
                     
                     updateCertAttachmentAndSubCertStatus(sitesInfo);
+                    updateCertFoodScopeVisibility();
+                    renderCertFoodScopeTable(data.foodScopeRows || []);
                     renderCertSitesTable(data.sites || []);
                     renderCertProductsTable(data.products || []);
                 }
@@ -4992,7 +5376,8 @@
                 document.getElementById('certEdit_creditCode').value = '91110108XXXXXXXXXX';
                 document.getElementById('certEdit_scope').value = '';
                 document.getElementById('certEdit_scopeEn').value = '';
-                document.getElementById('certEdit_standard').value = 'ISO 9001:2015';
+                document.getElementById('certEdit_soaInfo').value = '';
+                setSelectedCertStandards(['GB/T 19001-2016 / ISO 9001:2015']);
                 
                 const markRadios = document.querySelectorAll('input[name="certMark"]');
                 markRadios.forEach(radio => {
@@ -5000,6 +5385,8 @@
                 });
                 
                 updateCertAttachmentAndSubCertStatus(sitesInfo);
+                updateCertFoodScopeVisibility();
+                renderCertFoodScopeTable([]);
                 autoFillCertSites(sitesInfo);
                 renderCertProductsTable([]);
             }
@@ -5045,7 +5432,7 @@
                 </select>`;
                 
                 tr.innerHTML = `
-                    <td>${index + 1}</td>
+                    <td><span class="cert-row-index">${index + 1}</span></td>
                     <td><input type="text" class="form-input cert-site-name-input" value="${site.name || ''}" ${isMain ? 'readonly style="background:#f5f5f5; cursor:not-allowed;"' : ''}></td>
                     <td><textarea class="form-input cert-site-code-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.code || ''}</textarea></td>
                     <td><textarea class="form-input cert-site-address-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.address || ''}</textarea></td>
@@ -5076,12 +5463,12 @@
             products.forEach((prod, index) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${index + 1}</td>
+                    <td><span class="cert-row-index">${index + 1}</span></td>
                     <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">${prod.category || ''}</textarea></td>
                     <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">${prod.name || ''}</textarea></td>
                     <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">${prod.remark || ''}</textarea></td>
                     <td>
-                        <button onclick="deleteCertProductRow(this)" class="text-red-500 hover:text-red-700">
+                        <button onclick="deleteCertProductRow(this)" class="cert-icon-btn" title="删除">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
@@ -5100,12 +5487,12 @@
             const index = tbody.children.length + 1;
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td>${index}</td>
+                <td><span class="cert-row-index">${index}</span></td>
                 <td><input type="text" class="form-input" placeholder="产品类别"></td>
                 <td><input type="text" class="form-input" placeholder="产品名称"></td>
                 <td><input type="text" class="form-input" placeholder="备注"></td>
                 <td>
-                    <button onclick="deleteCertProductRow(this)" class="text-red-500 hover:text-red-700">
+                    <button onclick="deleteCertProductRow(this)" class="cert-icon-btn" title="删除">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>
@@ -5131,7 +5518,12 @@
             const rows = tbody.querySelectorAll('tr');
             rows.forEach((row, index) => {
                 if (row.cells.length > 1) {
-                    row.cells[0].textContent = index + 1;
+                    const indexEl = row.querySelector('.cert-row-index');
+                    if (indexEl) {
+                        indexEl.textContent = index + 1;
+                    } else {
+                        row.cells[0].textContent = index + 1;
+                    }
                 }
             });
         }
@@ -5160,11 +5552,14 @@
                 creditCode: document.getElementById('certEdit_creditCode').value,
                 scope: document.getElementById('certEdit_scope').value,
                 scopeEn: document.getElementById('certEdit_scopeEn').value,
-                standard: document.getElementById('certEdit_standard').value,
+                standards: getSelectedCertStandards(),
+                standard: formatCertStandards(getSelectedCertStandards()),
+                soaInfo: document.getElementById('certEdit_soaInfo').value,
                 hasAttachment: document.getElementById('certEdit_hasAttachment').value,
                 hasSubCert: document.getElementById('certEdit_hasSubCert').value,
                 certMark: document.querySelector('input[name="certMark"]:checked')?.value || 'CNAS',
                 isMultiSite: isMultiSite() ? '是' : '否',
+                foodScopeRows: getCertFoodScopeRows(),
                 sites: [],
                 products: []
             };
@@ -6371,3 +6766,4 @@
 
 </body>
 </html>
+
