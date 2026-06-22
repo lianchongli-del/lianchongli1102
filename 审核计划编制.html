@@ -830,16 +830,58 @@
             gap: 8px;
         }
 
-        .combined-info-row {
+        .scope-site-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .scope-site-card {
+            padding: 14px 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .scope-line {
+            display: grid;
+            grid-template-columns: 130px minmax(0, 1fr);
+            gap: 14px;
+            align-items: center;
+            min-height: 36px;
+        }
+
+        .scope-line + .scope-line {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #dbe2ea;
+        }
+
+        .scope-label {
+            color: #64748b;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .scope-value {
+            min-width: 0;
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background: #f8fafc;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            font-size: 13px;
-            border: 1px solid #e2e8f0;
+            gap: 10px;
+            flex-wrap: wrap;
+            color: #1e293b;
+        }
+
+        .scope-date-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .scope-date-row .form-input {
+            width: 150px;
         }
 
         /* 提交按钮区域 */
@@ -882,6 +924,9 @@
                     <span class="text-slate-300">|</span>
                     <span class="font-medium">监督审核</span>
                     <span class="font-medium text-amber-700">OHSMS</span>
+                    <span class="text-slate-300">|</span>
+                    <span class="font-medium">再认证</span>
+                    <span class="font-medium text-indigo-700">ISMS</span>
                 </div>
             </div>
         </div>
@@ -907,59 +952,12 @@
                     <textarea class="form-textarea">评价客户管理体系的持续符合性和有效性，以确定是否推荐保持认证；</textarea>
                 </div>
                 <div class="form-field">
+                    <label class="form-label">再认证</label>
+                    <textarea class="form-textarea">确认客户管理体系作为一个整体的持续符合性和有效性，以及与认证范围的持续相关性和适宜性，以确定是否推荐再认证；</textarea>
+                </div>
+                <div class="form-field">
                     <label class="form-label">其他</label>
                     <textarea class="form-textarea" placeholder="请输入其他审核目的"></textarea>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3. 审核范围 -->
-        <div id="section-scope" class="form-section">
-            <div class="section-header" onclick="toggleSection(this)">
-                <div class="section-title">
-                    <div class="section-icon bg-purple-100 text-purple-600">
-                        <i class="fas fa-sitemap"></i>
-                    </div>
-                    审核范围
-                </div>
-                <i class="fas fa-chevron-down text-slate-400 transition-transform"></i>
-            </div>
-            <div class="p-5">
-                <div class="space-y-3">
-                    <div class="combined-info-row">
-                        <span class="text-slate-600">北京市西城区北礼士路甲38号</span>
-                        <span class="text-slate-300">|</span>
-                        <span class="range-tag tag-center">中心职能</span>
-                        <span class="text-slate-300">|</span>
-                        <span class="font-medium text-blue-700">QMS(31.04.01,31.04.02,31.04.05)：轨道交通运营服务</span>
-                        <span class="font-medium text-green-700">EMS(31.04.01)：城市轨道交通运营环境管理</span>
-                        <span class="font-medium text-amber-700">OHSMS(31.04.01)：轨道交通职业健康安全管理</span>
-                        <span class="text-slate-300">|</span>
-                        <span>自</span>
-                        <input type="month" class="form-input" style="width: 140px;" value="2023-04">
-                        <span>至</span>
-                        <input type="date" class="form-input" style="width: 150px;" value="2024-04-18">
-                    </div>
-                    <div class="combined-info-row">
-                        <span class="text-slate-600">北京市东城区建国门南大街5号</span>
-                        <span class="text-slate-300">|</span>
-                        <span class="font-medium text-green-700">EMS：城市轨道交通运营环境管理</span>
-                        <span class="text-slate-300">|</span>
-                        <span>自</span>
-                        <input type="month" class="form-input" style="width: 140px;" value="2023-04">
-                        <span>至</span>
-                        <input type="date" class="form-input" style="width: 150px;" value="2024-04-18">
-                    </div>
-                    <div class="combined-info-row">
-                        <span class="text-slate-600">北京市朝阳区望京北路9号</span>
-                        <span class="text-slate-300">|</span>
-                        <span class="font-medium text-amber-700">OHSMS：轨道交通职业健康安全管理</span>
-                        <span class="text-slate-300">|</span>
-                        <span>自</span>
-                        <input type="month" class="form-input" style="width: 140px;" value="2023-04">
-                        <span>至</span>
-                        <input type="date" class="form-input" style="width: 150px;" value="2024-04-18">
-                    </div>
                 </div>
             </div>
         </div>
@@ -1038,45 +1036,108 @@
             </div>
         </div>
 
-        <!-- 5. 班次和时间 -->
-        <div id="section-shift" class="form-section">
+
+        <!-- 3. 审核范围 -->
+        <div id="section-scope" class="form-section">
             <div class="section-header" onclick="toggleSection(this)">
                 <div class="section-title">
-                    <div class="section-icon bg-amber-100 text-amber-600">
-                        <i class="fas fa-clock"></i>
+                    <div class="section-icon bg-purple-100 text-purple-600">
+                        <i class="fas fa-sitemap"></i>
                     </div>
-                    班次和班次时间
+                    审核范围
                 </div>
                 <i class="fas fa-chevron-down text-slate-400 transition-transform"></i>
             </div>
             <div class="p-5">
-                <div class="shift-list bg-slate-50 rounded-lg p-4 border border-slate-200">
-                    <div class="shift-row"><span class="shift-label">总部</span><div class="shift-time-group"><span class="text-sm text-slate-700">第1班次：08:00-17:30</span></div></div>
-                    <div class="shift-row"><span class="shift-label">运营一分公司</span><div class="shift-time-group"><span class="text-sm text-slate-700">第1班次：08:00-17:30；第2班次：18:00-02:00</span></div></div>
-                    <div class="shift-row"><span class="shift-label">运营二分公司</span><div class="shift-time-group"><span class="text-sm text-slate-700">第1班次：08:30-17:30</span></div></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 6. 审核日期 -->
-        <div id="section-date" class="form-section">
-            <div class="section-header">
-                <div class="section-title">
-                    <div class="section-icon bg-rose-100 text-rose-600">
-                        <i class="fas fa-calendar-alt"></i>
+                <div class="scope-site-list">
+                    <div class="scope-site-card">
+                        <div class="scope-line">
+                            <div class="scope-label">场所名称</div>
+                            <div class="scope-value">
+                                <span>北京市西城区北礼士路甲38号</span>
+                                <span class="range-tag tag-center">中心职能</span>
+                            </div>
+                        </div>
+                        <div class="scope-line">
+                            <div class="scope-label">认证领域和专业代码</div>
+                            <div class="scope-value">
+                                <span class="font-medium text-blue-700">QMS(31.04.01,31.04.02,31.04.05)：轨道交通运营服务</span>
+                                <span class="font-medium text-green-700">EMS(31.04.01)：城市轨道交通运营环境管理</span>
+                                <span class="font-medium text-amber-700">OHSMS(31.04.01)：轨道交通职业健康安全管理</span>
+                            </div>
+                        </div>
+                        <div class="scope-line">
+                            <div class="scope-label">计划审核时间</div>
+                            <div class="scope-value scope-date-row">
+                                <span>自</span>
+                                <input type="date" class="form-input" value="2023-04-19">
+                                <span>至</span>
+                                <input type="date" class="form-input" value="2024-04-18">
+                            </div>
+                        </div>
+                        <div class="scope-line">
+                            <div class="scope-label">班次和班次时间</div>
+                            <div class="scope-value">
+                                <span>第1班次：08:00-17:30</span>
+                            </div>
+                        </div>
                     </div>
-                    审核日期
-                </div>
-            </div>
-            <div class="p-5">
-                <div class="form-grid form-grid-2">
-                    <div class="form-field">
-                        <label class="form-label">审核日期</label>
-                        <div class="flex items-center gap-2">
-                            <input type="date" class="form-input" style="width: 140px;" value="2024-04-15">
-                            <span class="text-slate-500">至</span>
-                            <input type="date" class="form-input" style="width: 140px;" value="2024-04-18">
-                            <span class="text-sm text-slate-600 ml-2">共 <span class="font-bold text-slate-900 text-lg">4</span> 天</span>
+                    <div class="scope-site-card">
+                        <div class="scope-line">
+                            <div class="scope-label">场所名称</div>
+                            <div class="scope-value">
+                                <span>北京市东城区建国门南大街5号</span>
+                            </div>
+                        </div>
+                        <div class="scope-line">
+                            <div class="scope-label">认证领域和专业代码</div>
+                            <div class="scope-value">
+                                <span class="font-medium text-green-700">EMS(31.04.01)：城市轨道交通运营环境管理</span>
+                            </div>
+                        </div>
+                        <div class="scope-line">
+                            <div class="scope-label">计划审核时间</div>
+                            <div class="scope-value scope-date-row">
+                                <span>自</span>
+                                <input type="date" class="form-input" value="2023-04-19">
+                                <span>至</span>
+                                <input type="date" class="form-input" value="2024-04-18">
+                            </div>
+                        </div>
+                        <div class="scope-line">
+                            <div class="scope-label">班次和班次时间</div>
+                            <div class="scope-value">
+                                <span>第1班次：08:00-17:30；第2班次：18:00-02:00</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="scope-site-card">
+                        <div class="scope-line">
+                            <div class="scope-label">场所名称</div>
+                            <div class="scope-value">
+                                <span>北京市朝阳区望京北路9号</span>
+                            </div>
+                        </div>
+                        <div class="scope-line">
+                            <div class="scope-label">认证领域和专业代码</div>
+                            <div class="scope-value">
+                                <span class="font-medium text-amber-700">OHSMS(31.04.01)：轨道交通职业健康安全管理</span>
+                            </div>
+                        </div>
+                        <div class="scope-line">
+                            <div class="scope-label">计划审核时间</div>
+                            <div class="scope-value scope-date-row">
+                                <span>自</span>
+                                <input type="date" class="form-input" value="2023-04-19">
+                                <span>至</span>
+                                <input type="date" class="form-input" value="2024-04-18">
+                            </div>
+                        </div>
+                        <div class="scope-line">
+                            <div class="scope-label">班次和班次时间</div>
+                            <div class="scope-value">
+                                <span>第1班次：08:30-17:30</span>
+                            </div>
                         </div>
                     </div>
                 </div>
