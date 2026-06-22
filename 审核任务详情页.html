@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CQC审核任务详情</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-width: 0;
+            font-family: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f3f6fb;
+            color: #1e293b;
+        }
+        .page-shell {
+            width: min(100%, 1540px);
+            margin: 0 auto;
+            padding: 24px;
+        }
+        .page-header {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+            overflow: hidden;
+        }
+        .header-main {
+            padding: 22px 24px;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 20px;
+            align-items: start;
+        }
+        .header-band {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            border-top: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+        .top-titlebar {
+            min-height: 64px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 0 24px;
+            margin-bottom: 18px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+        }
+        .top-titlebar .back-btn {
+            height: auto;
+            padding: 0;
+            margin: 0;
+            border: 0;
+            background: transparent;
+            color: #64748b;
+            font-size: 14px;
+        }
+        .top-titlebar .back-btn:hover {
+            color: #1e293b;
+            background: transparent;
+            border-color: transparent;
+        }
+        .title-divider {
+            width: 1px;
+            height: 28px;
+            background: #cbd5e1;
+        }
+        .title-text {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0f172a;
+            white-space: nowrap;
+        }
+        .title-tags {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .header-stat {
+            padding: 14px 18px;
+            border-right: 1px solid #e2e8f0;
+        }
+        .header-stat:last-child { border-right: 0; }
+        .section {
+            margin-top: 18px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+            overflow: hidden;
+        }
+        .section-header {
+            min-height: 56px;
+            padding: 14px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            background: #fbfdff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .section-body { padding: 20px; }
+        .readonly-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+        }
+        .readonly-item { min-width: 0; }
+        .readonly-label {
+            margin-bottom: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+        }
+        .readonly-value {
+            min-height: 38px;
+            padding: 9px 11px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: #f8fafc;
+            font-size: 13px;
+            line-height: 1.55;
+            color: #1e293b;
+            word-break: break-word;
+        }
+        .readonly-value.multiline {
+            min-height: 74px;
+            white-space: pre-line;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            height: 24px;
+            padding: 0 9px;
+            border-radius: 999px;
+            border: 1px solid;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .badge-blue { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+        .badge-green { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+        .badge-amber { background: #fffbeb; color: #b45309; border-color: #fde68a; }
+        .badge-rose { background: #fff1f2; color: #be123c; border-color: #fecdd3; }
+        .badge-slate { background: #f8fafc; color: #475569; border-color: #cbd5e1; }
+        .table-scroll {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+        table {
+            width: 100%;
+            min-width: 980px;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        th {
+            padding: 11px 12px;
+            background: #f8fafc;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+            white-space: nowrap;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #edf2f7;
+            color: #334155;
+            vertical-align: top;
+        }
+        tr:last-child td { border-bottom: 0; }
+        .summary-strip {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .metric {
+            min-width: 0;
+            padding: 13px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+        .metric-label {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        .metric-value {
+            font-size: 18px;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.25;
+        }
+        .mode-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 14px 16px;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            background: #eff6ff;
+            margin-bottom: 16px;
+        }
+        .site-list {
+            display: grid;
+            gap: 16px;
+        }
+        .site-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #fff;
+        }
+        .site-card-header {
+            padding: 14px 16px;
+            background: #fbfdff;
+            border-bottom: 1px solid #e2e8f0;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 12px;
+            align-items: start;
+        }
+        .site-meta {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            padding: 14px 16px;
+            border-bottom: 1px solid #eef2f7;
+            background: #fff;
+        }
+        .site-personnel {
+            padding: 16px;
+        }
+        .person-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            height: 26px;
+            padding: 0 9px;
+            border-radius: 6px;
+            background: #fff;
+            border: 1px solid #c7d2fe;
+            color: #3730a3;
+            font-size: 12px;
+            font-weight: 700;
+            margin: 0 6px 6px 0;
+        }
+        .role-leader { color: #1d4ed8; font-weight: 700; }
+        .role-member { color: #334155; font-weight: 600; }
+        .role-expert { color: #be123c; font-weight: 700; }
+        .note-box {
+            border: 1px solid #fde68a;
+            background: #fffbeb;
+            border-radius: 8px;
+            padding: 12px 14px;
+            color: #92400e;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+        .stage-two-layout {
+            display: grid;
+            grid-template-columns: minmax(260px, 0.34fr) minmax(0, 1fr);
+            gap: 16px;
+            align-items: start;
+        }
+        .compact-list {
+            display: grid;
+            gap: 10px;
+        }
+        .compact-item {
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+        .back-btn,
+        .link-btn,
+        .modal-close {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border: 1px solid #d1d5db;
+            background: #fff;
+            color: #334155;
+            border-radius: 6px;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .back-btn { height: 34px; padding: 0 12px; margin-bottom: 14px; }
+        .link-btn {
+            height: 30px;
+            padding: 0 10px;
+            color: #1d4ed8;
+            border-color: #bfdbfe;
+            background: #eff6ff;
+            white-space: nowrap;
+        }
+        .back-btn:hover,
+        .modal-close:hover { background: #f8fafc; border-color: #94a3b8; }
+        .link-btn:hover { background: #dbeafe; border-color: #60a5fa; }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(15, 23, 42, 0.46);
+            z-index: 1000;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-panel {
+            width: min(1180px, 96vw);
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.24);
+            overflow: hidden;
+        }
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            background: #fbfdff;
+        }
+        .modal-body {
+            padding: 18px;
+            overflow-y: auto;
+            display: grid;
+            gap: 16px;
+        }
+        .modal-close { width: 32px; height: 32px; padding: 0; }
+        .plan-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .plan-block {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #fff;
+        }
+        .plan-block-title {
+            padding: 11px 14px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 13px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+        .plan-block-body { padding: 14px; }
+        .stage-two-overview {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .hidden-section { display: none !important; }
+        .plan-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 40px 24px;
+            overflow-y: auto;
+            background: rgba(15, 23, 42, 0.48);
+        }
+        .plan-modal.show { display: flex; }
+        .readonly-field {
+            min-height: 36px;
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: #f8fafc;
+            color: #1e293b;
+            font-size: 13px;
+            line-height: 1.55;
+            word-break: break-word;
+        }
+        .process-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .process-table th {
+            padding: 10px;
+            background: #f8fafc;
+            color: #475569;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 700;
+            text-align: left;
+            white-space: nowrap;
+        }
+        .process-table td {
+            padding: 10px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+            vertical-align: top;
+        }
+        .inline-readonly {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 38px;
+            padding: 9px 11px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: #f8fafc;
+            font-size: 13px;
+            color: #1e293b;
+        }
+        .inline-readonly .readonly-label {
+            margin: 0;
+            white-space: nowrap;
+        }
+        .inline-readonly .inline-value {
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .flex { display: flex; }
+        .flex-wrap { flex-wrap: wrap; }
+        .items-center { align-items: center; }
+        .justify-start { justify-content: flex-start; }
+        .gap-2 { gap: 8px; }
+        .mb-3 { margin-bottom: 12px; }
+        .mb-4 { margin-bottom: 16px; }
+        .mt-1 { margin-top: 4px; }
+        .mt-2 { margin-top: 8px; }
+        .mt-4 { margin-top: 16px; }
+        .text-sm { font-size: 13px; }
+        .text-xs { font-size: 12px; }
+        .text-\[16px\] { font-size: 16px; }
+        .text-\[22px\] { font-size: 22px; }
+        .text-center { text-align: center; }
+        .font-semibold { font-weight: 600; }
+        .font-bold { font-weight: 700; }
+        .font-mono { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+        .leading-tight { line-height: 1.25; }
+        .leading-7 { line-height: 1.75; }
+        .text-slate-500 { color: #64748b; }
+        .text-slate-700 { color: #334155; }
+        .text-slate-900 { color: #0f172a; }
+        .text-slate-950 { color: #020617; }
+        .text-blue-600 { color: #2563eb; }
+        .text-blue-700 { color: #1d4ed8; }
+        .text-blue-900 { color: #1e3a8a; }
+        .text-amber-500 { color: #f59e0b; }
+        .text-emerald-700 { color: #047857; }
+        .bg-emerald-50 { background: #ecfdf5; }
+        .wide-field { grid-column: 1 / -1; }
+        @media (max-width: 1180px) {
+            .readonly-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .summary-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .site-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .stage-two-layout { grid-template-columns: 1fr; }
+            .plan-grid,
+            .stage-two-overview { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 760px) {
+            .page-shell { padding: 14px; }
+            .top-titlebar { align-items: flex-start; flex-direction: column; gap: 10px; padding: 14px 16px; }
+            .title-divider { display: none; }
+            .title-text { font-size: 18px; }
+            .header-main { grid-template-columns: 1fr; padding: 18px; }
+            .header-band { grid-template-columns: 1fr; }
+            .header-stat { border-right: 0; border-bottom: 1px solid #e2e8f0; }
+            .header-stat:last-child { border-bottom: 0; }
+            .readonly-grid,
+            .summary-strip,
+            .site-meta { grid-template-columns: 1fr; }
+            .site-card-header { grid-template-columns: 1fr; }
+            .mode-card { align-items: flex-start; flex-direction: column; }
+            .section-body { padding: 16px; }
+        }
+        @media (min-width: 1024px) {
+            .lg\:justify-end { justify-content: flex-end; }
+        }
+    </style>
+</head>
+<body>
+    <main class="page-shell">
+        <div class="top-titlebar">
+            <button type="button" class="back-btn" onclick="history.back()"><i class="fas fa-arrow-left"></i>返回列表</button>
+            <div class="title-divider"></div>
+            <div class="title-text">审核任务详情</div>
+            <div class="title-tags">
+                <span class="badge badge-blue">一阶段</span>
+                <span class="badge badge-green">QMS+EMS</span>
+            </div>
+        </div>
+        <header class="page-header">
+            <div class="header-band">
+                <div class="header-stat">
+                    <div class="readonly-label">客户名称</div>
+                    <div class="font-bold text-slate-900">北京市地铁运营有限公司</div>
+                </div>
+                <div class="header-stat">
+                    <div class="readonly-label">计划审核时间</div>
+                    <div class="font-bold text-slate-900">2026-04-15 08:30 至 2026-04-19 17:00</div>
+                </div>
+                <div class="header-stat">
+                    <div class="readonly-label">总审核人天</div>
+                    <div class="font-bold text-blue-700">15.0 人天</div>
+                </div>
+            </div>
+        </header>
+
+        <section class="section">
+            <div class="section-header">
+                <div class="section-title"><i class="fas fa-link text-blue-600"></i>关联审核项目</div>
+            </div>
+            <div class="section-body">
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 56px;">序号</th>
+                                <th>项目编号</th>
+                                <th>客户名称</th>
+                                <th>审核类型</th>
+                                <th>认证领域</th>
+                                <th>审核阶段</th>
+                                <th>场所数量</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td class="font-mono text-xs">1100-Q1-2026-0002</td>
+                                <td class="font-semibold text-slate-900">北京市地铁运营有限公司</td>
+                                <td>初次认证</td>
+                                <td><span class="badge badge-blue">QMS</span></td>
+                                <td>一阶段</td>
+                                <td>4</td>
+                                <td><button type="button" class="link-btn" onclick="openPlanModal('qms')"><i class="fas fa-eye"></i>查看策划方案</button></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td class="font-mono text-xs">1100-E1-2026-0003</td>
+                                <td class="font-semibold text-slate-900">北京市地铁运营有限公司</td>
+                                <td>再认证</td>
+                                <td><span class="badge badge-green">EMS</span></td>
+                                <td>一阶段</td>
+                                <td>4</td>
+                                <td><button type="button" class="link-btn" onclick="openPlanModal('ems')"><i class="fas fa-eye"></i>查看策划方案</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">
+                <div class="section-title"><i class="fas fa-clipboard-list text-amber-500"></i>任务基础信息与客户要求</div>
+            </div>
+            <div class="section-body">
+                <div class="readonly-grid">
+                    <div class="readonly-item">
+                        <div class="inline-readonly">
+                            <span class="readonly-label">是否需要召开审核准备会</span>
+                            <span class="inline-value">是</span>
+                        </div>
+                    </div>
+                    <div class="readonly-item wide-field">
+                        <div class="readonly-label">客户特殊要求</div>
+                        <div class="readonly-value multiline">1. 审核时间需避开每月最后一周，客户需进行月度盘点。
+2. 审核组需至少包含 1 名具备轨道交通行业经验的审核员。
+3. 审核报告需同步提供英文版本。
+4. 费用范围包含住宿及交通费。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">
+                <div class="section-title"><i class="fas fa-users-cog text-blue-600"></i>审核组分配设置</div>
+                <span class="badge badge-blue"><i class="fas fa-map-marker-alt"></i>按场所安排审核组</span>
+            </div>
+            <div class="section-body">
+                <div class="mode-card">
+                    <div>
+                        <div class="font-bold text-blue-900">当前分配模式：已开启按场所安排审核组</div>
+                        <div class="mt-1 text-sm text-blue-700">已选择审核人员，并分别分配到各审核场所；每个场所下均已有审核人员和审核日期区间。</div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="badge badge-blue">组长：武荣刚</span>
+                        <span class="badge badge-green">已选 7 人</span>
+                        <span class="badge badge-amber">未分配 0.0 人天</span>
+                    </div>
+                </div>
+
+                <div class="summary-strip">
+                    <div class="metric">
+                        <div class="metric-label">审核组结合度</div>
+                        <div class="metric-value">62%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">管理体系整合程度</div>
+                        <div class="metric-value">90%</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">结合折扣后总人天</div>
+                        <div class="metric-value">15.0</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">覆盖体系</div>
+                        <div class="metric-value text-[16px]">QMS / EMS</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">专业覆盖</div>
+                        <div class="metric-value text-[16px]">19.01 / 19.07 / 19.08 / 19.12</div>
+                    </div>
+                </div>
+
+                <div class="readonly-label">已选择人员</div>
+                <div class="mb-4">
+                    <span class="person-chip"><i class="fas fa-user-tie"></i>武荣刚 · 组长</span>
+                    <span class="person-chip">王洪伟 · 组员</span>
+                    <span class="person-chip">周志兴 · 组员</span>
+                    <span class="person-chip">张爱兵 · 组员</span>
+                    <span class="person-chip">李晨 · 组员</span>
+                    <span class="person-chip">刘娜 · 技术专家</span>
+                    <span class="person-chip">黄起超 · 组员</span>
+                </div>
+
+                <div class="table-scroll mb-4">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 56px;">序号</th>
+                                <th>场所名称</th>
+                                <th class="text-center">Q</th>
+                                <th class="text-center">E</th>
+                                <th class="text-center">小计</th>
+                                <th>结合折扣后</th>
+                                <th class="text-center">最终人天</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>北京市地铁运营有限公司（总部）</td>
+                                <td class="text-center">2.5</td>
+                                <td class="text-center">2.0</td>
+                                <td class="text-center">4.5</td>
+                                <td>× 85%</td>
+                                <td class="text-center font-bold text-blue-700">4.0</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>北京市地铁运营有限公司运营一分公司</td>
+                                <td class="text-center">2.5</td>
+                                <td class="text-center">-</td>
+                                <td class="text-center">2.5</td>
+                                <td>× 100%</td>
+                                <td class="text-center font-bold text-blue-700">2.5</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>北京市地铁运营有限公司运营二分公司</td>
+                                <td class="text-center">-</td>
+                                <td class="text-center">2.0</td>
+                                <td class="text-center">2.0</td>
+                                <td>× 100%</td>
+                                <td class="text-center font-bold text-blue-700">2.0</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>北京市地铁运营有限公司运营三分公司</td>
+                                <td class="text-center">2.0</td>
+                                <td class="text-center">2.0</td>
+                                <td class="text-center">4.0</td>
+                                <td>× 85%</td>
+                                <td class="text-center font-bold text-blue-700">3.5</td>
+                            </tr>
+                            <tr class="bg-emerald-50 font-bold">
+                                <td>合计</td>
+                                <td>总计</td>
+                                <td class="text-center">-</td>
+                                <td class="text-center">-</td>
+                                <td class="text-center">13.0</td>
+                                <td>-</td>
+                                <td class="text-center text-emerald-700">12.0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="site-list">
+                    <article class="site-card">
+                        <div class="site-card-header">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="badge badge-green">总部</span>
+                                <h3 class="font-bold text-slate-900">北京市地铁运营有限公司（总部）</h3>
+                                <span class="badge badge-blue">QMS+EMS</span>
+                                <span class="badge badge-slate">证书 1 份</span>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="badge badge-blue">计划 4.0 人天</span>
+                                <span class="badge badge-green">已分配 4.0</span>
+                            </div>
+                        </div>
+                        <div class="site-meta">
+                            <div><div class="readonly-label">场所地址</div><div class="readonly-value">北京市西城区北礼士路甲38号</div></div>
+                            <div><div class="readonly-label">有效人数</div><div class="readonly-value">200</div></div>
+                            <div><div class="readonly-label">审核日期区间</div><div class="readonly-value">2026-04-15 08:30 至 2026-04-16 17:00</div></div>
+                        </div>
+                        <div class="site-personnel table-scroll">
+                            <table>
+                                <thead><tr><th>序号</th><th>姓名</th><th>组内身份</th><th>资格</th><th>注册编号</th><th>CQC编号</th><th>联系电话</th><th>审核日期区间</th></tr></thead>
+                                <tbody>
+                                    <tr><td>1</td><td class="font-semibold">武荣刚</td><td class="role-leader">组长</td><td>QMS正式</td><td class="font-mono text-xs">2022-N1QMS-6028373</td><td class="font-mono text-xs">CQC21458</td><td>13661227694</td><td>2026-04-15 08:30 至 2026-04-16 17:00</td></tr>
+                                    <tr><td>2</td><td class="font-semibold">张爱兵</td><td class="role-member">组员</td><td>QMS正式，EMS正式</td><td class="font-mono text-xs">2023-N1QMS-5011045，2023-N1EMS-3011045</td><td class="font-mono text-xs">CQC11045</td><td>13800138003</td><td>2026-04-15 08:30 至 2026-04-16 17:00</td></tr>
+                                    <tr><td>3</td><td class="font-semibold">刘娜</td><td class="role-expert">技术专家</td><td>技术专家</td><td class="font-mono text-xs">TE-2024-0188</td><td class="font-mono text-xs">CQC40876</td><td>13800138007</td><td>2026-04-15 13:30 至 2026-04-16 12:00</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+
+                    <article class="site-card">
+                        <div class="site-card-header">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="badge badge-blue">场所</span>
+                                <h3 class="font-bold text-slate-900">北京市地铁运营有限公司运营一分公司</h3>
+                                <span class="badge badge-blue">QMS</span>
+                                <span class="badge badge-slate">证书 1 份</span>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="badge badge-blue">计划 2.5 人天</span>
+                                <span class="badge badge-green">已分配 2.5</span>
+                            </div>
+                        </div>
+                        <div class="site-meta">
+                            <div><div class="readonly-label">场所地址</div><div class="readonly-value">北京市昌平区东三旗太平庄车辆段</div></div>
+                            <div><div class="readonly-label">有效人数</div><div class="readonly-value">180</div></div>
+                            <div><div class="readonly-label">审核日期区间</div><div class="readonly-value">2026-04-17 08:30 至 2026-04-17 17:00</div></div>
+                        </div>
+                        <div class="site-personnel table-scroll">
+                            <table>
+                                <thead><tr><th>序号</th><th>姓名</th><th>组内身份</th><th>资格</th><th>注册编号</th><th>CQC编号</th><th>联系电话</th><th>审核日期区间</th></tr></thead>
+                                <tbody>
+                                    <tr><td>1</td><td class="font-semibold">王洪伟</td><td class="role-member">组员</td><td>QMS高级，EMS正式</td><td class="font-mono text-xs">2021-N1QMS-5012345</td><td class="font-mono text-xs">CQC10852</td><td>13800138001</td><td>2026-04-17 08:30 至 2026-04-17 17:00</td></tr>
+                                    <tr><td>2</td><td class="font-semibold">李晨</td><td class="role-member">组员</td><td>QMS正式，EMS实习</td><td class="font-mono text-xs">2024-N1QMS-3223150，2024-N0EMS-0081266</td><td class="font-mono text-xs">CQC30566</td><td>13800138006</td><td>2026-04-17 08:30 至 2026-04-17 12:00</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+
+                    <article class="site-card">
+                        <div class="site-card-header">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="badge badge-blue">场所</span>
+                                <h3 class="font-bold text-slate-900">北京市地铁运营有限公司运营二分公司</h3>
+                                <span class="badge badge-green">EMS</span>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="badge badge-blue">计划 2.0 人天</span>
+                                <span class="badge badge-green">已分配 2.0</span>
+                            </div>
+                        </div>
+                        <div class="site-meta">
+                            <div><div class="readonly-label">场所地址</div><div class="readonly-value">北京市石景山区杨庄大街18号</div></div>
+                            <div><div class="readonly-label">有效人数</div><div class="readonly-value">160</div></div>
+                            <div><div class="readonly-label">审核日期区间</div><div class="readonly-value">2026-04-18 08:30 至 2026-04-18 17:00</div></div>
+                        </div>
+                        <div class="site-personnel table-scroll">
+                            <table>
+                                <thead><tr><th>序号</th><th>姓名</th><th>组内身份</th><th>资格</th><th>注册编号</th><th>CQC编号</th><th>联系电话</th><th>审核日期区间</th></tr></thead>
+                                <tbody>
+                                    <tr><td>1</td><td class="font-semibold">周志兴</td><td class="role-member">组员</td><td>QMS正式，EMS正式</td><td class="font-mono text-xs">2023-N1QMS-7015678</td><td class="font-mono text-xs">CQC10923</td><td>13800138002</td><td>2026-04-18 08:30 至 2026-04-18 17:00</td></tr>
+                                    <tr><td>2</td><td class="font-semibold">黄起超</td><td class="role-member">组员</td><td>QMS正式，EMS正式</td><td class="font-mono text-xs">2024-N1QMS-6015922</td><td class="font-mono text-xs">CQC10634</td><td>13501320752</td><td>2026-04-18 13:30 至 2026-04-18 17:00</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+
+                    <article class="site-card">
+                        <div class="site-card-header">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="badge badge-blue">场所</span>
+                                <h3 class="font-bold text-slate-900">北京市地铁运营有限公司运营三分公司</h3>
+                                <span class="badge badge-blue">QMS+EMS</span>
+                                <span class="badge badge-slate">证书 1 份</span>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="badge badge-blue">计划 3.5 人天</span>
+                                <span class="badge badge-green">已分配 3.5</span>
+                            </div>
+                        </div>
+                        <div class="site-meta">
+                            <div><div class="readonly-label">场所地址</div><div class="readonly-value">北京市海淀区德胜门西大街甲5号</div></div>
+                            <div><div class="readonly-label">有效人数</div><div class="readonly-value">150</div></div>
+                            <div><div class="readonly-label">审核日期区间</div><div class="readonly-value">2026-04-19 08:30 至 2026-04-19 17:00</div></div>
+                        </div>
+                        <div class="site-personnel table-scroll">
+                            <table>
+                                <thead><tr><th>序号</th><th>姓名</th><th>组内身份</th><th>资格</th><th>注册编号</th><th>CQC编号</th><th>联系电话</th><th>审核日期区间</th></tr></thead>
+                                <tbody>
+                                    <tr><td>1</td><td class="font-semibold">武荣刚</td><td class="role-leader">组长</td><td>QMS正式</td><td class="font-mono text-xs">2022-N1QMS-6028373</td><td class="font-mono text-xs">CQC21458</td><td>13661227694</td><td>2026-04-19 08:30 至 2026-04-19 17:00</td></tr>
+                                    <tr><td>2</td><td class="font-semibold">张爱兵</td><td class="role-member">组员</td><td>QMS正式，EMS正式</td><td class="font-mono text-xs">2023-N1QMS-5011045，2023-N1EMS-3011045</td><td class="font-mono text-xs">CQC11045</td><td>13800138003</td><td>2026-04-19 08:30 至 2026-04-19 17:00</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">
+                <div class="section-title"><i class="fas fa-calendar-check text-orange-500"></i>二阶段审核预排</div>
+            </div>
+            <div class="section-body">
+                <div class="stage-two-overview">
+                    <div class="compact-item">
+                        <div class="readonly-label">预排审核开始时间</div>
+                        <div class="font-bold text-slate-900">2026-05-18 08:30</div>
+                    </div>
+                    <div class="compact-item">
+                        <div class="readonly-label">预排审核结束时间</div>
+                        <div class="font-bold text-slate-900">2026-05-22 17:00</div>
+                    </div>
+                </div>
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>姓名</th>
+                                <th>组内身份</th>
+                                <th>资格</th>
+                                <th>注册编号</th>
+                                <th>CQC编号</th>
+                                <th>工作单位</th>
+                                <th>专兼职</th>
+                                <th>联系电话</th>
+                                <th>审核日期区间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td class="font-semibold">武荣刚</td><td class="role-leader">组长</td><td>QMS正式</td><td class="font-mono text-xs">2022-N1QMS-6028373</td><td class="font-mono text-xs">CQC21458</td><td>东北区域 / 辽宁公司</td><td><span class="badge badge-blue">专职</span></td><td>13661227694</td><td>2026-05-18 08:30 至 2026-05-22 17:00</td></tr>
+                            <tr><td>2</td><td class="font-semibold">张爱兵</td><td class="role-member">组员</td><td>QMS正式，EMS正式</td><td class="font-mono text-xs">2023-N1QMS-5011045，2023-N1EMS-3011045</td><td class="font-mono text-xs">CQC11045</td><td>东北区域 / 黑龙江公司</td><td><span class="badge badge-rose">兼职</span></td><td>13800138003</td><td>2026-05-18 08:30 至 2026-05-22 17:00</td></tr>
+                            <tr><td>3</td><td class="font-semibold">周志兴</td><td class="role-member">组员</td><td>QMS正式，EMS正式</td><td class="font-mono text-xs">2023-N1QMS-7015678</td><td class="font-mono text-xs">CQC10923</td><td>东北区域 / 辽宁公司</td><td><span class="badge badge-blue">专职</span></td><td>13800138002</td><td>2026-05-19 08:30 至 2026-05-22 17:00</td></tr>
+                            <tr><td>4</td><td class="font-semibold">黄起超</td><td class="role-member">组员</td><td>QMS正式，EMS正式</td><td class="font-mono text-xs">2024-N1QMS-6015922</td><td class="font-mono text-xs">CQC10634</td><td>东北区域 / 辽宁公司</td><td><span class="badge badge-blue">专职</span></td><td>13501320752</td><td>2026-05-18 13:30 至 2026-05-21 17:00</td></tr>
+                            <tr><td>5</td><td class="font-semibold">刘娜</td><td class="role-expert">技术专家</td><td>技术专家</td><td class="font-mono text-xs">TE-2024-0188</td><td class="font-mono text-xs">CQC40876</td><td>东北区域 / 辽宁公司</td><td><span class="badge badge-rose">兼职</span></td><td>13800138007</td><td>2026-05-20 08:30 至 2026-05-21 17:00</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 查看策划方案弹窗 -->
+    <div class="plan-modal" id="planModal">
+        <div class="bg-white rounded-xl shadow-lg w-[1200px] max-w-[95vw] overflow-hidden">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-slate-900">初次认证策划方案（只读）</h3>
+                <button onclick="closePlanModal()" class="text-slate-400 hover:text-slate-600 transition-colors"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div class="flex border-b border-slate-200 bg-white">
+                <button type="button" data-plan-tab="sampling" onclick="switchPlanTab('sampling')" class="plan-tab-btn px-6 py-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600">场所抽样方案及实施情况</button>
+                <button type="button" data-plan-tab="process" onclick="switchPlanTab('process')" class="plan-tab-btn px-6 py-3 text-sm font-medium text-slate-600 border-b-2 border-transparent hover:text-slate-800">管理体系过程清单</button>
+                <button type="button" data-plan-tab="cert" onclick="switchPlanTab('cert')" class="plan-tab-btn px-6 py-3 text-sm font-medium text-slate-600 border-b-2 border-transparent hover:text-slate-800">证书内容确认件</button>
+            </div>
+            <div class="p-6 max-h-[70vh] overflow-y-auto">
+                <div id="planTab_sampling" class="plan-tab-content">
+                    <div class="flex justify-between items-center mb-4"><div class="text-sm font-semibold text-slate-900">场所抽样方案及实施情况</div><div class="bg-amber-50 border border-amber-200 text-amber-700 px-3 py-2 rounded-lg text-xs inline-flex items-center gap-2"><i class="fas fa-info-circle"></i>根据抽样规则，本次策划需要选择全部场所</div></div>
+                    <div class="mb-6 border border-slate-200 rounded-xl overflow-hidden"><div class="bg-blue-50 px-4 py-3 border-b border-slate-200 flex items-center gap-2"><span class="inline-flex items-center px-2 py-1 bg-blue-600 text-white text-xs rounded-md font-medium">总部</span><span class="font-medium text-slate-800 text-sm">运营地址（中心职能）</span></div><div class="p-4 space-y-4"><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">计划审核时间</label><div class="readonly-field">2024年04月</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">实际审核时间</label><div class="readonly-field">----年--月</div></div></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">班次信息</label><div class="readonly-field">班次：1，08:00-17:30</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">联系人/电话</label><div class="readonly-field">张先生/13800138000</div></div></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">地址</label><div class="readonly-field">北京市海淀区中关村大街1号</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">涉及产品/过程/活动</label><div class="readonly-field">软件开发、系统集成</div></div></div><div class="grid grid-cols-4 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">专业代码</label><div class="readonly-field">Q01</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">认可机构</label><div class="readonly-field">CNAS</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">人数(含承包方)</label><div class="readonly-field">200</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">有效人数</label><div class="readonly-field">180</div></div></div><div class="border-t border-slate-200 pt-4 mt-4"><label class="block text-xs font-semibold text-slate-700 mb-2">人天计算（AI底座）</label><div class="grid grid-cols-4 gap-4 mb-2"><div><label class="block text-xs text-slate-500 mb-1">审核准备</label><div class="readonly-field">1.5</div></div><div><label class="block text-xs text-slate-500 mb-1">第一阶段</label><div class="readonly-field">1.0</div></div><div><label class="block text-xs text-slate-500 mb-1">二阶段现场</label><div class="readonly-field">4.0</div></div><div><label class="block text-xs text-slate-500 mb-1">调整比例</label><div class="readonly-field">1.0</div></div></div><div class="bg-blue-50 p-3 rounded-lg flex justify-between items-center"><span class="text-sm text-slate-600">调整后</span><span class="text-xl font-bold text-blue-600">6.5</span></div></div><div class="mt-5 border-t border-slate-200 pt-4"><div class="text-sm font-semibold text-slate-900 mb-3">过程审核策划</div><div class="overflow-x-auto"><table class="process-table border border-slate-200 rounded-lg"><thead><tr><th style="width:50px">序号</th><th style="min-width:220px">过程名称</th><th style="min-width:110px">主责部门</th><th style="min-width:130px">相关部门</th><th style="min-width:160px">涉及标准条款</th><th style="min-width:320px">绩效参数或相关文件</th></tr></thead><tbody><tr><td>1</td><td>组织环境识别与相关方需求评审</td><td>最高管理者</td><td>综合管理部、各部门</td><td>QES: 4.1, 4.2</td><td>组织环境分析表、相关方需求清单</td></tr>
+<tr><td>2</td><td>管理体系范围确定</td><td>最高管理者</td><td>质量部、市场部</td><td>QES: 4.3</td><td>管理体系范围说明、认证范围确认记录</td></tr>
+<tr><td>3</td><td>体系过程识别与相互作用策划</td><td>质量部</td><td>各部门</td><td>QES: 4.4</td><td>过程关系图、过程绩效指标表</td></tr>
+<tr><td>4</td><td>领导作用与职责权限分配</td><td>总经理</td><td>人力资源部、各部门</td><td>QES: 5.1, 5.3</td><td>岗位职责说明书、授权书</td></tr>
+<tr><td>5</td><td>质量方针与目标管理</td><td>总经理</td><td>质量部、各部门</td><td>QES: 5.2, 6.2</td><td>质量方针、年度质量目标及分解表</td></tr>
+<tr><td>6</td><td>风险和机遇识别与应对</td><td>质量部</td><td>各部门</td><td>QES: 6.1</td><td>风险和机遇清单、应对措施跟踪表</td></tr>
+<tr><td>7</td><td>资源配置与基础设施管理</td><td>行政部</td><td>信息技术部、财务部</td><td>QES: 7.1</td><td>资源配置计划、设备设施台账</td></tr>
+<tr><td>8</td><td>人员能力与培训管理</td><td>人力资源部</td><td>各部门</td><td>QES: 7.2</td><td>培训计划、能力评价记录</td></tr>
+<tr><td>9</td><td>内部沟通与外部沟通管理</td><td>综合管理部</td><td>市场部、客服部</td><td>QES: 7.4</td><td>沟通记录、客户沟通台账</td></tr>
+<tr><td>10</td><td>文件和记录控制</td><td>质量部</td><td>各部门</td><td>QES: 7.5</td><td>文件清单、记录控制清单</td></tr>
+<tr><td>11</td><td>客户需求评审</td><td>市场部</td><td>技术部、交付部</td><td>QES: 8.2</td><td>合同评审记录、客户需求确认单</td></tr>
+<tr><td>12</td><td>服务方案策划</td><td>项目管理部</td><td>技术部、质量部</td><td>QES: 8.1</td><td>项目策划书、服务实施方案</td></tr>
+<tr><td>13</td><td>采购与外包方管理</td><td>采购部</td><td>质量部、财务部</td><td>QES: 8.4</td><td>合格供方名录、采购评价记录</td></tr>
+<tr><td>14</td><td>软件研发过程管理</td><td>研发部</td><td>测试部、产品部</td><td>QES: 8.3, 8.5</td><td>研发计划、设计评审记录、版本发布记录</td></tr>
+<tr><td>15</td><td>系统集成项目实施</td><td>交付部</td><td>研发部、客服部</td><td>QES: 8.5</td><td>实施计划、现场实施记录、验收单</td></tr>
+<tr><td>16</td><td>监视和测量资源管理</td><td>质量部</td><td>技术部</td><td>QES: 7.1.5</td><td>计量器具台账、校准证书</td></tr>
+<tr><td>17</td><td>客户满意度监测</td><td>客服部</td><td>市场部、质量部</td><td>QES: 9.1.2</td><td>客户满意度调查、投诉处理记录</td></tr>
+<tr><td>18</td><td>内部审核管理</td><td>质量部</td><td>各部门</td><td>QES: 9.2</td><td>内审计划、内审检查表、内审报告</td></tr>
+<tr><td>19</td><td>管理评审管理</td><td>总经理</td><td>质量部、各部门</td><td>QES: 9.3</td><td>管理评审计划、输入资料、评审报告</td></tr>
+<tr><td>20</td><td>不符合与纠正措施管理</td><td>质量部</td><td>责任部门</td><td>QES: 10.2, 10.3</td><td>不符合报告、纠正措施跟踪记录</td></tr></tbody></table></div></div></div></div>
+                    <div class="mb-6 border border-slate-200 rounded-xl overflow-hidden"><div class="bg-slate-50 px-4 py-3 border-b border-slate-200"><span class="font-medium text-slate-800 text-sm">生产现场一</span></div><div class="p-4 space-y-4"><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">计划审核时间</label><div class="readonly-field">2024年04月</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">实际审核时间</label><div class="readonly-field">----年--月</div></div></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">班次信息</label><div class="readonly-field">班次：1，08:00-17:30；班次：2，18:00-02:00；班次：3，02:00-08:00</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">联系人/电话</label><div class="readonly-field">李主管/13900139000</div></div></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">地址</label><div class="readonly-field">北京市昌平区生产基地</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">涉及产品/过程/活动</label><div class="readonly-field">硬件制造、组装测试</div></div></div><div class="grid grid-cols-4 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">专业代码</label><div class="readonly-field">19.07.00、19.10.00</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">认可机构</label><div class="readonly-field">CNAS、UKAS</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">人数(含承包方)</label><div class="readonly-field">80</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">有效人数</label><div class="readonly-field">75（发子证）</div></div></div><div class="border-t border-slate-200 pt-4 mt-4"><label class="block text-xs font-semibold text-slate-700 mb-2">人天计算（AI底座）</label><div class="grid grid-cols-4 gap-4 mb-2"><div><label class="block text-xs text-slate-500 mb-1">审核准备</label><div class="readonly-field">1.5</div></div><div><label class="block text-xs text-slate-500 mb-1">第一阶段</label><div class="readonly-field">1.0</div></div><div><label class="block text-xs text-slate-500 mb-1">二阶段现场</label><div class="readonly-field">4.0</div></div><div><label class="block text-xs text-slate-500 mb-1">调整比例</label><div class="readonly-field">1.0</div></div></div><div class="bg-blue-50 p-3 rounded-lg flex justify-between items-center"><span class="text-sm text-slate-600">调整后</span><span class="text-xl font-bold text-blue-600">6.5</span></div></div><div class="mt-5 border-t border-slate-200 pt-4"><div class="text-sm font-semibold text-slate-900 mb-3">过程审核策划</div><div class="overflow-x-auto"><table class="process-table border border-slate-200 rounded-lg"><thead><tr><th style="width:50px">序号</th><th style="min-width:220px">过程名称</th><th style="min-width:110px">主责部门</th><th style="min-width:130px">相关部门</th><th style="min-width:160px">涉及标准条款</th><th style="min-width:320px">绩效参数或相关文件</th></tr></thead><tbody><tr><td>1</td><td>生产现场环境与安全条件确认</td><td>生产部</td><td>行政部、质量部</td><td>QES: 7.1, 8.1</td><td>现场环境检查记录、安全巡检表</td></tr>
+<tr><td>2</td><td>生产计划接收与排产</td><td>生产计划部</td><td>仓储部、采购部</td><td>QES: 8.1</td><td>生产计划单、排产记录</td></tr>
+<tr><td>3</td><td>原材料和零部件接收检验</td><td>质量部</td><td>仓储部、采购部</td><td>QES: 8.4, 8.6</td><td>来料检验记录、供应商质量反馈单</td></tr>
+<tr><td>4</td><td>仓储和物料标识管理</td><td>仓储部</td><td>生产部、质量部</td><td>QES: 8.5.2, 8.5.4</td><td>物料台账、标识卡、先进先出记录</td></tr>
+<tr><td>5</td><td>硬件制造作业准备</td><td>生产部</td><td>工艺部、设备部</td><td>QES: 8.5.1</td><td>作业指导书、首件确认记录</td></tr>
+<tr><td>6</td><td>组装过程控制</td><td>生产部</td><td>质量部、工艺部</td><td>QES: 8.5.1</td><td>组装记录、工序检验记录</td></tr>
+<tr><td>7</td><td>焊接和装配特殊过程控制</td><td>生产部</td><td>工艺部、质量部</td><td>QES: 8.5.1</td><td>特殊过程确认记录、参数监控记录</td></tr>
+<tr><td>8</td><td>测试工装和设备点检</td><td>设备部</td><td>生产部、质量部</td><td>QES: 7.1.3, 7.1.5</td><td>设备点检表、维护保养记录</td></tr>
+<tr><td>9</td><td>在线检验和过程放行</td><td>质量部</td><td>生产部</td><td>QES: 8.6</td><td>过程检验记录、放行记录</td></tr>
+<tr><td>10</td><td>成品测试与验证</td><td>测试部</td><td>质量部、生产部</td><td>QES: 8.6</td><td>测试报告、验证记录</td></tr>
+<tr><td>11</td><td>不合格品隔离与处置</td><td>质量部</td><td>生产部、仓储部</td><td>QES: 8.7</td><td>不合格品评审单、返工返修记录</td></tr>
+<tr><td>12</td><td>变更控制与临时偏离管理</td><td>工艺部</td><td>生产部、质量部</td><td>QES: 8.5.6</td><td>变更申请单、偏离批准记录</td></tr>
+<tr><td>13</td><td>产品防护和包装管理</td><td>生产部</td><td>仓储部、质量部</td><td>QES: 8.5.4</td><td>包装规范、产品防护检查记录</td></tr>
+<tr><td>14</td><td>成品入库和出货检验</td><td>仓储部</td><td>质量部、物流部</td><td>QES: 8.6, 8.5.4</td><td>成品入库单、出货检验记录</td></tr>
+<tr><td>15</td><td>追溯性和批次管理</td><td>质量部</td><td>生产部、仓储部</td><td>QES: 8.5.2</td><td>批次追溯记录、序列号台账</td></tr>
+<tr><td>16</td><td>班次交接与异常反馈</td><td>生产部</td><td>质量部、设备部</td><td>QES: 7.4, 8.5.1</td><td>交接班记录、异常处理单</td></tr>
+<tr><td>17</td><td>现场人员能力和上岗资格</td><td>人力资源部</td><td>生产部、质量部</td><td>QES: 7.2</td><td>岗位培训记录、上岗资格清单</td></tr>
+<tr><td>18</td><td>生产现场6S与持续改进</td><td>生产部</td><td>质量部、行政部</td><td>QES: 7.1, 10.3</td><td>6S检查表、改善提案记录</td></tr>
+<tr><td>19</td><td>客户财产和外来物品管理</td><td>仓储部</td><td>生产部、质量部</td><td>QES: 8.5.3</td><td>客户财产清单、外来物品交接记录</td></tr>
+<tr><td>20</td><td>生产绩效监测与数据分析</td><td>生产部</td><td>质量部、计划部</td><td>QES: 9.1, 10.3</td><td>一次合格率统计、生产效率分析表</td></tr></tbody></table></div></div></div></div>
+                </div>
+                <div id="planTab_process" class="plan-tab-content hidden-section"><div class="text-sm font-semibold text-slate-900 mb-3">管理体系过程清单</div><div class="overflow-x-auto"><table class="process-table border border-slate-200 rounded-lg"><thead><tr><th style="width:50px">序号</th><th style="min-width:260px">过程名称</th><th style="min-width:120px">主责部门</th><th style="min-width:120px">相关部门</th><th style="min-width:180px">涉及标准条款</th><th style="min-width:420px">绩效参数或相关文件</th><th style="width:110px">是否为专业过程</th></tr></thead><tbody><tr><td>1</td><td>公司环境分析、相关方要求、风险和机遇、体系策划过程</td><td>最高管理者</td><td>各部门</td><td>QES: 4.1, 4.2, 4.3, 4.4, 6.1, 6.2, 6.3</td><td>《管理过程程序》《质量、环境管理体系的有效性监视和测量控制程序》《内部审核控制程序》《风险和机遇控制程序》《环境因素危险源辨识与评价控制程序》《合规性控制程序》《目标指标管理方案控制程序》《不符合、纠正措施控制程序》《应对风险和机遇控制程序》</td><td class='text-center'>否</td></tr>
+<tr><td>2</td><td>风险和机遇的识别和应对措施过程</td><td>质量管理部门</td><td>各部门</td><td>QES: 6.1</td><td>《风险和机遇控制程序》《环境安全体系监测与测量控制程序》</td><td class='text-center'>否</td></tr>
+<tr><td>3</td><td>质量目标和测量分析和评价管理过程</td><td>质量管理部</td><td>各部门</td><td>QES: 9.1</td><td>《质量目标控制程序》《合规性评价控制程序》《污染物排放浓度/速率》《年度目标方案控制程序》</td><td class='text-center'>否</td></tr>
+<tr><td>4</td><td>方针、目标的策划与实施</td><td>质量管理部</td><td>各部门</td><td>QES: 6.2</td><td>《目标指标管理方案控制程序》</td><td class='text-center'>否</td></tr>
+<tr><td>5</td><td>合规性评价</td><td>质量管理部</td><td>各部门</td><td>QES: 9.1</td><td>《合规性评价控制程序》</td><td class='text-center'>否</td></tr>
+<tr><td>6</td><td>管理评审过程</td><td>最高管理者办公室、财务部</td><td>各部门</td><td>QES: 9.3</td><td>《管理评审控制程序》</td><td class='text-center'>否</td></tr></tbody></table></div></div>
+                <div id="planTab_cert" class="plan-tab-content hidden-section"><div class="flex justify-between items-center mb-4"><div class="text-sm font-semibold text-slate-900">证书内容确认件</div><div class="bg-slate-50 border border-slate-200 text-slate-600 px-3 py-2 rounded-lg text-xs inline-flex items-center gap-2"><i class="fas fa-lock"></i>只读展示，内容来源于策划方案</div></div><div class="border border-slate-200 rounded-xl overflow-hidden mb-6"><div class="bg-slate-50 px-4 py-3 border-b border-slate-200 font-medium text-slate-800 text-sm">证书基础信息</div><div class="p-4 grid grid-cols-2 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">客户名称（中文）</label><div class="readonly-field">华信环境监测技术中心</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">客户名称（英文）</label><div class="readonly-field">Huaxin Environmental Monitoring Technology Center</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">注册地址（中文）</label><div class="readonly-field">北京市海淀区中关村大街1号</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">注册地址（英文）</label><div class="readonly-field">No.1 Zhongguancun Street, Haidian District, Beijing</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">认证地址（中文）</label><div class="readonly-field">北京市海淀区中关村大街1号</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">认证地址（英文）</label><div class="readonly-field">No.1 Zhongguancun Street, Haidian District, Beijing, P.R.China</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">法定代表人</label><div class="readonly-field">张先生</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">统一社会信用代码</label><div class="readonly-field">91110108XXXXXXXXXX</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">认证标准</label><div class="readonly-field">ISO 9001:2015</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">认可标识</label><div class="readonly-field">CNAS</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">是否含附件</label><div class="readonly-field">是</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">是否颁发子证书</label><div class="readonly-field">是</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">是否多场所</label><div class="readonly-field">是</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">证书版本</label><div class="readonly-field">初次认证证书内容确认件</div></div><div class="col-span-2"><label class="block text-xs font-medium text-slate-700 mb-1">认证范围（中文）</label><div class="readonly-field" style="min-height:44px;white-space:normal;">软件开发、系统集成及相关管理活动</div></div><div class="col-span-2"><label class="block text-xs font-medium text-slate-700 mb-1">认证范围（英文）</label><div class="readonly-field" style="min-height:44px;white-space:normal;">Software development, system integration and related management activities</div></div></div></div><div class="border border-slate-200 rounded-xl overflow-hidden"><div class="bg-slate-50 px-4 py-3 border-b border-slate-200 font-medium text-slate-800 text-sm">多场所及子证书信息</div><div class="overflow-x-auto"><table class="process-table"><thead><tr><th style="width:50px">序号</th><th style="min-width:180px">场所名称</th><th style="min-width:160px">统一社会信用代码</th><th style="min-width:260px">场所地址</th><th style="min-width:180px">涉及产品/过程/活动</th><th style="width:100px">是否子证书</th><th style="min-width:120px">备注</th></tr></thead><tbody><tr><td>1</td><td>运营地址（中心职能）</td><td>91110108XXXXXXXXXX</td><td>北京市海淀区中关村大街1号</td><td>软件开发、系统集成</td><td class="text-center">否</td><td>-</td></tr><tr><td>2</td><td>生产现场一</td><td>91110108XXXXXXXX01</td><td>北京市昌平区生产基地</td><td>硬件制造</td><td class="text-center">是</td><td>颁发子证书</td></tr><tr><td>3</td><td>研发中心</td><td>91110108XXXXXXXX02</td><td>北京市朝阳区研发大厦</td><td>软件研发</td><td class="text-center">是</td><td>颁发子证书</td></tr><tr><td>4</td><td>分公司</td><td>91110108XXXXXXXX03</td><td>上海市浦东新区</td><td>销售服务</td><td class="text-center">否</td><td>-</td></tr><tr><td>5</td><td>办事处</td><td>91110108XXXXXXXX04</td><td>广州市天河区</td><td>客户服务</td><td class="text-center">否</td><td>-</td></tr></tbody></table></div></div></div>
+            </div>
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-end"><button onclick="closePlanModal()" class="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-all shadow-sm">关闭</button></div>
+        </div>
+    </div>
+
+    <script>
+        function openPlanModal() { viewPlan(); }
+        function viewPlan() {
+            document.getElementById('planModal').classList.add('show');
+            switchPlanTab('sampling');
+        }
+        function switchPlanTab(tabName) {
+            document.querySelectorAll('#planModal .plan-tab-content').forEach(section => {
+                section.classList.toggle('hidden-section', section.id !== `planTab_${tabName}`);
+            });
+            document.querySelectorAll('#planModal .plan-tab-btn').forEach(btn => {
+                const isActive = btn.dataset.planTab === tabName;
+                btn.classList.toggle('text-blue-600', isActive);
+                btn.classList.toggle('border-blue-600', isActive);
+                btn.classList.toggle('text-slate-600', !isActive);
+                btn.classList.toggle('border-transparent', !isActive);
+            });
+        }
+        function closePlanModal() {
+            document.getElementById('planModal').classList.remove('show');
+        }
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') closePlanModal();
+        });
+    </script>
+</body>
+</html>
