@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一阶段审核报告</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: #f8fafc;
+            color: #1e293b;
+            font-family: "Inter", "Noto Sans SC", "Microsoft YaHei", Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.65;
+        }
+        html { scroll-behavior: smooth; }
+        .page {
+            width: 100%;
+            max-width: none;
+            margin: 0;
+            padding: clamp(12px, 2vw, 28px) clamp(12px, 2.4vw, 32px) 56px;
+        }
+        .report-controls {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin: 0;
+            padding: 10px 20px;
+            border: 0;
+            border-bottom: 1px solid #e2e8f0;
+            border-radius: 0;
+            background: rgba(255, 255, 255, 0.96);
+            box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+            backdrop-filter: blur(8px);
+        }
+        .anchor-nav {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 1px;
+        }
+        .anchor-nav a {
+            display: inline-flex;
+            align-items: center;
+            height: 30px;
+            padding: 0 10px;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            color: #475569;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .anchor-nav a:hover {
+            color: #1e293b;
+            background: #f1f5f9;
+            border-color: #e2e8f0;
+        }
+        .anchor-nav a.active {
+            color: #2563eb;
+            background: #eff6ff;
+            border-color: #bfdbfe;
+            font-weight: 600;
+        }
+        .download-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            height: 36px;
+            padding: 0 16px;
+            border: 1px solid #1d4ed8;
+            border-radius: 6px;
+            background: #2563eb;
+            color: #fff;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .download-link:hover {
+            background: #1d4ed8;
+        }
+        .report {
+            width: 100%;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: visible;
+            box-shadow: 0 2px 4px rgba(15, 23, 42, 0.08);
+        }
+        .report-header {
+            padding: 28px 32px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            background: #fff;
+        }
+        .report-header h1 {
+            margin: 0;
+            font-size: 24px;
+            letter-spacing: 1px;
+            color: #0f172a;
+            text-align: center;
+        }
+        .report-header .subtitle {
+            margin-top: 8px;
+            color: #475569;
+            font-size: 13px;
+            text-align: center;
+        }
+        .section {
+            padding: 22px 28px 4px;
+            scroll-margin-top: 72px;
+        }
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 12px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .section-title::before {
+            content: "";
+            width: 4px;
+            height: 18px;
+            border-radius: 2px;
+            background: #2563eb;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin-bottom: 18px;
+        }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 10px 12px;
+            vertical-align: top;
+            word-break: break-word;
+        }
+        th {
+            width: 18%;
+            background: #f9fafb;
+            color: #334155;
+            text-align: left;
+            font-weight: 600;
+        }
+        td {
+            background: #fff;
+            color: #111827;
+        }
+        .compact th, .compact td { padding: 8px 10px; }
+        .center { text-align: center; }
+        .muted { color: #64748b; }
+        .tag-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .tag {
+            display: inline-flex;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid #bfdbfe;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .tag.green { border-color: #bbf7d0; background: #f0fdf4; color: #15803d; }
+        .tag.amber { border-color: #fcd34d; background: #fffbeb; color: #b45309; }
+        .result-ok { color: #047857; font-weight: 600; }
+        .result-warn { color: #b45309; font-weight: 600; }
+        .problem-main col.seq { width: 6%; }
+        .problem-main col.desc { width: 40%; }
+        .problem-main col.rectify { width: 40%; }
+        .problem-main col.time { width: 14%; }
+        .problem-other col.seq { width: 6%; }
+        .problem-other col.content { width: 94%; }
+        .problem-main th:nth-child(1),
+        .problem-main td:nth-child(1),
+        .problem-other th:nth-child(1),
+        .problem-other td:nth-child(1) {
+            width: 6%;
+            min-width: 56px;
+        }
+        .problem-main th:nth-child(2),
+        .problem-main td:nth-child(2),
+        .problem-main th:nth-child(3),
+        .problem-main td:nth-child(3) {
+            width: 40%;
+        }
+        .problem-main th:nth-child(4),
+        .problem-main td:nth-child(4) {
+            width: 14%;
+        }
+        .file-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .file-actions a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .file-actions a:hover { text-decoration: underline; }
+        @media print {
+            body { background: #fff; }
+            .page { max-width: none; padding: 0; }
+            .report-controls { display: none; }
+            .report { box-shadow: none; border: 0; border-radius: 0; }
+            .section { break-inside: avoid; }
+        }
+        @media (max-width: 900px) {
+            .report-header { padding: 22px 18px 18px; }
+            .report-controls { align-items: stretch; flex-direction: column; }
+            .section { padding: 18px 14px 2px; }
+            table { table-layout: auto; }
+            th, td { padding: 9px 10px; }
+            th { width: 28%; }
+        }
+        @media (max-width: 640px) {
+            .download-link { width: 100%; justify-content: center; }
+            table, tbody, tr, th, td {
+                display: block;
+                width: 100%;
+            }
+            thead { display: none; }
+            tr { border: 1px solid #dbe3ef; margin-bottom: 10px; }
+            th {
+                border: 0;
+                border-bottom: 1px solid #e2e8f0;
+                background: #f1f5f9;
+            }
+            td {
+                border: 0;
+                border-bottom: 1px solid #eef2f7;
+            }
+            td:last-child { border-bottom: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <main class="report" id="reportContent">
+            <header class="report-header">
+                <h1>一阶段审核报告</h1>
+                <div class="subtitle">审核任务编号：RW-202403240001 | 报告提交日期：2024-04-18</div>
+            </header>
+
+            <div class="report-controls">
+                <nav class="anchor-nav">
+                    <a href="#summary">项目概要</a>
+                    <a href="#basic">基本信息</a>
+                    <a href="#evaluation">评价内容</a>
+                    <a href="#system-info">体系信息</a>
+                    <a href="#adjust">待调整内容</a>
+                    <a href="#other">其他内容</a>
+                    <a href="#problems">问题清单</a>
+                    <a href="#advice">下一阶段建议</a>
+                    <a href="#attachments">附件</a>
+                </nav>
+                <a class="download-link" href="#" id="downloadReport">下载报告</a>
+            </div>
+
+            <section class="section" id="summary">
+                <h2 class="section-title">项目概要</h2>
+                <table class="compact">
+                    <tr>
+                        <th>客户名称</th>
+                        <td>北京市地铁运营有限公司</td>
+                        <th>运营地址</th>
+                        <td>北京市西城区西直门外大街2号</td>
+                    </tr>
+                    <tr>
+                        <th>认证领域</th>
+                        <td>QMS、EMS、OHSMS</td>
+                        <th>审核阶段</th>
+                        <td>一阶段</td>
+                    </tr>
+                    <tr>
+                        <th>组长</th>
+                        <td>武荣刚</td>
+                        <th>审核日期</th>
+                        <td>2024-04-15 至 2024-04-18</td>
+                    </tr>
+                    <tr>
+                        <th>当前节点</th>
+                        <td colspan="3">审核进行中</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section class="section" id="basic">
+                <h2 class="section-title">基本信息</h2>
+                <table>
+                    <tr>
+                        <th>审核目的</th>
+                        <td>收集客户管理体系范围内必要信息，评价客户基本情况和为管理体系策划、准备的情况，确定第二阶段审核的可行性和重点。</td>
+                    </tr>
+                    <tr>
+                        <th>审核准则</th>
+                        <td>
+                            <div class="tag-row">
+                                <span class="tag">QMS：GB/T 19001-2016/ISO 9001:2015</span>
+                                <span class="tag green">EMS：GB/T 24001-2016/ISO 14001:2015</span>
+                                <span class="tag amber">OHSMS：GB/T 45001-2020/ISO 45001:2018</span>
+                            </div>
+                            <div style="margin-top: 8px;">客户管理体系文件；适用法律法规；客户特殊要求：无；其他审核准则：无。</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>一阶段审核方式</th>
+                        <td>现场审核</td>
+                    </tr>
+                    <tr>
+                        <th>审核组</th>
+                        <td>审核组长：武荣刚；组员：王洪伟、李明。</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section class="section" id="evaluation">
+                <h2 class="section-title">评价内容填报</h2>
+                <table>
+                    <tr><th>管理体系运行超过3个月</th><td><span class="result-ok">符合</span>，体系开始运行时间：2024-01-01。</td></tr>
+                    <tr><th>文件化信息符合性</th><td><span class="result-ok">符合</span>。已对客户管理体系文件（包括版本号或发布日期）进行了评审。</td></tr>
+                    <tr><th>方针和目标适宜性</th><td><span class="result-ok">符合</span>。方针、目标与关键绩效识别满足审核要求。</td></tr>
+                    <tr><th>适用法律法规和其他要求识别</th><td><span class="result-ok">符合</span>。</td></tr>
+                    <tr><th>违反法律法规和强制性标准情况</th><td>未发现。</td></tr>
+                    <tr><th>管理体系过程确定充分性</th><td><span class="result-ok">符合</span>。</td></tr>
+                    <tr><th>内部审核和管理评审</th><td>已实施内部审核和管理评审。</td></tr>
+                    <tr><th>事故、职业病、投诉、行政监管处罚及回应</th><td>无。</td></tr>
+                    <tr><th>标准不适用条款或要求的合理性（QMS）</th><td><span class="result-ok">合理</span>，未发现不合理的不适用条款或要求。</td></tr>
+                    <tr><th>ISMS 范围、边界及适用性声明</th><td><span class="result-ok">符合</span>。</td></tr>
+                    <tr><th>ITSMS 范围、服务目录/SLA/接口/服务点</th><td><span class="result-ok">符合</span>。</td></tr>
+                    <tr><th>风险因素识别全面性和风险确定合理性（E/S/F/H）</th><td><span class="result-ok">符合</span>。</td></tr>
+                    <tr><th>风险因素控制策划充分性和适宜性（E/S/F/H）</th><td><span class="result-ok">符合</span>。</td></tr>
+                    <tr><th>验证策划充分性、合理性（F/H）</th><td><span class="result-ok">符合</span>。</td></tr>
+                    <tr><th>风险和机遇及策划措施（Q/E/S）</th><td><span class="result-ok">符合</span>。</td></tr>
+                    <tr><th>潜在紧急情况识别及响应措施（E/S）</th><td><span class="result-ok">符合</span>。</td></tr>
+                    <tr><th>信息安全风险评估方法及控制措施（IS）</th><td><span class="result-ok">符合</span>。</td></tr>
+                    <tr><th>生鲜乳日供应与企业日加工能力匹配程度（乳 GMP）</th><td>不适用。</td></tr>
+                    <tr><th>其他</th><td class="muted">无。</td></tr>
+                </table>
+            </section>
+
+            <section class="section" id="system-info">
+                <h2 class="section-title">经确认的组织建立的管理体系的相关信息</h2>
+                <table>
+                    <tr>
+                        <th>管理体系覆盖内容</th>
+                        <td>QMS：城市轨道交通运营管理服务；EMS：城市轨道交通运营管理服务及相关管理活动；OHSMS：城市轨道交通运营管理服务及相关管理活动。</td>
+                    </tr>
+                    <tr>
+                        <th>管理体系范围内场所（地址）</th>
+                        <td>中心职能：北京市西城区西直门外大街2号；多场所1：北京市海淀区中关村大街1号；多场所2：北京市昌平区生产基地；多场所3：北京市朝阳区轨道交通运营调度中心。</td>
+                    </tr>
+                    <tr><th>临时服务现场信息</th><td class="muted">无。</td></tr>
+                    <tr><th>外部提供的职能或过程（外包）</th><td class="muted">无重大外包过程。</td></tr>
+                    <tr><th>管理体系范围内有效人数</th><td>QMS：850人；EMS：850人；OHSMS：850人。</td></tr>
+                    <tr><th>整合管理体系（IMS）整合程度</th><td>85%。</td></tr>
+                </table>
+            </section>
+
+            <section class="section" id="adjust">
+                <h2 class="section-title">待调整内容</h2>
+                <table class="compact">
+                    <tr><th>审核方案是否需要调整</th><td>不需要调整。</td></tr>
+                    <tr><th>专业判定是否需要调整</th><td>不需要调整。</td></tr>
+                    <tr><th>二阶段审核人天数是否需相应调整</th><td>不需要调整。</td></tr>
+                </table>
+            </section>
+
+            <section class="section" id="other">
+                <h2 class="section-title">其他内容</h2>
+                <table>
+                    <tr><th>污染物排放标准/排放总量/作业环境危害因素标准</th><td>执行国家及地方适用污染物排放标准和作业环境危害因素控制要求。</td></tr>
+                    <tr><th>生产（或服务）班次和时间</th><td>场所1（中心职能）：班次1，08:00-17:30；场所2（生产现场一）：班次1，08:00-17:30，班次2，18:00-02:00，班次3，02:00-08:00；场所3（运营调度中心）：班次1，08:00-20:00，班次2，20:00-08:00。</td></tr>
+                    <tr><th>二阶段是否拟对所有班次进行审核</th><td>是。</td></tr>
+                    <tr><th>二阶段重要审核点</th><td>运营调度、现场安全管控、环境因素识别与控制、应急准备和响应、质量目标监视测量。</td></tr>
+                    <tr><th>对质量目标实现具有重要影响的关键点（QMS适用）</th><td>运营服务准点率、设备设施维护有效性、顾客投诉响应、应急处置效率。</td></tr>
+                    <tr><th>对二阶段审核组组成的建议</th><td>建议配备具有轨道交通运营服务、环境管理和职业健康安全专业能力的审核人员。</td></tr>
+                </table>
+            </section>
+
+            <section class="section" id="problems">
+                <h2 class="section-title">问题清单</h2>
+                <table class="problem-main">
+                    <colgroup>
+                        <col class="seq">
+                        <col class="desc">
+                        <col class="rectify">
+                        <col class="time">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th class="center">序号</th>
+                            <th>问题描述</th>
+                            <th>最终整改情况</th>
+                            <th>确认时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="center">1</td><td>组织的环境因素识别不充分，未包含新开通线路的环境影响评价。</td><td>已补充新开通线路的环境影响评价报告，更新了环境因素识别清单。</td><td>2024/4/9 15:14:18</td></tr>
+                        <tr><td class="center">2</td><td>危险源辨识缺少对地铁施工期间交叉作业的风险评估。</td><td>已完成地铁施工期间交叉作业的风险评估，制定了专项安全管理方案。</td><td>2024/4/9 15:14:18</td></tr>
+                        <tr><td class="center">3</td><td>应急预案演练记录不完整，缺少2024年第一季度演练记录。</td><td>已补充2024年第一季度应急演练记录，包括演练方案、照片和总结报告。</td><td>2024/4/9 15:14:18</td></tr>
+                    </tbody>
+                </table>
+                <table class="compact problem-other">
+                    <colgroup>
+                        <col class="seq">
+                        <col class="content">
+                    </colgroup>
+                    <thead><tr><th class="center">序号</th><th>其他应关注的问题</th></tr></thead>
+                    <tbody>
+                        <tr><td class="center">1</td><td>建议关注员工心理健康管理，特别是高压岗位的心理疏导机制。</td></tr>
+                        <tr><td class="center">2</td><td>建议完善供应商管理体系，特别是对关键零部件供应商的二方审核频次。</td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="section" id="advice">
+                <h2 class="section-title">审核组对下一阶段审核的建议</h2>
+                <table>
+                    <tr>
+                        <th>建议结论</th>
+                        <td><span class="result-warn">待《第一阶段审核问题清单》中“需完成整改后方可进入第二阶段审核的问题”得到整改并经审核组确认接受后，可进入第二阶段审核。</span></td>
+                    </tr>
+                    <tr>
+                        <th>备注</th>
+                        <td>清单中的其他问题将在第二阶段审核中继续关注。若相关问题在六个月内仍未得到整改并经审核组确认，或进入第二阶段审核前客户管理体系出现重大变化而导致所收集的信息失去意义或已做出的审核结论面临风险时，应重新实施第一阶段审核。</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section class="section" id="attachments">
+                <h2 class="section-title">附件</h2>
+                <table class="compact">
+                    <thead>
+                        <tr>
+                            <th style="width: 8%;" class="center">序号</th>
+                            <th>附件名称</th>
+                            <th style="width: 14%;">格式</th>
+                            <th style="width: 18%;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="center">1</td>
+                            <td>一阶段审核问题清单.pdf</td>
+                            <td>PDF</td>
+                            <td><span class="file-actions"><a href="#" class="attachment-preview" data-file="一阶段审核问题清单.pdf">预览</a><a href="#" class="attachment-download" data-file="一阶段审核问题清单.pdf">下载</a></span></td>
+                        </tr>
+                        <tr>
+                            <td class="center">2</td>
+                            <td>管理体系文件评审记录.pdf</td>
+                            <td>PDF</td>
+                            <td><span class="file-actions"><a href="#" class="attachment-preview" data-file="管理体系文件评审记录.pdf">预览</a><a href="#" class="attachment-download" data-file="管理体系文件评审记录.pdf">下载</a></span></td>
+                        </tr>
+                        <tr>
+                            <td class="center">3</td>
+                            <td>现场审核记录.pdf</td>
+                            <td>PDF</td>
+                            <td><span class="file-actions"><a href="#" class="attachment-preview" data-file="现场审核记录.pdf">预览</a><a href="#" class="attachment-download" data-file="现场审核记录.pdf">下载</a></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.getElementById('downloadReport').addEventListener('click', function (event) {
+            event.preventDefault();
+            const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+            const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = '一阶段审核报告.html';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+        });
+
+        const navLinks = Array.from(document.querySelectorAll('.anchor-nav a'));
+        const sections = navLinks
+            .map(link => document.querySelector(link.getAttribute('href')))
+            .filter(Boolean);
+
+        function setActiveNav() {
+            const y = window.scrollY + 120;
+            let current = sections[0];
+            sections.forEach(section => {
+                if (section.offsetTop <= y) current = section;
+            });
+            navLinks.forEach(link => {
+                link.classList.toggle('active', current && link.getAttribute('href') === '#' + current.id);
+            });
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function () {
+                navLinks.forEach(item => item.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        window.addEventListener('scroll', setActiveNav, { passive: true });
+        setActiveNav();
+
+        document.querySelectorAll('.attachment-preview').forEach(link => {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+                const fileName = this.dataset.file;
+                const preview = window.open('', '_blank');
+                if (!preview) return;
+                preview.document.write(`<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>${fileName}</title><style>body{font-family:"Microsoft YaHei",Arial,sans-serif;padding:32px;background:#f8fafc;color:#0f172a}.box{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:24px;max-width:760px;margin:auto}</style></head><body><div class="box"><h1>${fileName}</h1><p>附件预览区域。实际系统中此处展示 PDF 文件内容。</p></div></body></html>`);
+                preview.document.close();
+            });
+        });
+
+        document.querySelectorAll('.attachment-download').forEach(link => {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+                const fileName = this.dataset.file;
+                const blob = new Blob([`附件下载占位文件：${fileName}`], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                const download = document.createElement('a');
+                download.href = url;
+                download.download = fileName;
+                document.body.appendChild(download);
+                download.click();
+                download.remove();
+                URL.revokeObjectURL(url);
+            });
+        });
+    </script>
+</body>
+</html>
