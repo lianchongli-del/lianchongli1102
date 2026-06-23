@@ -4595,7 +4595,8 @@
         function getDefaultHeadquartersLocation() {
             return {
                 name: selectedCustomer && selectedCustomer.name ? selectedCustomer.name : '总部',
-                address: selectedCustomer && (selectedCustomer.opAddress || selectedCustomer.address) ? (selectedCustomer.opAddress || selectedCustomer.address) : '北京市朝阳区xxx路'
+                address: selectedCustomer && (selectedCustomer.opAddress || selectedCustomer.address) ? (selectedCustomer.opAddress || selectedCustomer.address) : '北京市朝阳区xxx路',
+                creditCode: selectedCustomer && selectedCustomer.code ? selectedCustomer.code : '91110105MA00XXXXXX'
             };
         }
 
@@ -4606,8 +4607,13 @@
                 card.dataset.locAddress = headquarters.address;
                 const nameEl = card.querySelector('.location-name');
                 const addressEl = card.querySelector('.location-address');
+                const creditCodeInput = card.querySelector('.location-credit-code-input');
                 if (nameEl) nameEl.textContent = headquarters.name;
                 if (addressEl) addressEl.textContent = headquarters.address;
+                if (creditCodeInput) {
+                    creditCodeInput.value = headquarters.creditCode;
+                    updateLocationSubCertAvailability(creditCodeInput);
+                }
             });
             updateQuickNav();
         }
@@ -4791,7 +4797,7 @@
 
             cardsList.appendChild(card);
             const headquarters = getDefaultHeadquartersLocation();
-            addLocationCard(uniqueId, 'HQ', headquarters.name, headquarters.address, 'fixed', true, { locked: true });
+            addLocationCard(uniqueId, 'HQ', headquarters.name, headquarters.address, 'fixed', true, { locked: true, creditCode: headquarters.creditCode });
             applyDefaultInputPlaceholders(card);
             bindLocationActionButtons(card);
 
@@ -5887,7 +5893,7 @@
 
             cardsList.appendChild(card);
             const headquarters = getDefaultHeadquartersLocation();
-            addLocationCard(uniqueId, 'HQ', headquarters.name, headquarters.address, 'fixed', true, { locked: true });
+            addLocationCard(uniqueId, 'HQ', headquarters.name, headquarters.address, 'fixed', true, { locked: true, creditCode: headquarters.creditCode });
             applyDefaultInputPlaceholders(card);
             bindLocationActionButtons(card);
         }
@@ -6872,13 +6878,13 @@ function initAttachments() {
         }
 
         const availableLocations = [
-            { id: 'SH', name: '上海分公司', address: '上海市浦东新区xxx路', type: 'fixed', center: false },
-            { id: 'GZ', name: '广州运营中心', address: '广州市天河区xxx路', type: 'fixed', center: false },
-            { id: 'NJ', name: '南京研发中心', address: '南京市建邺区xxx路', type: 'fixed', center: false },
-            { id: 'CD', name: '成都交付中心', address: '成都市高新区xxx路', type: 'fixed', center: false },
-            { id: 'SP1', name: '客户服务点', address: '北京市海淀区xxx路', type: 'service', center: false },
-            { id: 'SP2', name: '华东服务点', address: '苏州市工业园区xxx路', type: 'service', center: false },
-            { id: 'SP3', name: '华南服务点', address: '深圳市南山区xxx路', type: 'service', center: false }
+            { id: 'SH', name: '上海分公司', address: '上海市浦东新区xxx路', type: 'fixed', center: false, creditCode: '91310115MA1KXXXXXX' },
+            { id: 'GZ', name: '广州运营中心', address: '广州市天河区xxx路', type: 'fixed', center: false, creditCode: '91440101MA5XXXXXXX' },
+            { id: 'NJ', name: '南京研发中心', address: '南京市建邺区xxx路', type: 'fixed', center: false, creditCode: '' },
+            { id: 'CD', name: '成都交付中心', address: '成都市高新区xxx路', type: 'fixed', center: false, creditCode: '' },
+            { id: 'SP1', name: '客户服务点', address: '北京市海淀区xxx路', type: 'service', center: false, creditCode: '' },
+            { id: 'SP2', name: '华东服务点', address: '苏州市工业园区xxx路', type: 'service', center: false, creditCode: '' },
+            { id: 'SP3', name: '华南服务点', address: '深圳市南山区xxx路', type: 'service', center: false, creditCode: '' }
         ];
 
         // 场所相关函数
@@ -6952,6 +6958,7 @@ function initAttachments() {
                                    data-loc-address="${loc.address}"
                                    data-loc-type="${loc.type}"
                                    data-loc-center="${loc.center}"
+                                   data-loc-credit-code="${loc.creditCode || ''}"
                                    ${alreadyAdded ? 'checked disabled' : ''}>
                             <div class="w-10 h-10 rounded-lg ${loc.type === 'service' ? 'bg-violet-100 text-violet-600' : 'bg-emerald-100 text-emerald-600'} flex items-center justify-center shrink-0">
                                 <i class="fas ${typeIcon}"></i>
@@ -6959,10 +6966,6 @@ function initAttachments() {
                             <div class="min-w-0">
                                 <p class="font-medium text-slate-900 text-sm truncate">${loc.name} <span class="text-[10px] ${typeClass} px-1.5 py-0.5 rounded">${typeLabel}</span> ${loc.center ? '<span class="text-[10px] bg-cyan-100 text-cyan-700 px-1.5 py-0.5 rounded">中心职能</span>' : ''}</p>
                                 <p class="text-xs text-slate-500 truncate">${loc.address}</p>
-                                <label class="inline-flex items-center gap-1 mt-1 text-[11px] text-slate-600" onclick="event.stopPropagation()">
-                                    <input type="checkbox" class="location-center-toggle rounded text-cyan-600" data-loc-id="${loc.id}" ${loc.center ? 'checked' : ''} ${alreadyAdded ? 'disabled' : ''}>
-                                    <span>设为中心职能</span>
-                                </label>
                             </div>
                         </div>
                         ${alreadyAdded ? '<span class="text-[11px] text-slate-400 ml-3 shrink-0">已添加</span>' : '<i class="fas fa-plus text-slate-300 ml-3 shrink-0"></i>'}
@@ -6982,15 +6985,14 @@ function initAttachments() {
             }
 
             checkedOptions.forEach(input => {
-                const centerInput = Array.from(modal.querySelectorAll('.location-center-toggle'))
-                    .find(item => item.dataset.locId === input.dataset.locId);
                 addLocationCard(
                     uniqueId,
                     input.dataset.locId,
                     input.dataset.locName,
                     input.dataset.locAddress,
                     input.dataset.locType,
-                    centerInput ? centerInput.checked : input.dataset.locCenter === 'true'
+                    input.dataset.locCenter === 'true',
+                    { creditCode: input.dataset.locCreditCode || '' }
                 );
             });
 
@@ -7006,14 +7008,16 @@ function initAttachments() {
                     name: '导入固定场所A',
                     address: '导入文件回写地址A',
                     type: 'fixed',
-                    center: false
+                    center: false,
+                    creditCode: ''
                 },
                 {
                     id: 'IMPORT_' + (Date.now() + 1),
                     name: '导入服务点B',
                     address: '导入文件回写地址B',
                     type: 'service',
-                    center: false
+                    center: false,
+                    creditCode: ''
                 }
             ];
             input.value = '';
@@ -7140,11 +7144,15 @@ function initAttachments() {
             div.dataset.locAddress = address;
             div.dataset.locType = type;
             div.dataset.locCenter = isKeyLocation ? 'true' : 'false';
+            div.dataset.locCreditCode = options.creditCode || '';
             div.className = 'location-card bg-white border border-slate-200 rounded-xl p-4 shadow-sm';
             const typeLabel = type === 'service' ? '服务点' : (type === 'temp' ? '临时场所' : '固定场所');
             const typeClass = type === 'service' ? 'bg-violet-100 text-violet-700' : (type === 'temp' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700');
             const typeIcon = type === 'service' ? 'fa-headset' : (type === 'temp' ? 'fa-map-pin' : 'fa-building');
             const productionScopeId = cardId;
+            const creditCode = options.creditCode || '';
+            const escapedCreditCode = escapeHtml(creditCode);
+            const canIssueSubCert = creditCode.trim().length > 0;
             div.innerHTML = `
                 <div class="flex items-start justify-between mb-3">
                     <div class="flex items-center gap-3">
@@ -7167,7 +7175,7 @@ function initAttachments() {
                         <label class="block text-[10px] font-medium text-slate-500 mb-1 required">涉及的产品、过程、活动/工程项目进展情况</label>
                         <input type="text" placeholder="500字以内" maxlength="500" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
                     </div>
-                    <div class="col-span-2">
+                    <div class="col-span-1">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">场所人数</label>
                         <input type="number" placeholder="0" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
                     </div>
@@ -7179,6 +7187,10 @@ function initAttachments() {
                         </select>
                     </div>
                     <div class="col-span-3">
+                        <label class="block text-[10px] font-medium text-slate-500 mb-1">统一社会信用代码</label>
+                        <input type="text" value="${escapedCreditCode}" oninput="updateLocationSubCertAvailability(this)" class="location-credit-code-input w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white" placeholder="统一社会信用代码">
+                    </div>
+                    <div class="col-span-2">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">联系人</label>
                         <div class="flex gap-1">
                             <select onchange="toggleManualLocationContact(this)" class="location-contact-select flex-1 min-w-0 px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
@@ -7190,13 +7202,13 @@ function initAttachments() {
                             <input type="text" placeholder="联系人姓名" class="manual-location-contact hidden flex-1 min-w-0 px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
                         </div>
                     </div>
-                    <div class="col-span-3">
+                    <div class="col-span-2">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">电话</label>
                         <input type="tel" placeholder="电话" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
                     </div>
                     <div class="col-span-2">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">是否出子证</label>
-                        <select class="w-full px-1 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white" title="是否出子证">
+                        <select class="location-sub-cert-select w-full px-1 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 ${canIssueSubCert ? 'bg-white' : 'bg-slate-100 cursor-not-allowed'}" title="是否出子证" ${canIssueSubCert ? '' : 'disabled'}>
                             <option value="no">否</option>
                             <option value="yes">是</option>
                         </select>
@@ -7213,6 +7225,21 @@ function initAttachments() {
                 checkAttachmentConditions();
             }
             updateQuickNav();
+        }
+
+        function updateLocationSubCertAvailability(input) {
+            const card = input.closest('.location-card');
+            if (!card) return;
+            const creditCode = input.value.trim();
+            card.dataset.locCreditCode = creditCode;
+            const subCertSelect = card.querySelector('.location-sub-cert-select');
+            if (!subCertSelect) return;
+            const canIssueSubCert = creditCode.length > 0;
+            subCertSelect.disabled = !canIssueSubCert;
+            if (!canIssueSubCert) subCertSelect.value = 'no';
+            subCertSelect.classList.toggle('bg-white', canIssueSubCert);
+            subCertSelect.classList.toggle('bg-slate-100', !canIssueSubCert);
+            subCertSelect.classList.toggle('cursor-not-allowed', !canIssueSubCert);
         }
 
         function toggleManualLocationContact(select) {
