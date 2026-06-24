@@ -896,6 +896,291 @@
             background: #fef2f2;
         }
 
+        .customer-context-card {
+            border: 1px solid #dbeafe;
+            border-radius: 8px;
+            background: #f8fbff;
+            padding: 16px;
+        }
+
+        .customer-context-grid {
+            display: grid;
+            grid-template-columns: minmax(180px, 1.2fr) minmax(180px, 1fr) minmax(240px, 1.5fr) auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .customer-context-label {
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .customer-context-value {
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+            padding: 8px 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: #fff;
+            color: #0f172a;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.45;
+            word-break: break-word;
+        }
+
+        .customer-context-value.is-empty {
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .modify-site-option {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #fff;
+            padding: 12px;
+        }
+
+        .modify-site-option.is-disabled {
+            cursor: not-allowed;
+            opacity: 0.68;
+            background: #f8fafc;
+        }
+
+        .modify-site-option.is-selected {
+            border-color: #60a5fa;
+            background: #eff6ff;
+        }
+
+        .site-action-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 12px;
+        }
+
+        .site-action-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .site-action-card.is-active {
+            border-color: #93c5fd;
+            box-shadow: 0 8px 18px -16px rgba(37, 99, 235, 0.45);
+        }
+
+        .site-action-card-header {
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .site-action-card-body {
+            padding: 12px;
+        }
+
+        .cert-preview-section {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #fff;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .cert-preview-section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 18px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #0f172a;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .cert-preview-index {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: #eff6ff;
+            color: #2563eb;
+            font-weight: 800;
+        }
+
+        .cert-preview-body {
+            padding: 18px 22px;
+        }
+
+        .cert-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px 20px;
+        }
+
+        .cert-preview-field label {
+            display: block;
+            margin-bottom: 6px;
+            color: #0f172a;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .cert-preview-value {
+            min-height: 46px;
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            border: 1px solid #dbe3ef;
+            border-radius: 6px;
+            background: #fff;
+            color: #17233c;
+            line-height: 1.55;
+            white-space: pre-wrap;
+        }
+
+        .cert-preview-value.textarea {
+            min-height: 98px;
+            align-items: flex-start;
+        }
+
+        .cert-preview-checklist {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 12px;
+        }
+
+        .cert-preview-check {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: #17233c;
+            font-size: 15px;
+        }
+
+        .cert-preview-check input,
+        .cert-preview-radio input {
+            width: 16px;
+            height: 16px;
+        }
+
+        .cert-preview-radio-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .cert-preview-radio {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 40px;
+            padding: 0 12px;
+            border: 1px solid #dbe3ef;
+            border-radius: 6px;
+            background: #fff;
+            color: #17233c;
+        }
+
+        .cert-preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .cert-preview-table th,
+        .cert-preview-table td {
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+            vertical-align: middle;
+            color: #17233c;
+            word-break: break-word;
+        }
+
+        .cert-preview-table th {
+            background: #f8fafc;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .cert-preview-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px 0;
+            background: #fff;
+            border-bottom: 1px solid #e2e8f0;
+            overflow-x: auto;
+        }
+
+        .cert-preview-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 38px;
+            padding: 0 14px;
+            border: 1px solid #dbe3ef;
+            border-bottom: 0;
+            border-radius: 8px 8px 0 0;
+            background: #f8fafc;
+            color: #475569;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .cert-preview-tab.active {
+            background: #eff6ff;
+            border-color: #93c5fd;
+            color: #1d4ed8;
+        }
+
+        .cert-preview-pane {
+            display: none;
+        }
+
+        .cert-preview-pane.active {
+            display: block;
+        }
+
+        .modify-site-fields {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 10px;
+            align-items: end;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed #bfdbfe;
+        }
+
+        @media (max-width: 1100px) {
+            .customer-context-grid,
+            .cert-preview-grid,
+            .modify-site-fields {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .customer-context-grid,
+            .cert-preview-grid,
+            .modify-site-fields {
+                grid-template-columns: 1fr;
+            }
+        }
+
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
@@ -920,10 +1205,6 @@
                 <button onclick="saveSurvey()" class="px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition inline-flex items-center gap-2">
                     <i class="fas fa-save text-slate-600"></i>
                     保存
-                </button>
-                <button type="button" onclick="openCertificateSelectModal()" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-sm transition inline-flex items-center gap-2 font-medium">
-                    <i class="fas fa-plus"></i>
-                    选择领域
                 </button>
                 <button onclick="confirmSubmit()" id="confirmSubmitBtn" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-sm transition inline-flex items-center gap-2 font-medium">
                     <i class="fas fa-paper-plane"></i>
@@ -952,6 +1233,43 @@
                 </div>
 
                 <div id="onlineForm" class="space-y-4">
+                    <div class="customer-context-card">
+                        <div class="customer-context-grid">
+                            <div>
+                                <div class="customer-context-label">客户名称</div>
+                                <div id="selectedCustomerName" class="customer-context-value is-empty">未选择</div>
+                            </div>
+                            <div>
+                                <div class="customer-context-label">统一社会信用代码</div>
+                                <div id="selectedCustomerCode" class="customer-context-value is-empty">未选择</div>
+                            </div>
+                            <div>
+                                <div class="customer-context-label">注册地址</div>
+                                <div id="selectedCustomerAddress" class="customer-context-value is-empty">未选择</div>
+                            </div>
+                            <button type="button" onclick="openCustomerModal()" class="h-10 px-4 bg-white border border-blue-500 text-blue-600 rounded-lg hover:bg-blue-50 transition inline-flex items-center justify-center gap-2 font-medium whitespace-nowrap">
+                                <i class="fas fa-search"></i>
+                                选择客户
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-lg p-4 border-slate-200">
+                        <div class="sub-section-title">
+                            <i class="fas fa-certificate"></i>
+                            选择变更领域
+                            <span class="text-xs font-normal text-slate-500 ml-2">点击按钮选择客户已有认证领域，系统自动带入该领域下证书信息。</span>
+                        </div>
+                        <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                            <div id="selectedDomainSummary" class="text-sm text-slate-500">请先选择客户，再选择变更领域。</div>
+                            <button type="button" onclick="openCertificateSelectModal()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-sm transition inline-flex items-center gap-2 font-medium">
+                                <i class="fas fa-layer-group"></i>
+                                选择领域
+                            </button>
+                        </div>
+                        <div id="certificateInfoRows"></div>
+                    </div>
+
                     <div class="border rounded-lg p-4 border-slate-200">
                         <div class="sub-section-title">
                             <i class="fas fa-file-signature"></i>
@@ -1037,6 +1355,47 @@
                 </div>
             </div>
 
+            <div id="customerSelectModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-6">
+                <div class="bg-white rounded-lg shadow-2xl w-full max-w-6xl max-h-[88vh] flex flex-col overflow-hidden">
+                    <div class="flex items-start justify-between px-5 py-4 border-b border-slate-200">
+                        <div>
+                            <h4 class="font-bold text-slate-900 text-xl">选择客户</h4>
+                            <p class="text-sm text-slate-500 mt-2">支持按客户名称、统一社会信用代码模糊搜索。</p>
+                        </div>
+                        <button onclick="closeCustomerModal()" class="w-9 h-9 rounded-full hover:bg-slate-100 text-slate-600 text-xl" title="关闭">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="px-5 py-4 border-b border-slate-200 bg-slate-50">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="text" id="customerSearch" placeholder="搜索客户名称、统一社会信用代码..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" oninput="filterCustomers(this.value)">
+                        </div>
+                    </div>
+                    <div class="flex-1 overflow-auto p-5">
+                        <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                            <table class="cert-modal-table">
+                                <colgroup><col style="width: 54px;"><col style="width: 240px;"><col style="width: 230px;"><col><col style="width: 100px;"></colgroup>
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>客户名称</th>
+                                        <th>统一社会信用代码</th>
+                                        <th>注册地址</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customerList"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center gap-3 px-5 py-4 border-t border-slate-200 bg-white">
+                        <div class="text-sm text-slate-500">共 <span id="customerCount">0</span> 条客户</div>
+                        <button type="button" onclick="closeCustomerModal()" class="px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition">取消</button>
+                    </div>
+                </div>
+            </div>
+
             <div id="certificateSelectModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-6">
                 <div class="bg-white rounded-lg shadow-2xl w-full max-w-7xl max-h-[90vh] flex flex-col overflow-hidden">
                     <div class="flex items-start justify-between px-5 py-4 border-b border-slate-200">
@@ -1081,6 +1440,24 @@
                         </button>
                     </div>
                     <div id="certificatePreviewBody" class="flex-1 min-h-[720px] bg-slate-100"></div>
+                </div>
+            </div>
+
+            <div id="changePreviewModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-6">
+                <div class="bg-white rounded-lg shadow-2xl w-full max-w-6xl max-h-[90vh] flex flex-col overflow-hidden">
+                    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-200">
+                        <div>
+                            <h4 class="font-bold text-slate-900 text-xl">变更后证书内容预览</h4>
+                        </div>
+                        <button onclick="closeChangePreviewModal()" class="w-9 h-9 rounded-full hover:bg-slate-100 text-slate-600 text-xl" title="关闭">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div id="changePreviewBody" class="flex-1 overflow-auto p-5 bg-slate-50"></div>
+                    <div class="flex justify-end gap-2 px-5 py-4 border-t border-slate-200 bg-white">
+                        <button type="button" onclick="closeChangePreviewModal()" class="px-4 py-2 bg-white border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition">关闭</button>
+                        <button type="button" onclick="confirmSubmitFromPreview()" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition inline-flex items-center gap-2 font-medium"><i class="fas fa-paper-plane"></i>确认提交</button>
+                    </div>
                 </div>
             </div>
 
@@ -1154,7 +1531,7 @@
                                 <th>审核范围</th>
                             </tr>
                             <tr class="certificate-domain-row">
-                                <td colspan="6"><span class="certificate-domain-title">认证领域：QMS（质量管理体系）</span></td>
+                                <td colspan="6"><span class="certificate-domain-title">认证领域：QMS</span></td>
                             </tr>
                             <tr>
                                 <td class="certificate-index">1</td>
@@ -1173,7 +1550,7 @@
                                 <td class="certificate-scope">信息技术服务运行维护及相关管理活动</td>
                             </tr>
                             <tr class="certificate-domain-row">
-                                <td colspan="6"><span class="certificate-domain-title">认证领域：EMS（环境管理体系）</span></td>
+                                <td colspan="6"><span class="certificate-domain-title">认证领域：EMS</span></td>
                             </tr>
                             <tr>
                                 <td class="certificate-index">1</td>
@@ -1278,8 +1655,8 @@
                     <p class="font-semibold text-blue-900 mb-2">审核安排：</p>
                     <ul class="list-disc list-inside mt-2 text-blue-800 space-y-1 text-sm">
                         <li>审核时间：2026年4月15日-17日</li>
-                        <li>QMS（质量管理体系）：00123Q34567R0S/37000、00123Q34568R0S/37000</li>
-                        <li>EMS（环境管理体系）：00123E34569R0S/37000、00123E34570R0S/37000</li>
+                        <li>QMS：00123Q34567R0S/37000、00123Q34568R0S/37000</li>
+                        <li>EMS：00123E34569R0S/37000、00123E34570R0S/37000</li>
                     </ul>
                 </div>
 
@@ -1336,6 +1713,46 @@ let certificateChangeGroups = {};
 let multiSiteChangeData = {};
 let certificateRecordSeq = 1;
 let pendingCertificateSelection = [];
+let selectedCustomer = null;
+
+const customerOptions = [
+    {
+        id: 1,
+        name: '北京某某科技有限公司',
+        enName: 'Beijing Demo Technology Co., Ltd.',
+        code: '91110108MA01ABCDE1',
+        address: '北京市海淀区示例路88号',
+        enAddress: 'No.88 Shili Road, Haidian District, Beijing',
+        operationAddress: '北京市海淀区示例路88号',
+        enOperationAddress: 'No.88 Shili Road, Haidian District, Beijing, P.R.China',
+        legalRepresentative: '李先生',
+        domains: ['Q', 'E', 'S']
+    },
+    {
+        id: 2,
+        name: '彩晶光电科技（昆山）有限公司',
+        enName: 'Caijing Optoelectronic Technology (Kunshan) Co., Ltd.',
+        code: '91320583MA2QW8888X',
+        address: '江苏省苏州市昆山市开发区光电产业园18号',
+        enAddress: 'No.18 Optoelectronic Industrial Park, Kunshan, Suzhou, Jiangsu',
+        operationAddress: '江苏省苏州市昆山市开发区光电产业园18号',
+        enOperationAddress: 'No.18 Optoelectronic Industrial Park, Kunshan, Suzhou, Jiangsu, P.R.China',
+        legalRepresentative: '王先生',
+        domains: ['Q', 'E']
+    },
+    {
+        id: 3,
+        name: '上海智造装备股份有限公司',
+        enName: 'Shanghai Intelligent Equipment Co., Ltd.',
+        code: '91310000MA1K3TEST9',
+        address: '上海市浦东新区张江路168号',
+        enAddress: 'No.168 Zhangjiang Road, Pudong New Area, Shanghai',
+        operationAddress: '上海市浦东新区张江路168号',
+        enOperationAddress: 'No.168 Zhangjiang Road, Pudong New Area, Shanghai, P.R.China',
+        legalRepresentative: '赵先生',
+        domains: ['Q', 'S']
+    }
+];
 
 const defaultCertificateSites = [
     {id: 'hq', name: '北京总部', address: '北京市朝阳区xxx路xxx号', scope: 'QMS、EMS认证范围', people: 120},
@@ -1356,9 +1773,9 @@ const certificateSiteMap = {
 
 // 调查表字段配置（来自 MSF11-23 获证方情况调查和变更申请表）
 const certificateDomainOptions = [
-    {value: 'Q', label: '质量管理体系'},
-    {value: 'E', label: '环境管理体系'},
-    {value: 'S', label: '职业健康安全管理体系'}
+    {value: 'Q', label: 'QMS'},
+    {value: 'E', label: 'EMS'},
+    {value: 'S', label: 'OHSMS'}
 ];
 
 const customerCertificatePool = [
@@ -1580,6 +1997,7 @@ const changeItems = [
 
 // ===== 初始化 =====
 document.addEventListener('DOMContentLoaded', function() {
+    renderCustomerSummary();
     renderCertificateInfoRows();
     renderSurveyTables();
     updateStatusDisplay();
@@ -1680,11 +2098,8 @@ function confirmSubmit() {
         return;
     }
 
-    if(confirm('确认提交证书变更申请表？')) {
-        applicationStatus = 'submitted';
-        updateStatusDisplay();
-        showNotification('证书变更申请表已提交', 'success');
-    }
+    openChangePreviewModal();
+    showNotification('请先预览变更后证书内容，确认无误后再提交', 'info');
 }
 
 // ===== Tab切换 =====
@@ -1715,6 +2130,130 @@ function renderSurveyTables() {
 
 function renderChangeChecklist() {
     renderSurveyTables();
+}
+
+function getCustomerDomainLabels(customer) {
+    if(!customer) return '';
+    return (customer.domains || []).map(function(domain) {
+        return getCertificateDomainLabel(domain);
+    }).join('、');
+}
+
+function renderCustomerSummary() {
+    const nameEl = document.getElementById('selectedCustomerName');
+    const codeEl = document.getElementById('selectedCustomerCode');
+    const addressEl = document.getElementById('selectedCustomerAddress');
+    const summaryEl = document.getElementById('selectedDomainSummary');
+    const setValue = function(el, value) {
+        if(!el) return;
+        el.textContent = value || '未选择';
+        el.classList.toggle('is-empty', !value);
+    };
+    setValue(nameEl, selectedCustomer && selectedCustomer.name);
+    setValue(codeEl, selectedCustomer && selectedCustomer.code);
+    setValue(addressEl, selectedCustomer && selectedCustomer.address);
+    if(summaryEl) {
+        if(!selectedCustomer) {
+            summaryEl.textContent = '请先选择客户，再选择变更领域。';
+        } else if(certificateRecords.length === 0) {
+            summaryEl.textContent = '当前客户已选择，可继续选择变更领域。';
+        } else {
+            const domain = getSelectedCertificateDomain();
+            summaryEl.textContent = '已选择：' + getCertificateDomainLabel(domain) + '，已带入 ' + certificateRecords.length + ' 份证书。';
+        }
+    }
+}
+
+function openCustomerModal() {
+    const modal = document.getElementById('customerSelectModal');
+    const search = document.getElementById('customerSearch');
+    if(search) search.value = '';
+    renderCustomerList('');
+    if(!modal) return;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeCustomerModal() {
+    const modal = document.getElementById('customerSelectModal');
+    if(!modal) return;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+function renderCustomerList(keyword = '') {
+    const tbody = document.getElementById('customerList');
+    const count = document.getElementById('customerCount');
+    if(!tbody) return;
+    const query = String(keyword || '').trim().toLowerCase();
+    const filtered = customerOptions.filter(function(customer) {
+        return !query ||
+            customer.name.toLowerCase().includes(query) ||
+            customer.code.toLowerCase().includes(query);
+    });
+    if(count) count.textContent = filtered.length;
+    tbody.innerHTML = filtered.length ? filtered.map(function(customer) {
+        const checked = selectedCustomer && selectedCustomer.id === customer.id;
+        return '<tr class="' + (checked ? 'is-selected ' : '') + 'hover:bg-blue-50 cursor-pointer transition-colors" onclick="selectCustomer(' + customer.id + ')">' +
+            '<td><input type="radio" name="selectedCustomer" ' + (checked ? 'checked' : '') + '></td>' +
+            '<td class="font-semibold text-slate-900">' + escapeHtml(customer.name) + '</td>' +
+            '<td>' + escapeHtml(customer.code) + '</td>' +
+            '<td>' + escapeHtml(customer.address) + '</td>' +
+            '<td><button type="button" class="px-3 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700 transition-colors">选择</button></td>' +
+            '</tr>';
+    }).join('') : '<tr><td colspan="5" class="text-center text-slate-500 py-8">未找到匹配客户</td></tr>';
+}
+
+function filterCustomers(keyword) {
+    renderCustomerList(keyword);
+}
+
+function selectCustomer(customerId) {
+    const customer = customerOptions.find(function(item) {
+        return item.id === customerId;
+    });
+    if(!customer) return;
+    const switchingCustomer = selectedCustomer && selectedCustomer.id !== customer.id;
+    if(switchingCustomer && hasFilledApplicationContent()) {
+        const confirmed = confirm('切换客户后，已选择领域、证书变更信息、其他调查项目、声明及附件将全部清空，是否继续？');
+        if(!confirmed) return;
+    }
+    selectedCustomer = customer;
+    certificateRecords = [];
+    clearApplicationContentForDomainSwitch();
+    updateCustomerDerivedDefaults(customer);
+    closeCustomerModal();
+    renderCustomerSummary();
+    renderCertificateInfoRows();
+    renderSurveyTables();
+    updateStatusDisplay();
+    showNotification('已选择客户：' + customer.name, 'success');
+}
+
+function updateCustomerDerivedDefaults(customer) {
+    const itemMap = {
+        orgName: customer.name,
+        registeredAddress: customer.address,
+        operationAddress: customer.operationAddress || customer.address
+    };
+    certificateItems.forEach(function(item) {
+        if(itemMap[item.id]) item.current = itemMap[item.id];
+    });
+}
+
+function getActiveCustomerCertificates() {
+    if(!selectedCustomer) return [];
+    return customerCertificatePool.filter(function(record) {
+        return (selectedCustomer.domains || []).includes(record.domain);
+    }).map(function(record) {
+        const scopedId = 'c' + selectedCustomer.id + '_' + record.id;
+        const scopedNo = selectedCustomer.id === 1 ? record.certNo : record.certNo.replace('00123', '00' + (120 + selectedCustomer.id));
+        return Object.assign({}, record, {
+            id: scopedId,
+            sourceId: record.id,
+            certNo: scopedNo
+        });
+    });
 }
 
 function getSelectedCertificateDomain() {
@@ -1756,6 +2295,7 @@ function renderCertificateInfoRows() {
     const container = document.getElementById('certificateInfoRows');
     if(!container) return;
     syncCertificatesFromRecords();
+    renderCustomerSummary();
     if(certificateRecords.length === 0) {
         container.innerHTML = '<div class="text-center text-sm text-slate-500 py-10 bg-slate-50 rounded-lg border border-dashed border-slate-300">暂无证书，请点击“选择领域”从客户已有领域中选择。</div>';
         renderSurveyTables();
@@ -1807,12 +2347,20 @@ function addCertificateRecord() {
 }
 
 function openCertificateSelectModal() {
+    if(!selectedCustomer) {
+        showNotification('请先选择客户', 'error');
+        openCustomerModal();
+        return;
+    }
     pendingCertificateSelection = [];
     const modal = document.getElementById('certificateSelectModal');
     const domainSelect = document.getElementById('certificateModalDomain');
     if(!modal || !domainSelect) return;
     const defaultDomain = getSelectedCertificateDomain();
-    domainSelect.innerHTML = '<option value="">请选择认证领域</option>' + certificateDomainOptions.map(function(option) {
+    const availableDomains = new Set(getActiveCustomerCertificates().map(function(record) { return record.domain; }));
+    domainSelect.innerHTML = '<option value="">请选择认证领域</option>' + certificateDomainOptions.filter(function(option) {
+        return availableDomains.has(option.value);
+    }).map(function(option) {
         return '<option value="' + escapeHtml(option.value) + '" ' + (defaultDomain === option.value ? 'selected' : '') + '>' + escapeHtml(option.label) + '</option>';
     }).join('');
     modal.classList.remove('hidden');
@@ -1838,7 +2386,7 @@ function renderCertificateSelectModalRows() {
         if(meta) meta.textContent = '已选择 0 份证书';
         return;
     }
-    const domainRecords = customerCertificatePool.filter(function(record) {
+    const domainRecords = getActiveCustomerCertificates().filter(function(record) {
         return record.domain === domain;
     });
     pendingCertificateSelection = domainRecords.map(function(record) { return record.id; });
@@ -1883,7 +2431,7 @@ function confirmCertificateSelection() {
         showNotification('请先选择认证领域', 'error');
         return;
     }
-    const recordsToUse = customerCertificatePool.filter(function(record) {
+    const recordsToUse = getActiveCustomerCertificates().filter(function(record) {
         return record.domain === selectedDomain;
     });
     if(recordsToUse.length === 0) {
@@ -1906,6 +2454,7 @@ function confirmCertificateSelection() {
     closeCertificateSelectModal();
     renderCertificateInfoRows();
     renderSurveyTables();
+    renderCustomerSummary();
     updateStatusDisplay();
     showNotification('已选择' + getCertificateDomainLabel(selectedDomain) + '，共 ' + recordsToUse.length + ' 份证书', 'success');
 }
@@ -1933,8 +2482,8 @@ function hasFilledApplicationContent() {
 
     return Object.keys(multiSiteChangeData).some(function(certId) {
         const data = multiSiteChangeData[certId] || {};
-        return data.addEnabled || data.removeEnabled || (data.addSites || []).length > 0 ||
-            (data.removeSiteIds || []).length > 0 || String(data.reason || '').trim();
+        return data.addEnabled || data.removeEnabled || data.modifyEnabled || (data.addSites || []).length > 0 ||
+            (data.removeSiteIds || []).length > 0 || (data.modifySites || []).length > 0 || String(data.reason || '').trim();
     });
 }
 
@@ -1979,6 +2528,264 @@ function closeCertificatePreview() {
     modal.classList.remove('flex');
 }
 
+function openChangePreviewModal() {
+    const modal = document.getElementById('changePreviewModal');
+    const body = document.getElementById('changePreviewBody');
+    if(!modal || !body) return;
+    syncCertificatesFromRecords();
+    body.innerHTML = renderChangePreviewBody();
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeChangePreviewModal() {
+    const modal = document.getElementById('changePreviewModal');
+    if(!modal) return;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+function confirmSubmitFromPreview() {
+    applicationStatus = 'submitted';
+    updateStatusDisplay();
+    closeChangePreviewModal();
+    showNotification('证书变更申请表已提交', 'success');
+}
+
+function renderChangePreviewBody() {
+    if(!certificateRecords.length) {
+        return '<div class="text-center text-sm text-slate-500 py-14 bg-white rounded-lg border border-dashed border-slate-300">请先选择客户和变更领域，再提交查看变更后证书内容。</div>';
+    }
+    const previewCertificates = getPreviewCertificates();
+    const tabs = previewCertificates.map(function(cert, index) {
+        return '<button type="button" class="cert-preview-tab ' + (index === 0 ? 'active' : '') + '" onclick="switchCertificatePreviewTab(' + index + ')">' +
+            '<i class="fas fa-certificate"></i><span>证书 ' + (index + 1) + '</span><span class="text-xs font-normal">' + escapeHtml(getCertificateNoText(cert)) + '</span>' +
+            '</button>';
+    }).join('');
+    const panes = previewCertificates.map(function(cert, index) {
+        return '<div class="cert-preview-pane ' + (index === 0 ? 'active' : '') + '" data-cert-preview-pane="' + index + '">' +
+            renderCertificateAfterPreview(cert, index) +
+            '</div>';
+    }).join('');
+    return '<div class="bg-white border border-slate-200 rounded-lg overflow-hidden">' +
+        '<div class="cert-preview-tabs">' + tabs + '</div>' +
+        '<div class="p-4 bg-slate-50">' + panes + '</div>' +
+        '</div>';
+}
+
+function getPreviewCertificates() {
+    return allCertificates.slice(0, 2);
+}
+
+function switchCertificatePreviewTab(index) {
+    document.querySelectorAll('.cert-preview-tab').forEach(function(tab, tabIndex) {
+        tab.classList.toggle('active', tabIndex === index);
+    });
+    document.querySelectorAll('.cert-preview-pane').forEach(function(pane) {
+        pane.classList.toggle('active', pane.getAttribute('data-cert-preview-pane') === String(index));
+    });
+}
+
+function renderCertificateAfterPreview(cert, certIndex) {
+    const values = getCertificateAfterValues(cert, certIndex);
+    return '<div class="cert-domain-section">' +
+        '<div class="cert-domain-header">' +
+        '<span><i class="fas fa-certificate mr-2 text-blue-500"></i>证书 ' + (certIndex + 1) + '：' + escapeHtml(getCertificateNoText(cert)) + '</span>' +
+        '<span class="text-xs text-slate-500">' + escapeHtml(cert.domainName || getCertificateDomainLabel(cert.domain)) + '</span>' +
+        '</div>' +
+        '<div class="p-4 bg-slate-50">' +
+        renderPreviewCustomerSection(values) +
+        renderPreviewScopeSection(values) +
+        renderPreviewStandardSection(values) +
+        renderPreviewAttachmentSection(values) +
+        renderPreviewSitesSection(values) +
+        '</div>' +
+        '</div>';
+}
+
+function renderPreviewCustomerSection(values) {
+    return renderPreviewSection(1, '客户基本信息',
+        '<div class="cert-preview-grid">' +
+        renderPreviewField('客户名称 *', values.customerName) +
+        renderPreviewField('客户名称（英文）', values.customerNameEn) +
+        renderPreviewField('注册地址 *', values.registeredAddress) +
+        renderPreviewField('注册地址（英文）', values.registeredAddressEn) +
+        renderPreviewField('运营地址 *', values.operationAddress) +
+        renderPreviewField('运营地址（英文）', values.operationAddressEn) +
+        renderPreviewField('法人代表或负责人 *', values.legalRepresentative) +
+        renderPreviewField('统一社会信用代码或注册编号(境外组织) *', values.creditCode) +
+        '</div>');
+}
+
+function renderPreviewScopeSection(values) {
+    return renderPreviewSection(2, '认证范围',
+        renderPreviewField('认证范围（中文） *', values.certScope, true) +
+        renderPreviewField('认证范围（英文）', values.certScopeEn, true));
+}
+
+function renderPreviewStandardSection(values) {
+    const standards = getDomainStandardOptions().filter(function(option) {
+        return option.domain === values.domain;
+    });
+    const selectedStandards = values.standards.length ? values.standards : [getDomainStandard(values.domain)];
+    return renderPreviewSection(3, '认证标准与证书标志选择',
+        '<div class="mb-6"><div class="font-semibold text-slate-900 mb-3">认证标准 *</div>' +
+        '<div class="cert-preview-checklist">' + standards.map(function(option) {
+            return '<label class="cert-preview-check"><input type="checkbox" disabled ' + (selectedStandards.includes(option.standard) ? 'checked' : '') + '><span>' + escapeHtml(option.standard) + '</span></label>';
+        }).join('') + '</div></div>' +
+        '<div><div class="font-semibold text-slate-900 mb-3">认证证书标志</div>' +
+        '<div class="cert-preview-radio-row">' + ['CNAS标志', 'DAKKS标志', 'UKAS标志', '不带认可标志'].map(function(mark, index) {
+            return '<label class="cert-preview-radio"><input type="radio" disabled ' + (mark === values.accreditationMark ? 'checked' : '') + '><span>' + mark + '</span></label>';
+        }).join('') + '</div></div>');
+}
+
+function renderPreviewAttachmentSection(values) {
+    return renderPreviewSection(4, '证书附件与子证书',
+        '<div class="cert-preview-grid">' +
+        renderPreviewField('是否有证书附件', values.hasAttachment ? '是' : '否') +
+        renderPreviewField('是否有子证书', values.hasSubCertificate ? '是' : '否') +
+        '</div>');
+}
+
+function renderPreviewSitesSection(values) {
+    const rows = values.sites.length ? values.sites.map(function(site, index) {
+        return '<tr>' +
+            '<td>' + (index + 1) + '</td>' +
+            '<td>' + escapeHtml(site.name || '-') + '</td>' +
+            '<td>' + escapeHtml(site.code || values.creditCode || '-') + '</td>' +
+            '<td>' + escapeHtml(site.address || '-') + '</td>' +
+            '<td>' + escapeHtml(site.scope || '-') + '</td>' +
+            '<td>' + escapeHtml(site.isSubCertificate === 'yes' ? '是' : '否') + '</td>' +
+            '<td>' + escapeHtml(site.remark || '-') + '</td>' +
+            '</tr>';
+    }).join('') : '<tr><td colspan="7" class="text-center text-slate-500">暂无多场所信息</td></tr>';
+    return renderPreviewSection(5, '证书附件【多场所】',
+        '<div class="overflow-x-auto"><table class="cert-preview-table" style="min-width:1450px;">' +
+        '<colgroup><col style="width: 60px;"><col style="width: 180px;"><col style="width: 170px;"><col style="width: 220px;"><col style="width: 420px;"><col style="width: 150px;"><col style="width: 150px;"></colgroup>' +
+        '<thead><tr><th>序号</th><th>（组织/场所）名称</th><th>统一信用代码</th><th>运营地址</th><th>覆盖的产品和服务</th><th>客户需要子证/是否出子证</th><th>备注</th></tr></thead>' +
+        '<tbody>' + rows + '</tbody></table></div>');
+}
+
+function renderPreviewSection(index, title, body) {
+    return '<div class="cert-preview-section">' +
+        '<div class="cert-preview-section-title"><span class="cert-preview-index">' + index + '</span><span>' + title + '</span></div>' +
+        '<div class="cert-preview-body">' + body + '</div>' +
+        '</div>';
+}
+
+function renderPreviewField(label, value, multiline) {
+    return '<div class="cert-preview-field">' +
+        '<label>' + escapeHtml(label) + '</label>' +
+        '<div class="cert-preview-value ' + (multiline ? 'textarea' : '') + '">' + escapeHtml(value || '-') + '</div>' +
+        '</div>';
+}
+
+function getCertificateAfterValues(cert, certIndex) {
+    const customer = selectedCustomer || {};
+    const orgName = getResolvedCertificateText('orgName', cert);
+    const registeredAddress = getResolvedCertificateText('registeredAddress', cert);
+    const operationAddress = getResolvedCertificateText('operationAddress', cert);
+    const scope = getResolvedCertificateText('certScope', cert);
+    const standardValues = getResolvedCertificateStandards(cert);
+    const sites = getAfterSitesForCertificate(cert);
+    return {
+        domain: cert.domain,
+        customerName: orgName.zh || orgName.text || customer.name || '-',
+        customerNameEn: orgName.en || customer.enName || '',
+        registeredAddress: registeredAddress.zh || registeredAddress.text || customer.address || '-',
+        registeredAddressEn: registeredAddress.en || customer.enAddress || '',
+        operationAddress: operationAddress.zh || operationAddress.text || customer.operationAddress || customer.address || '-',
+        operationAddressEn: operationAddress.en || customer.enOperationAddress || customer.enAddress || '',
+        legalRepresentative: customer.legalRepresentative || '张先生',
+        creditCode: customer.code || '-',
+        certScope: scope.zh || scope.text || getCertificateCurrentText({id: 'certScope'}, cert),
+        certScopeEn: scope.en || '',
+        standards: standardValues,
+        accreditationMark: certIndex % 2 === 0 ? 'CNAS标志' : 'UKAS标志',
+        hasAttachment: true,
+        hasSubCertificate: sites.some(function(site) { return site.isSubCertificate === 'yes'; }) || !!cert.isSubCertificate,
+        sites: sites
+    };
+}
+
+function getResolvedCertificateText(itemId, cert) {
+    const item = certificateItems.find(function(entry) { return entry.id === itemId; }) || {id: itemId};
+    const group = getAppliedCertificateGroup(itemId, cert);
+    if(!group) return {text: getCertificateCurrentText(item, cert) || item.current || ''};
+    const zh = group.afterZh || (document.getElementById('afterZh_' + group.id) || {}).value || '';
+    const en = group.afterEn || (document.getElementById('afterEn_' + group.id) || {}).value || '';
+    const direct = group.after || (document.getElementById('after_' + group.id) || {}).value || '';
+    return {text: direct || zh, zh: zh || direct, en: en};
+}
+
+function getResolvedCertificateStandards(cert) {
+    const group = getAppliedCertificateGroup('certStandard', cert);
+    if(!group) return [getDomainStandard(cert.domain)];
+    const standards = group.afterStandards || [];
+    if(standards.length) return standards;
+    const hidden = (document.getElementById('after_' + group.id) || {}).value || group.afterStandard || '';
+    return hidden ? hidden.split('；').filter(Boolean) : [getDomainStandard(cert.domain)];
+}
+
+function getAppliedCertificateGroup(itemId, cert) {
+    const checked = document.getElementById('change_' + itemId);
+    if(!checked || !checked.checked) return null;
+    return (certificateChangeGroups[itemId] || []).find(function(group) {
+        return isUnifiedCertificateItem(itemId) || (group.certIds || []).includes(cert.certId);
+    }) || null;
+}
+
+function getAfterSitesForCertificate(cert) {
+    const data = ensureMultiSiteData();
+    const selectedDomain = cert.domain || getSelectedChangeDomain();
+    let sites = getAllCurrentSites().filter(function(site) {
+        return !selectedDomain || (site.domainCodes || []).includes(selectedDomain);
+    }).map(function(site) {
+        return Object.assign({}, site, {
+            code: selectedCustomer ? selectedCustomer.code : '',
+            scope: getQmsSiteScope(site),
+            remark: site.id === 'hq' ? '主场所' : ''
+        });
+    });
+    if(data.removeEnabled) {
+        sites = sites.filter(function(site) {
+            return !(data.removeSiteIds || []).includes(site.id);
+        });
+    }
+    if(data.modifyEnabled) {
+        (data.modifySites || []).forEach(function(modified) {
+            sites = sites.map(function(site) {
+                if(site.id !== modified.id) return site;
+                const merged = Object.assign({}, site, modified, {remark: '修改场所'});
+                if(!modified.scope || modified.scope === modified.originalScope) {
+                    merged.scope = getQmsSiteScope(merged);
+                }
+                return merged;
+            });
+        });
+    }
+    if(data.addEnabled) {
+        (data.addSites || []).filter(function(site) {
+            return (site.domainCodes || []).includes(selectedDomain);
+        }).forEach(function(site) {
+            sites.push(Object.assign({}, site, {
+                code: selectedCustomer ? selectedCustomer.code : '',
+                remark: '新增场所'
+            }));
+        });
+    }
+    return sites;
+}
+
+function getQmsSiteScope(site) {
+    const scopeMap = {
+        hq: '软件产品研发、系统集成项目管理、质量策划、客户服务及相关管理活动',
+        sh: '软件实施交付、系统集成现场服务、运维支持及相关质量管理活动',
+        gz: '软件测试验证、技术支持、研发过程支持及相关质量管理活动'
+    };
+    return scopeMap[site.id] || site.scope || '软件开发、系统集成及相关质量管理活动';
+}
+
 function formatDisplayDate(value) {
     if(!value) return '-';
     const parts = String(value).split('-');
@@ -2016,15 +2823,15 @@ function getDomainStandard(domain) {
 
 function getDomainStandardOptions() {
     return [
-        {domain: 'Q', domainName: '质量管理体系', standard: 'GB/T 19001-2016 / ISO 9001:2015'},
-        {domain: 'Q', domainName: '质量管理体系', standard: 'GB/T 19001-2026 / ISO 9001:2025'},
-        {domain: 'Q', domainName: '质量管理体系', standard: 'GB/T 50430'},
-        {domain: 'Q', domainName: '质量管理体系', standard: 'IATF 16949'},
-        {domain: 'Q', domainName: '质量管理体系', standard: 'AS9100'},
-        {domain: 'Q', domainName: '质量管理体系', standard: 'IRIS / ISO 22163'},
-        {domain: 'Q', domainName: '质量管理体系', standard: 'TL 9000'},
-        {domain: 'E', domainName: '环境管理体系', standard: 'GB/T 24001-2015/ISO 14001:2015'},
-        {domain: 'E', domainName: '环境管理体系', standard: 'GB/T 24001-2026/ISO 14001:2026'}
+        {domain: 'Q', domainName: 'QMS', standard: 'GB/T 19001-2016 / ISO 9001:2015'},
+        {domain: 'Q', domainName: 'QMS', standard: 'GB/T 19001-2026 / ISO 9001:2025'},
+        {domain: 'Q', domainName: 'QMS', standard: 'GB/T 50430'},
+        {domain: 'Q', domainName: 'QMS', standard: 'IATF 16949'},
+        {domain: 'Q', domainName: 'QMS', standard: 'AS9100'},
+        {domain: 'Q', domainName: 'QMS', standard: 'IRIS / ISO 22163'},
+        {domain: 'Q', domainName: 'QMS', standard: 'TL 9000'},
+        {domain: 'E', domainName: 'EMS', standard: 'GB/T 24001-2015/ISO 14001:2015'},
+        {domain: 'E', domainName: 'EMS', standard: 'GB/T 24001-2026/ISO 14001:2026'}
     ];
 }
 
@@ -2117,12 +2924,17 @@ function ensureMultiSiteData() {
         multiSiteChangeData.global = {
             addEnabled: false,
             removeEnabled: false,
+            modifyEnabled: false,
             addSites: [],
             removeSiteIds: [],
             removeSiteDomains: {},
+            modifySites: [],
             reason: ''
         };
     }
+    const data = multiSiteChangeData.global;
+    if(typeof data.modifyEnabled === 'undefined') data.modifyEnabled = false;
+    if(!Array.isArray(data.modifySites)) data.modifySites = [];
     return multiSiteChangeData.global;
 }
 
@@ -2142,9 +2954,9 @@ function getSiteDomainCodes(siteId) {
 function getMultiSiteDomains() {
     const selectedDomain = getSelectedChangeDomain();
     const domainMap = {
-        Q: '质量管理体系',
-        E: '环境管理体系',
-        S: '职业健康安全管理体系'
+        Q: 'QMS',
+        E: 'EMS',
+        S: 'OHSMS'
     };
     return selectedDomain ? [{domain: selectedDomain, domainName: domainMap[selectedDomain] || selectedDomain}] : [];
 }
@@ -2161,32 +2973,20 @@ function renderMultiSiteCertificateChanges() {
     const data = ensureMultiSiteData();
     const addRows = renderAddSiteDomainGroups(data);
     const removeRows = getAllCurrentSites().map(renderRemoveSiteOption).join('');
+    const modifyRows = getAllCurrentSites().map(renderModifySiteOption).join('');
     container.innerHTML = '<div class="site-change-card" id="multiSiteGlobal">' +
-        '<div class="change-group-header">' +
-        '<div><div class="text-sm font-semibold text-slate-900">场所增删信息</div></div>' +
-        '<div class="flex flex-wrap gap-2 text-xs">' +
-        '<span class="px-2 py-1 rounded-full bg-green-50 text-green-700 border border-green-200">新增场所 ' + data.addSites.length + '</span>' +
-        '<span class="px-2 py-1 rounded-full bg-red-50 text-red-700 border border-red-200">删除场所 ' + data.removeSiteIds.length + '</span>' +
+        '<div class="site-action-grid">' +
+        renderMultiSiteActionCard('addEnabled', '新增场所', data.addSites.length, 'green', 'fa-plus-circle', data.addEnabled,
+            '<div id="addSites_multiSite">' + addRows + '</div>') +
+        renderMultiSiteActionCard('modifyEnabled', '修改场所', data.modifySites.length, 'blue', 'fa-pen-to-square', data.modifyEnabled,
+            '<div class="text-xs text-slate-500 mb-3">主场所不可修改，其余场所可修改并设置是否发子证。</div><div class="space-y-3" id="modifySites_multiSite">' + modifyRows + '</div>') +
+        renderMultiSiteActionCard('removeEnabled', '删除场所', data.removeSiteIds.length, 'red', 'fa-minus-circle', data.removeEnabled,
+            '<div class="remove-site-grid" id="removeSites_multiSite">' + removeRows + '</div>' +
+            '<div class="mt-3 flex gap-4 text-xs"><button type="button" class="text-blue-600 hover:text-blue-700" onclick="setAllRemoveSites(true)">全选</button><button type="button" class="text-blue-600 hover:text-blue-700" onclick="setAllRemoveSites(false)">取消全选</button></div>') +
         '</div>' +
-        '</div>' +
-        '<div class="site-change-section">' +
-        '<div class="flex flex-wrap gap-4 text-sm">' +
-        '<label class="inline-flex items-center gap-2 cursor-pointer"><input type="checkbox" ' + (data.addEnabled ? 'checked' : '') + ' onchange="toggleMultiSiteAction(\'addEnabled\', this.checked)">新增场所</label>' +
-        '<label class="inline-flex items-center gap-2 cursor-pointer"><input type="checkbox" ' + (data.removeEnabled ? 'checked' : '') + ' onchange="toggleMultiSiteAction(\'removeEnabled\', this.checked)">删除场所</label>' +
-        '</div>' +
-        '</div>' +
-        (data.addEnabled ? '<div class="site-change-section">' +
-        '<div class="font-semibold text-slate-800 text-sm mb-3"><i class="fas fa-plus-circle text-green-500 mr-2"></i>新增场所信息</div>' +
-        '<div id="addSites_multiSite">' + addRows + '</div>' +
-        '</div>' : '') +
-        (data.removeEnabled ? '<div class="site-change-section">' +
-        '<div class="font-semibold text-slate-800 text-sm mb-3"><i class="fas fa-minus-circle text-red-500 mr-2"></i>选择要删除的场所（可多选）</div>' +
-        '<div class="remove-site-grid" id="removeSites_multiSite">' + removeRows + '</div>' +
-        '<div class="mt-3 flex gap-4 text-xs"><button type="button" class="text-blue-600 hover:text-blue-700" onclick="setAllRemoveSites(true)">全选</button><button type="button" class="text-blue-600 hover:text-blue-700" onclick="setAllRemoveSites(false)">取消全选</button></div>' +
-        '</div>' : '') +
-        ((data.addEnabled || data.removeEnabled) ? '<div class="site-change-section">' +
+        ((data.addEnabled || data.removeEnabled || data.modifyEnabled) ? '<div class="site-change-section">' +
         '<label class="block text-sm font-medium text-slate-700 mb-2">变更情况和原因描述 <span class="text-red-500">*</span></label>' +
-        '<textarea id="desc_multiSite" maxlength="500" placeholder="请描述场所新增或删除的情况和原因" oninput="syncMultiSiteReason()">' + escapeHtml(data.reason || '') + '</textarea>' +
+        '<textarea id="desc_multiSite" maxlength="500" placeholder="请描述场所新增、删除或修改的情况和原因" oninput="syncMultiSiteReason()">' + escapeHtml(data.reason || '') + '</textarea>' +
         '</div>' : '') +
         '<div class="site-change-section">' +
         '<div class="font-semibold text-slate-800 text-sm mb-3"><i class="fas fa-paperclip text-blue-500 mr-2"></i>相关证据附件</div>' +
@@ -2195,6 +2995,21 @@ function renderMultiSiteCertificateChanges() {
         '</div>';
     enableEvidenceUpload('multiSite');
     updateEvidenceUI('multiSite');
+}
+
+function renderMultiSiteActionCard(field, title, count, color, icon, enabled, bodyHtml) {
+    const colorClass = {
+        green: 'bg-green-50 text-green-700 border-green-200',
+        blue: 'bg-blue-50 text-blue-700 border-blue-200',
+        red: 'bg-red-50 text-red-700 border-red-200'
+    }[color] || 'bg-slate-50 text-slate-700 border-slate-200';
+    return '<div class="site-action-card ' + (enabled ? 'is-active' : '') + '">' +
+        '<label class="site-action-card-header cursor-pointer">' +
+        '<span class="inline-flex items-center gap-2 font-semibold text-slate-900"><input type="checkbox" ' + (enabled ? 'checked' : '') + ' onchange="toggleMultiSiteAction(\'' + field + '\', this.checked)"><i class="fas ' + icon + '"></i>' + title + '</span>' +
+        '<span class="px-2 py-1 rounded-full border text-xs ' + colorClass + '">' + count + '</span>' +
+        '</label>' +
+        (enabled ? '<div class="site-action-card-body">' + bodyHtml + '</div>' : '') +
+        '</div>';
 }
 
 function renderCurrentSiteTooltip(sites) {
@@ -2248,6 +3063,43 @@ function renderRemoveSiteOption(site) {
         '</div>';
 }
 
+function getModifiedSite(siteId) {
+    const data = ensureMultiSiteData();
+    return (data.modifySites || []).find(function(site) {
+        return site.id === siteId;
+    });
+}
+
+function renderModifySiteOption(site) {
+    const data = ensureMultiSiteData();
+    const isHeadquarters = site.id === 'hq';
+    const modified = getModifiedSite(site.id);
+    const checked = !!modified;
+    const domainNames = getMultiSiteDomains().filter(function(domain) {
+        return (site.domainCodes || []).includes(domain.domain);
+    }).map(function(domain) { return domain.domainName; }).join('、') || '暂无领域';
+    const draft = modified || site;
+    return '<div class="modify-site-option ' + (isHeadquarters ? 'is-disabled' : '') + (checked ? ' is-selected' : '') + '">' +
+        '<label class="flex items-start gap-3 ' + (isHeadquarters ? 'cursor-not-allowed' : 'cursor-pointer') + '">' +
+        '<input type="checkbox" class="mt-1" value="' + escapeHtml(site.id) + '" ' + (checked ? 'checked' : '') + (isHeadquarters ? ' disabled' : '') + ' onchange="syncModifySites()">' +
+        '<div class="min-w-0 flex-1">' +
+        '<div class="font-semibold text-slate-800">' + escapeHtml(site.name) + '</div>' +
+        '<div class="text-xs text-slate-500 mt-1">' + escapeHtml(site.address) + '</div>' +
+        '<div class="text-xs text-blue-700 mt-1">' + escapeHtml(site.scope) + '</div>' +
+        '<div class="text-xs text-slate-500 mt-1">现有领域：' + escapeHtml(domainNames) + '；人数：' + escapeHtml(String(site.people)) + '</div>' +
+        (isHeadquarters ? '<div class="text-xs text-red-500 mt-1">主场所不可修改</div>' : '') +
+        '</div>' +
+        '</label>' +
+        (checked && !isHeadquarters ? '<div class="modify-site-fields">' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">场所名称</label><input type="text" value="' + escapeHtml(draft.name || '') + '" oninput="updateModifiedSiteField(\'' + site.id + '\', \'name\', this.value)"></div>' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">地址</label><input type="text" value="' + escapeHtml(draft.address || '') + '" oninput="updateModifiedSiteField(\'' + site.id + '\', \'address\', this.value)"></div>' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">产品/服务范围</label><input type="text" value="' + escapeHtml(draft.scope || '') + '" oninput="updateModifiedSiteField(\'' + site.id + '\', \'scope\', this.value)"></div>' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">人数</label><input type="number" min="0" value="' + escapeHtml(String(draft.people || 0)) + '" oninput="updateModifiedSiteField(\'' + site.id + '\', \'people\', this.value)"></div>' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">是否发子证</label><select onchange="updateModifiedSiteField(\'' + site.id + '\', \'isSubCertificate\', this.value)"><option value="no" ' + ((draft.isSubCertificate || 'no') === 'no' ? 'selected' : '') + '>否</option><option value="yes" ' + (draft.isSubCertificate === 'yes' ? 'selected' : '') + '>是</option></select></div>' +
+        '</div>' : '') +
+        '</div>';
+}
+
 function renderAddedSiteRow(site) {
     return '<div class="site-row" data-site-row="' + site.id + '">' +
         '<div><label class="block text-xs font-medium text-slate-600 mb-1">场所名称</label><input type="text" value="' + escapeHtml(site.name || '') + '" placeholder="请输入场所名称" oninput="updateMultiSiteField(\'' + site.id + '\', \'name\', this.value)"></div>' +
@@ -2285,7 +3137,10 @@ function toggleMultiSiteAction(field, checked) {
         data.removeSiteIds = [];
         data.removeSiteDomains = {};
     }
-    if(!data.addEnabled && !data.removeEnabled) {
+    if(field === 'modifyEnabled' && !checked) {
+        data.modifySites = [];
+    }
+    if(!data.addEnabled && !data.removeEnabled && !data.modifyEnabled) {
         data.reason = '';
     }
     renderMultiSiteCertificateChanges();
@@ -2304,6 +3159,44 @@ function updateMultiSiteField(siteId, field, value) {
     const site = data.addSites.find(function(entry) { return entry.id === siteId; });
     if(!site) return;
     site[field] = field === 'people' ? Number(value || 0) : value;
+}
+
+function syncModifySites() {
+    const data = ensureMultiSiteData();
+    data.modifyEnabled = true;
+    const checkedIds = Array.from(document.querySelectorAll('#modifySites_multiSite .modify-site-option input[type="checkbox"]:checked:not(:disabled)')).map(function(input) {
+        return input.value;
+    });
+    const currentSites = getAllCurrentSites();
+    data.modifySites = checkedIds.map(function(siteId) {
+        const existing = (data.modifySites || []).find(function(site) { return site.id === siteId; });
+        if(existing) return existing;
+        const original = currentSites.find(function(site) { return site.id === siteId; }) || {};
+        return Object.assign({}, original, {
+            originalName: original.name,
+            originalAddress: original.address,
+            originalScope: original.scope,
+            originalPeople: original.people,
+            originalIsSubCertificate: original.isSubCertificate || 'no',
+            isSubCertificate: original.isSubCertificate || 'no'
+        });
+    });
+    renderMultiSiteCertificateChanges();
+}
+
+function updateModifiedSiteField(siteId, field, value) {
+    const data = ensureMultiSiteData();
+    const site = (data.modifySites || []).find(function(entry) { return entry.id === siteId; });
+    if(!site) return;
+    site[field] = field === 'people' ? Number(value || 0) : value;
+}
+
+function removeModifiedSite(siteId) {
+    const data = ensureMultiSiteData();
+    data.modifySites = (data.modifySites || []).filter(function(site) {
+        return site.id !== siteId;
+    });
+    renderMultiSiteCertificateChanges();
 }
 
 function getDefaultRemoveSiteDomains(site) {
@@ -2352,7 +3245,7 @@ function syncMultiSiteReason() {
 
 function hasMultiSiteChanges() {
     const data = ensureMultiSiteData();
-    return data.addEnabled || data.removeEnabled;
+    return data.addEnabled || data.removeEnabled || data.modifyEnabled;
 }
 
 function validateMultiSiteChanges() {
@@ -2370,9 +3263,16 @@ function validateMultiSiteChanges() {
         showNotification('新增场所需填写场所名称、地址、产品/服务范围并选择领域', 'error');
         return false;
     }
+    const invalidModifySite = data.modifyEnabled && (data.modifySites || []).some(function(site) {
+        return site.id === 'hq' || !String(site.name || '').trim() || !String(site.address || '').trim() || !String(site.scope || '').trim();
+    });
+    if(invalidModifySite) {
+        showNotification('修改场所需填写场所名称、地址、产品/服务范围，且主场所不可修改', 'error');
+        return false;
+    }
     const missingReason = !String(data.reason || '').trim();
     if(missingReason) {
-        showNotification('有场所增删时需填写变更情况和原因描述', 'error');
+        showNotification('有场所新增、删除或修改时需填写变更情况和原因描述', 'error');
         return false;
     }
     const missingAddSite = data.addEnabled && (!data.addSites || data.addSites.length === 0);
@@ -2383,6 +3283,11 @@ function validateMultiSiteChanges() {
     const missingRemoveSite = data.removeEnabled && (!data.removeSiteIds || data.removeSiteIds.length === 0);
     if(missingRemoveSite) {
         showNotification('已选择删除场所时需至少勾选一个现有场所', 'error');
+        return false;
+    }
+    const missingModifySite = data.modifyEnabled && (!data.modifySites || data.modifySites.length === 0);
+    if(missingModifySite) {
+        showNotification('已选择修改场所时需至少勾选一个非主场所', 'error');
         return false;
     }
     return true;
@@ -2648,111 +3553,6 @@ function toggleAgentMode() {
 }
 
 function saveSurvey() {
-    if(certificateRecords.length === 0) {
-        showNotification('请先选择认证领域', 'error');
-        return;
-    }
-    const hasMissingCertificateNo = certificateRecords.some(function(record) {
-        return !String(record.certNo || '').trim();
-    });
-    if(hasMissingCertificateNo) {
-        showNotification('证书编号为必填项', 'error');
-        return;
-    }
-    const domains = new Set(certificateRecords.map(function(record) {
-        return record.domain;
-    }).filter(Boolean));
-    if(domains.size > 1) {
-        showNotification('证书变更申请仅能选择一个认证领域', 'error');
-        return;
-    }
-
-    const needsIssueInfo = hasSelectedCertificateChangeInfo();
-    const issueType = document.getElementById('issueType').value;
-    if(needsIssueInfo && !issueType) {
-        showNotification('请选择签发类型', 'error');
-        return;
-    }
-
-    const representative = document.getElementById('customerRepresentative').value.trim();
-    const declarationDate = document.getElementById('declarationDate').value;
-
-    if(!representative || !declarationDate) {
-        showNotification('请填写客户代表和填写日期', 'error');
-        return;
-    }
-
-    const certificateItemMissingSelection = certificateItems.some(function(item) {
-        if(item.id === 'multiSite' || isUnifiedCertificateItem(item.id)) return false;
-        const checked = document.getElementById('change_' + item.id);
-        const groups = certificateChangeGroups[item.id] || [];
-        return checked && checked.checked && groups.every(function(group) {
-            return !group.certIds || group.certIds.length === 0;
-        });
-    });
-
-    if(certificateItemMissingSelection) {
-        showNotification('已勾选的认证证书信息需至少选择一本证书', 'error');
-        return;
-    }
-
-    const duplicateCertificateSelection = certificateItems.some(function(item) {
-        if(item.id === 'multiSite' || isUnifiedCertificateItem(item.id)) return false;
-        const checked = document.getElementById('change_' + item.id);
-        if(!checked || !checked.checked) return false;
-        const selectedCertIds = (certificateChangeGroups[item.id] || []).flatMap(function(group) {
-            return group.certIds || [];
-        });
-        return new Set(selectedCertIds).size !== selectedCertIds.length;
-    });
-
-    if(duplicateCertificateSelection) {
-        showNotification('同一本证书不能出现在多个变更内容组', 'error');
-        return;
-    }
-
-    const certificateChangedIds = certificateItems.flatMap(function(item) {
-        if(item.id === 'multiSite') return [];
-        const checked = document.getElementById('change_' + item.id);
-        if(!checked || !checked.checked) return [];
-        if(isUnifiedCertificateItem(item.id)) {
-            return (certificateChangeGroups[item.id] || []).map(function(group) {
-                return group.id;
-            });
-        }
-        return (certificateChangeGroups[item.id] || []).filter(function(group) {
-            return group.certIds && group.certIds.length > 0;
-        }).map(function(group) {
-            return group.id;
-        });
-    });
-
-    const otherChangedIds = changeItems.map(function(item) { return item.id; }).filter(function(id) {
-        const checked = document.getElementById('change_' + id);
-        return checked && checked.checked;
-    });
-
-    const changedIds = certificateChangedIds.concat(otherChangedIds);
-
-    const incomplete = changedIds.find(function(id) {
-        const desc = (document.getElementById('desc_' + id) || {}).value || '';
-        const afterField = document.getElementById('after_' + id);
-        const after = (afterField || {}).value || '';
-        const afterZh = (document.getElementById('afterZh_' + id) || {}).value || '';
-        const hasCertificateAfter = !!afterField || !!document.getElementById('afterZh_' + id);
-        const hasAfterValue = document.getElementById('afterZh_' + id) ? afterZh.trim() : after.trim();
-        return !desc.trim() || (hasCertificateAfter && !hasAfterValue);
-    });
-
-    if(incomplete) {
-        showNotification('有变化的项目需填写变更后内容及原因描述', 'error');
-        return;
-    }
-
-    if(!validateMultiSiteChanges()) {
-        return;
-    }
-
     if(currentRole === 'customer') {
         applicationStatus = 'customer_filled';
         showNotification('证书变更申请表已保存，等待客服审核提交', 'success');
