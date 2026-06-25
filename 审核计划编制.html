@@ -917,7 +917,7 @@
             <div class="p-5">
                 <div class="tip-box">
                     <i class="fas fa-info-circle"></i>
-                    <span class="font-medium">初次认证（二阶段）</span>
+                    <span class="font-medium">初次认证</span>
                     <span class="text-slate-300">|</span>
                     <span class="font-medium text-blue-700">QMS</span>
                     <span class="font-medium text-green-700">EMS</span>
@@ -944,15 +944,15 @@
             </div>
             <div class="p-5 space-y-4">
                 <div class="form-field">
-                    <label class="form-label">初次认证</label>
+                    <label class="form-label">初次认证（QMS EMS）</label>
                     <textarea class="form-textarea">评价客户管理体系的实施情况，包括有效性，以确定是否推荐认证；</textarea>
                 </div>
                 <div class="form-field">
-                    <label class="form-label">监督</label>
+                    <label class="form-label">监督（OHSMS）</label>
                     <textarea class="form-textarea">评价客户管理体系的持续符合性和有效性，以确定是否推荐保持认证；</textarea>
                 </div>
                 <div class="form-field">
-                    <label class="form-label">再认证</label>
+                    <label class="form-label">再认证（ISMS）</label>
                     <textarea class="form-textarea">确认客户管理体系作为一个整体的持续符合性和有效性，以及与认证范围的持续相关性和适宜性，以确定是否推荐再认证；</textarea>
                 </div>
                 <div class="form-field">
@@ -1020,15 +1020,25 @@
                         </div>
                     </div>
 
-                    <div class="criteria-item" id="criteria-item-other">
+                    <div class="criteria-item expanded active" id="criteria-item-other">
                         <div class="criteria-header" onclick="toggleCriteriaCheckbox('criteria-other')">
                             <div class="criteria-checkbox-wrapper">
-                                <input type="checkbox" class="criteria-checkbox" id="criteria-other" onchange="toggleCriteriaField('other')">
+                                <input type="checkbox" class="criteria-checkbox" id="criteria-other" checked onchange="toggleCriteriaField('other')">
                             </div>
-                            <span class="criteria-label-text">其他审核准则</span>
+                            <span class="criteria-label-text">其他审核准则<span class="criteria-auto-tag">ISMS领域适用</span></span>
                             <i class="fas fa-chevron-down criteria-expand-icon"></i>
                         </div>
-                        <div class="criteria-content-area">
+                        <div class="criteria-content-area space-y-3">
+                            <div class="form-grid form-grid-2">
+                                <div class="form-field">
+                                    <label class="form-label">SoA版本</label>
+                                    <input type="text" class="form-input criteria-input-field" id="input-other-soa-version" placeholder="请输入SoA版本">
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label">发布日期</label>
+                                    <input type="date" class="form-input criteria-input-field" id="input-other-release-date">
+                                </div>
+                            </div>
                             <input type="text" class="form-input criteria-input-field" id="input-other" placeholder="请输入其他审核准则说明">
                         </div>
                     </div>
@@ -1571,7 +1581,9 @@
                 item.classList.add('expanded', 'active');
             } else {
                 item.classList.remove('expanded', 'active');
-                input.value = '';
+                item.querySelectorAll('input, textarea, select').forEach(control => {
+                    control.value = '';
+                });
             }
         }
 
