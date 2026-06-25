@@ -1103,9 +1103,11 @@
                         <div><label class="block text-xs font-medium text-slate-700 mb-1 required">风险等级</label><select id="riskLevel" class="editable-field" onchange="updateRiskLevel(this.value)"><option value="">请选择</option><option value="1" selected>一级（高风险）</option><option value="2">二级（中风险）</option><option value="3">三级（低风险）</option></select></div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div><label class="block text-xs font-medium text-slate-700 mb-1 required">认证申请资料是否齐全</label><select class="editable-field"><option value="Y" selected>是（Y）</option><option value="N">否（N）</option></select></div>
                         <div id="runningTimeField"><label class="block text-xs font-medium text-slate-700 mb-1 required">管理体系正式运行是否已满3或6个月</label><select class="editable-field"><option value="Y" selected>是（Y）</option><option value="N">否（N）</option></select></div>
+                        <div class="initial-only"><label class="block text-xs font-medium text-slate-700 mb-1">合同签署人</label><input type="text" class="editable-field" value="张经理" placeholder="请输入合同签署人"></div>
+                        <div class="initial-only"><label class="block text-xs font-medium text-slate-700 mb-1">咨询人</label><input type="text" class="editable-field" value="李顾问" placeholder="请输入咨询人"></div>
                     </div>
 
                     <!-- 专业代码选择功能 - 所有评审类型都显示 -->
@@ -1955,11 +1957,13 @@
                 historyRefreshBtn.classList.add('hidden');
                 historyRefreshBtn.classList.remove('inline-flex');
             }
+            document.querySelectorAll('.initial-only').forEach(el => el.classList.add('hidden'));
 
             switch(type) {
                 case 'initial':
                     historyEmpty.querySelector('p').textContent = '初次认证无历史证书信息';
                     if (stage1Apply) stage1Apply.classList.remove('hidden');
+                    document.querySelectorAll('.initial-only').forEach(el => el.classList.remove('hidden'));
                     break;
                 case 'recertification':
                     if (holderChangeTopBtn) holderChangeTopBtn.classList.remove('hidden');
