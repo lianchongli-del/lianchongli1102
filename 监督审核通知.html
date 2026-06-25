@@ -669,6 +669,147 @@
             margin-bottom: 12px;
         }
 
+        .customer-context-card {
+            border: 1px solid #dbeafe;
+            border-radius: 8px;
+            background: #f8fbff;
+            padding: 16px;
+        }
+
+        .customer-context-grid {
+            display: grid;
+            grid-template-columns: minmax(180px, 1.2fr) minmax(180px, 1fr) minmax(240px, 1.5fr);
+            gap: 12px;
+            align-items: end;
+        }
+
+        .customer-context-label {
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .customer-context-value {
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+            padding: 8px 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: #fff;
+            color: #0f172a;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.45;
+            word-break: break-word;
+        }
+
+        .customer-context-value.is-empty {
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .cert-info-table {
+            width: 100%;
+            min-width: 1280px;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 12px;
+        }
+
+        .cert-info-table th,
+        .cert-info-table td {
+            padding: 9px 10px;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+            vertical-align: top;
+            color: #334155;
+            word-break: break-word;
+        }
+
+        .cert-info-table th {
+            background: #f8fafc;
+            color: #0f172a;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .site-action-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 12px;
+        }
+
+        .site-action-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .site-action-card.is-active {
+            border-color: #93c5fd;
+            box-shadow: 0 8px 18px -16px rgba(37, 99, 235, 0.45);
+        }
+
+        .site-action-card-header {
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .site-action-card-body {
+            padding: 12px;
+        }
+
+        .modify-site-option {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #fff;
+            padding: 12px;
+        }
+
+        .modify-site-option.is-disabled {
+            cursor: not-allowed;
+            opacity: 0.68;
+            background: #f8fafc;
+        }
+
+        .modify-site-option.is-selected {
+            border-color: #60a5fa;
+            background: #eff6ff;
+        }
+
+        .modify-site-fields {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 10px;
+            align-items: end;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed #bfdbfe;
+        }
+
+        @media (max-width: 1100px) {
+            .customer-context-grid,
+            .modify-site-fields {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .customer-context-grid,
+            .modify-site-fields {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .site-change-card {
             border: 1px solid #dbeafe;
             border-radius: 8px;
@@ -873,6 +1014,33 @@
                 </div>
 
                 <div id="onlineForm" class="space-y-6">
+                    <div class="customer-context-card">
+                        <div class="customer-context-grid">
+                            <div>
+                                <div class="customer-context-label">客户名称</div>
+                                <div id="selectedCustomerName" class="customer-context-value"></div>
+                            </div>
+                            <div>
+                                <div class="customer-context-label">统一社会信用代码</div>
+                                <div id="selectedCustomerCode" class="customer-context-value"></div>
+                            </div>
+                            <div>
+                                <div class="customer-context-label">注册地址</div>
+                                <div id="selectedCustomerAddress" class="customer-context-value"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-lg p-5 border-slate-200">
+                        <div class="sub-section-title mb-4">
+                            <i class="fas fa-certificate"></i>
+                            变更领域信息
+                            <span class="text-xs font-normal text-slate-500 ml-2">客户和认证领域由审核项目带入，不可在本表中选择或修改。</span>
+                        </div>
+                        <div id="selectedDomainSummary" class="text-sm text-slate-500 mb-3"></div>
+                        <div id="certificateInfoRows"></div>
+                    </div>
+
                     <div class="border rounded-lg p-5 border-slate-200">
                         <div class="sub-section-title mb-4">
                             <i class="fas fa-certificate"></i>
@@ -1280,6 +1448,12 @@ const allCertificates = [
     {certId: 'e2', domain: 'E', domainName: '环境管理体系', certNo: '00123E34570R0S/37000'}
 ];
 
+const lockedCustomerInfo = {
+    name: '北京某某科技有限公司',
+    code: '91110108MA01ABCDE1',
+    address: '北京市海淀区示例路88号'
+};
+
 const certificateItems = [
     {
         id: 'orgName',
@@ -1344,6 +1518,8 @@ const changeItems = [
 
 // ===== 初始化 =====
 document.addEventListener('DOMContentLoaded', function() {
+    renderCustomerSummary();
+    renderCertificateInfoRows();
     renderSurveyTables();
     updateStatusDisplay();
     initEmailEditorSelection();
@@ -1459,6 +1635,68 @@ function renderSurveyTables() {
 
 function renderChangeChecklist() {
     renderSurveyTables();
+}
+
+function renderCustomerSummary() {
+    const fields = [
+        ['selectedCustomerName', lockedCustomerInfo.name],
+        ['selectedCustomerCode', lockedCustomerInfo.code],
+        ['selectedCustomerAddress', lockedCustomerInfo.address]
+    ];
+    fields.forEach(function(pair) {
+        const el = document.getElementById(pair[0]);
+        if(!el) return;
+        el.textContent = pair[1] || '未选择';
+        el.classList.toggle('is-empty', !pair[1]);
+    });
+    const summaryEl = document.getElementById('selectedDomainSummary');
+    if(summaryEl) {
+        const domainNames = getCertificateDomains().map(function(domain) {
+            return domain.domainName;
+        }).join('、');
+        summaryEl.textContent = '已带入认证领域：' + domainNames + '，共 ' + allCertificates.length + ' 份证书。';
+    }
+}
+
+function renderCertificateInfoRows() {
+    const container = document.getElementById('certificateInfoRows');
+    if(!container) return;
+    const grouped = allCertificates.reduce(function(result, cert) {
+        if(!result[cert.domain]) result[cert.domain] = [];
+        result[cert.domain].push(cert);
+        return result;
+    }, {});
+    container.innerHTML = Object.keys(grouped).map(function(domain) {
+        const records = grouped[domain];
+        return '<div class="cert-domain-section mb-3">' +
+            '<div class="cert-domain-header">' +
+            '<span><i class="fas fa-layer-group mr-2 text-blue-500"></i>认证领域：' + escapeHtml(records[0].domainName || domain) + '</span>' +
+            '<span class="text-xs text-slate-500">' + records.length + ' 份证书</span>' +
+            '</div>' +
+            renderCertificateInfoTable(records) +
+            '</div>';
+    }).join('');
+}
+
+function renderCertificateInfoTable(records) {
+    return '<div class="overflow-x-auto">' +
+        '<table class="cert-info-table">' +
+        '<colgroup><col style="width: 170px;"><col style="width: 160px;"><col style="width: 150px;"><col><col style="width: 118px;"><col style="width: 128px;"><col style="width: 118px;"><col style="width: 160px;"></colgroup>' +
+        '<thead><tr><th>证书编号</th><th>认证机构</th><th>认证领域</th><th>认证标准</th><th>首次发证日期</th><th>本周期发证日期</th><th>有效期至</th><th>最近一次现场审核时间</th></tr></thead>' +
+        '<tbody>' + records.map(function(record) {
+            return '<tr>' +
+                '<td class="font-semibold text-slate-900">' + renderCertificateNo(record) + '</td>' +
+                '<td>中国质量认证中心</td>' +
+                '<td>' + escapeHtml(record.domainName || '-') + '</td>' +
+                '<td>' + escapeHtml(getDomainStandard(record.domain)) + '</td>' +
+                '<td>2020/04/18</td>' +
+                '<td>2023/04/18</td>' +
+                '<td>2026/04/17</td>' +
+                '<td>2025/04/12 至 2025/04/14</td>' +
+                '</tr>';
+        }).join('') + '</tbody>' +
+        '</table>' +
+        '</div>';
 }
 
 function isUnifiedCertificateItem(itemId) {
@@ -1613,13 +1851,18 @@ function ensureMultiSiteData() {
         multiSiteChangeData.global = {
             addEnabled: false,
             removeEnabled: false,
+            modifyEnabled: false,
             addSites: [],
             removeSiteIds: [],
             removeSiteDomains: {},
+            modifySites: [],
             reason: ''
         };
     }
-    return multiSiteChangeData.global;
+    const data = multiSiteChangeData.global;
+    if(typeof data.modifyEnabled === 'undefined') data.modifyEnabled = false;
+    if(!Array.isArray(data.modifySites)) data.modifySites = [];
+    return data;
 }
 
 function getSiteDomainCodes(siteId) {
@@ -1656,36 +1899,21 @@ function renderMultiSiteCertificateChanges() {
     if(!container) return;
     const data = ensureMultiSiteData();
     const addRows = renderAddSiteDomainGroups(data);
-    const currentSites = getAllCurrentSites();
-    const removeRows = currentSites.map(renderRemoveSiteOption).join('');
+    const removeRows = getAllCurrentSites().map(renderRemoveSiteOption).join('');
+    const modifyRows = getAllCurrentSites().map(renderModifySiteOption).join('');
     container.innerHTML = '<div class="site-change-card" id="multiSiteGlobal">' +
-        '<div class="change-group-header">' +
-        '<div><div class="text-sm font-semibold text-slate-900">场所增删信息</div></div>' +
-        '<div class="flex flex-wrap gap-2 text-xs">' +
-        '<span class="px-2 py-1 rounded-full bg-green-50 text-green-700 border border-green-200">新增场所 ' + data.addSites.length + '</span>' +
-        '<span class="px-2 py-1 rounded-full bg-red-50 text-red-700 border border-red-200">删除场所 ' + data.removeSiteIds.length + '</span>' +
+        '<div class="site-action-grid">' +
+        renderMultiSiteActionCard('addEnabled', '新增场所', data.addSites.length, 'green', 'fa-plus-circle', data.addEnabled,
+            '<div id="addSites_multiSite">' + addRows + '</div>') +
+        renderMultiSiteActionCard('modifyEnabled', '修改场所', data.modifySites.length, 'blue', 'fa-pen-to-square', data.modifyEnabled,
+            '<div class="text-xs text-slate-500 mb-3">主场所不可修改，其余场所可修改并设置是否发子证。</div><div class="space-y-3" id="modifySites_multiSite">' + modifyRows + '</div>') +
+        renderMultiSiteActionCard('removeEnabled', '删除场所', data.removeSiteIds.length, 'red', 'fa-minus-circle', data.removeEnabled,
+            '<div class="remove-site-grid" id="removeSites_multiSite">' + removeRows + '</div>' +
+            '<div class="mt-3 flex gap-4 text-xs"><button type="button" class="text-blue-600 hover:text-blue-700" onclick="setAllRemoveSites(true)">全选</button><button type="button" class="text-blue-600 hover:text-blue-700" onclick="setAllRemoveSites(false)">取消全选</button></div>') +
         '</div>' +
-        '</div>' +
-        '<div class="site-change-section">' +
-        '<div class="flex flex-wrap gap-4 text-sm">' +
-        '<label class="inline-flex items-center gap-2 cursor-pointer"><input type="checkbox" ' + (data.addEnabled ? 'checked' : '') + ' onchange="toggleMultiSiteAction(\'addEnabled\', this.checked)">新增场所</label>' +
-        '<label class="inline-flex items-center gap-2 cursor-pointer"><input type="checkbox" ' + (data.removeEnabled ? 'checked' : '') + ' onchange="toggleMultiSiteAction(\'removeEnabled\', this.checked)">删除场所</label>' +
-        '</div>' +
-        '</div>' +
-        (data.addEnabled ? '<div class="site-change-section">' +
-        '<div class="flex items-center justify-between gap-3 mb-3">' +
-        '<div class="font-semibold text-slate-800 text-sm"><i class="fas fa-plus-circle text-green-500 mr-2"></i>新增场所信息</div>' +
-        '</div>' +
-        '<div id="addSites_multiSite">' + addRows + '</div>' +
-        '</div>' : '') +
-        (data.removeEnabled ? '<div class="site-change-section">' +
-        '<div class="font-semibold text-slate-800 text-sm mb-3"><i class="fas fa-minus-circle text-red-500 mr-2"></i>选择要删除的场所（可多选）</div>' +
-        '<div class="remove-site-grid" id="removeSites_multiSite">' + removeRows + '</div>' +
-        '<div class="mt-3 flex gap-4 text-xs"><button type="button" class="text-blue-600 hover:text-blue-700" onclick="setAllRemoveSites(true)">全选</button><button type="button" class="text-blue-600 hover:text-blue-700" onclick="setAllRemoveSites(false)">取消全选</button></div>' +
-        '</div>' : '') +
-        ((data.addEnabled || data.removeEnabled) ? '<div class="site-change-section">' +
+        ((data.addEnabled || data.removeEnabled || data.modifyEnabled) ? '<div class="site-change-section">' +
         '<label class="block text-sm font-medium text-slate-700 mb-2">变更情况和原因描述 <span class="text-red-500">*</span></label>' +
-        '<textarea id="desc_multiSite" maxlength="500" placeholder="请描述场所新增或删除的情况和原因" oninput="syncMultiSiteReason()">' + escapeHtml(data.reason || '') + '</textarea>' +
+        '<textarea id="desc_multiSite" maxlength="500" placeholder="请描述场所新增、删除或修改的情况和原因" oninput="syncMultiSiteReason()">' + escapeHtml(data.reason || '') + '</textarea>' +
         '</div>' : '') +
         '<div class="site-change-section">' +
         '<div class="font-semibold text-slate-800 text-sm mb-3"><i class="fas fa-paperclip text-blue-500 mr-2"></i>相关证据附件</div>' +
@@ -1694,6 +1922,21 @@ function renderMultiSiteCertificateChanges() {
         '</div>';
     enableEvidenceUpload('multiSite');
     updateEvidenceUI('multiSite');
+}
+
+function renderMultiSiteActionCard(field, title, count, color, icon, enabled, bodyHtml) {
+    const colorClass = {
+        green: 'bg-green-50 text-green-700 border-green-200',
+        blue: 'bg-blue-50 text-blue-700 border-blue-200',
+        red: 'bg-red-50 text-red-700 border-red-200'
+    }[color] || 'bg-slate-50 text-slate-700 border-slate-200';
+    return '<div class="site-action-card ' + (enabled ? 'is-active' : '') + '">' +
+        '<label class="site-action-card-header cursor-pointer">' +
+        '<span class="inline-flex items-center gap-2 font-semibold text-slate-900"><input type="checkbox" ' + (enabled ? 'checked' : '') + ' onchange="toggleMultiSiteAction(\'' + field + '\', this.checked)"><i class="fas ' + icon + '"></i>' + title + '</span>' +
+        '<span class="px-2 py-1 rounded-full border text-xs ' + colorClass + '">' + count + '</span>' +
+        '</label>' +
+        (enabled ? '<div class="site-action-card-body">' + bodyHtml + '</div>' : '') +
+        '</div>';
 }
 
 function renderCurrentSiteTooltip(sites) {
@@ -1763,6 +2006,42 @@ function renderRemoveSiteOption(site) {
         '</div>';
 }
 
+function getModifiedSite(siteId) {
+    const data = ensureMultiSiteData();
+    return (data.modifySites || []).find(function(site) {
+        return site.id === siteId;
+    });
+}
+
+function renderModifySiteOption(site) {
+    const isHeadquarters = site.id === 'hq';
+    const modified = getModifiedSite(site.id);
+    const checked = !!modified;
+    const domainNames = getMultiSiteDomains().filter(function(domain) {
+        return (site.domainCodes || []).includes(domain.domain);
+    }).map(function(domain) { return domain.domainName; }).join('、') || '暂无领域';
+    const draft = modified || site;
+    return '<div class="modify-site-option ' + (isHeadquarters ? 'is-disabled' : '') + (checked ? ' is-selected' : '') + '">' +
+        '<label class="flex items-start gap-3 ' + (isHeadquarters ? 'cursor-not-allowed' : 'cursor-pointer') + '">' +
+        '<input type="checkbox" class="mt-1" value="' + escapeHtml(site.id) + '" ' + (checked ? 'checked' : '') + (isHeadquarters ? ' disabled' : '') + ' onchange="syncModifySites()">' +
+        '<div class="min-w-0 flex-1">' +
+        '<div class="font-semibold text-slate-800">' + escapeHtml(site.name) + '</div>' +
+        '<div class="text-xs text-slate-500 mt-1">' + escapeHtml(site.address) + '</div>' +
+        '<div class="text-xs text-blue-700 mt-1">' + escapeHtml(site.scope) + '</div>' +
+        '<div class="text-xs text-slate-500 mt-1">现有领域：' + escapeHtml(domainNames) + '；人数：' + escapeHtml(String(site.people)) + '</div>' +
+        (isHeadquarters ? '<div class="text-xs text-red-500 mt-1">主场所不可修改</div>' : '') +
+        '</div>' +
+        '</label>' +
+        (checked && !isHeadquarters ? '<div class="modify-site-fields">' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">场所名称</label><input type="text" value="' + escapeHtml(draft.name || '') + '" oninput="updateModifiedSiteField(\'' + site.id + '\', \'name\', this.value)"></div>' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">地址</label><input type="text" value="' + escapeHtml(draft.address || '') + '" oninput="updateModifiedSiteField(\'' + site.id + '\', \'address\', this.value)"></div>' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">产品/服务范围</label><input type="text" value="' + escapeHtml(draft.scope || '') + '" oninput="updateModifiedSiteField(\'' + site.id + '\', \'scope\', this.value)"></div>' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">人数</label><input type="number" min="0" value="' + escapeHtml(String(draft.people || 0)) + '" oninput="updateModifiedSiteField(\'' + site.id + '\', \'people\', this.value)"></div>' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">是否发子证</label><select onchange="updateModifiedSiteField(\'' + site.id + '\', \'isSubCertificate\', this.value)"><option value="no" ' + ((draft.isSubCertificate || 'no') === 'no' ? 'selected' : '') + '>否</option><option value="yes" ' + (draft.isSubCertificate === 'yes' ? 'selected' : '') + '>是</option></select></div>' +
+        '</div>' : '') +
+        '</div>';
+}
+
 function renderAddedSiteRow(site) {
     return '<div class="site-row" data-site-row="' + site.id + '">' +
         '<div><label class="block text-xs font-medium text-slate-600 mb-1">场所名称</label><input type="text" value="' + escapeHtml(site.name || '') + '" placeholder="请输入场所名称" oninput="updateMultiSiteField(\'' + site.id + '\', \'name\', this.value)"></div>' +
@@ -1799,12 +2078,15 @@ function toggleMultiSiteAction(field, checked) {
         data.removeSiteIds = [];
         data.removeSiteDomains = {};
     }
+    if(field === 'modifyEnabled' && !checked) {
+        data.modifySites = [];
+    }
     if(field === 'removeEnabled' && checked) {
         data.removeSiteIds = (data.removeSiteIds || []).filter(function(siteId) {
             return siteId !== 'hq';
         });
     }
-    if(!data.addEnabled && !data.removeEnabled) {
+    if(!data.addEnabled && !data.removeEnabled && !data.modifyEnabled) {
         data.reason = '';
     }
     renderMultiSiteCertificateChanges();
@@ -1821,6 +2103,36 @@ function removeMultiSiteRow(siteId) {
 function updateMultiSiteField(siteId, field, value) {
     const data = ensureMultiSiteData();
     const site = data.addSites.find(function(entry) { return entry.id === siteId; });
+    if(!site) return;
+    site[field] = field === 'people' ? Number(value || 0) : value;
+}
+
+function syncModifySites() {
+    const data = ensureMultiSiteData();
+    data.modifyEnabled = true;
+    const checkedIds = Array.from(document.querySelectorAll('#modifySites_multiSite .modify-site-option input[type="checkbox"]:checked:not(:disabled)')).map(function(input) {
+        return input.value;
+    });
+    const currentSites = getAllCurrentSites();
+    data.modifySites = checkedIds.map(function(siteId) {
+        const existing = (data.modifySites || []).find(function(site) { return site.id === siteId; });
+        if(existing) return existing;
+        const original = currentSites.find(function(site) { return site.id === siteId; }) || {};
+        return Object.assign({}, original, {
+            originalName: original.name,
+            originalAddress: original.address,
+            originalScope: original.scope,
+            originalPeople: original.people,
+            originalIsSubCertificate: original.isSubCertificate || 'no',
+            isSubCertificate: original.isSubCertificate || 'no'
+        });
+    });
+    renderMultiSiteCertificateChanges();
+}
+
+function updateModifiedSiteField(siteId, field, value) {
+    const data = ensureMultiSiteData();
+    const site = (data.modifySites || []).find(function(entry) { return entry.id === siteId; });
     if(!site) return;
     site[field] = field === 'people' ? Number(value || 0) : value;
 }
@@ -1886,14 +2198,14 @@ function syncMultiSiteReason() {
 
 function hasMultiSiteChanges() {
     const data = ensureMultiSiteData();
-    return data.addEnabled || data.removeEnabled;
+    return data.addEnabled || data.removeEnabled || data.modifyEnabled;
 }
 
 function validateMultiSiteChanges() {
     const checked = document.getElementById('change_multiSite');
     if(!checked || !checked.checked) return true;
     if(!hasMultiSiteChanges()) {
-        showNotification('分支机构/常设多场所需至少新增或删除一个场所', 'error');
+        showNotification('分支机构/常设多场所需至少新增、删除或修改一个场所', 'error');
         return false;
     }
     const data = ensureMultiSiteData();
@@ -1904,9 +2216,16 @@ function validateMultiSiteChanges() {
         showNotification('新增场所需填写场所名称、地址、产品/服务范围并选择领域', 'error');
         return false;
     }
+    const invalidModifySite = data.modifyEnabled && (data.modifySites || []).some(function(site) {
+        return site.id === 'hq' || !String(site.name || '').trim() || !String(site.address || '').trim() || !String(site.scope || '').trim();
+    });
+    if(invalidModifySite) {
+        showNotification('修改场所需填写场所名称、地址、产品/服务范围，且主场所不可修改', 'error');
+        return false;
+    }
     const missingReason = !String(data.reason || '').trim();
     if(missingReason) {
-        showNotification('有场所增删时需填写变更情况和原因描述', 'error');
+        showNotification('有场所新增、删除或修改时需填写变更情况和原因描述', 'error');
         return false;
     }
     const missingAddSite = data.addEnabled && (!data.addSites || data.addSites.length === 0);
@@ -1917,6 +2236,11 @@ function validateMultiSiteChanges() {
     const missingRemoveSite = data.removeEnabled && (!data.removeSiteIds || data.removeSiteIds.length === 0);
     if(missingRemoveSite) {
         showNotification('已选择删除场所时需至少勾选一个现有场所', 'error');
+        return false;
+    }
+    const missingModifySite = data.modifyEnabled && (!data.modifySites || data.modifySites.length === 0);
+    if(missingModifySite) {
+        showNotification('已选择修改场所时需至少勾选一个非主场所', 'error');
         return false;
     }
     const missingRemoveDomain = data.removeEnabled && (data.removeSiteIds || []).some(function(siteId) {
