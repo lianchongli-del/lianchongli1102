@@ -448,6 +448,22 @@
                         <div class="text-xs text-slate-500 mb-1">公司总人数</div>
                         <div class="text-sm font-medium text-slate-800">690</div>
                     </div>
+                    <div>
+                        <div class="text-xs text-slate-500 mb-1">联系人</div>
+                        <div class="text-sm font-medium text-slate-800 truncate">张丽</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-500 mb-1">职务</div>
+                        <div class="text-sm font-medium text-slate-800 truncate">质量管理部经理</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-500 mb-1">电话</div>
+                        <div class="text-sm font-medium text-slate-800">13800138000</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-500 mb-1">Email</div>
+                        <div class="text-sm font-medium text-slate-800 truncate">zhangli@bjmetro.com</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -459,6 +475,9 @@
                     <i class="fas fa-link text-blue-600"></i>
                     <h3 class="font-semibold text-slate-900">关联审核项目</h3>
                 </div>
+                <button type="button" onclick="openProjectModal()" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs font-medium transition-colors">
+                    <i class="fas fa-plus mr-1"></i>新增项目
+                </button>
             </div>
             <div class="p-6">
                 <div class="overflow-x-auto">
@@ -475,7 +494,7 @@
                             </tr>
                         </thead>
                         <tbody id="projectTable">
-                            <tr>
+                            <tr data-project-no="1100-Q1-2026-0002">
                                 <td>1</td>
                                 <td>1100-Q1-2026-0002</td>
                                 <td>初次认证</td>
@@ -483,10 +502,13 @@
                                 <td>二阶段</td>
                                 <td>4</td>
                                 <td>
-                                    <button onclick="viewPlan()" class="text-blue-600 hover:text-blue-800 text-xs font-medium">查看策划方案</button>
+                                    <div class="flex items-center gap-3">
+                                        <button onclick="viewPlan()" class="text-blue-600 hover:text-blue-800 text-xs font-medium">查看策划方案</button>
+                                        <button type="button" onclick="deleteLinkedProject(this)" class="text-rose-600 hover:text-rose-700 text-xs font-medium">删除</button>
+                                    </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr data-project-no="1100-R1-2026-0003">
                                 <td>2</td>
                                 <td>1100-R1-2026-0003</td>
                                 <td>再认证</td>
@@ -494,7 +516,10 @@
                                 <td>二阶段</td>
                                 <td>4</td>
                                 <td>
-                                    <button onclick="viewPlan()" class="text-blue-600 hover:text-blue-800 text-xs font-medium">查看策划方案</button>
+                                    <div class="flex items-center gap-3">
+                                        <button onclick="viewPlan()" class="text-blue-600 hover:text-blue-800 text-xs font-medium">查看策划方案</button>
+                                        <button type="button" onclick="deleteLinkedProject(this)" class="text-rose-600 hover:text-rose-700 text-xs font-medium">删除</button>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
@@ -742,6 +767,57 @@
             <span class="text-sm text-slate-600 mr-auto">已选择 <span id="selectedCount" class="font-semibold text-blue-600">0</span> 人</span>
             <button onclick="closePersonnelModal()" class="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-all shadow-sm">取消</button>
             <button onclick="confirmPersonnelSelection()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md shadow-blue-200 transition-all">确认添加</button>
+        </div>
+    </div>
+
+    <!-- 新增关联项目弹窗 -->
+    <div class="plan-modal" id="projectModal">
+        <div class="bg-white rounded-xl shadow-lg w-[920px] max-w-[95vw] overflow-hidden">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-900">新增关联审核项目</h3>
+                    <p class="text-sm text-slate-500 mt-1">仅可恢复已删除的初始化项目</p>
+                </div>
+                <button type="button" onclick="closeProjectModal()" class="text-slate-400 hover:text-slate-600 transition-colors" aria-label="关闭"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div class="p-6 max-h-[60vh] overflow-y-auto">
+                <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                    <table class="process-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 48px"></th>
+                                <th>项目编号</th>
+                                <th>审核类型</th>
+                                <th>认证领域</th>
+                                <th>审核阶段</th>
+                                <th>场所数量</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-project-no="1100-Q1-2026-0002">
+                                <td><input type="checkbox" class="project-option"></td>
+                                <td>1100-Q1-2026-0002</td>
+                                <td>初次认证</td>
+                                <td>QMS</td>
+                                <td>二阶段</td>
+                                <td>4</td>
+                            </tr>
+                            <tr data-project-no="1100-R1-2026-0003">
+                                <td><input type="checkbox" class="project-option"></td>
+                                <td>1100-R1-2026-0003</td>
+                                <td>再认证</td>
+                                <td>EMS</td>
+                                <td>二阶段</td>
+                                <td>4</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
+                <button type="button" onclick="closeProjectModal()" class="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700">取消</button>
+                <button type="button" onclick="confirmProjectSelection()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">确认添加</button>
+            </div>
         </div>
     </div>
 
@@ -2003,6 +2079,68 @@
 
         function toggleInfoCard(cardId) {
             document.getElementById(cardId)?.classList.toggle('collapsed');
+        }
+
+        function openProjectModal() {
+            const linkedProjectNos = new Set([...document.querySelectorAll('#projectTable tr[data-project-no]')].map(row => row.dataset.projectNo));
+            document.querySelectorAll('#projectModal tr[data-project-no]').forEach(row => {
+                const checkbox = row.querySelector('.project-option');
+                const isLinked = linkedProjectNos.has(row.dataset.projectNo);
+                checkbox.checked = false;
+                checkbox.disabled = isLinked;
+                row.classList.toggle('opacity-50', isLinked);
+            });
+            document.getElementById('projectModal').classList.add('show');
+        }
+
+        function closeProjectModal() {
+            document.getElementById('projectModal').classList.remove('show');
+        }
+
+        function confirmProjectSelection() {
+            const selectedRows = [...document.querySelectorAll('#projectModal .project-option:checked')].map(checkbox => checkbox.closest('tr'));
+            if (!selectedRows.length) {
+                alert('请选择需要关联的审核项目');
+                return;
+            }
+
+            const projectTable = document.getElementById('projectTable');
+            selectedRows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const projectNo = row.dataset.projectNo;
+                projectTable.insertAdjacentHTML('beforeend', `
+                    <tr data-project-no="${projectNo}">
+                        <td></td>
+                        <td>${cells[1].textContent.trim()}</td>
+                        <td>${cells[2].textContent.trim()}</td>
+                        <td>${cells[3].textContent.trim()}</td>
+                        <td>${cells[4].textContent.trim()}</td>
+                        <td>${cells[5].textContent.trim()}</td>
+                        <td>
+                            <div class="flex items-center gap-3">
+                                <button onclick="viewPlan()" class="text-blue-600 hover:text-blue-800 text-xs font-medium">查看策划方案</button>
+                                <button type="button" onclick="deleteLinkedProject(this)" class="text-rose-600 hover:text-rose-700 text-xs font-medium">删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                `);
+            });
+            updateProjectNumbers();
+            closeProjectModal();
+        }
+
+        function deleteLinkedProject(button) {
+            const row = button.closest('tr');
+            if (confirm(`确定删除关联项目“${row.dataset.projectNo}”吗？`)) {
+                row.remove();
+                updateProjectNumbers();
+            }
+        }
+
+        function updateProjectNumbers() {
+            document.querySelectorAll('#projectTable tr[data-project-no]').forEach((row, index) => {
+                row.cells[0].textContent = index + 1;
+            });
         }
         
         function viewPlan() { 
