@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -567,6 +568,41 @@
             </div>
         </div>
 
+        <!-- 客户基础信息 -->
+        <div id="customer-basic-info" class="bg-white border border-slate-200 rounded-lg shadow-sm mb-6 px-6 py-4">
+            <div class="flex items-center gap-6 min-w-0">
+                <div class="flex items-center gap-3 min-w-[300px]">
+                    <i class="fas fa-building text-blue-600"></i>
+                    <div class="min-w-0">
+                        <div class="text-xs text-slate-500 mb-1">客户名称</div>
+                        <a href="我的客户详情.html" target="_blank" class="inline-flex items-center gap-2 text-base font-semibold text-blue-700 hover:text-blue-800">
+                            <span class="truncate">北京市地铁运营有限公司</span>
+                            <i class="fas fa-external-link-alt text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="h-10 w-px bg-slate-200"></div>
+                <div class="grid grid-cols-4 gap-5 flex-1 min-w-0">
+                    <div>
+                        <div class="text-xs text-slate-500 mb-1">客户注册地址</div>
+                        <div class="text-sm font-medium text-slate-800 truncate">北京市西城区北礼士路甲38号</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-500 mb-1">运营地址</div>
+                        <div class="text-sm font-medium text-slate-800 truncate">北京市西城区北礼士路甲38号</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-500 mb-1">统一社会信用代码</div>
+                        <div class="text-sm font-medium text-slate-800 truncate">91110000101123456X</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-500 mb-1">公司总人数</div>
+                        <div class="text-sm font-medium text-slate-800">690</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 关联审核项目 -->
         <div id="manage-audit-projects" class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
             <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
@@ -582,7 +618,6 @@
                             <tr>
                                 <th style="width: 50px">序号</th>
                                 <th>项目编号</th>
-                                <th>客户名称</th>
                                 <th>审核类型</th>
                                 <th>认证领域</th>
                                 <th>审核阶段</th>
@@ -594,7 +629,6 @@
                             <tr>
                                 <td>1</td>
                                 <td>1100-Q1-2026-0002</td>
-                                <td>北京市地铁运营有限公司</td>
                                 <td>初次认证</td>
                                 <td>QMS</td>
                                 <td>一阶段</td>
@@ -606,7 +640,6 @@
                             <tr>
                                 <td>2</td>
                                 <td>1100-E1-2026-0003</td>
-                                <td>北京市地铁运营有限公司</td>
                                 <td>再认证</td>
                                 <td>EMS</td>
                                 <td>一阶段</td>
@@ -621,12 +654,12 @@
             </div>
         </div>
 
-        <!-- 客户特殊要求 -->
-        <div id="customer-special-requirements" class="customer-requirements-card collapsed bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
-            <button type="button" class="w-full bg-slate-50 px-6 py-3 border-b border-slate-200 flex items-center justify-between text-left" onclick="toggleCustomerRequirements()">
+        <!-- 客户备注信息 -->
+        <div id="customer-remark-info" class="customer-requirements-card collapsed bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+            <button type="button" class="w-full bg-slate-50 px-6 py-3 border-b border-slate-200 flex items-center justify-between text-left" onclick="toggleInfoCard('customer-remark-info')">
                 <span class="flex items-center gap-2">
                     <i class="fas fa-clipboard-list text-slate-500"></i>
-                    <span class="font-semibold text-slate-900">客户特殊要求</span>
+                    <span class="font-semibold text-slate-900">客户备注信息</span>
                 </span>
                 <i class="fas fa-chevron-down text-slate-500 customer-requirements-toggle"></i>
             </button>
@@ -634,9 +667,23 @@
                 <div class="readonly-field w-full" style="min-height: 0; height: auto; white-space: pre-wrap; line-height: 1.7; padding-top: 10px; padding-bottom: 10px;">
 1. 审核时间需避开每月最后一周（我们需要进行月度盘点）；
 2. 审核组需至少包含1名具备轨道交通行业经验的审核员，建议上次的审核组长张三来；
-3. 审核报告需同步提供英文版本；
-4. 是否包含住宿以及交通费：是，包含住宿及交通费。
+3. 审核报告需同步提供英文版本。
                 </div>
+            </div>
+        </div>
+
+        <!-- 任务备注信息 -->
+        <div id="task-remark-info" class="customer-requirements-card collapsed bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+            <button type="button" class="w-full bg-slate-50 px-6 py-3 border-b border-slate-200 flex items-center justify-between text-left" onclick="toggleInfoCard('task-remark-info')">
+                <span class="flex items-center gap-2">
+                    <i class="fas fa-note-sticky text-slate-500"></i>
+                    <span class="font-semibold text-slate-900">任务备注信息</span>
+                </span>
+                <i class="fas fa-chevron-down text-slate-500 customer-requirements-toggle"></i>
+            </button>
+            <div class="customer-requirements-body p-4">
+                <label for="taskRemark" class="block text-xs font-medium text-slate-700 mb-1">任务备注信息</label>
+                <textarea id="taskRemark" class="editable-field w-full" rows="4" placeholder="请输入任务备注，可填写审核任务安排、内部提醒或其他补充说明..." style="min-height: 96px; resize: vertical; line-height: 1.6;"></textarea>
             </div>
         </div>
 
@@ -1076,7 +1123,7 @@
         <div class="flex-1 overflow-y-auto p-6">
             <div class="relative mb-4">
                 <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
-                <input type="text" class="editable-field pl-10" placeholder="搜索项目编号、客户名称...">
+                <input type="text" class="editable-field pl-10" placeholder="搜索项目编号...">
             </div>
             
             <div class="overflow-x-auto">
@@ -1085,7 +1132,6 @@
                         <tr>
                             <th style="width: 40px"><input type="checkbox" id="selectAllProjects" onclick="toggleSelectAllProjects(this)" checked></th>
                             <th>项目编号</th>
-                            <th>客户名称</th>
                             <th>审核类型</th>
                             <th>认证领域</th>
                             <th>审核阶段</th>
@@ -1096,7 +1142,6 @@
                         <tr>
                             <td><input type="checkbox" class="project-checkbox" checked></td>
                             <td>1100-S1-2026-0004</td>
-                            <td>北京市地铁运营有限公司</td>
                             <td>初次认证</td>
                             <td>OHSMS</td>
                             <td>一阶段</td>
@@ -1105,7 +1150,6 @@
                         <tr>
                             <td><input type="checkbox" class="project-checkbox" checked></td>
                             <td>1100-R1-2026-0005</td>
-                            <td>北京市地铁运营有限公司</td>
                             <td>再认证</td>
                             <td>ISMS</td>
                             <td>一阶段</td>
@@ -1130,12 +1174,13 @@
                 <button onclick="closePlanModal()" class="text-slate-400 hover:text-slate-600 transition-colors"><i class="fas fa-times text-xl"></i></button>
             </div>
             <div class="flex border-b border-slate-200 bg-white">
-                <button type="button" data-plan-tab="sampling" onclick="switchPlanTab('sampling')" class="plan-tab-btn px-6 py-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600">场所抽样方案及实施情况</button>
+                <button type="button" data-plan-tab="requirements" onclick="switchPlanTab('requirements')" class="plan-tab-btn px-6 py-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600">客户特殊要求</button>
+                <button type="button" data-plan-tab="sampling" onclick="switchPlanTab('sampling')" class="plan-tab-btn px-6 py-3 text-sm font-medium text-slate-600 border-b-2 border-transparent hover:text-slate-800">场所抽样方案及实施情况</button>
                 <button type="button" data-plan-tab="process" onclick="switchPlanTab('process')" class="plan-tab-btn px-6 py-3 text-sm font-medium text-slate-600 border-b-2 border-transparent hover:text-slate-800">管理体系过程清单</button>
                 <button type="button" data-plan-tab="cert" onclick="switchPlanTab('cert')" class="plan-tab-btn px-6 py-3 text-sm font-medium text-slate-600 border-b-2 border-transparent hover:text-slate-800">证书内容确认件</button>
             </div>
             <div class="p-6 max-h-[70vh] overflow-y-auto">
-                <div id="planTab_sampling" class="plan-tab-content">
+                <div id="planTab_sampling" class="plan-tab-content hidden-section">
                     <div class="flex justify-between items-center mb-4"><div class="text-sm font-semibold text-slate-900">场所抽样方案及实施情况</div><div class="bg-amber-50 border border-amber-200 text-amber-700 px-3 py-2 rounded-lg text-xs inline-flex items-center gap-2"><i class="fas fa-info-circle"></i>根据抽样规则，本次策划需要选择全部场所</div></div>
                     <div class="mb-6 border border-slate-200 rounded-xl overflow-hidden"><div class="bg-blue-50 px-4 py-3 border-b border-slate-200 flex items-center gap-2"><span class="inline-flex items-center px-2 py-1 bg-blue-600 text-white text-xs rounded-md font-medium">总部</span><span class="font-medium text-slate-800 text-sm">运营地址（中心职能）</span></div><div class="p-4 space-y-4"><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">计划审核时间</label><div class="readonly-field">2024年04月</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">实际审核时间</label><div class="readonly-field">----年--月</div></div></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">班次信息</label><div class="readonly-field">班次：1，08:00-17:30</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">联系人/电话</label><div class="readonly-field">张先生/13800138000</div></div></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">地址</label><div class="readonly-field">北京市海淀区中关村大街1号</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">涉及产品/过程/活动</label><div class="readonly-field">软件开发、系统集成</div></div></div><div class="grid grid-cols-4 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">专业代码</label><div class="readonly-field">Q01</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">认可机构</label><div class="readonly-field">CNAS</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">人数(含承包方)</label><div class="readonly-field">200</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">有效人数</label><div class="readonly-field">180</div></div></div><div class="border-t border-slate-200 pt-4 mt-4"><label class="block text-xs font-semibold text-slate-700 mb-2">人天计算（AI底座）</label><div class="grid grid-cols-4 gap-4 mb-2"><div><label class="block text-xs text-slate-500 mb-1">审核准备</label><div class="readonly-field">1.5</div></div><div><label class="block text-xs text-slate-500 mb-1">第一阶段</label><div class="readonly-field">1.0</div></div><div><label class="block text-xs text-slate-500 mb-1">二阶段现场</label><div class="readonly-field">4.0</div></div><div><label class="block text-xs text-slate-500 mb-1">调整比例</label><div class="readonly-field">1.0</div></div></div><div class="bg-blue-50 p-3 rounded-lg flex justify-between items-center"><span class="text-sm text-slate-600">调整后</span><span class="text-xl font-bold text-blue-600">6.5</span></div></div><div class="mt-5 border-t border-slate-200 pt-4"><div class="text-sm font-semibold text-slate-900 mb-3">过程审核策划</div><div class="overflow-x-auto"><table class="process-table border border-slate-200 rounded-lg"><thead><tr><th style="width:50px">序号</th><th style="min-width:220px">过程名称</th><th style="min-width:110px">主责部门</th><th style="min-width:130px">相关部门</th><th style="min-width:160px">涉及标准条款</th><th style="min-width:320px">绩效参数或相关文件</th></tr></thead><tbody><tr><td>1</td><td>组织环境识别与相关方需求评审</td><td>最高管理者</td><td>综合管理部、各部门</td><td>QES: 4.1, 4.2</td><td>组织环境分析表、相关方需求清单</td></tr>
 <tr><td>2</td><td>管理体系范围确定</td><td>最高管理者</td><td>质量部、市场部</td><td>QES: 4.3</td><td>管理体系范围说明、认证范围确认记录</td></tr>
@@ -1177,6 +1222,22 @@
 <tr><td>18</td><td>生产现场6S与持续改进</td><td>生产部</td><td>质量部、行政部</td><td>QES: 7.1, 10.3</td><td>6S检查表、改善提案记录</td></tr>
 <tr><td>19</td><td>客户财产和外来物品管理</td><td>仓储部</td><td>生产部、质量部</td><td>QES: 8.5.3</td><td>客户财产清单、外来物品交接记录</td></tr>
 <tr><td>20</td><td>生产绩效监测与数据分析</td><td>生产部</td><td>质量部、计划部</td><td>QES: 9.1, 10.3</td><td>一次合格率统计、生产效率分析表</td></tr></tbody></table></div></div></div></div>
+                </div>
+                <div id="planTab_requirements" class="plan-tab-content hidden-section">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="text-sm font-semibold text-slate-900">客户特殊要求</div>
+                        <div class="bg-slate-50 border border-slate-200 text-slate-600 px-3 py-2 rounded-lg text-xs inline-flex items-center gap-2">
+                            <i class="fas fa-lock"></i>只读展示，内容来源于策划方案
+                        </div>
+                    </div>
+                    <div class="border border-slate-200 rounded-xl overflow-hidden">
+                        <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 font-medium text-slate-800 text-sm">客户特殊要求</div>
+                        <div class="p-4">
+                            <div class="readonly-field w-full" style="min-height: 0; height: auto; white-space: pre-wrap; line-height: 1.7; padding-top: 10px; padding-bottom: 10px;">1. 审核时间需避开每月最后一周（客户需进行月度盘点）；
+2. 审核组需至少包含1名具备轨道交通行业经验的审核员；
+3. 审核报告需同步提供英文版本。</div>
+                        </div>
+                    </div>
                 </div>
                 <div id="planTab_process" class="plan-tab-content hidden-section"><div class="text-sm font-semibold text-slate-900 mb-3">管理体系过程清单</div><div class="overflow-x-auto"><table class="process-table border border-slate-200 rounded-lg"><thead><tr><th style="width:50px">序号</th><th style="min-width:260px">过程名称</th><th style="min-width:120px">主责部门</th><th style="min-width:120px">相关部门</th><th style="min-width:180px">涉及标准条款</th><th style="min-width:420px">绩效参数或相关文件</th><th style="width:110px">是否为专业过程</th></tr></thead><tbody><tr><td>1</td><td>公司环境分析、相关方要求、风险和机遇、体系策划过程</td><td>最高管理者</td><td>各部门</td><td>QES: 4.1, 4.2, 4.3, 4.4, 6.1, 6.2, 6.3</td><td>《管理过程程序》《质量、环境管理体系的有效性监视和测量控制程序》《内部审核控制程序》《风险和机遇控制程序》《环境因素危险源辨识与评价控制程序》《合规性控制程序》《目标指标管理方案控制程序》《不符合、纠正措施控制程序》《应对风险和机遇控制程序》</td><td class='text-center'>否</td></tr>
 <tr><td>2</td><td>风险和机遇的识别和应对措施过程</td><td>质量管理部门</td><td>各部门</td><td>QES: 6.1</td><td>《风险和机遇控制程序》《环境安全体系监测与测量控制程序》</td><td class='text-center'>否</td></tr>
@@ -3158,13 +3219,17 @@
             closeProjectModal();
         }
         
+        function toggleInfoCard(cardId) {
+            document.getElementById(cardId)?.classList.toggle('collapsed');
+        }
+
         function toggleCustomerRequirements() {
-            document.getElementById('customer-special-requirements')?.classList.toggle('collapsed');
+            toggleInfoCard('customer-remark-info');
         }
         
         function viewPlan() { 
             document.getElementById('planModal').classList.add('show'); 
-            switchPlanTab('sampling');
+            switchPlanTab('requirements');
         }
         function switchPlanTab(tabName) {
             document.querySelectorAll('#planModal .plan-tab-content').forEach(section => {
@@ -3232,11 +3297,6 @@
     </script>
 </body>
 </html>
-
-
-
-
-
 
 
 
