@@ -101,7 +101,6 @@
             line-height: 1;
             vertical-align: middle;
         }
-        .tag-qms { background: #dbeafe; color: #1e40af; }
         .tag-ems { background: #dcfce7; color: #166534; }
         .tag-fulltime { background: #f3e8ff; color: #7c3aed; }
         .tag-parttime { background: #fce7f3; color: #be185d; }
@@ -2708,10 +2707,6 @@
                     assignedBadge = `<span class="site-assigned-info"><i class="fas fa-map-marker-alt mr-1"></i>已分配：${person.assignedInfo.siteName}</span>`;
                 }
                 
-                // 使用full-coverage-tag类统一全覆盖标签样式
-                const fullCoverageBadge = person.coverage.isFullCoverage ? 
-                    '<span class="full-coverage-tag"><i class="fas fa-check mr-1"></i>全覆盖</span>' : '';
-                
                 // 外部单位标识
                 const externalBadge = isExternal ? 
                     '<span class="external-badge"><i class="fas fa-lock mr-1"></i>经审批调用</span>' : '';
@@ -2729,10 +2724,8 @@
                             <span class="remaining-days-badge ${daysClass}">${person.remainingDays}天/180天</span>
                             <span class="personnel-tag ${person.type === '专职' ? 'tag-fulltime' : 'tag-parttime'}">${person.type}</span>
                             ${renderLeaderBadge(person)}
-                            ${person.qualification.includes('Q') ? '<span class="personnel-tag tag-qms">QMS</span>' : ''}
                             ${conflictBadge}
                             ${assignedBadge}
-                            ${fullCoverageBadge}
                             ${externalBadge}
                         </div>
                         ${isSelected ? '<i class="fas fa-check-circle text-blue-600 text-xl"></i>' : '<i class="far fa-circle text-slate-300 text-xl"></i>'}
@@ -2793,9 +2786,6 @@
                     assignedBadge = `<span class="site-assigned-info"><i class="fas fa-map-marker-alt mr-1"></i>已在：${person.assignedInfo.siteName} (${person.assignedInfo.dateRange})</span>`;
                 }
                 
-                const fullCoverageBadge = person.coverage.isFullCoverage ? 
-                    '<span class="full-coverage-tag"><i class="fas fa-check mr-1"></i>全覆盖</span>' : '';
-                
                 const externalBadge = isExternal ? 
                     '<span class="external-badge"><i class="fas fa-lock mr-1"></i>经审批调用</span>' : '';
                 
@@ -2811,10 +2801,8 @@
                             <span class="remaining-days-badge ${daysClass}">${person.remainingDays}天/180天</span>
                             <span class="personnel-tag ${person.type === '专职' ? 'tag-fulltime' : 'tag-parttime'}">${person.type}</span>
                             ${renderLeaderBadge(person)}
-                            ${person.qualification.includes('Q') ? '<span class="personnel-tag tag-qms">QMS</span>' : ''}
                             ${conflictBadge}
                             ${assignedBadge}
-                            ${fullCoverageBadge}
                             ${externalBadge}
                         </div>
                         ${isSelected ? '<i class="fas fa-check-circle text-blue-600 text-xl"></i>' : '<i class="far fa-circle text-slate-300 text-xl"></i>'}
