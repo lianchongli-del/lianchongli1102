@@ -1,896 +1,2883 @@
+
+
 <!DOCTYPE html>
+
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CQC审核任务详情</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CQC审核任务详情 - 任务信息整合版</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
-
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            min-width: 0;
-            font-family: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background: #f3f6fb;
-            color: #1e293b;
+        
+        body { 
+            font-family: 'Inter', 'Noto Sans SC', sans-serif; 
+            background-color: #f1f5f9; 
+            min-width: 1400px;
         }
-        .page-shell {
-            width: min(100%, 1540px);
-            margin: 0 auto;
-            padding: 24px;
-        }
-        .page-header {
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
-            overflow: hidden;
-        }
-        .header-main {
-            padding: 22px 24px;
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
-            gap: 20px;
-            align-items: start;
-        }
-        .header-band {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            border-top: 1px solid #e2e8f0;
-            background: #f8fafc;
-        }
-        .top-titlebar {
-            min-height: 64px;
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            padding: 0 24px;
-            margin-bottom: 18px;
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
-        }
-        .top-titlebar .back-btn {
-            height: auto;
-            padding: 0;
-            margin: 0;
-            border: 0;
-            background: transparent;
-            color: #64748b;
-            font-size: 14px;
-        }
-        .top-titlebar .back-btn:hover {
-            color: #1e293b;
-            background: transparent;
-            border-color: transparent;
-        }
-        .title-divider {
-            width: 1px;
-            height: 28px;
-            background: #cbd5e1;
-        }
-        .title-text {
-            font-size: 20px;
-            font-weight: 800;
-            color: #0f172a;
-            white-space: nowrap;
-        }
-        .title-tags {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .header-stat {
-            padding: 14px 18px;
-            border-right: 1px solid #e2e8f0;
-        }
-        .header-stat:last-child { border-right: 0; }
-        .section {
-            margin-top: 18px;
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
-            overflow: hidden;
-        }
-        .section-header {
-            min-height: 56px;
-            padding: 14px 20px;
-            border-bottom: 1px solid #e2e8f0;
-            background: #fbfdff;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 14px;
-            flex-wrap: wrap;
-        }
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            font-size: 15px;
-            font-weight: 700;
-            color: #0f172a;
-        }
-        .section-body { padding: 20px; }
-        .readonly-grid {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 14px;
-        }
-        .readonly-item { min-width: 0; }
-        .readonly-label {
-            margin-bottom: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #64748b;
-        }
-        .readonly-value {
-            min-height: 38px;
-            padding: 9px 11px;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            background: #f8fafc;
-            font-size: 13px;
-            line-height: 1.55;
-            color: #1e293b;
-            word-break: break-word;
-        }
-        .readonly-value.multiline {
-            min-height: 74px;
-            white-space: pre-line;
-        }
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            height: 24px;
-            padding: 0 9px;
-            border-radius: 999px;
-            border: 1px solid;
-            font-size: 12px;
-            font-weight: 700;
-            white-space: nowrap;
-        }
-        .badge-blue { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
-        .badge-green { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
-        .badge-amber { background: #fffbeb; color: #b45309; border-color: #fde68a; }
-        .badge-rose { background: #fff1f2; color: #be123c; border-color: #fecdd3; }
-        .badge-slate { background: #f8fafc; color: #475569; border-color: #cbd5e1; }
-        .table-scroll {
+        
+        .readonly-field { 
+            background: #f8fafc; 
+            border: 1px solid #e2e8f0; 
+            padding: 8px 12px; 
+            border-radius: 6px; 
+            font-size: 13px; 
+            color: #1e293b; 
+            min-height: 36px;
             width: 100%;
-            overflow-x: auto;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
         }
-        table {
-            width: 100%;
-            min-width: 980px;
-            border-collapse: collapse;
-            font-size: 13px;
+        .editable-field { 
+            border: 1px solid #d1d5db; 
+            padding: 8px 12px; 
+            border-radius: 6px; 
+            font-size: 13px; 
+            transition: all 0.2s; 
+            width: 100%; 
         }
-        th {
-            padding: 11px 12px;
-            background: #f8fafc;
-            color: #475569;
-            font-size: 12px;
-            font-weight: 700;
-            text-align: left;
-            border-bottom: 1px solid #e2e8f0;
+        .editable-field:focus { 
+            outline: none; 
+            border-color: #3b82f6; 
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); 
+        }
+        .editable-field:hover { border-color: #93c5fd; }
+        
+        .field-group { 
+            background: #ffffff; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 12px; 
+            padding: 20px; 
+            margin-bottom: 16px; 
+            transition: all 0.2s; 
+        }
+        .field-group:hover { 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); 
+            border-color: #cbd5e1; 
+        }
+        
+        .process-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 13px; 
+        }
+        .process-table th { 
+            background: #f8fafc; 
+            padding: 10px; 
+            text-align: left; 
+            font-weight: 600; 
+            color: #475569; 
+            border-bottom: 1px solid #e2e8f0; 
             white-space: nowrap;
         }
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #edf2f7;
+        .process-table td { 
+            padding: 10px; 
+            border-bottom: 1px solid #f1f5f9; 
             color: #334155;
-            vertical-align: top;
         }
-        tr:last-child td { border-bottom: 0; }
-        .summary-strip {
-            display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-            gap: 12px;
-            margin-bottom: 16px;
+        .process-table tr:hover td { background: #f8fafc; }
+        
+        .toggle-wrapper { display: flex; align-items: center; gap: 12px; }
+        .toggle-switch { position: relative; width: 48px; height: 24px; background: #d1d5db; border-radius: 12px; cursor: pointer; transition: all 0.3s; }
+        .toggle-switch.active { background: #2563eb; }
+        .toggle-slider { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: all 0.3s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .toggle-switch.active .toggle-slider { left: 26px; }
+        
+        .status-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; border: 1px solid; }
+        .badge-draft { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+        .badge-submitted { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+        
+        .personnel-tag { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center;
+            padding: 2px 8px; 
+            border-radius: 4px; 
+            font-size: 11px; 
+            margin-right: 4px; 
+            font-weight: 500; 
+            height: 24px;
+            line-height: 1;
+            vertical-align: middle;
         }
-        .metric {
-            min-width: 0;
-            padding: 13px 14px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            background: #f8fafc;
+        .tag-ems { background: #dcfce7; color: #166534; }
+        .tag-fulltime { background: #f3e8ff; color: #7c3aed; }
+        .tag-parttime { background: #fce7f3; color: #be185d; }
+        
+        .slide-modal { position: fixed; top: 0; right: 0; width: 900px; height: 100vh; background: white; box-shadow: -4px 0 24px rgba(0,0,0,0.08); z-index: 1000; transform: translateX(100%); transition: transform 0.3s ease-in-out; display: flex; flex-direction: column; }
+        .slide-modal.open { transform: translateX(0); }
+        .slide-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.45); z-index: 999; display: none; }
+        .slide-modal-overlay.show { display: block; }
+        
+        .plan-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5); z-index: 2000; display: none; justify-content: center; align-items: flex-start; padding: 40px; overflow-y: auto; }
+        .plan-modal.show { display: flex; }
+        
+        .site-card { border: 1px solid #e2e8f0; border-radius: 12px; background: white; margin-bottom: 16px; transition: all 0.3s; }
+        .site-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-color: #cbd5e1; }
+        
+        .selected-personnel-bar { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; }
+        .selected-personnel-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: white; border: 1px solid #22c55e; border-radius: 6px; font-size: 13px; color: #15803d; margin-right: 8px; margin-bottom: 8px; }
+        
+
+        /* 详情页：已选择人员不可删除 */
+        .selected-personnel-tag .remove-btn { display: none !important; }
+        .remaining-days-badge { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center;
+            padding: 2px 8px; 
+            background: #fff7ed; 
+            border: 1px solid #fed7aa; 
+            color: #ea580c; 
+            border-radius: 12px; 
+            font-size: 12px; 
+            font-weight: 600; 
+            margin-left: 8px; 
+            height: 24px;
+            line-height: 1;
+            vertical-align: middle;
         }
-        .metric-label {
-            font-size: 12px;
-            color: #64748b;
-            margin-bottom: 4px;
+        .remaining-days-badge.warning { background: #fef3c7; border-color: #fcd34d; color: #a16207; }
+        .remaining-days-badge.danger { background: #fef2f2; border-color: #fecaca; color: #dc2626; }
+        
+        .info-tooltip { 
+            position: relative; 
+            display: inline-flex; 
+            cursor: help; 
+            color: #2563eb; 
+            margin-left: 8px; 
         }
-        .metric-value {
-            font-size: 18px;
-            font-weight: 800;
-            color: #0f172a;
-            line-height: 1.25;
+        .tooltip-content { 
+            display: none; 
+            position: absolute; 
+            left: 0; 
+            top: 100%; 
+            margin-top: 8px; 
+            width: 520px; 
+            background: white; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 8px; 
+            padding: 12px; 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); 
+            z-index: 9999; 
+            font-size: 13px; 
+            color: #475569; 
+            font-weight: normal;
+            text-align: left;
         }
-        .mode-card {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            padding: 14px 16px;
-            border: 1px solid #bfdbfe;
-            border-radius: 8px;
-            background: #eff6ff;
-            margin-bottom: 16px;
+        .info-tooltip:hover .tooltip-content { display: block; }
+        
+        th .info-tooltip .tooltip-content {
+            left: auto;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-top: 0;
+            margin-right: 8px;
+            width: 520px;
         }
-        .site-list {
-            display: grid;
-            gap: 16px;
+        
+        .coefficient-formula { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; font-family: 'Courier New', monospace; font-size: 14px; color: #15803d; }
+        
+        .non-venue-stat { display: flex; align-items: center; gap: 8px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 8px 12px; }
+        
+        .site-stats-row { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            background: #f8fafc; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 8px; 
+            padding: 8px 16px;
         }
-        .site-card {
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            overflow: hidden;
-            background: #fff;
+        .site-stat-item-inline { 
+            display: flex; 
+            align-items: center; 
+            gap: 4px; 
+            font-size: 13px; 
         }
-        .site-card-header {
-            padding: 14px 16px;
-            background: #fbfdff;
+        .site-stat-label { color: #64748b; font-weight: 500; }
+        .site-stat-value { font-weight: 700; font-family: monospace; }
+        
+        .cert-system-tag { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center;
+            padding: 2px 8px; 
+            background: #f0fdf4; 
+            border: 1px solid #bbf7d0; 
+            color: #15803d; 
+            border-radius: 6px; 
+            font-size: 12px; 
+            font-weight: 500; 
+            margin-left: 8px; 
+            height: 24px;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        
+        .date-time-group { display: flex; align-items: center; gap: 6px; }
+        .time-period-select { width: 90px; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; background: white; height: 36px; }
+        .time-period-select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        
+        .hidden-section { display: none !important; }
+
+        .customer-requirements-card.collapsed .customer-requirements-body {
+            display: none;
+        }
+
+        .customer-requirements-toggle {
+            transition: transform 0.2s ease;
+        }
+
+        .customer-requirements-card.collapsed .customer-requirements-toggle {
+            transform: rotate(-90deg);
+        }
+        
+        #coverageSummaryPanel {
+            position: sticky;
+            top: -24px;
+            z-index: 20;
+            background: white;
+            padding: 16px 0;
+            margin: -24px 0 16px 0;
             border-bottom: 1px solid #e2e8f0;
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
-            gap: 12px;
-            align-items: start;
         }
-        .site-meta {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 12px;
-            padding: 14px 16px;
-            border-bottom: 1px solid #eef2f7;
-            background: #fff;
+        
+        .system-coverage-bar { display: flex; gap: 16px; margin-bottom: 0; flex-wrap: wrap; }
+        .system-coverage-item { flex: 1; min-width: 280px; background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }
+        .system-coverage-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .system-coverage-title { font-size: 14px; font-weight: 600; color: #334155; }
+        .system-coverage-status { font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 12px; }
+        .status-full { background: #dcfce7; color: #166534; }
+        .status-partial { background: #fef3c7; color: #92400e; }
+        .status-none { background: #f1f5f9; color: #64748b; }
+        .coverage-progress { height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; margin-bottom: 12px; }
+        .coverage-progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+        
+        .code-chip { display: inline-flex; align-items: center; padding: 3px 10px; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12px; color: #94a3b8; margin-right: 6px; margin-bottom: 6px; font-family: 'Courier New', monospace; transition: all 0.2s; }
+        .code-chip.matched { background: #dcfce7; border-color: #86efac; color: #166534; font-weight: 600; }
+        .code-chip.missing { background: #f1f5f9; border-color: #e2e8f0; color: #94a3b8; }
+        
+        .person-card { 
+            cursor: pointer; 
+            margin-bottom: 12px; 
+            padding: 16px; 
+            border: 2px solid #e2e8f0; 
+            border-radius: 12px; 
+            background: white;
+            transition: all 0.2s ease;
         }
-        .site-personnel {
-            padding: 16px;
+        .person-card:hover { 
+            border-color: #93c5fd; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
-        .person-chip {
+        .person-card.selected { 
+            background: #eff6ff; 
+            border-color: #3b82f6; 
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        /* 外部人员样式 - 背景与普通卡片一致 */
+        .person-card.external { 
+            opacity: 1; 
+            border-color: #e2e8f0; 
+            background: white;
+            cursor: pointer; 
+        }
+        .person-card.external:hover { 
+            border-color: #93c5fd; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .person-card.external.selected {
+            background: #eff6ff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        
+        .person-system-coverage { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+        .person-system-tag { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center;
+            gap: 4px; 
+            padding: 2px 8px; 
+            border-radius: 4px; 
+            font-size: 11px; 
+            font-weight: 500; 
+            border: 1px solid; 
+            height: 22px;
+            line-height: 1;
+        }
+        .system-tag-full { background: #f0fdf4; border-color: #86efac; color: #15803d; }
+        .system-tag-partial { background: #fffbeb; border-color: #fcd34d; color: #a16207; }
+        .system-tag-none { background: #f8fafc; border-color: #e2e8f0; color: #94a3b8; }
+        
+        .required-codes-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+        
+        .conflict-badge {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            height: 26px;
-            padding: 0 9px;
+            justify-content: center;
+            padding: 2px 8px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
             border-radius: 6px;
-            background: #fff;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+            height: 24px;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        
+        .site-assigned-info {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 8px;
+            background: #dbeafe;
+            border: 1px solid #93c5fd;
+            color: #1d4ed8;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-left: 8px;
+            height: 24px;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        
+        /* 证书份数标签样式 */
+        .sub-cert-tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 8px;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            color: #c2410c;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-left: 8px;
+            height: 24px;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        
+        /* 全覆盖标签样式统一 */
+        .full-coverage-tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 8px;
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+            color: #15803d;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            height: 24px;
+            line-height: 1;
+            vertical-align: middle;
+            gap: 4px;
+        }
+        
+        /* 外部人员标识 */
+        .external-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 8px;
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            color: #92400e;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+            height: 24px;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        
+        /* 标签容器对齐 */
+        .tag-container {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            height: 24px;
+            vertical-align: middle;
+        }
+
+        /* 组长与已选人员覆盖展示 */
+        .leader-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 2px 8px;
+            background: #eef2ff;
             border: 1px solid #c7d2fe;
             color: #3730a3;
-            font-size: 12px;
+            border-radius: 6px;
+            font-size: 11px;
             font-weight: 700;
-            margin: 0 6px 6px 0;
+            height: 24px;
+            line-height: 1;
+            vertical-align: middle;
         }
-        .role-leader { color: #1d4ed8; font-weight: 700; }
-        .role-member { color: #334155; font-weight: 600; }
-        .role-expert { color: #be123c; font-weight: 700; }
-        .note-box {
-            border: 1px solid #fde68a;
-            background: #fffbeb;
+        .selected-coverage-panel {
+            background: #ffffff;
+            border: 1px solid #bbf7d0;
             border-radius: 8px;
-            padding: 12px 14px;
-            color: #92400e;
-            font-size: 13px;
-            line-height: 1.7;
-        }
-        .stage-two-layout {
-            display: grid;
-            grid-template-columns: minmax(260px, 0.34fr) minmax(0, 1fr);
-            gap: 16px;
-            align-items: start;
-        }
-        .compact-list {
-            display: grid;
-            gap: 10px;
-        }
-        .compact-item {
             padding: 12px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            background: #f8fafc;
         }
-        .back-btn,
-        .link-btn,
-        .modal-close {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            border: 1px solid #d1d5db;
-            background: #fff;
-            color: #334155;
-            border-radius: 6px;
-            font: inherit;
+        .selected-coverage-panel .system-coverage-bar { gap: 12px; }
+        .selected-coverage-panel .system-coverage-item { min-width: 240px; padding: 12px; }
+        .selected-coverage-empty {
+            color: #94a3b8;
             font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .back-btn { height: 34px; padding: 0 12px; margin-bottom: 14px; }
-        .link-btn {
-            height: 30px;
-            padding: 0 10px;
-            color: #1d4ed8;
-            border-color: #bfdbfe;
-            background: #eff6ff;
-            white-space: nowrap;
-        }
-        .back-btn:hover,
-        .modal-close:hover { background: #f8fafc; border-color: #94a3b8; }
-        .link-btn:hover { background: #dbeafe; border-color: #60a5fa; }
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            background: rgba(15, 23, 42, 0.46);
-            z-index: 1000;
-        }
-        .modal-overlay.show { display: flex; }
-        .modal-panel {
-            width: min(1180px, 96vw);
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.24);
-            overflow: hidden;
-        }
-        .modal-header {
-            padding: 16px 20px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-            background: #fbfdff;
-        }
-        .modal-body {
-            padding: 18px;
-            overflow-y: auto;
-            display: grid;
-            gap: 16px;
-        }
-        .modal-close { width: 32px; height: 32px; padding: 0; }
-        .plan-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 12px;
-        }
-        .plan-block {
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            overflow: hidden;
-            background: #fff;
-        }
-        .plan-block-title {
-            padding: 11px 14px;
-            background: #f8fafc;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 13px;
-            font-weight: 800;
-            color: #0f172a;
-        }
-        .plan-block-body { padding: 14px; }
-        .stage-two-overview {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        .hidden-section { display: none !important; }
-        .plan-modal {
-            position: fixed;
-            inset: 0;
-            z-index: 1000;
-            display: none;
-            align-items: flex-start;
-            justify-content: center;
-            padding: 40px 24px;
-            overflow-y: auto;
-            background: rgba(15, 23, 42, 0.48);
-        }
-        .plan-modal.show { display: flex; }
-        .readonly-field {
-            min-height: 36px;
-            padding: 8px 12px;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            background: #f8fafc;
-            color: #1e293b;
-            font-size: 13px;
-            line-height: 1.55;
-            word-break: break-word;
-        }
-        .process-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-        .process-table th {
-            padding: 10px;
-            background: #f8fafc;
-            color: #475569;
-            border-bottom: 1px solid #e2e8f0;
-            font-weight: 700;
-            text-align: left;
-            white-space: nowrap;
-        }
-        .process-table td {
-            padding: 10px;
-            border-bottom: 1px solid #f1f5f9;
-            color: #334155;
-            vertical-align: top;
-        }
-        .inline-readonly {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            min-height: 38px;
-            padding: 9px 11px;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            background: #f8fafc;
-            font-size: 13px;
-            color: #1e293b;
-        }
-        .inline-readonly .readonly-label {
-            margin: 0;
-            white-space: nowrap;
-        }
-        .inline-readonly .inline-value {
-            font-weight: 700;
-            color: #0f172a;
-        }
-        .flex { display: flex; }
-        .flex-wrap { flex-wrap: wrap; }
-        .items-center { align-items: center; }
-        .justify-start { justify-content: flex-start; }
-        .gap-2 { gap: 8px; }
-        .mb-3 { margin-bottom: 12px; }
-        .mb-4 { margin-bottom: 16px; }
-        .mt-1 { margin-top: 4px; }
-        .mt-2 { margin-top: 8px; }
-        .mt-4 { margin-top: 16px; }
-        .text-sm { font-size: 13px; }
-        .text-xs { font-size: 12px; }
-        .text-\[16px\] { font-size: 16px; }
-        .text-\[22px\] { font-size: 22px; }
-        .text-center { text-align: center; }
-        .font-semibold { font-weight: 600; }
-        .font-bold { font-weight: 700; }
-        .font-mono { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
-        .leading-tight { line-height: 1.25; }
-        .leading-7 { line-height: 1.75; }
-        .text-slate-500 { color: #64748b; }
-        .text-slate-700 { color: #334155; }
-        .text-slate-900 { color: #0f172a; }
-        .text-slate-950 { color: #020617; }
-        .text-blue-600 { color: #2563eb; }
-        .text-blue-700 { color: #1d4ed8; }
-        .text-blue-900 { color: #1e3a8a; }
-        .text-amber-500 { color: #f59e0b; }
-        .text-emerald-700 { color: #047857; }
-        .bg-emerald-50 { background: #ecfdf5; }
-        .wide-field { grid-column: 1 / -1; }
-        @media (max-width: 1180px) {
-            .readonly-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .summary-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-            .site-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .stage-two-layout { grid-template-columns: 1fr; }
-            .plan-grid,
-            .stage-two-overview { grid-template-columns: 1fr; }
-        }
-        @media (max-width: 760px) {
-            .page-shell { padding: 14px; }
-            .top-titlebar { align-items: flex-start; flex-direction: column; gap: 10px; padding: 14px 16px; }
-            .title-divider { display: none; }
-            .title-text { font-size: 18px; }
-            .header-main { grid-template-columns: 1fr; padding: 18px; }
-            .header-band { grid-template-columns: 1fr; }
-            .header-stat { border-right: 0; border-bottom: 1px solid #e2e8f0; }
-            .header-stat:last-child { border-bottom: 0; }
-            .readonly-grid,
-            .summary-strip,
-            .site-meta { grid-template-columns: 1fr; }
-            .site-card-header { grid-template-columns: 1fr; }
-            .mode-card { align-items: flex-start; flex-direction: column; }
-            .section-body { padding: 16px; }
-        }
-        @media (min-width: 1024px) {
-            .lg\:justify-end { justify-content: flex-end; }
+            padding: 8px 0;
         }
     </style>
-</head>
+<base target="_blank"/>
+<base target="_blank"/>
+<style>
+    /* TASK_DETAIL_READONLY_PATCH_START */
+    html, body { width:100% !important; min-width:0 !important; max-width:100% !important; overflow-x:hidden !important; }
+    body { background:#f5f7fa !important; color:#1f2937 !important; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",Arial,sans-serif !important; }
+    .task-detail-container { width:100%; max-width:100%; padding:16px; }
+    .task-detail-container > .bg-white, .customer-requirements-card, #audit-team-assignment { border-radius:8px !important; box-shadow:0 1px 2px rgba(15,23,42,.04) !important; }
+    .task-detail-container .bg-slate-50 { background:#fafafa !important; }
+    .detail-mode-tip { display:flex; align-items:center; justify-content:space-between; gap:16px; background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:14px 18px; margin-bottom:16px; box-shadow:0 1px 2px rgba(15,23,42,.04); }
+    .detail-mode-tip-left { display:flex; align-items:center; gap:12px; min-width:0; }
+    .detail-mode-title { font-size:15px; font-weight:700; color:#1e293b; margin-bottom:2px; }
+    .detail-mode-desc { font-size:12px; color:#64748b; line-height:1.5; }
+    .detail-mode-chip { flex:0 0 auto; display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border:1px solid #bfdbfe; background:#eff6ff; color:#2563eb; border-radius:999px; font-size:12px; font-weight:600; }
+    .readonly-field, .editable-field, input, textarea, select { border-radius:8px !important; }
+    .readonly-field, .editable-field[disabled], input[disabled], textarea[disabled], select[disabled], .detail-field { background:#f9fafb !important; border:1px solid #e2e8f0 !important; color:#334155 !important; opacity:1 !important; cursor:default !important; }
+    input[type="checkbox"][disabled] { cursor:default !important; accent-color:#2563eb; }
+    .process-table th { background:#f8fafc !important; color:#64748b !important; font-weight:600 !important; }
+    .process-table td { color:#334155 !important; }
+    .process-table tr:hover td { background:#eff6ff !important; }
+    .toggle-switch { cursor:pointer !important; }
+    #addPersonnelBtn, #editIntegrationBtn, #integrationEditGroup, #stageTwoPrearrangeBody, .detail-hide-action, button[onclick^="openPersonnelModal"], button[onclick^="openSitePersonnelModal"], button[onclick^="openStageTwoPersonnelModal"], button[onclick^="remove"], button[onclick^="saveDraft"], button[onclick^="submitTask"], button[onclick^="selectProjects"] { display:none !important; }
+    .action-col-hidden { display:none !important; }
+    .text-center.py-8 p { color:#64748b !important; }
+    .site-card { border-radius:8px !important; }
+    .selected-personnel-bar { background:#f0fdf4 !important; border-color:#bbf7d0 !important; }
+    .coefficient-formula { background:#f0fdf4 !important; border-color:#bbf7d0 !important; }
+    #venueModeText { min-width:180px; display:inline-block; }
+    .detail-table-note { color:#94a3b8; font-size:12px; margin-top:6px; }
+    /* TASK_DETAIL_READONLY_PATCH_END */
+</style><style>
+/* ===== 合并页外层与第一个HTML保留卡片样式 ===== */
+body {
+    background: #f3f6fb !important;
+    overflow-x: auto !important;
+}
+.page-shell {
+    width: min(100%, 1540px);
+    margin: 0 auto;
+    padding: 24px;
+}
+.top-titlebar {
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 0 24px;
+    margin-bottom: 18px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+}
+.top-titlebar .back-btn {
+    height: auto;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: transparent;
+    color: #64748b;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border-radius: 6px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.top-titlebar .back-btn:hover {
+    color: #1e293b;
+    background: transparent;
+    border-color: transparent;
+}
+.title-divider {
+    width: 1px;
+    height: 28px;
+    background: #cbd5e1;
+}
+.title-text {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f172a;
+    white-space: nowrap;
+}
+.title-tags {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.merged-task-page .task-detail-container {
+    padding: 0 !important;
+}
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 24px;
+    padding: 0 9px;
+    border-radius: 999px;
+    border: 1px solid;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.badge-blue { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+.badge-green { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+.badge-amber { background: #fffbeb; color: #b45309; border-color: #fde68a; }
+.badge-rose { background: #fff1f2; color: #be123c; border-color: #fecdd3; }
+.badge-slate { background: #f8fafc; color: #475569; border-color: #cbd5e1; }
+
+#related-audit-project-section.section {
+    margin: 0 0 24px 0;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    overflow: hidden;
+}
+#related-audit-project-section .section-header {
+    min-height: 56px;
+    padding: 14px 20px;
+    border-bottom: 1px solid #e2e8f0;
+    background: #fbfdff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+#related-audit-project-section .section-title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+}
+#related-audit-project-section .section-body {
+    padding: 20px;
+}
+#related-audit-project-section .table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+}
+#related-audit-project-section table {
+    width: 100%;
+    min-width: 980px;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+#related-audit-project-section th {
+    padding: 11px 12px;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+    white-space: nowrap;
+}
+#related-audit-project-section td {
+    padding: 12px;
+    border-bottom: 1px solid #edf2f7;
+    color: #334155;
+    vertical-align: top;
+}
+#related-audit-project-section tr:last-child td { border-bottom: 0; }
+.link-btn {
+    height: 30px;
+    padding: 0 10px;
+    color: #1d4ed8;
+    border-color: #bfdbfe;
+    background: #eff6ff;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.link-btn:hover { background: #dbeafe; border-color: #60a5fa; }
+
+/* 策划方案弹窗：保留第一个HTML关联审核项目的查看功能 */
+.plan-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 24px;
+    overflow-y: auto;
+    background: rgba(15, 23, 42, 0.48);
+}
+.plan-modal.show { display: flex; }
+.hidden-section { display: none !important; }
+.readonly-field {
+    min-height: 36px;
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #f8fafc;
+    color: #1e293b;
+    font-size: 13px;
+    line-height: 1.55;
+    word-break: break-word;
+}
+.process-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+.process-table th {
+    padding: 10px;
+    background: #f8fafc;
+    color: #475569;
+    border-bottom: 1px solid #e2e8f0;
+    font-weight: 700;
+    text-align: left;
+    white-space: nowrap;
+}
+.process-table td {
+    padding: 10px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+    vertical-align: top;
+}
+
+@media (max-width: 760px) {
+    .page-shell { padding: 14px; }
+    .top-titlebar { align-items: flex-start; flex-direction: column; gap: 10px; padding: 14px 16px; }
+    .title-divider { display: none; }
+    .title-text { font-size: 18px; }
+    #related-audit-project-section .section-body { padding: 16px; }
+}
+</style></head>
 <body>
-    <main class="page-shell">
-        <div class="top-titlebar">
-            <button type="button" class="back-btn" onclick="history.back()"><i class="fas fa-arrow-left"></i>返回列表</button>
-            <div class="title-divider"></div>
-            <div class="title-text">审核任务详情</div>
-            <div class="title-tags">
-                <span class="badge badge-blue">一阶段</span>
-                <span class="badge badge-green">QMS+EMS</span>
-            </div>
-        </div>
-        <header class="page-header">
-            <div class="header-band">
-                <div class="header-stat">
-                    <div class="readonly-label">客户名称</div>
-                    <div class="font-bold text-slate-900">北京市地铁运营有限公司</div>
-                </div>
-                <div class="header-stat">
-                    <div class="readonly-label">计划审核时间</div>
-                    <div class="font-bold text-slate-900">2026-04-15 08:30 至 2026-04-19 17:00</div>
-                </div>
-                <div class="header-stat">
-                    <div class="readonly-label">总审核人天</div>
-                    <div class="font-bold text-blue-700">15.0 人天</div>
-                </div>
-            </div>
-        </header>
-
-        <section class="section">
-            <div class="section-header">
-                <div class="section-title"><i class="fas fa-link text-blue-600"></i>关联审核项目</div>
-            </div>
-            <div class="section-body">
-                <div class="table-scroll">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 56px;">序号</th>
-                                <th>项目编号</th>
-                                <th>客户名称</th>
-                                <th>审核类型</th>
-                                <th>认证领域</th>
-                                <th>审核阶段</th>
-                                <th>场所数量</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td class="font-mono text-xs">1100-Q1-2026-0002</td>
-                                <td class="font-semibold text-slate-900">北京市地铁运营有限公司</td>
-                                <td>初次认证</td>
-                                <td><span class="badge badge-blue">QMS</span></td>
-                                <td>一阶段</td>
-                                <td>4</td>
-                                <td><button type="button" class="link-btn" onclick="openPlanModal('qms')"><i class="fas fa-eye"></i>查看策划方案</button></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td class="font-mono text-xs">1100-E1-2026-0003</td>
-                                <td class="font-semibold text-slate-900">北京市地铁运营有限公司</td>
-                                <td>再认证</td>
-                                <td><span class="badge badge-green">EMS</span></td>
-                                <td>一阶段</td>
-                                <td>4</td>
-                                <td><button type="button" class="link-btn" onclick="openPlanModal('ems')"><i class="fas fa-eye"></i>查看策划方案</button></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <section class="section">
-            <div class="section-header">
-                <div class="section-title"><i class="fas fa-clipboard-list text-amber-500"></i>任务基础信息与客户要求</div>
-            </div>
-            <div class="section-body">
-                <div class="readonly-grid">
-                    <div class="readonly-item">
-                        <div class="inline-readonly">
-                            <span class="readonly-label">是否需要召开审核准备会</span>
-                            <span class="inline-value">是</span>
+<main class="page-shell merged-task-page">
+<div class="top-titlebar">
+<button class="back-btn" onclick="history.back()" type="button"><i class="fas fa-arrow-left"></i>返回列表</button>
+<div class="title-divider"></div>
+<div class="title-text">审核任务详情</div>
+<div class="title-tags">
+<span class="badge badge-blue">一阶段</span>
+<span class="badge badge-green">QMS+EMS</span>
+</div>
+</div>
+<div class="task-detail-container">
+<div class="bg-white border border-slate-200 rounded-lg shadow-sm mb-6 px-6 py-4" id="customer-basic-info">
+<div class="flex items-center gap-6 min-w-0">
+<div class="flex items-center gap-3 min-w-[300px]">
+<i class="fas fa-building text-blue-600"></i>
+<div class="min-w-0">
+<div class="text-xs text-slate-500 mb-1">客户名称</div>
+<a class="inline-flex items-center gap-2 text-base font-semibold text-blue-700 hover:text-blue-800" href="我的客户详情.html" target="_blank">
+<span class="truncate">北京市地铁运营有限公司</span>
+<i class="fas fa-external-link-alt text-xs"></i>
+</a>
+</div>
+</div>
+<div class="h-10 w-px bg-slate-200"></div>
+<div class="grid grid-cols-4 gap-5 flex-1 min-w-0">
+<div>
+<div class="text-xs text-slate-500 mb-1">客户注册地址</div>
+<div class="text-sm font-medium text-slate-800 truncate">北京市西城区北礼士路甲38号</div>
+</div>
+<div>
+<div class="text-xs text-slate-500 mb-1">运营地址</div>
+<div class="text-sm font-medium text-slate-800 truncate">北京市西城区北礼士路甲38号</div>
+</div>
+<div>
+<div class="text-xs text-slate-500 mb-1">统一社会信用代码</div>
+<div class="text-sm font-medium text-slate-800 truncate">91110000101123456X</div>
+</div>
+<div>
+<div class="text-xs text-slate-500 mb-1">公司总人数</div>
+<div class="text-sm font-medium text-slate-800">690</div>
+</div>
+<div>
+<div class="text-xs text-slate-500 mb-1">联系人</div>
+<div class="text-sm font-medium text-slate-800 truncate">张丽</div>
+</div>
+<div>
+<div class="text-xs text-slate-500 mb-1">职务</div>
+<div class="text-sm font-medium text-slate-800 truncate">质量管理部经理</div>
+</div>
+<div>
+<div class="text-xs text-slate-500 mb-1">电话</div>
+<div class="text-sm font-medium text-slate-800">13800138000</div>
+</div>
+<div>
+<div class="text-xs text-slate-500 mb-1">Email</div>
+<div class="text-sm font-medium text-slate-800 truncate">zhangli@bjmetro.com</div>
+</div>
+</div>
+</div>
+</div><section class="section" id="related-audit-project-section">
+<div class="section-header">
+<div class="section-title"><i class="fas fa-link text-blue-600"></i>关联审核项目</div>
+</div>
+<div class="section-body">
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th style="width: 56px;">序号</th>
+<th>项目编号</th>
+<th>审核类型</th>
+<th>认证领域</th>
+<th>审核阶段</th>
+<th>场所数量</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td class="font-mono text-xs">1100-Q1-2026-0002</td>
+<td>初次认证</td>
+<td><span class="badge badge-blue">QMS</span></td>
+<td>一阶段</td>
+<td>4</td>
+<td><button class="link-btn" onclick="openPlanModal('qms')" type="button"><i class="fas fa-eye"></i>查看策划方案</button></td>
+</tr>
+<tr>
+<td>2</td>
+<td class="font-mono text-xs">1100-E1-2026-0003</td>
+<td>再认证</td>
+<td><span class="badge badge-green">EMS</span></td>
+<td>一阶段</td>
+<td>4</td>
+<td><button class="link-btn" onclick="openPlanModal('ems')" type="button"><i class="fas fa-eye"></i>查看策划方案</button></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<div class="customer-requirements-card bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6" id="task-remark-info">
+<button class="w-full bg-slate-50 px-6 py-3 border-b border-slate-200 flex items-center justify-between text-left" onclick="toggleInfoCard('task-remark-info')" type="button">
+<span class="flex items-center gap-2">
+<i class="fas fa-note-sticky text-slate-500"></i>
+<span class="font-semibold text-slate-900">任务备注信息</span>
+</span>
+<i class="fas fa-chevron-down text-slate-500 customer-requirements-toggle"></i>
+</button>
+<div class="customer-requirements-body p-4">
+<label class="block text-xs font-medium text-slate-700 mb-1" for="taskRemark">任务备注信息</label>
+<textarea class="detail-field w-full editable-field" disabled="disabled" id="taskRemark" placeholder="请输入任务备注，可填写审核任务安排、内部提醒或其他补充说明..." readonly="readonly" rows="4" style="min-height: 96px; resize: vertical; line-height: 1.6;">一阶段审核任务已完成审核组配置，审核前完成资料准备、审核时间确认及客户沟通。现场如需调整，由审核组长统一反馈并在确认进度中处理。</textarea>
+</div>
+</div>
+<div class="detail-mode-tip">
+<div class="detail-mode-tip-left">
+<i class="fas fa-eye text-blue-600"></i>
+<div>
+<div class="detail-mode-title">任务信息详情展示</div>
+<div class="detail-mode-desc">通过右侧开关切换查看“统一分配审核组”和“按场所安排审核组”两种详情内容；当前页面为查看页，仅展示已配置结果。</div>
+</div>
+</div>
+<div class="detail-mode-chip"><i class="fas fa-lock"></i> 只读详情</div>
+</div><div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden" id="audit-team-assignment">
+<div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<i class="fas fa-users-cog text-blue-600"></i>
+<h3 class="font-semibold text-slate-900">审核组分配设置</h3>
+</div>
+<div class="toggle-wrapper">
+<span class="text-sm font-medium text-slate-700">按场所安排审核组</span>
+<div class="toggle-switch" id="venueToggle" onclick="toggleVenueMode(this)">
+<div class="toggle-slider"></div>
+</div>
+<span class="text-xs text-slate-500 ml-2" id="venueModeText">已关闭：统一分配审核组</span>
+</div>
+</div>
+<div class="p-6">
+<div class="mb-6" id="assignPersonnelSection">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-sm font-semibold text-slate-800 flex items-center gap-2">
+                            指派审核人员
+                            <span class="info-tooltip">
+<i class="fas fa-exclamation-circle text-blue-500"></i>
+<div class="tooltip-content">
+                                    当前为"统一分配"模式，所有场所共用同一审核组。审核组需至少包含1名<strong>专职审核员</strong>。
+                                </div>
+</span>
+</h3>
+<button class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs font-medium shadow-sm shadow-blue-200 transition-all" id="addPersonnelBtn" onclick="openPersonnelModal()">
+<i class="fas fa-user-plus mr-1"></i>添加人员
+                        </button>
+</div>
+<div class="flex items-center gap-3 mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+<input class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer" id="needPrepMeeting" type="checkbox"/>
+<label class="text-sm font-medium text-slate-700 cursor-pointer select-none" for="needPrepMeeting">是否需要召开审核准备会</label>
+</div>
+<div class="selected-personnel-bar" id="selectedPersonnelDisplay">
+<div class="flex items-center justify-between gap-3 mb-2">
+<div class="text-sm font-medium text-slate-700" id="selectedPersonnelTitle">已选择人员：</div>
+</div>
+<div id="selectedPersonnelTags"></div>
+<div class="selected-coverage-panel mt-3" id="selectedPersonnelCoverage"></div>
+</div>
+<div class="field-group" style="margin-bottom: 16px;">
+<div class="flex items-center gap-2 mb-3 text-sm font-semibold text-slate-900">
+<i class="fas fa-percentage text-purple-500"></i>结合系数计算
                         </div>
-                    </div>
-                    <div class="readonly-item wide-field">
-                        <div class="readonly-label">客户特殊要求</div>
-                        <div class="readonly-value multiline">1. 审核时间需避开每月最后一周，客户需进行月度盘点。
-2. 审核组需至少包含 1 名具备轨道交通行业经验的审核员。
-3. 审核报告需同步提供英文版本。
-4. 费用范围包含住宿及交通费。</div>
-                    </div>
-                </div>
-            </div>
-        </section>
+<div class="grid grid-cols-2 gap-4 items-end">
+<div>
+<span class="block text-xs font-medium text-slate-700 mb-1">审核组结合度：</span>
+<div class="coefficient-formula" id="auditGroupCombination" style="font-size: 13px; min-height: 40px; display: flex; align-items: center;"></div>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-xs font-medium text-slate-700 whitespace-nowrap">管理体系整合程度：</span>
+<div class="readonly-field flex items-center justify-between" id="integrationDisplay" style="width: 100px; text-align: center; font-weight: 600;">90%</div>
+<div class="flex items-center gap-2 hidden" id="integrationEditGroup">
+<input class="editable-field" id="integrationDegreeInput" max="100" min="0" style="width: 80px; text-align: center;" type="number" value="90"/>
+<span class="text-slate-600 font-medium">%</span>
+<button class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs font-medium shadow-sm" onclick="confirmIntegrationDegree()">确认</button>
+<button class="px-3 py-1.5 border border-slate-300 rounded-lg hover:bg-slate-50 text-xs font-medium text-slate-700" onclick="cancelIntegrationEdit()">取消</button>
+</div>
+<button class="px-3 py-1.5 border border-slate-300 rounded-lg hover:bg-slate-50 text-xs font-medium text-slate-700 shadow-sm" id="editIntegrationBtn" onclick="editIntegrationDegree()">
+<i class="fas fa-edit mr-1"></i>修改
+                                </button>
+</div>
+</div>
+</div>
+<div class="field-group">
+<div class="flex items-center gap-2 mb-3 text-sm font-semibold text-slate-900">
+<i class="fas fa-map-marker-alt text-red-500"></i>各场所审核时间计算结果
+                        </div>
+<div class="overflow-x-auto">
+<table class="process-table" id="siteTimeTable">
+<thead>
+<tr>
+<th style="width: 50px; text-align: center;">序号</th>
+<th>场所名称</th>
+<th style="text-align: center;">Q</th>
+<th style="text-align: center;">E</th>
+<th style="text-align: center;">小计</th>
+<th style="text-align: left;">
+                                            结合折扣后
+                                            <span class="info-tooltip">
+<i class="fas fa-exclamation-circle" style="color: #f59e0b;"></i>
+<div class="tooltip-content">
+<div style="font-weight: 600; margin-bottom: 8px; color: #0f172a;">结合折扣后计算公式说明</div>
+                                                    比较"管理体系整合程度"与"审核组结合度"中较小者M，然后根据如下公式计算；<br/>
+<div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 8px; margin-top: 8px; font-family: 'Courier New', monospace; color: #15803d;">
+                                                        (每个领域的审核总人天数相加)×（1-（M-20%）×0.25）
+                                                    </div>
+</div>
+</span>
+</th>
+<th style="text-align: center;">最终人天</th>
+</tr>
+</thead>
+<tbody id="siteTimeTableBody"></tbody>
+</table>
+</div>
+<div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-center">
+<span class="text-sm text-slate-600">各场所合计：</span>
+<span class="text-lg font-bold text-blue-600 mx-2" id="totalManDaysDisplay">0 人天</span>
+</div>
+</div>
+</div>
+<div class="mb-6 hidden-section" id="venueGlobalSettings">
+<div class="grid grid-cols-3 gap-4">
+<div>
+<label class="block text-xs font-medium text-slate-700 mb-1">审核组长 <span class="text-red-500">*</span></label>
+<select class="editable-field" id="leadAuditorSelect" onchange="refreshAllSiteCards()">
+<option value="">请选择审核组长</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-medium text-slate-700 mb-1">计划审核开始时间（总）</label>
+<div class="date-time-group">
+<input class="editable-field" id="auditStartDate" onchange="updateAllSiteDates()" type="date"/>
+<select class="time-period-select" id="auditStartPeriod" onchange="updateAllSiteDates()"></select>
+</div>
+</div>
+<div>
+<label class="block text-xs font-medium text-slate-700 mb-1">计划审核结束时间（总）</label>
+<div class="date-time-group">
+<input class="editable-field" id="auditEndDate" onchange="updateAllSiteDates()" type="date"/>
+<select class="time-period-select" id="auditEndPeriod" onchange="updateAllSiteDates()"></select>
+</div>
+</div>
+</div>
+</div>
+<div class="mb-6" id="nonVenuePersonnelList">
+<div class="grid grid-cols-5 gap-4 mb-4" id="nonVenueGlobalTime">
+<div>
+<label class="block text-xs font-medium text-slate-700 mb-1">计划审核开始时间（总）</label>
+<div class="date-time-group">
+<input class="editable-field" id="nonVenueAuditStartDate" onchange="updateNonVenueAllDates()" type="date"/>
+<select class="time-period-select" id="nonVenueStartPeriod" onchange="updateNonVenueAllDates()"></select>
+</div>
+</div>
+<div>
+<label class="block text-xs font-medium text-slate-700 mb-1">计划审核结束时间（总）</label>
+<div class="date-time-group">
+<input class="editable-field" id="nonVenueAuditEndDate" onchange="updateNonVenueAllDates()" type="date"/>
+<select class="time-period-select" id="nonVenueEndPeriod" onchange="updateNonVenueAllDates()"></select>
+</div>
+</div>
+<div>
+<label class="block text-xs font-medium text-slate-700 mb-1">审核人天数</label>
+<div class="non-venue-stat">
+<span class="text-xs text-slate-600">总计：</span>
+<span class="text-sm font-bold text-blue-600 font-mono" id="nonVenueTotalDays">0.0</span>
+</div>
+</div>
+<div>
+<label class="block text-xs font-medium text-slate-700 mb-1">已分配人天</label>
+<div class="non-venue-stat">
+<span class="text-xs text-slate-600">已分配：</span>
+<span class="text-sm font-bold text-blue-600 font-mono" id="nonVenueAssignedDays">0.0</span>
+</div>
+</div>
+<div>
+<label class="block text-xs font-medium text-slate-700 mb-1">未分配人天</label>
+<div class="non-venue-stat" style="background: #fffbeb; border-color: #fcd34d;">
+<span class="text-xs text-slate-600">未分配：</span>
+<span class="text-sm font-bold text-amber-600 font-mono" id="nonVenueUnassignedDays">0.0</span>
+</div>
+</div>
+</div>
+<div class="text-center py-8 text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-300 mb-4" id="nonVenueEmptyState">
+<i class="fas fa-users text-3xl mb-2"></i>
+<p class="text-sm">暂无分配人员，请点击上方"添加人员"按钮添加</p>
+</div>
+<div class="overflow-x-auto">
+<table class="process-table hidden" id="nonVenueTable">
+<thead>
+<tr>
+<th style="width: 50px">序号</th>
+<th>姓名</th>
+<th style="width: 120px">组内身份</th>
+<th>资格</th>
+<th>注册编号</th>
+<th style="width: 100px">CQC编号</th>
+<th>工作单位</th>
+<th style="width: 80px">专兼职</th>
+<th>联系电话</th>
+<th style="width: 320px">审核日期区间</th>
+<th style="width: 80px">操作</th>
+</tr>
+</thead>
+<tbody id="nonVenuePersonnelBody"></tbody>
+</table>
+</div>
+</div>
+<div class="hidden-section" id="siteCardsContainer"></div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // 全局状态
+        let isVenueMode = false;
+        let currentSiteId = null;
+        let selectedPersonnel = new Set();
+        let globalSelectedPersonnel = [];
+        let assignedPersonnel = [];
+        let sitePersonnelMap = new Map();
+        let stageTwoPrearrangePersonnel = [];
+        let personnelSelectionContext = 'audit';
 
-        <section class="section">
-            <div class="section-header">
-                <div class="section-title"><i class="fas fa-users-cog text-blue-600"></i>审核组分配设置</div>
-                <span class="badge badge-blue"><i class="fas fa-map-marker-alt"></i>按场所安排审核组</span>
-            </div>
-            <div class="section-body">
-                <div class="mode-card">
-                    <div>
-                        <div class="font-bold text-blue-900">当前分配模式：已开启按场所安排审核组</div>
-                        <div class="mt-1 text-sm text-blue-700">已选择审核人员，并分别分配到各审核场所；每个场所下均已有审核人员和审核日期区间。</div>
-                    </div>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="badge badge-blue">组长：武荣刚</span>
-                        <span class="badge badge-green">已选 7 人</span>
-                        <span class="badge badge-amber">未分配 0.0 人天</span>
-                    </div>
-                </div>
+        // 当前登录人所属公司（东北区域/辽宁公司）
+        const currentUserCompany = '辽宁公司';
+        const currentUserRegion = '东北区域';
+        
+        // 预设场所数据
+        const venues = [
+            { id: 'site_0', name: "北京市地铁运营有限公司（总部）", isMain: true, certSystem: "QMS+EMS", certCopies: 1, qmsPeople: 200, emsPeople: 200, address: "北京市西城区北礼士路甲38号", auditDays: 0 },
+            { id: 'site_1', name: "北京市地铁运营有限公司运营一分公司", isMain: false, certSystem: "QMS", certCopies: 1, qmsPeople: 180, emsPeople: null, address: "北京市昌平区东三旗太平庄车辆段", auditDays: 0 },
+            { id: 'site_2', name: "北京市地铁运营有限公司运营二分公司", isMain: false, certSystem: "EMS", certCopies: 0, qmsPeople: null, emsPeople: 160, address: "北京市石景山区杨庄大街18号", auditDays: 0 },
+            { id: 'site_3', name: "北京市地铁运营有限公司运营三分公司", isMain: false, certSystem: "QMS+EMS", certCopies: 1, qmsPeople: 150, emsPeople: 150, address: "北京市海淀区德胜门西大街甲5号", auditDays: 0 }
+        ];
+        
+        // 按认证领域分组的专业代码
+        const requiredProfessionalCodes = {
+            QMS: [
+                { code: "19.01.01", desc: "办公设备的制造" },
+                { code: "19.07.00", desc: "计算机及外部设备的制造" },
+                { code: "19.08.00", desc: "通信设备的制造" }
+            ],
+            EMS: [
+                { code: "19.03.00", desc: "电动机、发电机及变压器的制造" },
+                { code: "19.12.00", desc: "电池和蓄电池的制造" }
+            ]
+        };
+        
+        // 人员资质数据库 - 东北区域下各公司人员
+        const personnelDB = [
+            { 
+                name: "武荣刚", phone: "13661227694", cqc: "CQC21458", 
+                qualification: "Q审核员(2022-N1QMS-6028373)", defaultRole: "组长", 
+                workUnit: "辽宁公司", region: "东北区域", type: "专职", 
+                codes: { QMS: ["19.01.01", "19.07.00", "19.08.00"], EMS: ["19.03.00"] }, 
+                isBusy: false, busyPeriod: null, remainingDays: 88 
+            },
+            { 
+                name: "杨永峰", phone: "13661227694", cqc: "CQC21459", 
+                qualification: "Q审核员(2022-N1QMS-6028374)", defaultRole: "组长", 
+                workUnit: "辽宁公司", region: "东北区域", type: "专职", 
+                codes: { QMS: ["19.01.01", "19.07.00"], EMS: [] }, 
+                isBusy: true, busyPeriod: "2026-04-01 至 2026-04-30", remainingDays: 45 
+            },
+            { 
+                name: "王洪伟", phone: "13800138001", cqc: "CQC10852", 
+                qualification: "Q高级审核员(2021-N1QMS-5012345)", defaultRole: "组员", 
+                workUnit: "黑龙江公司", region: "东北区域", type: "兼职", 
+                codes: { QMS: ["19.07.00", "19.08.00"], EMS: ["19.03.00", "19.12.00"] }, 
+                isBusy: true, busyPeriod: "2026-04-10 至 2026-04-20", remainingDays: 120 
+            },
+            { 
+                name: "周志兴", phone: "13800138002", cqc: "CQC10923", 
+                qualification: "Q审核员(2023-N1QMS-7015678)", defaultRole: "组员", 
+                workUnit: "辽宁公司", region: "东北区域", type: "专职", 
+                codes: { QMS: ["19.01.01", "19.08.00"], EMS: ["19.03.00"] }, 
+                isBusy: false, busyPeriod: null, remainingDays: 92 
+            },
+            { 
+                name: "张爱兵", phone: "13800138003", cqc: "CQC11045", 
+                qualification: "Q/EMS审核员", registrationNumbers: ["2023-N1QMS-5011045", "2023-N1EMS-3011045"], defaultRole: "组员", 
+                workUnit: "黑龙江公司", region: "东北区域", type: "兼职", 
+                codes: { QMS: ["19.01.01", "19.07.00", "19.08.00"], EMS: ["19.03.00", "19.12.00"] }, 
+                isBusy: false, busyPeriod: null, remainingDays: 156 
+            },
+            { 
+                name: "李晨", phone: "13800138006", cqc: "CQC30566", 
+                qualification: "Q审核员，EMS实习审核员", registrationNumbers: ["2024-N1QMS-3223150", "2024-N0EMS-0081266"], defaultRole: "组员", 
+                workUnit: "辽宁公司", region: "东北区域", type: "专职", 
+                codes: { QMS: ["19.01.01", "19.07.00"], EMS: ["19.03.00"] }, 
+                isBusy: false, busyPeriod: null, remainingDays: 112 
+            },            { 
+                name: "刘娜", phone: "13800138007", cqc: "CQC40876", 
+                qualification: "技术专家", registrationNumbers: ["TE-2024-0188"], defaultRole: "技术专家", 
+                workUnit: "辽宁公司", region: "东北区域", type: "兼职", 
+                codes: { QMS: ["19.01.01", "19.07.00"], EMS: ["19.03.00"] }, 
+                isBusy: false, busyPeriod: null, remainingDays: 96 
+            },
+            { 
+                name: "沈书华", phone: "13683124756", cqc: "CQC08017", 
+                qualification: "Q审核员(2024-N1QMS-7012900)", defaultRole: "组员", 
+                workUnit: "吉林公司", region: "东北区域", type: "专职", 
+                codes: { QMS: ["19.08.00"], EMS: ["19.12.00"] }, 
+                isBusy: true, busyPeriod: "2026-04-05 至 2026-04-12", remainingDays: 78 
+            },
+            { 
+                name: "黄起超", phone: "13501320752", cqc: "CQC10634", 
+                qualification: "Q审核员(2024-N1QMS-6015922)", defaultRole: "组员", 
+                workUnit: "辽宁公司", region: "东北区域", type: "专职", 
+                codes: { QMS: ["19.01.01", "19.07.00"], EMS: ["19.03.00", "19.12.00"] }, 
+                isBusy: false, busyPeriod: null, remainingDays: 134 
+            },
+            { 
+                name: "娄杰", phone: "13910311490", cqc: "CQC10601", 
+                qualification: "Q审核员(2024-N1QMS-4014327)", defaultRole: "组员", 
+                workUnit: "吉林公司", region: "东北区域", type: "专职", 
+                codes: { QMS: ["19.01.01", "19.07.00", "19.08.00"], EMS: ["19.12.00"] }, 
+                isBusy: false, busyPeriod: null, remainingDays: 167 
+            }
+        ];
+        
+        function getPersonnelCredentialInfo(person) {
+            const raw = person.qualification || '';
+            let qualification = raw.replace(/（[^）]*）|\([^)]*\)/g, '').trim();
+            qualification = qualification
+                .replace(/Q\/EMS审核员/g, 'QMS正式，EMS正式')
+                .replace(/Q实习审核员/g, 'QMS实习')
+                .replace(/EMS实习审核员/g, 'EMS实习')
+                .replace(/OHSMS实习审核员/g, 'OHSMS实习')
+                .replace(/Q高级审核员/g, 'QMS高级')
+                .replace(/Q审核员/g, 'QMS正式')
+                .replace(/EMS审核员/g, 'EMS正式')
+                .replace(/OHSMS审核员/g, 'OHSMS正式');
+            if (!qualification) qualification = '-';
 
-                <div class="summary-strip">
-                    <div class="metric">
-                        <div class="metric-label">审核组结合度</div>
-                        <div class="metric-value">62%</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-label">管理体系整合程度</div>
-                        <div class="metric-value">90%</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-label">结合折扣后总人天</div>
-                        <div class="metric-value">15.0</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-label">覆盖体系</div>
-                        <div class="metric-value text-[16px]">QMS / EMS</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-label">专业覆盖</div>
-                        <div class="metric-value text-[16px]">19.01 / 19.07 / 19.08 / 19.12</div>
-                    </div>
-                </div>
+            const explicitRegs = person.registrationNumbers || person.registrationNo || person.registration || '';
+            let regs = Array.isArray(explicitRegs) ? explicitRegs : String(explicitRegs).split(/[，,]/).filter(Boolean);
+            const rawRegs = [...raw.matchAll(/\(([^)]*)\)/g)].map(match => match[1]).filter(Boolean);
+            regs = regs.length ? regs : rawRegs;
+            const registrationNumbers = regs.map(reg => String(reg).trim()).filter(Boolean).join('，') || '-';
+            return { qualification, registrationNumbers };
+        }
 
-                <div class="readonly-label">已选择人员</div>
-                <div class="mb-4">
-                    <span class="person-chip"><i class="fas fa-user-tie"></i>武荣刚 · 组长</span>
-                    <span class="person-chip">王洪伟 · 组员</span>
-                    <span class="person-chip">周志兴 · 组员</span>
-                    <span class="person-chip">张爱兵 · 组员</span>
-                    <span class="person-chip">李晨 · 组员</span>
-                    <span class="person-chip">刘娜 · 技术专家</span>
-                    <span class="person-chip">黄起超 · 组员</span>
-                </div>
+        function formatQualification(person) {
+            return getPersonnelCredentialInfo(person).qualification;
+        }
 
-                <div class="table-scroll mb-4">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 56px;">序号</th>
-                                <th>场所名称</th>
-                                <th class="text-center">Q</th>
-                                <th class="text-center">E</th>
-                                <th class="text-center">小计</th>
-                                <th>结合折扣后</th>
-                                <th class="text-center">最终人天</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>北京市地铁运营有限公司（总部）</td>
-                                <td class="text-center">2.5</td>
-                                <td class="text-center">2.0</td>
-                                <td class="text-center">4.5</td>
-                                <td>× 85%</td>
-                                <td class="text-center font-bold text-blue-700">4.0</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>北京市地铁运营有限公司运营一分公司</td>
-                                <td class="text-center">2.5</td>
-                                <td class="text-center">-</td>
-                                <td class="text-center">2.5</td>
-                                <td>× 100%</td>
-                                <td class="text-center font-bold text-blue-700">2.5</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>北京市地铁运营有限公司运营二分公司</td>
-                                <td class="text-center">-</td>
-                                <td class="text-center">2.0</td>
-                                <td class="text-center">2.0</td>
-                                <td>× 100%</td>
-                                <td class="text-center font-bold text-blue-700">2.0</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>北京市地铁运营有限公司运营三分公司</td>
-                                <td class="text-center">2.0</td>
-                                <td class="text-center">2.0</td>
-                                <td class="text-center">4.0</td>
-                                <td>× 85%</td>
-                                <td class="text-center font-bold text-blue-700">3.5</td>
-                            </tr>
-                            <tr class="bg-emerald-50 font-bold">
-                                <td>合计</td>
-                                <td>总计</td>
-                                <td class="text-center">-</td>
-                                <td class="text-center">-</td>
-                                <td class="text-center">13.0</td>
-                                <td>-</td>
-                                <td class="text-center text-emerald-700">12.0</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+        function formatRegistration(person) {
+            return getPersonnelCredentialInfo(person).registrationNumbers;
+        }
 
-                <div class="site-list">
-                    <article class="site-card">
-                        <div class="site-card-header">
-                            <div class="flex flex-wrap items-center gap-2">
-                                <span class="badge badge-green">总部</span>
-                                <h3 class="font-bold text-slate-900">北京市地铁运营有限公司（总部）</h3>
-                                <span class="badge badge-blue">QMS+EMS</span>
-                                <span class="badge badge-slate">证书 1 份</span>
+        function isTechnicalExpert(person) {
+            return person.role === '技术专家' || person.defaultRole === '技术专家' || formatQualification(person).includes('技术专家');
+        }
+
+        function normalizeSingleLeader(list = []) {
+            let hasLeader = false;
+            list.forEach(person => {
+                if (isTechnicalExpert(person)) {
+                    person.role = '技术专家';
+                    return;
+                }
+                if (person.role === '组长') {
+                    if (hasLeader) person.role = '组员';
+                    else hasLeader = true;
+                }
+            });
+        }
+
+        function hasOtherLeader(peers = [], person) {
+            return peers.some(item => item.cqc !== person.cqc && item.role === '组长');
+        }
+
+        function renderRoleSelect(person, onchange, minWidth = '80px', peers = []) {
+            if (isTechnicalExpert(person)) {
+                person.role = '技术专家';
+                return `<select class="editable-field py-1" style="min-width: ${minWidth};" disabled><option value="技术专家" selected>技术专家</option></select>`;
+            }
+            const leaderDisabled = person.role !== '组长' && hasOtherLeader(peers, person) ? 'disabled' : '';
+            return `
+                        <select class="editable-field py-1" style="min-width: ${minWidth};" onchange="${onchange}">
+                            <option value="组长" ${person.role === '组长' ? 'selected' : ''} ${leaderDisabled}>组长</option>
+                            <option value="分组长" ${person.role === '分组长' ? 'selected' : ''}>分组长</option>
+                            <option value="组员" ${person.role === '组员' || !person.role || person.role === '技术专家' ? 'selected' : ''}>组员</option>
+                        </select>`;
+        }
+
+        function getLeadAuditorCqc() {
+            return document.getElementById('leadAuditorSelect')?.value || '';
+        }
+
+        function renderSiteRoleSelect(person, onchange, minWidth = '80px') {
+            if (isTechnicalExpert(person)) {
+                person.role = '技术专家';
+                return `<select class="editable-field py-1" style="min-width: ${minWidth};" disabled><option value="技术专家" selected>技术专家</option></select>`;
+            }
+            if (person.cqc === getLeadAuditorCqc()) {
+                person.role = '组长';
+                return `<select class="editable-field py-1" style="min-width: ${minWidth};" disabled><option value="组长" selected>组长</option></select>`;
+            }
+            if (!['分组长', '组员'].includes(person.role)) person.role = '组员';
+            return `
+                        <select class="editable-field py-1" style="min-width: ${minWidth};" onchange="${onchange}">
+                            <option value="分组长" ${person.role === '分组长' ? 'selected' : ''}>分组长</option>
+                            <option value="组员" ${person.role === '组员' || !person.role ? 'selected' : ''}>组员</option>
+                        </select>`;
+        }
+
+        function renderNonVenueRoleSelect(person, onchange, minWidth = '80px', peers = []) {
+            if (isTechnicalExpert(person)) {
+                person.role = '技术专家';
+                return `<select class="editable-field py-1" style="min-width: ${minWidth};" disabled><option value="技术专家" selected>技术专家</option></select>`;
+            }
+            if (!['组长', '组员'].includes(person.role)) person.role = '组员';
+            const leaderDisabled = person.role !== '组长' && hasOtherLeader(peers, person) ? 'disabled' : '';
+            return `
+                        <select class="editable-field py-1" style="min-width: ${minWidth};" onchange="${onchange}">
+                            <option value="组长" ${person.role === '组长' ? 'selected' : ''} ${leaderDisabled}>组长</option>
+                            <option value="组员" ${person.role === '组员' || !person.role ? 'selected' : ''}>组员</option>
+                        </select>`;
+        }
+
+        function refreshAllSiteCards() {
+            sitePersonnelMap.forEach((_, siteId) => refreshSiteCard(siteId));
+            updateLeadAuditorOptions();
+        }
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSiteTimeTable();
+            initSiteCards();
+            updateLeadAuditorOptions();
+            updateSelectedPersonnelDisplay();
+            updateAuditGroupCombination();
+            updateNonVenueStats();
+            initTimeSelects();
+        });
+        
+        // 生成15分钟间隔时间选项
+        function generateTimeOptions(selectedValue, isStart) {
+            const defaultVal = isStart ? '08:00' : '17:00';
+            const val = selectedValue || defaultVal;
+            let options = '';
+            for (let h = 8; h <= 17; h++) {
+                for (let m = 0; m < 60; m += 15) {
+                    const time = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+                    const selected = time === val ? 'selected' : '';
+                    options += `<option value="${time}" ${selected}>${time}</option>`;
+                }
+            }
+            return options;
+        }
+                // 初始化静态时间选择器
+        function initTimeSelects() {
+            const startIds = ['auditStartPeriod', 'nonVenueStartPeriod', 'stageTwoStartPeriod'];
+            const endIds = ['auditEndPeriod', 'nonVenueEndPeriod', 'stageTwoEndPeriod'];
+            
+            startIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = generateTimeOptions(el.value, true);
+            });
+            
+            endIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = generateTimeOptions(el.value, false);
+            });
+        }
+        
+        // 将时间字符串解析为分钟数
+        function parseTimeToMinutes(timeStr) {
+            if (!timeStr || timeStr === '0.5') return 8 * 60; // 兼容旧值，默认08:00
+            const [h, m] = timeStr.split(':').map(Number);
+            return h * 60 + m;
+        }
+        
+        // 计算人员在各体系下的覆盖情况
+        function getSystemCoverage(personCodes) {
+            const result = {};
+            let totalMatched = 0;
+            let totalRequired = 0;
+            
+            for (const [system, codes] of Object.entries(requiredProfessionalCodes)) {
+                const requiredSet = new Set(codes.map(c => c.code));
+                const personSet = new Set(personCodes[system] || []);
+                const matched = [];
+                const missing = [];
+                
+                requiredSet.forEach(code => {
+                    if (personSet.has(code)) matched.push(code);
+                    else missing.push(code);
+                });
+                
+                totalMatched += matched.length;
+                totalRequired += requiredSet.size;
+                
+                if (matched.length === 0) {
+                    result[system] = { status: 'none', matched: 0, total: requiredSet.size, matchedCodes: matched, missingCodes: missing };
+                } else if (missing.length === 0) {
+                    result[system] = { status: 'full', matched: matched.length, total: requiredSet.size, matchedCodes: matched, missingCodes: missing };
+                } else {
+                    result[system] = { status: 'partial', matched: matched.length, total: requiredSet.size, matchedCodes: matched, missingCodes: missing };
+                }
+            }
+            
+            result.totalMatched = totalMatched;
+            result.totalRequired = totalRequired;
+            result.isFullCoverage = totalMatched === totalRequired && totalRequired > 0;
+            
+            return result;
+        }
+        
+        // 根据人员列表计算体系覆盖情况
+        function getCoverageSummaryForPeople(people = []) {
+            const summary = {};
+            const selectedPeople = (people || []).filter(Boolean);
+            
+            for (const [system, codes] of Object.entries(requiredProfessionalCodes)) {
+                const requiredSet = new Set(codes.map(c => c.code));
+                const requiredList = codes;
+                const unionCodes = new Set();
+                
+                selectedPeople.forEach(person => {
+                    ((person.codes && person.codes[system]) || []).forEach(code => unionCodes.add(code));
+                });
+                
+                const matched = [];
+                const missing = [];
+                requiredSet.forEach(code => {
+                    if (unionCodes.has(code)) matched.push(code);
+                    else missing.push(code);
+                });
+                
+                const percentage = requiredSet.size > 0 ? Math.round((matched.length / requiredSet.size) * 100) : 0;
+                
+                summary[system] = {
+                    status: matched.length === 0 ? 'none' : (missing.length === 0 ? 'full' : 'partial'),
+                    percentage,
+                    matched: matched.length,
+                    total: requiredSet.size,
+                    matchedCodes: matched,
+                    missingCodes: missing,
+                    allCodes: requiredList
+                };
+            }
+            return summary;
+        }
+
+        // 计算人员选择弹窗中已选人员的汇总覆盖情况
+        function getSelectedCoverageSummary() {
+            const selectedPeople = Array.from(selectedPersonnel).map(cqc => personnelDB.find(p => p.cqc === cqc)).filter(p => p);
+            return getCoverageSummaryForPeople(selectedPeople);
+        }
+        
+        // 渲染覆盖情况汇总面板
+        function renderCoverageSummary() {
+            const container = document.getElementById('systemCoverageContent');
+            const summary = getSelectedCoverageSummary();
+            
+            let html = '';
+            
+            for (const [system, data] of Object.entries(summary)) {
+                if (data.total === 0) continue;
+                
+                const statusClass = data.status === 'full' ? 'status-full' : data.status === 'partial' ? 'status-partial' : 'status-none';
+                const statusText = data.status === 'full' ? '全覆盖' : data.status === 'partial' ? `部分覆盖(${data.matched}/${data.total})` : '未覆盖';
+                const barColor = data.status === 'full' ? 'bg-green-500' : data.status === 'partial' ? 'bg-amber-400' : 'bg-slate-300';
+                
+                const codesHtml = data.allCodes.map(item => {
+                    const isMatched = data.matchedCodes.includes(item.code);
+                    const chipClass = isMatched ? 'matched' : 'missing';
+                    return `<span class="code-chip ${chipClass}" title="${item.desc}">${item.code}</span>`;
+                }).join('');
+                
+                html += `
+                    <div class="system-coverage-item">
+                        <div class="system-coverage-header">
+                            <div class="flex items-center gap-2">
+                                <span class="system-coverage-title">${system} 体系</span>
+                                <span class="text-xs text-slate-500">需覆盖 ${data.total} 个代码</span>
                             </div>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="badge badge-blue">计划 4.0 人天</span>
-                                <span class="badge badge-green">已分配 4.0</span>
+                            <span class="system-coverage-status ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="coverage-progress">
+                            <div class="coverage-progress-fill ${barColor}" style="width: ${data.percentage}%"></div>
+                        </div>
+                        <div class="required-codes-list">
+                            ${codesHtml}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+        
+
+        function renderLeaderBadge(person) {
+            if (!person) return '';
+            const isLeader = person.defaultRole === '组长' || person.role === '组长';
+            return isLeader ? '<span class="leader-badge"><i class="fas fa-user-tie"></i>组长</span>' : '';
+        }
+
+        function renderCoverageSummaryHtml(summary, compact = false) {
+            let html = '<div class="system-coverage-bar">';
+            let hasContent = false;
+            for (const [system, data] of Object.entries(summary || {})) {
+                if (!data || data.total === 0) continue;
+                hasContent = true;
+                const statusClass = data.status === 'full' ? 'status-full' : data.status === 'partial' ? 'status-partial' : 'status-none';
+                const statusText = data.status === 'full' ? '全覆盖' : data.status === 'partial' ? `部分覆盖(${data.matched}/${data.total})` : '未覆盖';
+                const barColor = data.status === 'full' ? 'bg-green-500' : data.status === 'partial' ? 'bg-amber-400' : 'bg-slate-300';
+                const codesHtml = data.allCodes.map(item => {
+                    const isMatched = data.matchedCodes.includes(item.code);
+                    const chipClass = isMatched ? 'matched' : 'missing';
+                    return `<span class="code-chip ${chipClass}" title="${item.desc}">${item.code}</span>`;
+                }).join('');
+                html += `
+                    <div class="system-coverage-item">
+                        <div class="system-coverage-header">
+                            <div class="flex items-center gap-2">
+                                <span class="system-coverage-title">${system} 体系</span>
+                                <span class="text-xs text-slate-500">需覆盖 ${data.total} 个代码</span>
+                            </div>
+                            <span class="system-coverage-status ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="coverage-progress">
+                            <div class="coverage-progress-fill ${barColor}" style="width: ${data.percentage}%"></div>
+                        </div>
+                        <div class="required-codes-list">${codesHtml}</div>
+                    </div>
+                `;
+            }
+            html += '</div>';
+            return hasContent ? html : '<div class="selected-coverage-empty">暂无体系覆盖要求</div>';
+        }
+
+        function renderSelectedPersonnelCoverage(personnelList = null) {
+            const container = document.getElementById('selectedPersonnelCoverage');
+            if (!container) return;
+            const people = personnelList || (isVenueMode ? globalSelectedPersonnel : assignedPersonnel);
+            if (!people || people.length === 0) {
+                container.innerHTML = '<div class="selected-coverage-empty"><i class="fas fa-shield-alt mr-1"></i>暂无已选择人员，选择后可查看领域和专业代码覆盖情况</div>';
+                return;
+            }
+            const summary = getCoverageSummaryForPeople(people);
+            container.innerHTML = `
+                <div class="flex items-center gap-2 mb-3 text-sm font-semibold text-slate-900">
+                    <i class="fas fa-shield-alt text-green-600"></i>已选人员体系覆盖情况
+                    <span class="text-xs text-slate-500 font-normal">根据当前已配置人员展示覆盖情况</span>
+                </div>
+                ${renderCoverageSummaryHtml(summary, true)}
+            `;
+        }
+
+        // 渲染人员体系覆盖标签 - 排除totalMatched等非体系属性
+        function renderPersonSystemCoverage(personCodes) {
+            const coverage = getSystemCoverage(personCodes);
+            let html = '<div class="person-system-coverage">';
+            
+            const systemKeys = Object.keys(requiredProfessionalCodes);
+                
+            for (const system of systemKeys) {
+                const data = coverage[system];
+                if (!data || data.total === 0) continue;
+                
+                const tagClass = data.status === 'full' ? 'system-tag-full' : data.status === 'partial' ? 'system-tag-partial' : 'system-tag-none';
+                const icon = data.status === 'full' ? 'fa-check-circle' : data.status === 'partial' ? 'fa-adjust' : 'fa-times-circle';
+                html += `
+                    <span class="person-system-tag ${tagClass}" title="${system}体系：覆盖${data.matched}/${data.total}">
+                        <i class="fas ${icon}"></i> ${system} ${data.matched}/${data.total}
+                    </span>
+                `;
+            }
+            
+            html += '</div>';
+            return html;
+        }
+        
+        // 人天修约函数
+        function roundManDays(value) {
+            const decimal = value % 1;
+            if (decimal < 0.25) return Math.floor(value);
+            else if (decimal < 0.75) return Math.floor(value) + 0.5;
+            else return Math.ceil(value);
+        }
+        
+        // 计算人天 - 15分钟颗粒度版本（基于8小时工作制 08:00-17:00）
+        function calculateManDaysWithPeriod(startDate, endDate, startTime, endTime) {
+            if (!startDate || !endDate) return 0;
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            if (start > end) return 0;
+            
+            const startMinutes = parseTimeToMinutes(startTime);
+            const endMinutes = parseTimeToMinutes(endTime);
+            
+            const diffTime = end - start;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            
+            const WORK_START = 8 * 60; // 08:00
+            const WORK_END = 17 * 60; // 17:00
+            const WORK_MINUTES_PER_DAY = 8 * 60; // 8小时为1天
+            
+            if (diffDays === 0) {
+                // 同一天：计算实际工作时长
+                const workedMinutes = Math.max(0, Math.min(WORK_END, endMinutes) - Math.max(WORK_START, startMinutes));
+                return Math.max(0.5, workedMinutes / WORK_MINUTES_PER_DAY);
+            }
+            
+            // 跨天
+            const middleDays = diffDays - 1;
+            const firstDayMinutes = Math.max(0, WORK_END - Math.max(WORK_START, startMinutes));
+            const lastDayMinutes = Math.max(0, Math.min(WORK_END, endMinutes) - WORK_START);
+            
+            return middleDays + (firstDayMinutes / WORK_MINUTES_PER_DAY) + (lastDayMinutes / WORK_MINUTES_PER_DAY);
+        }
+        
+        // 检查时间冲突
+        function checkTimeConflict(person, startDate, endDate) {
+            if (!person.isBusy || !person.busyPeriod || !startDate || !endDate) return null;
+            
+            const busyMatch = person.busyPeriod.match(/(\d{4}-\d{2}-\d{2})\s*至\s*(\d{4}-\d{2}-\d{2})/);
+            if (!busyMatch) return null;
+            
+            const busyStart = new Date(busyMatch[1]);
+            const busyEnd = new Date(busyMatch[2]);
+            const planStart = new Date(startDate);
+            const planEnd = new Date(endDate);
+            
+            if (planStart <= busyEnd && planEnd >= busyStart) {
+                return person.busyPeriod;
+            }
+            return null;
+        }
+        
+        // 检查人员是否已分配在其他场所
+        function getPersonAssignedInfo(cqc) {
+            if (!isVenueMode || !currentSiteId) return null;
+            
+            for (const [siteId, list] of sitePersonnelMap) {
+                if (siteId === currentSiteId) continue;
+                const person = list.find(p => p.cqc === cqc);
+                if (person) {
+                    const site = venues.find(v => v.id === siteId);
+                    return {
+                        siteName: site ? site.name : '其他场所',
+                        dateRange: person.dateStart && person.dateEnd ? 
+                            `${person.dateStart} 至 ${person.dateEnd}` : '未设置时间'
+                    };
+                }
+            }
+            return null;
+        }
+        
+        // 更新审核组结合度显示
+        function updateAuditGroupCombination() {
+            const container = document.getElementById('auditGroupCombination');
+            const personnelToShow = isVenueMode ? globalSelectedPersonnel : assignedPersonnel;
+            if (personnelToShow.length === 0) { container.innerHTML = ''; return; }
+            
+            const totalPeople = personnelToShow.length;
+            const fullTimeCount = personnelToShow.filter(p => p.type === '专职').length;
+            const partTimeCount = totalPeople - fullTimeCount;
+            
+            if (totalPeople > 0) {
+                const baseNum = totalPeople >= 3 ? totalPeople : 3;
+                const calc1 = (baseNum - 1) * 2;
+                const calc2 = fullTimeCount > 0 ? (fullTimeCount - 1) * 5 : 0;
+                const calc3 = partTimeCount > 0 ? (partTimeCount - 1) * 3 : 0;
+                const denominator = 10 * (baseNum - 1);
+                if (denominator > 0) {
+                    const sum = calc1 + calc2 + calc3;
+                    const result = Math.round((sum / denominator) * 100);
+                    container.innerHTML = `(${baseNum}-1)×2+(${fullTimeCount}-1)×5+(${partTimeCount}-1)×3÷10×(${baseNum}-1)×100% = <strong style="color: #d97706; font-size: 16px;">${result}%</strong>`;
+                }
+            }
+        }
+        
+        function editIntegrationDegree() {
+            document.getElementById('integrationDisplay').classList.add('hidden');
+            document.getElementById('editIntegrationBtn').classList.add('hidden');
+            const editGroup = document.getElementById('integrationEditGroup');
+            editGroup.classList.remove('hidden');
+            editGroup.style.display = 'flex';
+        }
+        
+        function confirmIntegrationDegree() {
+            const value = document.getElementById('integrationDegreeInput').value;
+            document.getElementById('integrationDisplay').textContent = value + '%';
+            document.getElementById('integrationDisplay').classList.remove('hidden');
+            document.getElementById('editIntegrationBtn').classList.remove('hidden');
+            document.getElementById('integrationEditGroup').classList.add('hidden');
+            document.getElementById('integrationEditGroup').style.display = 'none';
+            updateSiteTimeTable();
+        }
+        
+        function cancelIntegrationEdit() {
+            const originalValue = document.getElementById('integrationDisplay').textContent.replace('%', '');
+            document.getElementById('integrationDegreeInput').value = originalValue;
+            document.getElementById('integrationDisplay').classList.remove('hidden');
+            document.getElementById('editIntegrationBtn').classList.remove('hidden');
+            document.getElementById('integrationEditGroup').classList.add('hidden');
+            document.getElementById('integrationEditGroup').style.display = 'none';
+        }
+        
+        function calculateTotalSiteDays() {
+            return venues.reduce((sum, v) => sum + (v.auditDays || 0), 0);
+        }
+        
+        // 修改：运营一分公司和运营二分公司折扣率改为100%
+        function updateSiteTimeTable() {
+            const tbody = document.getElementById('siteTimeTableBody');
+            let totalFinalDays = 0;
+            
+            const rows = venues.map((venue, index) => {
+                const qmsDays = venue.qmsPeople ? roundManDays(venue.qmsPeople * 0.0116) : 0;
+                const emsDays = venue.emsPeople ? roundManDays(venue.emsPeople * 0.0094) : 0;
+                const subtotal = roundManDays(qmsDays + emsDays);
+                // 运营一分公司(site_1)和运营二分公司(site_2)使用100%折扣率，其余使用85%
+                const discountRate = (venue.id === 'site_1' || venue.id === 'site_2') ? 1.0 : 0.85;
+                
+                const discounted = roundManDays(subtotal * discountRate);
+                const finalDays = roundManDays(discounted);
+                venues[index].auditDays = finalDays;
+                venues[index].calculatedDays = { qms: qmsDays, ems: emsDays, subtotal, discounted, final: finalDays, discountRate };
+                totalFinalDays += finalDays;
+                
+                let tooltipContent = '';
+                if (venue.qmsPeople && venue.emsPeople) tooltipContent = `QMS有效人数：${venue.qmsPeople}，EMS有效人数：${venue.emsPeople}`;
+                else if (venue.qmsPeople) tooltipContent = `QMS有效人数：${venue.qmsPeople}`;
+                else if (venue.emsPeople) tooltipContent = `EMS有效人数：${venue.emsPeople}`;
+                
+                const discountText = discountRate === 1.0 ? '× 100%' : `× ${(discountRate * 100).toFixed(0)}%`;
+                
+                return `
+                    <tr>
+                        <td style="text-align: center;">${index + 1}</td>
+                        <td>
+                            <div class="flex items-center gap-1 cursor-help" title="${tooltipContent}">
+                                <i class="fas fa-building text-blue-500 mr-1"></i>${venue.name}（${venue.qmsPeople || venue.emsPeople}人）
+                            </div>
+                        </td>
+                        <td style="text-align: center;">${qmsDays > 0 ? qmsDays.toFixed(1) : '<span style="color: #cbd5e1;">-</span>'}</td>
+                        <td style="text-align: center;">${emsDays > 0 ? emsDays.toFixed(1) : '<span style="color: #cbd5e1;">-</span>'}</td>
+                        <td style="text-align: center;">${subtotal.toFixed(1)}</td>
+                        <td style="text-align: left;">${discountText}</td>
+                        <td style="text-align: center; font-weight: 600; color: #2563eb;">${finalDays.toFixed(1)}</td>
+                    </tr>
+                `;
+            }).join('');
+            
+            const totalRow = `
+                <tr style="background: #f0fdf4; font-weight: 600;">
+                    <td style="text-align: center;">合计</td>
+                    <td>总计</td>
+                    <td style="text-align: center;">-</td>
+                    <td style="text-align: center;">-</td>
+                    <td style="text-align: center;">-</td>
+                    <td style="text-align: left;">-</td>
+                    <td style="text-align: center; color: #16a34a; font-size: 14px;">${totalFinalDays.toFixed(1)}</td>
+                </tr>
+            `;
+            
+            tbody.innerHTML = rows + totalRow;
+            document.getElementById('totalManDaysDisplay').textContent = totalFinalDays.toFixed(1) + ' 人天';
+        }
+        
+        function updateNonVenueStats() {
+            const totalDays = calculateTotalSiteDays();
+            let assignedDays = 0;
+            assignedPersonnel.forEach(person => {
+                if (person.dateStart && person.dateEnd) {
+                    const days = calculateManDaysWithPeriod(person.dateStart, person.dateEnd, person.startPeriod || '08:00', person.endPeriod || '17:00');
+                    assignedDays += days;
+                }
+            });
+            assignedDays = roundManDays(assignedDays);
+            const unassignedDays = roundManDays(totalDays - assignedDays);
+            
+            document.getElementById('nonVenueTotalDays').textContent = totalDays.toFixed(1);
+            document.getElementById('nonVenueAssignedDays').textContent = assignedDays.toFixed(1);
+            document.getElementById('nonVenueUnassignedDays').textContent = unassignedDays.toFixed(1);
+            
+            const unassignedEl = document.getElementById('nonVenueUnassignedDays');
+            if (unassignedDays <= 0) unassignedEl.className = 'text-sm font-bold text-green-600 font-mono';
+            else if (unassignedDays <= 0.5) unassignedEl.className = 'text-sm font-bold text-amber-600 font-mono';
+            else unassignedEl.className = 'text-sm font-bold text-red-600 font-mono';
+        }
+        
+        function updateSiteStats(siteId) {
+            const card = document.getElementById(siteId);
+            if (!card) return;
+            const startInput = card.querySelector('.site-date-start');
+            const endInput = card.querySelector('.site-date-end');
+            const startPeriod = card.querySelector('.site-start-period');
+            const endPeriod = card.querySelector('.site-end-period');
+            const statsContainer = card.querySelector('.site-stats-row');
+            const venue = venues.find(v => v.id === siteId);
+            const totalDays = venue ? venue.auditDays : 0;
+            const personnelList = sitePersonnelMap.get(siteId) || [];
+            
+            let assignedDays = 0;
+            if (personnelList.length > 0 && startInput && endInput && startInput.value && endInput.value) {
+                assignedDays = calculateManDaysWithPeriod(startInput.value, endInput.value, startPeriod ? startPeriod.value : '08:00', endPeriod ? endPeriod.value : '17:00');
+            }
+            const roundedAssigned = roundManDays(assignedDays);
+            const unassignedDays = roundManDays(totalDays - roundedAssigned);
+            
+            const totalEl = statsContainer.querySelector('.stat-total');
+            const assignedEl = statsContainer.querySelector('.stat-assigned');
+            const unassignedEl = statsContainer.querySelector('.stat-unassigned');
+            
+            if (totalEl) totalEl.textContent = totalDays.toFixed(1);
+            if (assignedEl) assignedEl.textContent = roundedAssigned.toFixed(1);
+            if (unassignedEl) {
+                unassignedEl.textContent = unassignedDays.toFixed(1);
+                if (unassignedDays <= 0) unassignedEl.className = 'site-stat-value stat-unassigned text-green-600';
+                else if (unassignedDays <= 0.5) unassignedEl.className = 'site-stat-value stat-unassigned text-amber-600';
+                else unassignedEl.className = 'site-stat-value stat-unassigned text-red-600';
+            }
+        }
+        
+        function initSiteCards() {
+            const container = document.getElementById('siteCardsContainer');
+            container.innerHTML = '';
+            if (isVenueMode) {
+                venues.forEach((venue, index) => {
+                    const card = createSiteCard(venue, index);
+                    container.appendChild(card);
+                    if (!sitePersonnelMap.has(venue.id)) sitePersonnelMap.set(venue.id, []);
+                    updateSiteStats(venue.id);
+                });
+            }
+            togglePersonnelDisplayMode();
+        }
+        
+        // 修改：场所卡片增加证书份数显示，删除认证体系字段
+        function createSiteCard(venue, index) {
+            const card = document.createElement('div');
+            card.className = 'site-card';
+            card.id = venue.id;
+            card.dataset.siteId = venue.id;
+            
+            const personnelList = sitePersonnelMap.get(venue.id) || [];
+            const hasPersonnel = personnelList.length > 0;
+            const totalDays = venue.auditDays || 0;
+            const assignedDays = 0;
+            const unassignedDays = totalDays;
+            
+            // 证书份数HTML
+            const certCopiesHtml = venue.certCopies ? `<span class="sub-cert-tag">证书${venue.certCopies}份</span>` : '';
+            
+            card.innerHTML = `
+                <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between rounded-t-xl">
+                    <div class="flex items-center gap-2 flex-wrap flex-1">
+                        ${venue.isMain ? '<span class="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 text-xs rounded-md font-medium border border-green-200">总部</span>' : '<span class="inline-flex items-center px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded-md font-medium border border-blue-200">场所</span>'}
+                        <span class="font-semibold text-slate-800 text-sm">${venue.name}</span>
+                        <span class="cert-system-tag">${venue.certSystem}</span>
+                        ${certCopiesHtml}
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="site-stats-row">
+                            <div class="site-stat-item-inline">
+                                <span class="site-stat-label">审核人员：</span>
+                                <span class="site-stat-value text-blue-600 stat-total">${totalDays.toFixed(1)}</span>
+                            </div>
+                            <div class="h-4 w-px bg-slate-300 mx-2"></div>
+                            <div class="site-stat-item-inline">
+                                <span class="site-stat-label">已分配：</span>
+                                <span class="site-stat-value text-blue-600 stat-assigned">${assignedDays.toFixed(1)}</span>
+                            </div>
+                            <div class="h-4 w-px bg-slate-300 mx-2"></div>
+                            <div class="site-stat-item-inline">
+                                <span class="site-stat-label">未分配：</span>
+                                <span class="site-stat-value stat-unassigned ${unassignedDays > 0 ? 'text-amber-600' : 'text-green-600'}">${unassignedDays.toFixed(1)}</span>
                             </div>
                         </div>
-                        <div class="site-meta">
-                            <div><div class="readonly-label">场所地址</div><div class="readonly-value">北京市西城区北礼士路甲38号</div></div>
-                            <div><div class="readonly-label">有效人数</div><div class="readonly-value">200</div></div>
-                            <div><div class="readonly-label">审核日期区间</div><div class="readonly-value">2026-04-15 08:30 至 2026-04-16 17:00</div></div>
+                        <button onclick="openSitePersonnelModal('${venue.id}')" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs font-medium shadow-sm shadow-blue-200 transition-all">
+                            <i class="fas fa-user-plus mr-1"></i>分配人员
+                        </button>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <div class="grid grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">场所地址</label>
+                            <div class="readonly-field text-xs">${venue.address}</div>
                         </div>
-                        <div class="site-personnel table-scroll">
-                            <table>
-                                <thead><tr><th>序号</th><th>姓名</th><th>组内身份</th><th>资格</th><th>注册编号</th><th>CQC编号</th><th>联系电话</th><th>审核日期区间</th></tr></thead>
-                                <tbody>
-                                    <tr><td>1</td><td class="font-semibold">武荣刚</td><td class="role-leader">组长</td><td>QMS正式</td><td class="font-mono text-xs">2022-N1QMS-6028373</td><td class="font-mono text-xs">CQC21458</td><td>13661227694</td><td>2026-04-15 08:30 至 2026-04-16 17:00</td></tr>
-                                    <tr><td>2</td><td class="font-semibold">张爱兵</td><td class="role-member">组员</td><td>QMS正式，EMS正式</td><td class="font-mono text-xs">2023-N1QMS-5011045，2023-N1EMS-3011045</td><td class="font-mono text-xs">CQC11045</td><td>13800138003</td><td>2026-04-15 08:30 至 2026-04-16 17:00</td></tr>
-                                    <tr><td>3</td><td class="font-semibold">刘娜</td><td class="role-expert">技术专家</td><td>技术专家</td><td class="font-mono text-xs">TE-2024-0188</td><td class="font-mono text-xs">CQC40876</td><td>13800138007</td><td>2026-04-15 13:30 至 2026-04-16 12:00</td></tr>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">有效人数</label>
+                            <div class="readonly-field text-xs">${venue.qmsPeople || venue.emsPeople || 0}</div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">审核日期区间</label>
+                            <div class="flex items-center gap-2">
+                                <div class="date-time-group">
+                                    <input type="date" class="editable-field site-date-start" style="width: 130px;" onchange="updateSiteDate('${venue.id}')">
+                                    <select class="time-period-select site-start-period" style="width: 80px;" onchange="updateSiteDate('${venue.id}')">
+                                        ${generateTimeOptions('', true)}
+                                    </select>
+                                </div>
+                                <span class="text-slate-400">至</span>
+                                <div class="date-time-group">
+                                    <input type="date" class="editable-field site-date-end" style="width: 130px;" onchange="updateSiteDate('${venue.id}')">
+                                    <select class="time-period-select site-end-period" style="width: 80px;" onchange="updateSiteDate('${venue.id}')">
+                                        ${generateTimeOptions('', false)}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="personnelSection_${venue.id}" class="${!hasPersonnel ? 'hidden-section' : ''}">
+                        <div class="overflow-x-auto">
+                            <table class="process-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px">序号</th>
+                                        <th>姓名</th>
+                                        <th style="width: 100px">组内身份</th>
+                                        <th>资格</th>
+                                    <th>注册编号</th>
+                                        <th style="width: 100px">CQC编号</th>
+                                        <th>联系电话</th>
+                                        <th style="width: 320px">审核日期区间</th>
+                                        <th style="width: 80px">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="personnelBody_${venue.id}">
+                                    ${renderPersonnelRows(personnelList, venue.id)}
                                 </tbody>
                             </table>
                         </div>
-                    </article>
-
-                    <article class="site-card">
-                        <div class="site-card-header">
-                            <div class="flex flex-wrap items-center gap-2">
-                                <span class="badge badge-blue">场所</span>
-                                <h3 class="font-bold text-slate-900">北京市地铁运营有限公司运营一分公司</h3>
-                                <span class="badge badge-blue">QMS</span>
-                                <span class="badge badge-slate">证书 1 份</span>
-                            </div>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="badge badge-blue">计划 2.5 人天</span>
-                                <span class="badge badge-green">已分配 2.5</span>
-                            </div>
-                        </div>
-                        <div class="site-meta">
-                            <div><div class="readonly-label">场所地址</div><div class="readonly-value">北京市昌平区东三旗太平庄车辆段</div></div>
-                            <div><div class="readonly-label">有效人数</div><div class="readonly-value">180</div></div>
-                            <div><div class="readonly-label">审核日期区间</div><div class="readonly-value">2026-04-17 08:30 至 2026-04-17 17:00</div></div>
-                        </div>
-                        <div class="site-personnel table-scroll">
-                            <table>
-                                <thead><tr><th>序号</th><th>姓名</th><th>组内身份</th><th>资格</th><th>注册编号</th><th>CQC编号</th><th>联系电话</th><th>审核日期区间</th></tr></thead>
-                                <tbody>
-                                    <tr><td>1</td><td class="font-semibold">王洪伟</td><td class="role-member">组员</td><td>QMS高级，EMS正式</td><td class="font-mono text-xs">2021-N1QMS-5012345</td><td class="font-mono text-xs">CQC10852</td><td>13800138001</td><td>2026-04-17 08:30 至 2026-04-17 17:00</td></tr>
-                                    <tr><td>2</td><td class="font-semibold">李晨</td><td class="role-member">组员</td><td>QMS正式，EMS实习</td><td class="font-mono text-xs">2024-N1QMS-3223150，2024-N0EMS-0081266</td><td class="font-mono text-xs">CQC30566</td><td>13800138006</td><td>2026-04-17 08:30 至 2026-04-17 12:00</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </article>
-
-                    <article class="site-card">
-                        <div class="site-card-header">
-                            <div class="flex flex-wrap items-center gap-2">
-                                <span class="badge badge-blue">场所</span>
-                                <h3 class="font-bold text-slate-900">北京市地铁运营有限公司运营二分公司</h3>
-                                <span class="badge badge-green">EMS</span>
-                            </div>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="badge badge-blue">计划 2.0 人天</span>
-                                <span class="badge badge-green">已分配 2.0</span>
-                            </div>
-                        </div>
-                        <div class="site-meta">
-                            <div><div class="readonly-label">场所地址</div><div class="readonly-value">北京市石景山区杨庄大街18号</div></div>
-                            <div><div class="readonly-label">有效人数</div><div class="readonly-value">160</div></div>
-                            <div><div class="readonly-label">审核日期区间</div><div class="readonly-value">2026-04-18 08:30 至 2026-04-18 17:00</div></div>
-                        </div>
-                        <div class="site-personnel table-scroll">
-                            <table>
-                                <thead><tr><th>序号</th><th>姓名</th><th>组内身份</th><th>资格</th><th>注册编号</th><th>CQC编号</th><th>联系电话</th><th>审核日期区间</th></tr></thead>
-                                <tbody>
-                                    <tr><td>1</td><td class="font-semibold">周志兴</td><td class="role-member">组员</td><td>QMS正式，EMS正式</td><td class="font-mono text-xs">2023-N1QMS-7015678</td><td class="font-mono text-xs">CQC10923</td><td>13800138002</td><td>2026-04-18 08:30 至 2026-04-18 17:00</td></tr>
-                                    <tr><td>2</td><td class="font-semibold">黄起超</td><td class="role-member">组员</td><td>QMS正式，EMS正式</td><td class="font-mono text-xs">2024-N1QMS-6015922</td><td class="font-mono text-xs">CQC10634</td><td>13501320752</td><td>2026-04-18 13:30 至 2026-04-18 17:00</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </article>
-
-                    <article class="site-card">
-                        <div class="site-card-header">
-                            <div class="flex flex-wrap items-center gap-2">
-                                <span class="badge badge-blue">场所</span>
-                                <h3 class="font-bold text-slate-900">北京市地铁运营有限公司运营三分公司</h3>
-                                <span class="badge badge-blue">QMS+EMS</span>
-                                <span class="badge badge-slate">证书 1 份</span>
-                            </div>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="badge badge-blue">计划 3.5 人天</span>
-                                <span class="badge badge-green">已分配 3.5</span>
-                            </div>
-                        </div>
-                        <div class="site-meta">
-                            <div><div class="readonly-label">场所地址</div><div class="readonly-value">北京市海淀区德胜门西大街甲5号</div></div>
-                            <div><div class="readonly-label">有效人数</div><div class="readonly-value">150</div></div>
-                            <div><div class="readonly-label">审核日期区间</div><div class="readonly-value">2026-04-19 08:30 至 2026-04-19 17:00</div></div>
-                        </div>
-                        <div class="site-personnel table-scroll">
-                            <table>
-                                <thead><tr><th>序号</th><th>姓名</th><th>组内身份</th><th>资格</th><th>注册编号</th><th>CQC编号</th><th>联系电话</th><th>审核日期区间</th></tr></thead>
-                                <tbody>
-                                    <tr><td>1</td><td class="font-semibold">武荣刚</td><td class="role-leader">组长</td><td>QMS正式</td><td class="font-mono text-xs">2022-N1QMS-6028373</td><td class="font-mono text-xs">CQC21458</td><td>13661227694</td><td>2026-04-19 08:30 至 2026-04-19 17:00</td></tr>
-                                    <tr><td>2</td><td class="font-semibold">张爱兵</td><td class="role-member">组员</td><td>QMS正式，EMS正式</td><td class="font-mono text-xs">2023-N1QMS-5011045，2023-N1EMS-3011045</td><td class="font-mono text-xs">CQC11045</td><td>13800138003</td><td>2026-04-19 08:30 至 2026-04-19 17:00</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </article>
-                </div>
-            </div>
-        </section>
-
-        <section class="section">
-            <div class="section-header">
-                <div class="section-title"><i class="fas fa-calendar-check text-orange-500"></i>二阶段审核预排</div>
-            </div>
-            <div class="section-body">
-                <div class="stage-two-overview">
-                    <div class="compact-item">
-                        <div class="readonly-label">预排审核开始时间</div>
-                        <div class="font-bold text-slate-900">2026-05-18 08:30</div>
                     </div>
-                    <div class="compact-item">
-                        <div class="readonly-label">预排审核结束时间</div>
-                        <div class="font-bold text-slate-900">2026-05-22 17:00</div>
+                    ${!hasPersonnel ? `
+                    <div class="text-center py-8 text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-300" id="emptyState_${venue.id}">
+                        <i class="fas fa-users text-3xl mb-2"></i>
+                        <p class="text-sm">暂无分配人员，请点击右上角"分配人员"按钮添加</p>
                     </div>
+                    ` : ''}
                 </div>
-                <div class="table-scroll">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>序号</th>
-                                <th>姓名</th>
-                                <th>组内身份</th>
-                                <th>资格</th>
-                                <th>注册编号</th>
-                                <th>CQC编号</th>
-                                <th>工作单位</th>
-                                <th>专兼职</th>
-                                <th>联系电话</th>
-                                <th>审核日期区间</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>1</td><td class="font-semibold">武荣刚</td><td class="role-leader">组长</td><td>QMS正式</td><td class="font-mono text-xs">2022-N1QMS-6028373</td><td class="font-mono text-xs">CQC21458</td><td>东北区域 / 辽宁公司</td><td><span class="badge badge-blue">专职</span></td><td>13661227694</td><td>2026-05-18 08:30 至 2026-05-22 17:00</td></tr>
-                            <tr><td>2</td><td class="font-semibold">张爱兵</td><td class="role-member">组员</td><td>QMS正式，EMS正式</td><td class="font-mono text-xs">2023-N1QMS-5011045，2023-N1EMS-3011045</td><td class="font-mono text-xs">CQC11045</td><td>东北区域 / 黑龙江公司</td><td><span class="badge badge-rose">兼职</span></td><td>13800138003</td><td>2026-05-18 08:30 至 2026-05-22 17:00</td></tr>
-                            <tr><td>3</td><td class="font-semibold">周志兴</td><td class="role-member">组员</td><td>QMS正式，EMS正式</td><td class="font-mono text-xs">2023-N1QMS-7015678</td><td class="font-mono text-xs">CQC10923</td><td>东北区域 / 辽宁公司</td><td><span class="badge badge-blue">专职</span></td><td>13800138002</td><td>2026-05-19 08:30 至 2026-05-22 17:00</td></tr>
-                            <tr><td>4</td><td class="font-semibold">黄起超</td><td class="role-member">组员</td><td>QMS正式，EMS正式</td><td class="font-mono text-xs">2024-N1QMS-6015922</td><td class="font-mono text-xs">CQC10634</td><td>东北区域 / 辽宁公司</td><td><span class="badge badge-blue">专职</span></td><td>13501320752</td><td>2026-05-18 13:30 至 2026-05-21 17:00</td></tr>
-                            <tr><td>5</td><td class="font-semibold">刘娜</td><td class="role-expert">技术专家</td><td>技术专家</td><td class="font-mono text-xs">TE-2024-0188</td><td class="font-mono text-xs">CQC40876</td><td>东北区域 / 辽宁公司</td><td><span class="badge badge-rose">兼职</span></td><td>13800138007</td><td>2026-05-20 08:30 至 2026-05-21 17:00</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-    </main>
+            `;
+            return card;
+        }
+        
+        function renderPersonnelRows(personnelList, siteId) {
+            if (!personnelList || personnelList.length === 0) return '';
+            normalizeSingleLeader(personnelList);
+            return personnelList.map((person, idx) => `
+                <tr data-person-id="${person.cqc}">
+                    <td>${idx + 1}</td>
+                    <td class="font-medium text-slate-900">${person.name} ${renderLeaderBadge(person)}</td>
+                    <td>
+                        ${renderSiteRoleSelect(person, `updatePersonRole('${siteId}', '${person.cqc}', this.value)`, '80px')}
+                    </td>
+                    <td class="text-xs">${formatQualification(person)}</td>
+                    <td class="font-mono text-xs">${formatRegistration(person)}</td>
+                    <td class="font-mono text-xs">${person.cqc}</td>
+                    <td>${person.phone}</td>
+                    <td>
+                        <div class="date-time-group">
+                            <input type="date" class="editable-field py-1 text-xs" style="width: 110px;" value="${person.dateStart || ''}" onchange="updateSitePersonDate('${siteId}', '${person.cqc}', 'start', this.value)">
+                            <select class="time-period-select py-1 text-xs" style="width: 80px; height: 32px;" onchange="updateSitePersonPeriod('${siteId}', '${person.cqc}', 'start', this.value)">
+                                ${generateTimeOptions(person.startPeriod, true)}
+                            </select>
+                            <span class="text-slate-400">至</span>
+                            <input type="date" class="editable-field py-1 text-xs" style="width: 110px;" value="${person.dateEnd || ''}" onchange="updateSitePersonDate('${siteId}', '${person.cqc}', 'end', this.value)">
+                            <select class="time-period-select py-1 text-xs" style="width: 80px; height: 32px;" onchange="updateSitePersonPeriod('${siteId}', '${person.cqc}', 'end', this.value)">
+                                ${generateTimeOptions(person.endPeriod, false)}
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <button onclick="removePersonFromSite('${siteId}', '${person.cqc}')" class="text-red-500 hover:text-red-700">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
 
-    <!-- 查看策划方案弹窗 -->
+        function uniquePersonnel(list) {
+            const map = new Map();
+            list.filter(Boolean).forEach(person => {
+                if (person.cqc && !map.has(person.cqc)) map.set(person.cqc, person);
+            });
+            return Array.from(map.values());
+        }
+
+        function getCurrentSelectedAuditPersonnel() {
+            const sitePeople = [];
+            sitePersonnelMap.forEach(list => sitePeople.push(...list));
+            return uniquePersonnel([
+                ...assignedPersonnel,
+                ...globalSelectedPersonnel,
+                ...sitePeople
+            ]);
+        }
+
+        function syncStageTwoPersonnelFromCurrent(force) {
+            const currentPeople = getCurrentSelectedAuditPersonnel();
+            if (force || stageTwoPrearrangePersonnel.length === 0) {
+                stageTwoPrearrangePersonnel = currentPeople.map(person => ({ ...person }));
+                syncStageTwoPrearrangeDates();
+                renderStageTwoPrearrangePersonnel();
+            }
+        }
+
+        function toggleStageTwoPrearrange(checked) {
+            const body = document.getElementById('stageTwoPrearrangeBody');
+            if (!body) return;
+            if (checked) {
+                body.classList.remove('hidden-section');
+                syncStageTwoPersonnelFromCurrent(true);
+            } else {
+                body.classList.add('hidden-section');
+            }
+        }
+
+        function openStageTwoPersonnelModal() {
+            personnelSelectionContext = 'stageTwoPrearrange';
+            syncStageTwoPersonnelFromCurrent(false);
+            selectedPersonnel.clear();
+            stageTwoPrearrangePersonnel.forEach(p => selectedPersonnel.add(p.cqc));
+            document.getElementById('coverageSummaryPanel').classList.remove('hidden-section');
+            document.getElementById('filterConditionsSection').classList.remove('hidden-section');
+            document.getElementById('personnelOverlay').classList.add('show');
+            document.getElementById('personnelModal').classList.add('open');
+            renderCoverageSummary();
+            renderPersonnelList();
+        }
+
+        function syncStageTwoPrearrangeDates() {
+            const start = document.getElementById('stageTwoStartDate')?.value || '';
+            const end = document.getElementById('stageTwoEndDate')?.value || '';
+            const startPeriod = document.getElementById('stageTwoStartPeriod')?.value || '08:00';
+            const endPeriod = document.getElementById('stageTwoEndPeriod')?.value || '17:00';
+            stageTwoPrearrangePersonnel.forEach(person => {
+                person.dateStart = start;
+                person.dateEnd = end;
+                person.startPeriod = startPeriod;
+                person.endPeriod = endPeriod;
+            });
+            renderStageTwoPrearrangePersonnel();
+        }
+
+        function renderStageTwoPrearrangePersonnel() {
+            normalizeSingleLeader(stageTwoPrearrangePersonnel);
+            const tbody = document.getElementById('stageTwoPersonnelBody');
+            const table = document.getElementById('stageTwoPrearrangeTable');
+            const emptyState = document.getElementById('stageTwoPrearrangeEmpty');
+            if (!tbody || !table || !emptyState) return;
+            if (stageTwoPrearrangePersonnel.length === 0) {
+                table.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            table.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+            tbody.innerHTML = stageTwoPrearrangePersonnel.map((person, idx) => `
+                <tr>
+                    <td>${idx + 1}</td>
+                    <td class="font-medium text-slate-900">${person.name} ${renderLeaderBadge(person)}</td>
+                    <td>
+                        ${renderRoleSelect(person, `updateStageTwoRole(${idx}, this.value)`, '92px', stageTwoPrearrangePersonnel)}
+                    </td>
+                    <td class="text-xs">${formatQualification(person)}</td>
+                    <td class="font-mono text-xs">${formatRegistration(person)}</td>
+                    <td class="font-mono text-xs">${person.cqc}</td>
+                    <td>${person.region}/${person.workUnit}</td>
+                    <td>
+                        <span class="personnel-tag ${person.type === '专职' ? 'tag-fulltime' : 'tag-parttime'}">${person.type}</span>
+                    </td>
+                    <td>${person.phone}</td>
+                    <td>
+                        <div class="date-time-group">
+                            <input type="date" class="editable-field py-1 text-xs" style="width: 130px;" value="${person.dateStart || ''}" onchange="updateStageTwoDate(${idx}, 'start', this.value)">
+                            <select class="time-period-select py-1 text-xs" style="width: 100px; height: 34px;" onchange="updateStageTwoPeriod(${idx}, 'start', this.value)">
+                                ${generateTimeOptions(person.startPeriod, true)}
+                            </select>
+                            <span class="text-slate-400">至</span>
+                            <input type="date" class="editable-field py-1 text-xs" style="width: 130px;" value="${person.dateEnd || ''}" onchange="updateStageTwoDate(${idx}, 'end', this.value)">
+                            <select class="time-period-select py-1 text-xs" style="width: 100px; height: 34px;" onchange="updateStageTwoPeriod(${idx}, 'end', this.value)">
+                                ${generateTimeOptions(person.endPeriod, false)}
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <button onclick="removeStageTwoPrearrangePerson('${person.cqc}', event)" class="text-red-500 hover:text-red-700">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function removeStageTwoPrearrangePerson(cqc, event) {
+            event.stopPropagation();
+            stageTwoPrearrangePersonnel = stageTwoPrearrangePersonnel.filter(p => p.cqc !== cqc);
+            renderStageTwoPrearrangePersonnel();
+        }
+
+        function updateStageTwoRole(idx, role) {
+            const person = stageTwoPrearrangePersonnel[idx];
+            if (!person) return;
+            role = isTechnicalExpert(person) ? '技术专家' : role;
+            if (role === '组长' && hasOtherLeader(stageTwoPrearrangePersonnel, person)) {
+                alert('组长只能设置 1 人');
+                renderStageTwoPrearrangePersonnel();
+                return;
+            }
+            person.role = role;
+            renderStageTwoPrearrangePersonnel();
+        }
+
+        function updateStageTwoDate(idx, type, value) {
+            if (!stageTwoPrearrangePersonnel[idx]) return;
+            if (type === 'start') stageTwoPrearrangePersonnel[idx].dateStart = value;
+            else stageTwoPrearrangePersonnel[idx].dateEnd = value;
+        }
+
+        function updateStageTwoPeriod(idx, type, value) {
+            if (!stageTwoPrearrangePersonnel[idx]) return;
+            if (type === 'start') stageTwoPrearrangePersonnel[idx].startPeriod = value;
+            else stageTwoPrearrangePersonnel[idx].endPeriod = value;
+        }
+        
+        function toggleVenueMode(toggleElement) {
+            const text = document.getElementById('venueModeText');
+            isVenueMode = !isVenueMode;
+            
+            if (isVenueMode) {
+                text.textContent = '已开启：按场所分配审核人员';
+                toggleElement.classList.add('active');
+            } else {
+                text.textContent = '已关闭：统一分配审核组';
+                toggleElement.classList.remove('active');
+            }
+            
+            if (isVenueMode) {
+                if (globalSelectedPersonnel.length === 0 && assignedPersonnel.length > 0) {
+                    globalSelectedPersonnel = assignedPersonnel.map(person => ({ ...person }));
+                }
+                initSiteCards();
+                updateSelectedPersonnelDisplay();
+                updateAuditGroupCombination();
+                updateNonVenueStats();
+            } else {
+                if (assignedPersonnel.length === 0) {
+                    assignedPersonnel = getCurrentSelectedAuditPersonnel().map(person => ({ ...person }));
+                }
+                renderNonVenuePersonnel();
+                updateSelectedPersonnelDisplay();
+                updateAuditGroupCombination();
+                updateNonVenueStats();
+            }
+            updateLeadAuditorOptions();
+            togglePersonnelDisplayMode();
+            if (document.getElementById('enableStageTwoPrearrange')?.checked) {
+                syncStageTwoPersonnelFromCurrent(false);
+            }
+        }
+        
+        function togglePersonnelDisplayMode() {
+            const venueGlobalSettings = document.getElementById('venueGlobalSettings');
+            const nonVenueList = document.getElementById('nonVenuePersonnelList');
+            const siteContainer = document.getElementById('siteCardsContainer');
+            
+            if (isVenueMode) {
+                venueGlobalSettings.classList.remove('hidden-section');
+                nonVenueList.classList.add('hidden-section');
+                siteContainer.classList.remove('hidden-section');
+            } else {
+                venueGlobalSettings.classList.add('hidden-section');
+                nonVenueList.classList.remove('hidden-section');
+                siteContainer.classList.add('hidden-section');
+            }
+        }
+        
+        function openPersonnelModal() {
+            personnelSelectionContext = 'audit';
+            currentSiteId = null;
+            selectedPersonnel.clear();
+            if (isVenueMode) globalSelectedPersonnel.forEach(p => selectedPersonnel.add(p.cqc));
+            else assignedPersonnel.forEach(p => selectedPersonnel.add(p.cqc));
+            
+            document.getElementById('coverageSummaryPanel').classList.remove('hidden-section');
+            document.getElementById('filterConditionsSection').classList.remove('hidden-section');
+            
+            document.getElementById('personnelOverlay').classList.add('show');
+            document.getElementById('personnelModal').classList.add('open');
+            renderCoverageSummary();
+            renderPersonnelList();
+        }
+        
+        function openSitePersonnelModal(siteId) {
+            personnelSelectionContext = 'audit';
+            currentSiteId = siteId;
+            selectedPersonnel.clear();
+            const siteList = sitePersonnelMap.get(siteId) || [];
+            siteList.forEach(p => selectedPersonnel.add(p.cqc));
+            
+            document.getElementById('coverageSummaryPanel').classList.add('hidden-section');
+            document.getElementById('filterConditionsSection').classList.add('hidden-section');
+            
+            const site = venues.find(v => v.id === siteId);
+            document.querySelector('#personnelModal h3').textContent = site ? `选择审核人员 - ${site.name}` : '选择审核人员';
+            
+            document.getElementById('personnelOverlay').classList.add('show');
+            document.getElementById('personnelModal').classList.add('open');
+            renderSitePersonnelList();
+        }
+        
+        function closePersonnelModal() {
+            document.getElementById('personnelOverlay').classList.remove('show');
+            document.getElementById('personnelModal').classList.remove('open');
+            
+            document.querySelector('#personnelModal h3').textContent = '选择审核人员';
+            
+            personnelSelectionContext = 'audit';
+            currentSiteId = null;
+            selectedPersonnel.clear();
+            document.getElementById('personnelSearch').value = '';
+            document.getElementById('filterCity').value = '';
+            document.getElementById('filterQualification').value = '';
+            document.getElementById('filterType').value = '';
+            document.getElementById('filterStartDate').value = '';
+            document.getElementById('filterEndDate').value = '';
+        }
+        
+        function getSortedPersonnelList(personnelList, planStartDate, planEndDate) {
+            return personnelList.map(p => ({
+                ...p,
+                coverage: getSystemCoverage(p.codes),
+                timeConflict: planStartDate && planEndDate ? checkTimeConflict(p, planStartDate, planEndDate) : null,
+                assignedInfo: getPersonAssignedInfo(p.cqc)
+            })).sort((a, b) => {
+                if (b.coverage.isFullCoverage && !a.coverage.isFullCoverage) return 1;
+                if (!b.coverage.isFullCoverage && a.coverage.isFullCoverage) return -1;
+                return a.name.localeCompare(b.name);
+            });
+        }
+        
+        // 修改：统一标签样式和对齐，确保所有标签水平居中对齐
+        function renderPersonnelList() {
+            const container = document.getElementById('personnelList');
+            const search = document.getElementById('personnelSearch').value.toLowerCase();
+            const cityFilter = document.getElementById('filterCity').value;
+            const qualFilter = document.getElementById('filterQualification').value;
+            const typeFilter = document.getElementById('filterType').value;
+            const startDate = document.getElementById('filterStartDate').value;
+            const endDate = document.getElementById('filterEndDate').value;
+            
+            let filtered = personnelDB.filter(p => {
+                const matchSearch = p.name.toLowerCase().includes(search) || 
+                                   p.cqc.toLowerCase().includes(search) ||
+                                   (p.qualification.toLowerCase().includes(search) || formatQualification(p).toLowerCase().includes(search)) ||
+                                   (p.codes.QMS && p.codes.QMS.some(c => c.includes(search))) ||
+                                   (p.codes.EMS && p.codes.EMS.some(c => c.includes(search)));
+                const matchCompany = !cityFilter || p.workUnit === cityFilter;
+                const matchQual = !qualFilter || p.qualification.includes(qualFilter) || formatQualification(p).includes(qualFilter);
+                const matchType = !typeFilter || p.type === typeFilter;
+                return matchSearch && matchCompany && matchQual && matchType;
+            });
+            
+            // 传入筛选的时间进行冲突检测
+            filtered = getSortedPersonnelList(filtered, startDate, endDate);
+            
+            container.innerHTML = filtered.map(person => {
+                const isSelected = selectedPersonnel.has(person.cqc);
+                const isExternal = person.workUnit !== currentUserCompany;
+                let daysClass = '';
+                if (person.remainingDays <= 30) daysClass = 'danger';
+                else if (person.remainingDays <= 60) daysClass = 'warning';
+                
+                // 时间冲突检测
+                let conflictBadge = '';
+                if (person.timeConflict) {
+                    conflictBadge = `<span class="conflict-badge"><i class="fas fa-exclamation-triangle mr-1"></i>时间冲突：${person.timeConflict}</span>`;
+                }
+                
+                let assignedBadge = '';
+                if (!isVenueMode && person.assignedInfo) {
+                    assignedBadge = `<span class="site-assigned-info"><i class="fas fa-map-marker-alt mr-1"></i>已分配：${person.assignedInfo.siteName}</span>`;
+                }
+                
+                // 外部单位标识
+                const externalBadge = isExternal ? 
+                    '' : '';
+                
+                
+                const clickAction = `togglePersonSelection('${person.cqc}')`;
+                
+                return `
+                <div class="person-card ${isSelected ? 'selected' : ''} ${isExternal ? 'external' : ''}" 
+                     onclick="${clickAction}"
+                     data-cqc="${person.cqc}">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="tag-container" style="flex-wrap: wrap; height: auto; gap: 4px;">
+                            <span class="font-semibold text-slate-900" style="height: 24px; display: inline-flex; align-items: center; margin-right: 4px;">${person.name}</span>
+                            <span class="remaining-days-badge ${daysClass}">${person.remainingDays}天/180天</span>
+                            <span class="personnel-tag ${person.type === '专职' ? 'tag-fulltime' : 'tag-parttime'}">${person.type}</span>
+                            ${renderLeaderBadge(person)}
+                            ${conflictBadge}
+                            ${assignedBadge}
+                            ${externalBadge}
+                        </div>
+                        ${isSelected ? '<i class="fas fa-check-circle text-blue-600 text-xl"></i>' : '<i class="far fa-circle text-slate-300 text-xl"></i>'}
+                    </div>
+                    <div class="text-xs text-slate-500 space-y-1 mb-2">
+                        <div class="flex justify-between">
+                            <span>CQC编号：${person.cqc}</span>
+                        </div>
+                        <div>资格：${formatQualification(person)}</div>
+                        <div class="flex justify-between">
+                            <span>工作单位：${person.region}/${person.workUnit}</span>
+                            
+                        </div>
+                    </div>
+                    ${renderPersonSystemCoverage(person.codes)}
+                </div>
+                `;
+            }).join('');
+            
+            document.getElementById('selectedCount').textContent = selectedPersonnel.size;
+        }
+        
+
+        
+        // 修改：统一标签样式和对齐
+        function renderSitePersonnelList() {
+            const container = document.getElementById('personnelList');
+            if (globalSelectedPersonnel.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-300">
+                        <i class="fas fa-info-circle text-3xl mb-2"></i>
+                        <p class="text-sm">暂无已选择的人员，请先在"指派审核人员"处添加人员</p>
+                    </div>
+                `;
+                document.getElementById('selectedCount').textContent = '0';
+                return;
+            }
+            
+            const startDate = document.getElementById('filterStartDate').value;
+            const endDate = document.getElementById('filterEndDate').value;
+            
+            const sortedList = getSortedPersonnelList([...globalSelectedPersonnel], startDate, endDate);
+            
+            container.innerHTML = sortedList.map(person => {
+                const isSelected = selectedPersonnel.has(person.cqc);
+                const isExternal = person.workUnit !== currentUserCompany;
+                let daysClass = '';
+                if (person.remainingDays <= 30) daysClass = 'danger';
+                else if (person.remainingDays <= 60) daysClass = 'warning';
+                
+                let conflictBadge = '';
+                if (person.timeConflict) {
+                    conflictBadge = `<span class="conflict-badge"><i class="fas fa-exclamation-triangle mr-1"></i>时间冲突：${person.timeConflict}</span>`;
+                }
+                
+                let assignedBadge = '';
+                if (person.assignedInfo) {
+                    assignedBadge = `<span class="site-assigned-info"><i class="fas fa-map-marker-alt mr-1"></i>已在：${person.assignedInfo.siteName} (${person.assignedInfo.dateRange})</span>`;
+                }
+                
+                const externalBadge = isExternal ? 
+                    '' : '';
+                
+                const clickAction = `togglePersonSelection('${person.cqc}')`;
+                
+                return `
+                <div class="person-card ${isSelected ? 'selected' : ''} ${isExternal ? 'external' : ''}" 
+                     onclick="${clickAction}"
+                     data-cqc="${person.cqc}">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="tag-container" style="flex-wrap: wrap; height: auto; gap: 4px;">
+                            <span class="font-semibold text-slate-900" style="height: 24px; display: inline-flex; align-items: center; margin-right: 4px;">${person.name}</span>
+                            <span class="remaining-days-badge ${daysClass}">${person.remainingDays}天/180天</span>
+                            <span class="personnel-tag ${person.type === '专职' ? 'tag-fulltime' : 'tag-parttime'}">${person.type}</span>
+                            ${renderLeaderBadge(person)}
+                            ${conflictBadge}
+                            ${assignedBadge}
+                            ${externalBadge}
+                        </div>
+                        ${isSelected ? '<i class="fas fa-check-circle text-blue-600 text-xl"></i>' : '<i class="far fa-circle text-slate-300 text-xl"></i>'}
+                    </div>
+                    <div class="text-xs text-slate-500 space-y-1 mb-2">
+                        <div class="flex justify-between">
+                            <span>CQC编号：${person.cqc}</span>
+                        </div>
+                        <div>资格：${formatQualification(person)}</div>
+                        <div class="flex justify-between">
+                            <span>工作单位：${person.region}/${person.workUnit}</span>
+                            
+                        </div>
+                    </div>
+                    ${renderPersonSystemCoverage(person.codes)}
+                </div>
+                `;
+            }).join('');
+            
+            document.getElementById('selectedCount').textContent = selectedPersonnel.size;
+        }
+        
+        function filterPersonnel() {
+            if (isVenueMode && currentSiteId) renderSitePersonnelList();
+            else renderPersonnelList();
+        }
+        
+        function togglePersonSelection(cqc) {
+            if (selectedPersonnel.has(cqc)) selectedPersonnel.delete(cqc);
+            else selectedPersonnel.add(cqc);
+            
+            if (!isVenueMode || !currentSiteId) {
+                renderCoverageSummary();
+            }
+            
+            if (isVenueMode && currentSiteId) renderSitePersonnelList();
+            else renderPersonnelList();
+        }
+        
+        function confirmPersonnelSelection() {
+            const isStageTwoSelection = personnelSelectionContext === 'stageTwoPrearrange';
+            const selectedPeople = Array.from(selectedPersonnel).map(cqc => {
+                return personnelDB.find(p => p.cqc === cqc);
+            }).filter(p => p);
+            
+            if (selectedPeople.length === 0) {
+                alert('请至少选择一名人员');
+                return;
+            }
+            
+            if (isStageTwoSelection) {
+                const startDate = document.getElementById('stageTwoStartDate').value;
+                const endDate = document.getElementById('stageTwoEndDate').value;
+                const startPeriod = document.getElementById('stageTwoStartPeriod').value;
+                const endPeriod = document.getElementById('stageTwoEndPeriod').value;
+                stageTwoPrearrangePersonnel = selectedPeople.map(p => ({
+                    ...p, role: p.defaultRole, dateStart: startDate, dateEnd: endDate, startPeriod, endPeriod
+                }));
+                renderStageTwoPrearrangePersonnel();
+            } else if (isVenueMode && currentSiteId) {
+                let siteList = sitePersonnelMap.get(currentSiteId) || [];
+                const existingCqcs = siteList.map(p => p.cqc);
+                const newCqcs = selectedPeople.map(p => p.cqc);
+                siteList = siteList.filter(p => newCqcs.includes(p.cqc));
+                
+                const card = document.getElementById(currentSiteId);
+                const startDate = card.querySelector('.site-date-start').value;
+                const endDate = card.querySelector('.site-date-end').value;
+                const startPeriod = card.querySelector('.site-start-period').value;
+                const endPeriod = card.querySelector('.site-end-period').value;
+                
+                selectedPeople.forEach(person => {
+                    if (!existingCqcs.includes(person.cqc)) {
+                        siteList.push({ ...person, role: person.defaultRole, dateStart: startDate, dateEnd: endDate, startPeriod, endPeriod });
+                    }
+                });
+                sitePersonnelMap.set(currentSiteId, siteList);
+                refreshSiteCard(currentSiteId);
+                updateSiteStats(currentSiteId);
+            } else if (isVenueMode && !currentSiteId) {
+                globalSelectedPersonnel = selectedPeople.map(p => ({ ...p, role: p.defaultRole }));
+                updateSelectedPersonnelDisplay();
+            } else {
+                const startDate = document.getElementById('nonVenueAuditStartDate').value;
+                const endDate = document.getElementById('nonVenueAuditEndDate').value;
+                const startPeriod = document.getElementById('nonVenueStartPeriod').value;
+                const endPeriod = document.getElementById('nonVenueEndPeriod').value;
+                
+                assignedPersonnel = selectedPeople.map(p => ({
+                    ...p, role: p.defaultRole, venue: '', dateStart: startDate, dateEnd: endDate, startPeriod, endPeriod
+                }));
+                renderNonVenuePersonnel();
+                updateNonVenueStats();
+                updateSelectedPersonnelDisplay();
+            }
+            
+            updateLeadAuditorOptions();
+            updateAuditGroupCombination();
+            if (!isStageTwoSelection && document.getElementById('enableStageTwoPrearrange')?.checked) {
+                syncStageTwoPersonnelFromCurrent(false);
+            }
+            closePersonnelModal();
+            if (!isStageTwoSelection) validateFullTimeAuditor();
+        }
+        
+        function updateSelectedPersonnelDisplay() {
+            const container = document.getElementById('selectedPersonnelTags');
+            const titleEl = document.getElementById('selectedPersonnelTitle');
+            if (titleEl) titleEl.textContent = isVenueMode ? "已选择人员（可分配给各场所）：" : "已选择人员：";
+            
+            const personnelToShow = isVenueMode ? globalSelectedPersonnel : assignedPersonnel;
+            if (personnelToShow.length === 0) {
+                container.innerHTML = '<span class="text-slate-400 text-sm">暂无已选择人员</span>';
+                renderSelectedPersonnelCoverage([]);
+                return;
+            }
+            
+            container.innerHTML = personnelToShow.map(person => {
+                const isExternal = person.workUnit !== currentUserCompany;
+                return `
+                <span class="selected-personnel-tag">
+                    ${person.name}
+                    <span class="personnel-tag ${person.type === '专职' ? 'tag-fulltime' : 'tag-parttime'}" style="margin:0 4px">${person.type}</span>
+                    ${renderLeaderBadge(person)}
+                    
+                </span>
+            `}).join('');
+            renderSelectedPersonnelCoverage(personnelToShow);
+        }
+        
+        function removeFromGlobalSelection(cqc, event) {
+            if (event) event.stopPropagation();
+            return false;
+        }
+        
+        function refreshSiteCard(siteId) {
+            const card = document.getElementById(siteId);
+            const personnelList = sitePersonnelMap.get(siteId) || [];
+            const hasPersonnel = personnelList.length > 0;
+            
+            const tbody = document.getElementById(`personnelBody_${siteId}`);
+            const section = document.getElementById(`personnelSection_${siteId}`);
+            const emptyState = document.getElementById(`emptyState_${siteId}`);
+            const clearBtn = document.getElementById(`clearBtn_${siteId}`);
+            
+            if (hasPersonnel) {
+                tbody.innerHTML = renderPersonnelRows(personnelList, siteId);
+                section.classList.remove('hidden-section');
+                if (emptyState) emptyState.classList.add('hidden-section');
+                if (clearBtn) clearBtn.classList.remove('hidden-section');
+            } else {
+                section.classList.add('hidden-section');
+                if (emptyState) emptyState.classList.remove('hidden-section');
+                if (clearBtn) clearBtn.classList.add('hidden-section');
+            }
+            updateSiteStats(siteId);
+        }
+        
+        function renderNonVenuePersonnel() {
+            normalizeSingleLeader(assignedPersonnel);
+            const tbody = document.getElementById('nonVenuePersonnelBody');
+            const table = document.getElementById('nonVenueTable');
+            const emptyState = document.getElementById('nonVenueEmptyState');
+            
+            if (assignedPersonnel.length === 0) {
+                emptyState.classList.remove('hidden');
+                table.classList.add('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            table.classList.remove('hidden');
+            
+            tbody.innerHTML = assignedPersonnel.map((person, idx) => `
+                <tr>
+                    <td>${idx + 1}</td>
+                    <td class="font-medium text-slate-900">${person.name} ${renderLeaderBadge(person)}</td>
+                    <td>
+                        ${renderNonVenueRoleSelect(person, `updateNonVenueRole(${idx}, this.value)`, '80px', assignedPersonnel)}
+                    </td>
+                    <td class="text-xs">${formatQualification(person)}</td>
+                    <td class="font-mono text-xs">${formatRegistration(person)}</td>
+                    <td class="font-mono text-xs">${person.cqc}</td>
+                    <td>${person.region}/${person.workUnit}</td>
+                    <td>
+                        <span class="personnel-tag ${person.type === '专职' ? 'tag-fulltime' : 'tag-parttime'}">${person.type}</span>
+                    </td>
+                    <td>${person.phone}</td>
+                    <td>
+                        <div class="date-time-group">
+                            <input type="date" class="editable-field py-1 text-xs" style="width: 110px;" value="${person.dateStart || ''}" onchange="updateNonVenueDate(${idx}, 'start', this.value)">
+                            <select class="time-period-select py-1 text-xs" style="width: 80px; height: 32px;" onchange="updateNonVenuePeriod(${idx}, 'start', this.value)">
+                                ${generateTimeOptions(person.startPeriod, true)}
+                            </select>
+                            <span class="text-slate-400">至</span>
+                            <input type="date" class="editable-field py-1 text-xs" style="width: 110px;" value="${person.dateEnd || ''}" onchange="updateNonVenueDate(${idx}, 'end', this.value)">
+                            <select class="time-period-select py-1 text-xs" style="width: 80px; height: 32px;" onchange="updateNonVenuePeriod(${idx}, 'end', this.value)">
+                                ${generateTimeOptions(person.endPeriod, false)}
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <button onclick="removeNonVenuePersonnel(${idx})" class="text-red-500 hover:text-red-700">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            updateNonVenueStats();
+        }
+        
+        function updateNonVenueDate(idx, type, value) {
+            if (type === 'start') assignedPersonnel[idx].dateStart = value;
+            else assignedPersonnel[idx].dateEnd = value;
+            updateNonVenueStats();
+        }
+        
+        function updateNonVenuePeriod(idx, type, value) {
+            if (type === 'start') assignedPersonnel[idx].startPeriod = value;
+            else assignedPersonnel[idx].endPeriod = value;
+            updateNonVenueStats();
+        }
+        
+        function updateNonVenueAllDates() {
+            const start = document.getElementById('nonVenueAuditStartDate').value;
+            const end = document.getElementById('nonVenueAuditEndDate').value;
+            const startPeriod = document.getElementById('nonVenueStartPeriod').value;
+            const endPeriod = document.getElementById('nonVenueEndPeriod').value;
+            
+            assignedPersonnel.forEach(p => {
+                p.dateStart = start; p.dateEnd = end; p.startPeriod = startPeriod; p.endPeriod = endPeriod;
+            });
+            renderNonVenuePersonnel();
+        }
+        
+        function updateLeadAuditorOptions() {
+            const select = document.getElementById('leadAuditorSelect');
+            const currentVal = select.value;
+            let allPersonnel = [];
+            if (isVenueMode) allPersonnel = globalSelectedPersonnel;
+            else allPersonnel = assignedPersonnel;
+            
+            const uniquePersonnel = allPersonnel.filter((p, idx, self) => idx === self.findIndex(t => t.cqc === p.cqc));
+            const leadAuditors = uniquePersonnel.filter(p => !isTechnicalExpert(p));
+            
+            let html = '<option value="">请选择审核组长</option>';
+            leadAuditors.forEach(p => {
+                html += `<option value="${p.cqc}" ${currentVal === p.cqc ? 'selected' : ''}>${p.name} (${p.cqc})</option>`;
+            });
+            select.innerHTML = html;
+        }
+        
+        function removePersonFromSite(siteId, cqc) {
+            let list = sitePersonnelMap.get(siteId) || [];
+            list = list.filter(p => p.cqc !== cqc);
+            sitePersonnelMap.set(siteId, list);
+            refreshSiteCard(siteId);
+            updateLeadAuditorOptions();
+            updateAuditGroupCombination();
+        }
+        
+        function removeNonVenuePersonnel(idx) {
+            assignedPersonnel.splice(idx, 1);
+            renderNonVenuePersonnel();
+            updateSelectedPersonnelDisplay();
+            updateLeadAuditorOptions();
+            updateAuditGroupCombination();
+        }
+        
+        function updatePersonRole(siteId, cqc, role) {
+            const list = sitePersonnelMap.get(siteId) || [];
+            const person = list.find(p => p.cqc === cqc);
+            if (person) {
+                if (isTechnicalExpert(person)) role = '技术专家';
+                else if (person.cqc === getLeadAuditorCqc()) role = '组长';
+                else if (role === '组长') role = '组员';
+                person.role = role;
+                updateLeadAuditorOptions();
+                refreshSiteCard(siteId);
+            }
+        }
+        
+        function updateSitePersonDate(siteId, cqc, type, value) {
+            const list = sitePersonnelMap.get(siteId) || [];
+            const person = list.find(p => p.cqc === cqc);
+            if (person) {
+                if (type === 'start') person.dateStart = value;
+                else person.dateEnd = value;
+                updateSiteStats(siteId);
+            }
+        }
+        
+        function updateSitePersonPeriod(siteId, cqc, type, value) {
+            const list = sitePersonnelMap.get(siteId) || [];
+            const person = list.find(p => p.cqc === cqc);
+            if (person) {
+                if (type === 'start') person.startPeriod = value;
+                else person.endPeriod = value;
+                updateSiteStats(siteId);
+            }
+        }
+        
+        function updateNonVenueRole(idx, role) {
+            const person = assignedPersonnel[idx];
+            if (person) {
+                role = isTechnicalExpert(person) ? '技术专家' : role;
+                if (!isTechnicalExpert(person) && role === '分组长') role = '组员';
+                if (role === '组长' && hasOtherLeader(assignedPersonnel, person)) {
+                    alert('组长只能设置 1 人');
+                    renderNonVenuePersonnel();
+                    return;
+                }
+                person.role = role;
+            }
+            updateLeadAuditorOptions();
+            renderNonVenuePersonnel();
+        }
+        
+        function validateFullTimeAuditor() {
+            if (isVenueMode) {
+                sitePersonnelMap.forEach((list) => {
+                    const hasFullTime = list.some(p => p.type === '专职');
+                    if (list.length > 0 && !hasFullTime) console.warn('场所缺少专职审核员');
+                });
+            } else {
+                const hasFullTime = assignedPersonnel.some(p => p.type === '专职');
+                if (assignedPersonnel.length > 0 && !hasFullTime) alert('警告：审核组中至少需要包含一名专职审核员');
+            }
+        }
+        
+        function updateAllSiteDates() {
+            const start = document.getElementById('auditStartDate').value;
+            const end = document.getElementById('auditEndDate').value;
+            const startPeriod = document.getElementById('auditStartPeriod').value;
+            const endPeriod = document.getElementById('auditEndPeriod').value;
+            
+            if (isVenueMode) {
+                globalSelectedPersonnel.forEach(p => { p.dateStart = start; p.dateEnd = end; p.startPeriod = startPeriod; p.endPeriod = endPeriod; });
+                sitePersonnelMap.forEach((list, siteId) => {
+                    list.forEach(p => { p.dateStart = start; p.dateEnd = end; p.startPeriod = startPeriod; p.endPeriod = endPeriod; });
+                    const card = document.getElementById(siteId);
+                    if (card) {
+                        card.querySelector('.site-date-start').value = start;
+                        card.querySelector('.site-date-end').value = end;
+                        card.querySelector('.site-start-period').value = startPeriod;
+                        card.querySelector('.site-end-period').value = endPeriod;
+                    }
+                    updateSiteStats(siteId);
+                });
+                venues.forEach(v => refreshSiteCard(v.id));
+            } else {
+                assignedPersonnel.forEach(p => { p.dateStart = start; p.dateEnd = end; p.startPeriod = startPeriod; p.endPeriod = endPeriod; });
+                renderNonVenuePersonnel();
+            }
+        }
+        
+        function updateSiteDate(siteId) {
+            const card = document.getElementById(siteId);
+            const start = card.querySelector('.site-date-start').value;
+            const end = card.querySelector('.site-date-end').value;
+            const startPeriod = card.querySelector('.site-start-period').value;
+            const endPeriod = card.querySelector('.site-end-period').value;
+            
+            const list = sitePersonnelMap.get(siteId) || [];
+            list.forEach(p => { p.dateStart = start; p.dateEnd = end; p.startPeriod = startPeriod; p.endPeriod = endPeriod; });
+            refreshSiteCard(siteId);
+            updateSiteStats(siteId);
+        }
+        
+        function selectProjects() {
+            document.getElementById('projectOverlay').classList.add('show');
+            document.getElementById('projectModal').classList.add('open');
+        }
+        
+        function closeProjectModal() {
+            document.getElementById('projectOverlay').classList.remove('show');
+            document.getElementById('projectModal').classList.remove('open');
+        }
+        
+        function toggleSelectAllProjects(checkbox) {
+            const checkboxes = document.querySelectorAll('.project-checkbox');
+            checkboxes.forEach(cb => cb.checked = checkbox.checked);
+        }
+        
+        function confirmProjectSelection() {
+            alert('已关联选中的审核项目');
+            closeProjectModal();
+        }
+        
+        function toggleInfoCard(cardId) {
+            document.getElementById(cardId)?.classList.toggle('collapsed');
+        }
+
+        function toggleCustomerRequirements() {
+            toggleInfoCard('customer-remark-info');
+        }
+        
+        function viewPlan() { 
+            document.getElementById('planModal').classList.add('show'); 
+            switchPlanTab('sampling');
+        }
+        function switchPlanTab(tabName) {
+            document.querySelectorAll('#planModal .plan-tab-content').forEach(section => {
+                section.classList.toggle('hidden-section', section.id !== `planTab_${tabName}`);
+            });
+            document.querySelectorAll('#planModal .plan-tab-btn').forEach(btn => {
+                const isActive = btn.dataset.planTab === tabName;
+                btn.classList.toggle('text-blue-600', isActive);
+                btn.classList.toggle('border-blue-600', isActive);
+                btn.classList.toggle('text-slate-600', !isActive);
+                btn.classList.toggle('border-transparent', !isActive);
+            });
+        }
+        
+        function closePlanModal() { 
+            document.getElementById('planModal').classList.remove('show'); 
+        }
+        
+        function toggleAllProcess(checkbox) {
+            const checkboxes = checkbox.closest('table').querySelectorAll('tbody input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = checkbox.checked);
+        }
+        
+        function saveDraft(btn) {
+            const original = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check mr-2"></i>已保存';
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.innerHTML = original;
+                btn.disabled = false;
+            }, 2000);
+        }
+        
+        function submitTask() {
+            if (!document.getElementById('leadAuditorSelect').value) { 
+                alert('请选择审核组长'); 
+                return; 
+            }
+            if (isVenueMode) {
+                let valid = true;
+                sitePersonnelMap.forEach((list) => { if (list.length === 0) valid = false; });
+                if (!valid) { 
+                    alert('请为所有场所分配审核人员'); 
+                    return; 
+                }
+            } else {
+                if (assignedPersonnel.length === 0) { 
+                    alert('请至少指派一名审核人员'); 
+                    return; 
+                }
+            }
+            if (confirm('确定提交审核任务？提交后组长及组员将收到任务通知。')) {
+                alert('提交成功！任务状态已变更为"已提交"。');
+                const badge = document.querySelector('.status-badge');
+                badge.textContent = '已提交';
+                badge.className = 'status-badge badge-submitted';
+            }
+        }
+        
+        function goBack() {
+            if (confirm('确定返回列表？未保存的数据将丢失。')) {
+                console.log('返回列表页');
+            }
+        }
+    </script><script>
+(function(){
+    const detailAssignments = {
+        nonVenue: [
+            ['CQC21458','组长','2024-04-15','2024-04-18','08:00','17:00'],
+            ['CQC10852','组员','2024-04-15','2024-04-16','08:00','17:00'],
+            ['CQC10923','组员','2024-04-15','2024-04-16','08:00','17:00'],
+            ['CQC11045','组员','2024-04-17','2024-04-17','08:00','17:00'],
+            ['CQC30566','组员','2024-04-17','2024-04-17','08:00','17:00'],
+            ['CQC40876','技术专家','2024-04-15','2024-04-16','08:00','17:00'],
+            ['CQC08017','组员','2024-04-18','2024-04-18','08:00','17:00'],
+            ['CQC10634','组员','2024-04-18','2024-04-18','08:00','17:00']
+        ],
+        sites: {
+            site_0: [
+                ['CQC21458','组长','2024-04-15','2024-04-18','08:00','17:00'],
+                ['CQC10852','组员','2024-04-15','2024-04-16','08:00','17:00'],
+                ['CQC10923','组员','2024-04-15','2024-04-16','08:00','17:00'],
+                ['CQC40876','技术专家','2024-04-15','2024-04-16','08:00','17:00']
+            ],
+            site_1: [
+                ['CQC11045','分组长','2024-04-17','2024-04-17','08:00','17:00'],
+                ['CQC30566','组员','2024-04-17','2024-04-17','08:00','17:00']
+            ],
+            site_2: [
+                ['CQC10634','分组长','2024-04-18','2024-04-18','08:00','17:00'],
+                ['CQC08017','组员','2024-04-18','2024-04-18','08:00','17:00']
+            ],
+            site_3: [
+                ['CQC21458','组长','2024-04-18','2024-04-18','08:00','17:00'],
+                ['CQC08017','组员','2024-04-18','2024-04-18','08:00','17:00']
+            ]
+        }
+    };
+
+    function clonePerson(cqc, role, start, end, startPeriod, endPeriod) {
+        const p = (personnelDB || []).find(item => item.cqc === cqc);
+        if (!p) return null;
+        return { ...p, role, dateStart:start, dateEnd:end, startPeriod, endPeriod };
+    }
+
+    function seedDetailData() {
+        if (typeof personnelDB === 'undefined') return;
+        assignedPersonnel = detailAssignments.nonVenue.map(args => clonePerson(...args)).filter(Boolean);
+        globalSelectedPersonnel = detailAssignments.nonVenue.map(args => clonePerson(...args)).filter(Boolean);
+        sitePersonnelMap = new Map();
+        Object.entries(detailAssignments.sites).forEach(([siteId, rows]) => {
+            sitePersonnelMap.set(siteId, rows.map(args => clonePerson(...args)).filter(Boolean));
+        });
+        const datePairs = [
+            ['nonVenueAuditStartDate','2024-04-15'], ['nonVenueAuditEndDate','2024-04-18'],
+            ['auditStartDate','2024-04-15'], ['auditEndDate','2024-04-18']
+        ];
+        datePairs.forEach(([id,val]) => { const el = document.getElementById(id); if (el) el.value = val; });
+        const periodPairs = [
+            ['nonVenueStartPeriod','08:00'], ['nonVenueEndPeriod','17:00'],
+            ['auditStartPeriod','08:00'], ['auditEndPeriod','17:00']
+        ];
+        periodPairs.forEach(([id,val]) => { const el = document.getElementById(id); if (el) el.value = val; });
+        const prep = document.getElementById('needPrepMeeting');
+        if (prep) prep.checked = true;
+        const lead = document.getElementById('leadAuditorSelect');
+        if (lead) lead.value = 'CQC21458';
+    }
+
+    function hideActionColumns(table) {
+        if (!table) return;
+        // 关联审核项目需要保留“操作”列中的“查看策划方案”入口
+        if (table.closest('#related-audit-project-section')) return;
+        const headers = Array.from(table.querySelectorAll('thead th'));
+        headers.forEach((th, idx) => {
+            if ((th.textContent || '').trim() === '操作') {
+                th.classList.add('action-col-hidden');
+                table.querySelectorAll('tbody tr').forEach(tr => {
+                    const cell = tr.children[idx];
+                    if (cell) cell.classList.add('action-col-hidden');
+                });
+            }
+        });
+    }
+
+    window.applyTaskDetailReadonly = function(){
+        document.querySelectorAll('input, textarea, select').forEach(el => {
+            if (el.id === 'integrationDegreeInput') return;
+            el.disabled = true;
+            if (el.tagName === 'TEXTAREA' || el.type === 'text' || el.type === 'date' || el.type === 'number') el.readOnly = true;
+        });
+        document.querySelectorAll('table').forEach(hideActionColumns);
+        document.querySelectorAll('button').forEach(btn => {
+            // 关联审核项目的“查看策划方案”入口、策划方案弹窗内的页签/关闭按钮均为只读查看入口，需要保留
+            if (btn.closest('#related-audit-project-section') || btn.closest('#planModal')) return;
+            const t = (btn.textContent || '').trim();
+            const onclick = btn.getAttribute('onclick') || '';
+            if (/添加人员|分配人员|选择人员|保存|提交|修改|确认|取消|删除|清空/.test(t) || /openPersonnelModal|openSitePersonnelModal|openStageTwoPersonnelModal|remove|saveDraft|submitTask|selectProjects/.test(onclick)) {
+                btn.classList.add('detail-hide-action');
+            }
+        });
+        document.querySelectorAll('[id^="emptyState_"] p, #nonVenueEmptyState p').forEach(p => {
+            p.textContent = '暂无已配置人员';
+        });
+        const title = document.getElementById('selectedPersonnelTitle');
+        if (title) title.textContent = isVenueMode ? '已选择人员（可分配给各场所）：' : '已选择人员：';
+    };
+
+    document.addEventListener('DOMContentLoaded', function(){
+        setTimeout(function(){
+            seedDetailData();
+            if (typeof initTimeSelects === 'function') initTimeSelects();
+            if (typeof updateSiteTimeTable === 'function') updateSiteTimeTable();
+            if (typeof updateLeadAuditorOptions === 'function') updateLeadAuditorOptions();
+            const lead = document.getElementById('leadAuditorSelect');
+            if (lead) lead.value = 'CQC21458';
+            if (typeof renderNonVenuePersonnel === 'function') renderNonVenuePersonnel();
+            if (typeof updateSelectedPersonnelDisplay === 'function') updateSelectedPersonnelDisplay();
+            if (typeof updateAuditGroupCombination === 'function') updateAuditGroupCombination();
+            if (typeof updateNonVenueStats === 'function') updateNonVenueStats();
+            if (typeof initSiteCards === 'function') initSiteCards();
+            window.applyTaskDetailReadonly();
+        }, 0);
+    });
+
+    const originalToggleTimer = setInterval(function(){
+        if (typeof toggleVenueMode === 'function' && !toggleVenueMode.__detailWrapped) {
+            const raw = toggleVenueMode;
+            toggleVenueMode = function(toggleElement){
+                raw(toggleElement);
+                setTimeout(window.applyTaskDetailReadonly, 0);
+            };
+            toggleVenueMode.__detailWrapped = true;
+            clearInterval(originalToggleTimer);
+        }
+    }, 30);
+})();
+</script>
+<!-- 查看策划方案弹窗 -->
     <div class="plan-modal" id="planModal">
         <div class="bg-white rounded-xl shadow-lg w-[1200px] max-w-[95vw] overflow-hidden">
             <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
@@ -904,7 +2891,7 @@
             </div>
             <div class="p-6 max-h-[70vh] overflow-y-auto">
                 <div id="planTab_sampling" class="plan-tab-content">
-                    <div class="flex justify-between items-center mb-4"><div class="text-sm font-semibold text-slate-900">场所抽样方案及实施情况</div><div class="bg-amber-50 border border-amber-200 text-amber-700 px-3 py-2 rounded-lg text-xs inline-flex items-center gap-2"><i class="fas fa-info-circle"></i>根据抽样规则，本次策划需要选择全部场所</div></div>
+                    <div class="flex justify-between items-center mb-4"><div class="text-sm font-semibold text-slate-900">场所抽样方案及实施情况</div></div>
                     <div class="mb-6 border border-slate-200 rounded-xl overflow-hidden"><div class="bg-blue-50 px-4 py-3 border-b border-slate-200 flex items-center gap-2"><span class="inline-flex items-center px-2 py-1 bg-blue-600 text-white text-xs rounded-md font-medium">总部</span><span class="font-medium text-slate-800 text-sm">运营地址（中心职能）</span></div><div class="p-4 space-y-4"><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">计划审核时间</label><div class="readonly-field">2024年04月</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">实际审核时间</label><div class="readonly-field">----年--月</div></div></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">班次信息</label><div class="readonly-field">班次：1，08:00-17:30</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">联系人/电话</label><div class="readonly-field">张先生/13800138000</div></div></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">地址</label><div class="readonly-field">北京市海淀区中关村大街1号</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">涉及产品/过程/活动</label><div class="readonly-field">软件开发、系统集成</div></div></div><div class="grid grid-cols-4 gap-4"><div><label class="block text-xs font-medium text-slate-700 mb-1">专业代码</label><div class="readonly-field">Q01</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">认可机构</label><div class="readonly-field">CNAS</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">人数(含承包方)</label><div class="readonly-field">200</div></div><div><label class="block text-xs font-medium text-slate-700 mb-1">有效人数</label><div class="readonly-field">180</div></div></div><div class="border-t border-slate-200 pt-4 mt-4"><label class="block text-xs font-semibold text-slate-700 mb-2">人天计算（AI底座）</label><div class="grid grid-cols-4 gap-4 mb-2"><div><label class="block text-xs text-slate-500 mb-1">审核准备</label><div class="readonly-field">1.5</div></div><div><label class="block text-xs text-slate-500 mb-1">第一阶段</label><div class="readonly-field">1.0</div></div><div><label class="block text-xs text-slate-500 mb-1">二阶段现场</label><div class="readonly-field">4.0</div></div><div><label class="block text-xs text-slate-500 mb-1">调整比例</label><div class="readonly-field">1.0</div></div></div><div class="bg-blue-50 p-3 rounded-lg flex justify-between items-center"><span class="text-sm text-slate-600">调整后</span><span class="text-xl font-bold text-blue-600">6.5</span></div></div><div class="mt-5 border-t border-slate-200 pt-4"><div class="text-sm font-semibold text-slate-900 mb-3">过程审核策划</div><div class="overflow-x-auto"><table class="process-table border border-slate-200 rounded-lg"><thead><tr><th style="width:50px">序号</th><th style="min-width:220px">过程名称</th><th style="min-width:110px">主责部门</th><th style="min-width:130px">相关部门</th><th style="min-width:160px">涉及标准条款</th><th style="min-width:320px">绩效参数或相关文件</th></tr></thead><tbody><tr><td>1</td><td>组织环境识别与相关方需求评审</td><td>最高管理者</td><td>综合管理部、各部门</td><td>QES: 4.1, 4.2</td><td>组织环境分析表、相关方需求清单</td></tr>
 <tr><td>2</td><td>管理体系范围确定</td><td>最高管理者</td><td>质量部、市场部</td><td>QES: 4.3</td><td>管理体系范围说明、认证范围确认记录</td></tr>
 <tr><td>3</td><td>体系过程识别与相互作用策划</td><td>质量部</td><td>各部门</td><td>QES: 4.4</td><td>过程关系图、过程绩效指标表</td></tr>
@@ -961,6 +2948,7 @@
     <script>
         function openPlanModal() { viewPlan(); }
         function viewPlan() {
+            restorePlanModalControls();
             document.getElementById('planModal').classList.add('show');
             switchPlanTab('sampling');
         }
@@ -979,9 +2967,21 @@
         function closePlanModal() {
             document.getElementById('planModal').classList.remove('show');
         }
+
+        function restorePlanModalControls() {
+            document.querySelectorAll('#planModal .detail-hide-action, #planModal .action-col-hidden').forEach(el => {
+                el.classList.remove('detail-hide-action', 'action-col-hidden');
+            });
+            document.querySelectorAll('#planModal .plan-tab-btn').forEach(btn => {
+                btn.style.display = '';
+                btn.disabled = false;
+            });
+        }
+        document.addEventListener('DOMContentLoaded', restorePlanModalControls);
         document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape') closePlanModal();
         });
     </script>
+
 </body>
 </html>
