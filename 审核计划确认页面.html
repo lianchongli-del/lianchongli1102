@@ -1,6 +1,8 @@
 
 
 
+
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -501,6 +503,7 @@
         .sign-status-pending { background: #dbeafe; color: #1d4ed8; }
         .sign-status-signing { background: #fef3c7; color: #92400e; }
         .sign-status-signed { background: #dcfce7; color: #166534; }
+        .sign-status-rejected { background: #fee2e2; color: #b91c1c; }
         .sign-status-waiting { background: #f1f5f9; color: #64748b; }
         .sign-platform-card {
             border: 1px solid #e2e8f0;
@@ -802,7 +805,7 @@
             </div>
             <div class="actions">
                 <button type="button" id="topSignBtn" class="action-btn primary" onclick="openSignModal()"><i class="fas fa-stamp"></i><span id="topSignBtnText">签章</span></button>
-                <button type="button" id="topReturnBtn" class="action-btn danger" onclick="openReturnReasonModal()"><i class="fas fa-reply"></i>退回</button>
+                <button type="button" id="topReturnBtn" class="action-btn danger" onclick="openReturnReasonModal()"><i class="fas fa-ban"></i>驳回</button>
             </div>
         </header>
         <main class="frame-stage">
@@ -810,24 +813,24 @@
         </main>
     </div>
 
-    <!-- 退回原因弹窗 -->
+    <!-- 驳回原因弹窗 -->
     <div class="sign-modal-mask" id="returnReasonModal" role="dialog" aria-modal="true" aria-labelledby="returnReasonTitle">
         <div class="sign-modal-card">
             <div class="sign-modal-header">
                 <div>
-                    <div class="sign-modal-title" id="returnReasonTitle"><i class="fas fa-reply text-red-500"></i>退回原因</div>
-                    <div class="sign-modal-subtitle">退回后系统保留当前审核计划内容，等待重新调整后再次提交。</div>
+                    <div class="sign-modal-title" id="returnReasonTitle"><i class="fas fa-ban text-red-500"></i>驳回原因</div>
+                    <div class="sign-modal-subtitle" id="returnReasonSubtitle">驳回提交后系统保留当前审核计划内容，并可在当前节点点击按钮查看驳回原因。</div>
                 </div>
                 <button type="button" class="sign-modal-close" onclick="closeSignModalById('returnReasonModal')" aria-label="关闭"><i class="fas fa-times"></i></button>
             </div>
             <div class="sign-modal-body">
-                <label class="return-reason-label" for="returnReasonText">请填写或查看本次退回原因</label>
-                <textarea id="returnReasonText" class="return-reason-textarea" placeholder="请输入退回原因">审核计划中的审核时间与项目实际安排不一致，请调整后重新提交确认。</textarea>
-                <div class="return-tip"><i class="fas fa-circle-info"></i><span>点击“确认退回”后，系统将记录退回原因并停留在当前页面。</span></div>
+                <label class="return-reason-label" id="returnReasonLabel" for="returnReasonText">请填写本次驳回原因</label>
+                <textarea id="returnReasonText" class="return-reason-textarea" placeholder="请输入驳回原因">审核计划中的审核时间与项目实际安排不一致，请调整后重新提交确认。</textarea>
+                <div class="return-tip" id="returnReasonTip"><i class="fas fa-circle-info"></i><span>点击“驳回提交”后，系统将记录驳回原因，并将当前项目管理/客户节点置为“已驳回”。</span></div>
             </div>
             <div class="sign-modal-footer">
-                <button type="button" class="action-btn" onclick="closeSignModalById('returnReasonModal')">取消</button>
-                <button type="button" class="action-btn danger" onclick="confirmReturnReason()">确认退回</button>
+                <button type="button" class="action-btn" id="returnReasonCancelBtn" onclick="closeSignModalById('returnReasonModal')">取消</button>
+                <button type="button" class="action-btn danger" id="returnReasonSubmitBtn" onclick="confirmReturnReason()">驳回提交</button>
             </div>
         </div>
     </div>
@@ -922,9 +925,9 @@
 
     <script>
         const signNodes = [
-            { key: 'leader', title: '组长', role: '审核组长', signer: '武荣刚', status: 'signed', signedAt: '2024-04-12 09:18:26', signMethod: 'online' },
-            { key: 'pm', title: '项目管理', role: '项目管理', signer: '周静', status: 'pending', signedAt: '', signMethod: 'online' },
-            { key: 'customer', title: '客户', role: '客户代表', signer: '刘海峰', status: 'waiting', signedAt: '', signMethod: 'online', offlineFileName: '', offlineFileSize: '', offlinePdfUrl: '' }
+            { key: 'leader', title: '组长', role: '审核组长', signer: '武荣刚', status: 'signed', signedAt: '2024-04-12 09:18:26', signMethod: 'online', rejectReason: '', rejectedAt: '' },
+            { key: 'pm', title: '项目管理', role: '项目管理', signer: '周静', status: 'pending', signedAt: '', signMethod: 'online', rejectReason: '', rejectedAt: '' },
+            { key: 'customer', title: '客户', role: '客户代表', signer: '刘海峰', status: 'waiting', signedAt: '', signMethod: 'online', offlineFileName: '', offlineFileSize: '', offlinePdfUrl: '', rejectReason: '', rejectedAt: '' }
         ];
         let signingIndex = -1;
         let customerSignMethod = 'online';
@@ -933,9 +936,23 @@
 
         function statusMeta(status) {
             if (status === 'signed') return { text: '已签章', icon: 'fa-circle-check', cls: 'sign-status-signed' };
+            if (status === 'rejected') return { text: '已驳回', icon: 'fa-circle-xmark', cls: 'sign-status-rejected' };
             if (status === 'signing') return { text: '签章中', icon: 'fa-spinner fa-spin', cls: 'sign-status-signing' };
             if (status === 'pending') return { text: '待签章', icon: 'fa-clock', cls: 'sign-status-pending' };
             return { text: '未开始', icon: 'fa-lock', cls: 'sign-status-waiting' };
+        }
+
+        function rejectedSignIndex() {
+            return signNodes.findIndex(function (node) { return node.status === 'rejected'; });
+        }
+
+        function isRejectableNode(node) {
+            return node && (node.key === 'pm' || node.key === 'customer');
+        }
+
+        function currentActionIndex() {
+            const activeIndex = currentSignIndex();
+            return activeIndex !== -1 ? activeIndex : rejectedSignIndex();
         }
 
         function currentSignIndex() {
@@ -1222,10 +1239,62 @@
             return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
         }
 
+        function setReturnReasonModalMode(mode, node) {
+            const title = document.getElementById('returnReasonTitle');
+            const subtitle = document.getElementById('returnReasonSubtitle');
+            const label = document.getElementById('returnReasonLabel');
+            const reason = document.getElementById('returnReasonText');
+            const tip = document.getElementById('returnReasonTip');
+            const cancelBtn = document.getElementById('returnReasonCancelBtn');
+            const submitBtn = document.getElementById('returnReasonSubmitBtn');
+            const nodeTitle = node && node.title ? node.title : '当前节点';
+            if (mode === 'view') {
+                if (title) title.innerHTML = '<i class="fas fa-circle-info text-red-500"></i>' + nodeTitle + '驳回原因';
+                if (subtitle) subtitle.textContent = '该节点已被驳回，以下为本次驳回提交记录。';
+                if (label) label.textContent = '驳回原因';
+                if (reason) {
+                    reason.value = (node && node.rejectReason) ? node.rejectReason : '暂无驳回原因';
+                    reason.readOnly = true;
+                }
+                if (tip) tip.innerHTML = '<i class="fas fa-clock"></i><span>驳回时间：' + escapeHtml((node && node.rejectedAt) || '-') + '</span>';
+                if (cancelBtn) cancelBtn.textContent = '关闭';
+                if (submitBtn) submitBtn.style.display = 'none';
+                return;
+            }
+            if (title) title.innerHTML = '<i class="fas fa-ban text-red-500"></i>' + nodeTitle + '驳回原因';
+            if (subtitle) subtitle.textContent = '驳回提交后系统保留当前审核计划内容，并可在当前节点点击按钮查看驳回原因。';
+            if (label) label.textContent = '请填写本次驳回原因';
+            if (reason) {
+                reason.readOnly = false;
+                reason.value = (node && node.rejectReason) ? node.rejectReason : '审核计划中的审核时间与项目实际安排不一致，请调整后重新提交确认。';
+            }
+            if (tip) tip.innerHTML = '<i class="fas fa-circle-info"></i><span>点击“驳回提交”后，系统将记录驳回原因，并将当前项目管理/客户节点置为“已驳回”。</span>';
+            if (cancelBtn) cancelBtn.textContent = '取消';
+            if (submitBtn) submitBtn.style.display = '';
+        }
+
+        function showRejectReason(index) {
+            const node = signNodes[Number(index)];
+            if (!node || node.status !== 'rejected') {
+                showSignToast('暂无可查看的驳回原因');
+                return;
+            }
+            setReturnReasonModalMode('view', node);
+            openSignModalById('returnReasonModal');
+        }
+
         function openReturnReasonModal() {
+            const idx = currentSignIndex();
+            const node = signNodes[idx];
+            if (!isRejectableNode(node)) {
+                showSignToast('当前节点不支持驳回提交');
+                return;
+            }
+            signingIndex = idx;
+            setReturnReasonModalMode('edit', node);
+            const reason = document.getElementById('returnReasonText');
             openSignModalById('returnReasonModal');
             setTimeout(function () {
-                const reason = document.getElementById('returnReasonText');
                 if (reason) reason.focus();
             }, 80);
         }
@@ -1233,6 +1302,11 @@
         function openSignModal() {
             const idx = currentSignIndex();
             if (idx === -1) {
+                const rejectedIndex = rejectedSignIndex();
+                if (rejectedIndex !== -1) {
+                    showSignToast(signNodes[rejectedIndex].title + '节点已驳回，需查看驳回原因后重新处理');
+                    return;
+                }
                 showSignToast('全部节点已完成签章，可预览最终文件');
                 openPdfPreview();
                 return;
@@ -1324,12 +1398,22 @@
             const reason = document.getElementById('returnReasonText');
             const value = reason ? reason.value.trim() : '';
             if (!value) {
-                showSignToast('请先填写退回原因');
+                showSignToast('请先填写驳回原因');
                 if (reason) reason.focus();
                 return;
             }
+            const idx = signingIndex >= 0 ? signingIndex : currentSignIndex();
+            const node = signNodes[idx];
+            if (!isRejectableNode(node)) {
+                showSignToast('当前节点不支持驳回提交');
+                return;
+            }
+            node.status = 'rejected';
+            node.rejectReason = value;
+            node.rejectedAt = nowText();
             closeSignModalById('returnReasonModal');
-            showSignToast('已记录退回原因：' + value);
+            renderAllSignatureUI();
+            showSignToast(node.title + '节点已驳回，驳回原因已记录');
         }
 
         function showSignToast(text) {
@@ -1354,7 +1438,7 @@
             const returnBtn = document.getElementById('topReturnBtn');
             if (!btn || !btnText) return;
             if (idx === -1) {
-                // 客户节点签章完成后，顶部不再显示“已完成”和“退回”按钮。
+                // 节点签章完成或驳回后，顶部不再显示操作按钮。
                 btn.style.display = 'none';
                 if (returnBtn) returnBtn.style.display = 'none';
                 return;
@@ -1369,6 +1453,7 @@
 
         function frameStatusClass(status) {
             if (status === 'signed') return 'completed';
+            if (status === 'rejected') return 'rejected';
             if (status === 'pending' || status === 'signing') return 'active';
             return 'waiting';
         }
@@ -1455,6 +1540,13 @@
                     .readonly-plan .frame-sign-node.waiting {
                         background: #f8fafc;
                     }
+                    .readonly-plan .frame-sign-node.rejected {
+                        border-color: #fca5a5;
+                        background: #fff7f7;
+                        box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.12);
+                        border-radius: 18px;
+                        padding: 18px 20px;
+                    }
                     .readonly-plan .frame-node-marker {
                         width: 40px;
                         height: 40px;
@@ -1475,6 +1567,14 @@
                     .readonly-plan .frame-sign-node.active .frame-node-marker {
                         background: #2563eb;
                         color: #ffffff;
+                    }
+                    .readonly-plan .frame-sign-node.rejected .frame-node-marker {
+                        width: 48px;
+                        height: 48px;
+                        flex-basis: 48px;
+                        background: #ef4444;
+                        color: #ffffff;
+                        font-size: 18px;
                     }
                     .readonly-plan .frame-node-main {
                         min-width: 0;
@@ -1498,6 +1598,19 @@
                     .readonly-plan .frame-sign-node.waiting .frame-node-sub {
                         color: #94a3b8;
                     }
+                    .readonly-plan .frame-sign-node.rejected .frame-node-title {
+                        color: #0f172a;
+                        font-size: 15px;
+                    }
+                    .readonly-plan .frame-sign-node.rejected .frame-node-sub {
+                        color: #475569;
+                        line-height: 1.45;
+                    }
+                    .readonly-plan .frame-node-reject-action {
+                        margin-top: 6px;
+                        display: flex;
+                        align-items: center;
+                    }
                     .readonly-plan .frame-node-status {
                         flex: 0 0 auto;
                         display: inline-flex;
@@ -1518,6 +1631,12 @@
                     .readonly-plan .frame-node-status.active {
                         background: #dbeafe;
                         color: #1d4ed8;
+                    }
+                    .readonly-plan .frame-node-status.rejected {
+                        min-width: 76px;
+                        background: #fee2e2;
+                        color: #b91c1c;
+                        font-weight: 800;
                     }
                     .readonly-plan .frame-node-status.waiting {
                         background: #e2e8f0;
@@ -1549,6 +1668,32 @@
                         cursor: pointer !important;
                         transition: all .18s ease;
                     }
+                    .readonly-plan .frame-reject-reason-btn {
+                        flex: 0 0 auto;
+                        display: inline-flex !important;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 6px;
+                        height: 30px;
+                        padding: 0 12px;
+                        border: 1px solid #fecaca;
+                        border-radius: 8px;
+                        background: #ffffff;
+                        color: #dc2626;
+                        font-size: 12px;
+                        font-weight: 800;
+                        cursor: pointer !important;
+                        white-space: nowrap;
+                        transition: all .18s ease;
+                    }
+                    .readonly-plan .frame-reject-reason-btn i {
+                        color: #dc2626;
+                        font-size: 12px;
+                    }
+                    .readonly-plan .frame-reject-reason-btn:hover {
+                        background: #fef2f2;
+                        border-color: #fca5a5;
+                    }
                     .readonly-plan .frame-preview-btn:hover {
                         background: #eff6ff;
                         border-color: #bfdbfe;
@@ -1578,7 +1723,8 @@
                 panel.className = 'frame-sign-progress-card';
                 nav.parentNode.insertBefore(panel, nav);
             }
-            const current = currentSignIndex();
+            const current = currentActionIndex();
+            const rejectedIndex = rejectedSignIndex();
             panel.innerHTML = `
                 <div class="frame-sign-progress-head">
                     <div>
@@ -1591,11 +1737,12 @@
                         ${signNodes.map(function (node, index) {
                             const isCurrent = index === current;
                             const nodeCls = frameStatusClass(node.status);
-                            const marker = node.status === 'signed' ? '<i class="fas fa-check"></i>' : String(index + 1);
-                            const stateText = node.status === 'signed' ? '已签章' : (node.status === 'pending' || node.status === 'signing' ? '待处理' : '未开始');
-                            const subText = node.status === 'signed' && node.signedAt ? (signMethodText(node) + ' · 签章人：' + node.signer + ' · ' + node.signedAt) : (node.status === 'pending' || node.status === 'signing' ? ('当前处理人：' + node.signer) : ('等待 ' + node.signer + ' 处理'));
-                            const nodeHtml = '<div class="frame-sign-node ' + nodeCls + '"><span class="frame-node-marker">' + marker + '</span><div class="frame-node-main"><span class="frame-node-title">' + node.title + '</span><span class="frame-node-sub">' + subText + '</span></div><span class="frame-node-status ' + nodeCls + '">' + stateText + '</span></div>';
-                            const arrowCls = index < current ? 'done' : (isCurrent ? 'active' : '');
+                            const marker = node.status === 'signed' ? '<i class="fas fa-check"></i>' : (node.status === 'rejected' ? '<i class="fas fa-exclamation"></i>' : String(index + 1));
+                            const stateText = node.status === 'signed' ? '已签章' : (node.status === 'rejected' ? '已驳回' : (node.status === 'pending' || node.status === 'signing' ? '待处理' : '未开始'));
+                            const subText = node.status === 'signed' && node.signedAt ? (signMethodText(node) + ' · 签章人：' + node.signer + ' · ' + node.signedAt) : (node.status === 'rejected' ? ('驳回人：' + node.signer + ' · ' + (node.rejectedAt || '-')) : (node.status === 'pending' || node.status === 'signing' ? ('当前处理人：' + node.signer) : ('等待 ' + node.signer + ' 处理')));
+                            const actionHtml = node.status === 'rejected' ? '<span class="frame-node-reject-action"><button type="button" class="frame-reject-reason-btn" data-reject-index="' + index + '"><i class="fas fa-circle-info"></i>查看驳回原因</button></span>' : '';
+                            const nodeHtml = '<div class="frame-sign-node ' + nodeCls + '"><span class="frame-node-marker">' + marker + '</span><div class="frame-node-main"><span class="frame-node-title">' + node.title + '</span><span class="frame-node-sub">' + escapeHtml(subText) + '</span>' + actionHtml + '</div><span class="frame-node-status ' + nodeCls + '">' + stateText + '</span></div>';
+                            const arrowCls = rejectedIndex !== -1 ? (index < rejectedIndex ? 'done' : '') : (index < current ? 'done' : (isCurrent ? 'active' : ''));
                             return index < signNodes.length - 1 ? nodeHtml + '<span class="frame-flow-arrow ' + arrowCls + '"><i class="fas fa-arrow-right"></i></span>' : nodeHtml;
                         }).join('')}
                     </div>
@@ -1603,6 +1750,11 @@
             `;
             const previewBtn = doc.getElementById('framePreviewBtn');
             if (previewBtn) previewBtn.onclick = function () { window.openPdfPreview(); };
+            doc.querySelectorAll('.frame-reject-reason-btn[data-reject-index]').forEach(function (btn) {
+                btn.onclick = function () {
+                    window.showRejectReason(this.getAttribute('data-reject-index'));
+                };
+            });
         }
 
         function escapeHtml(value) {
