@@ -685,6 +685,178 @@
             color: #dc2626;
         }
 
+        .past-plan-modal-mask {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(15, 23, 42, 0.45);
+            z-index: 2000;
+        }
+
+        .past-plan-modal-mask.show {
+            display: flex;
+        }
+
+        .past-plan-modal {
+            width: min(980px, 100%);
+            max-height: 86vh;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 24px 70px rgba(15, 23, 42, 0.24);
+            overflow: hidden;
+        }
+
+        .past-plan-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .past-plan-modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .past-plan-modal-body {
+            padding: 16px 20px 20px;
+            overflow-y: auto;
+        }
+
+        .past-plan-filter-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+            padding: 10px 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        .past-plan-filter-row label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .past-plan-filter-row select {
+            width: 160px;
+        }
+
+        .past-plan-confirm-modal {
+            width: min(420px, 100%);
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 24px 70px rgba(15, 23, 42, 0.24);
+            overflow: hidden;
+        }
+
+        .past-plan-confirm-body {
+            padding: 20px;
+        }
+
+        .past-plan-confirm-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .past-plan-confirm-text {
+            font-size: 13px;
+            line-height: 1.7;
+            color: #475569;
+        }
+
+        .past-plan-confirm-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 14px 20px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .past-plan-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .past-plan-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 14px;
+            background: #ffffff;
+            transition: border-color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .past-plan-card:hover {
+            border-color: #93c5fd;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+        }
+
+        .past-plan-card-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .past-plan-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .past-plan-meta {
+            margin-top: 4px;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .past-plan-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .past-plan-field {
+            min-width: 0;
+            padding: 8px;
+            background: #f8fafc;
+            border-radius: 6px;
+        }
+
+        .past-plan-field span {
+            display: block;
+            margin-bottom: 3px;
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        .past-plan-field strong {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 12px;
+            color: #1e293b;
+        }
+
         /* 范围信息行 */
         .range-row {
             display: flex;
@@ -1191,6 +1363,9 @@
                     </div>
                     审核活动安排
                 </div>
+                <button type="button" class="btn btn-primary btn-sm" onclick="openPastPlanModal()">
+                    <i class="fas fa-file-import"></i>导入过往计划
+                </button>
             </div>
             
             <div class="p-5">
@@ -1227,7 +1402,7 @@
                             </div>
                             <div class="site-info-item">
                                 <span class="site-info-label">审核日期区间</span>
-                                <span class="site-info-value">2024-04-15 至 2024-04-18</span>
+                                <span class="site-info-value" data-site-date-range="hq">2024-04-15 至 2024-04-18</span>
                             </div>
                             <div class="site-info-item">
                                 <span class="site-info-label">已分配人天</span>
@@ -1295,7 +1470,7 @@
                             </div>
                             <div class="site-info-item">
                                 <span class="site-info-label">审核日期区间</span>
-                                <span class="site-info-value">2024-04-16 至 2024-04-17</span>
+                                <span class="site-info-value" data-site-date-range="site1">2024-04-16 至 2024-04-17</span>
                             </div>
                             <div class="site-info-item">
                                 <span class="site-info-label">已分配人天</span>
@@ -1364,7 +1539,7 @@
                             </div>
                             <div class="site-info-item">
                                 <span class="site-info-label">审核日期区间</span>
-                                <span class="site-info-value">2024-04-17 至 2024-04-18</span>
+                                <span class="site-info-value" data-site-date-range="site2">2024-04-17 至 2024-04-18</span>
                             </div>
                             <div class="site-info-item">
                                 <span class="site-info-label">已分配人天</span>
@@ -1415,6 +1590,50 @@
 
     </main>
 
+    <div class="past-plan-modal-mask" id="pastPlanModal" role="dialog" aria-modal="true" aria-labelledby="pastPlanModalTitle">
+        <div class="past-plan-modal">
+            <div class="past-plan-modal-header">
+                <div>
+                    <div class="past-plan-modal-title" id="pastPlanModalTitle">选择过往审核计划</div>
+                    <div class="text-xs text-slate-500 mt-1">引用后将带入过往审核活动安排。</div>
+                </div>
+                <button type="button" class="btn btn-default btn-sm" onclick="closePastPlanModal()" aria-label="关闭">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="past-plan-modal-body">
+                <div class="past-plan-filter-row">
+                    <label for="pastPlanYearFilter">审核年度</label>
+                    <select id="pastPlanYearFilter" class="form-select" onchange="renderPastPlanList()">
+                        <option value="">全部年度</option>
+                    </select>
+                </div>
+                <div class="past-plan-list" id="pastPlanList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="past-plan-modal-mask" id="pastPlanConfirmModal" role="dialog" aria-modal="true" aria-labelledby="pastPlanConfirmTitle">
+        <div class="past-plan-confirm-modal">
+            <div class="past-plan-confirm-body">
+                <div class="past-plan-confirm-title" id="pastPlanConfirmTitle">
+                    <i class="fas fa-triangle-exclamation text-amber-500"></i>
+                    确认引用过往审核计划
+                </div>
+                <div class="past-plan-confirm-text">
+                    引入后将删除已填写的审核计划，并使用所选过往审核计划重新带入过往审核活动安排。
+                </div>
+                <div class="mt-3 text-sm font-semibold text-slate-900" id="pastPlanConfirmName"></div>
+            </div>
+            <div class="past-plan-confirm-actions">
+                <button type="button" class="btn btn-default btn-sm" onclick="closePastPlanConfirmModal()">取消</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="confirmPastPlanImport()">
+                    <i class="fas fa-check"></i>确认引用
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // 审核组人员数据
         const auditTeam = [
@@ -1439,8 +1658,140 @@
             site2: { name: '运营二分公司', type: '场所', address: '北京市朝阳区望京北路9号', scopes: ['OHSMS', 'EMS'], staff: 150 }
         };
 
+        const pastAuditPlans = [
+            {
+                id: 'past-2023-surveillance',
+                year: '2023',
+                name: '2023年度第一次审核',
+                customer: '北京市地铁运营有限公司',
+                auditTimeRange: '2023-04-17 至 2023-04-20',
+                auditType: '初次认证、监督审核',
+                auditStage: '二阶段',
+                domains: 'QMS、EMS、OHSMS',
+                leader: '武荣刚',
+                teamCount: '6人',
+                personDays: '12.0人天',
+                siteDateRanges: {
+                    hq: '2023-04-17 至 2023-04-20',
+                    site1: '2023-04-18 至 2023-04-19',
+                    site2: '2023-04-19 至 2023-04-20'
+                },
+                activities: {
+                    hq: [
+                        { date: '2023-04-17', startTime: '09:00', endTime: '11:00', auditors: ['wurg'], process: '管理体系运行、方针目标及职责权限', dept: '最高管理者/中心职能' },
+                        { date: '2023-04-17', startTime: '13:30', endTime: '15:30', auditors: ['whw'], process: '质量管理过程与文件记录控制', dept: '质量管理部/中心职能' }
+                    ],
+                    site1: [
+                        { date: '2023-04-18', startTime: '09:00', endTime: '11:00', auditors: ['zhangli'], process: 'EMS运行控制及合规性评价', dept: '运营一分公司' },
+                        { date: '2023-04-18', startTime: '13:30', endTime: '15:30', auditors: ['liuna'], process: '职业健康安全风险管控', dept: '运营一分公司' }
+                    ],
+                    site2: [
+                        { date: '2023-04-19', startTime: '09:00', endTime: '11:00', auditors: ['chenming'], process: '环境因素识别与运行绩效监视', dept: '运营二分公司' },
+                        { date: '2023-04-19', startTime: '13:30', endTime: '15:30', auditors: ['zhaoqiang'], process: '现场应急准备与响应', dept: '运营二分公司' }
+                    ]
+                }
+            },
+            {
+                id: 'past-2023-second',
+                year: '2023',
+                name: '2023年度第二次审核',
+                customer: '北京市地铁运营有限公司',
+                auditTimeRange: '2023-09-11 至 2023-09-14',
+                auditType: '初次认证、监督审核',
+                auditStage: '一阶段',
+                domains: 'QMS、EMS、OHSMS',
+                leader: '武荣刚',
+                teamCount: '5人',
+                personDays: '10.0人天',
+                siteDateRanges: {
+                    hq: '2023-09-11 至 2023-09-14',
+                    site1: '2023-09-12 至 2023-09-13',
+                    site2: '2023-09-13 至 2023-09-14'
+                },
+                activities: {
+                    hq: [
+                        { date: '2023-09-11', startTime: '09:00', endTime: '11:00', auditors: ['wurg'], process: '一阶段文件评审与体系边界确认', dept: '最高管理者/中心职能' },
+                        { date: '2023-09-11', startTime: '13:30', endTime: '15:30', auditors: ['whw'], process: '认证范围、审核准则及过程识别确认', dept: '质量管理部/中心职能' }
+                    ],
+                    site1: [
+                        { date: '2023-09-12', startTime: '09:00', endTime: '11:00', auditors: ['zhangli'], process: '现场基本情况及环境运行控制确认', dept: '运营一分公司' },
+                        { date: '2023-09-12', startTime: '13:30', endTime: '15:30', auditors: ['liuna'], process: '风险源识别及法规符合性确认', dept: '运营一分公司' }
+                    ],
+                    site2: [
+                        { date: '2023-09-13', startTime: '09:00', endTime: '11:00', auditors: ['chenming'], process: '现场过程识别与绩效监测确认', dept: '运营二分公司' },
+                        { date: '2023-09-13', startTime: '13:30', endTime: '15:30', auditors: ['zhaoqiang'], process: '应急准备、资源配置与现场条件确认', dept: '运营二分公司' }
+                    ]
+                }
+            },
+            {
+                id: 'past-2022-recertification',
+                year: '2022',
+                name: '2022年度第一次审核',
+                customer: '北京市地铁运营有限公司',
+                auditTimeRange: '2022-05-09 至 2022-05-13',
+                auditType: '再认证审核、监督审核',
+                auditStage: '二阶段',
+                domains: 'QMS、EMS',
+                leader: '张伟',
+                teamCount: '5人',
+                personDays: '14.5人天',
+                siteDateRanges: {
+                    hq: '2022-05-09 至 2022-05-13',
+                    site1: '2022-05-10 至 2022-05-11',
+                    site2: '2022-05-12 至 2022-05-13'
+                },
+                activities: {
+                    hq: [
+                        { date: '2022-05-09', startTime: '09:00', endTime: '11:30', auditors: ['wurg'], process: '管理体系策划、内审与管理评审', dept: '最高管理者/综合管理部' },
+                        { date: '2022-05-09', startTime: '14:00', endTime: '16:30', auditors: ['whw'], process: 'QMS核心过程与绩效评价', dept: '质量管理部' }
+                    ],
+                    site1: [
+                        { date: '2022-05-10', startTime: '09:00', endTime: '11:30', auditors: ['zhangli'], process: 'EMS合规性评价与运行控制', dept: '运营一分公司' }
+                    ],
+                    site2: [
+                        { date: '2022-05-12', startTime: '09:00', endTime: '11:30', auditors: ['chenming'], process: '能源、环境及现场控制', dept: '运营二分公司' }
+                    ]
+                }
+            },
+            {
+                id: 'past-2021-stage1',
+                year: '2021',
+                name: '2021年度第一次审核',
+                customer: '北京市地铁运营有限公司',
+                auditTimeRange: '2021-03-22 至 2021-03-23',
+                auditType: '初次认证',
+                auditStage: '一阶段',
+                domains: 'QMS、OHSMS',
+                leader: '王洪伟',
+                teamCount: '4人',
+                personDays: '6.0人天',
+                siteDateRanges: {
+                    hq: '2021-03-22 至 2021-03-23',
+                    site1: '2021-03-22 至 2021-03-22',
+                    site2: '2021-03-23 至 2021-03-23'
+                },
+                activities: {
+                    hq: [
+                        { date: '2021-03-22', startTime: '09:00', endTime: '10:30', auditors: ['wurg'], process: '一阶段文件评审与体系范围确认', dept: '最高管理者/中心职能' },
+                        { date: '2021-03-22', startTime: '10:45', endTime: '12:00', auditors: ['whw'], process: '认证范围、边界及适用性确认', dept: '体系管理部门' }
+                    ],
+                    site1: [
+                        { date: '2021-03-22', startTime: '14:00', endTime: '16:00', auditors: ['zhangli'], process: '现场基本情况及过程识别', dept: '运营一分公司' }
+                    ],
+                    site2: [
+                        { date: '2021-03-23', startTime: '09:00', endTime: '11:00', auditors: ['zhaoqiang'], process: '风险识别与现场准备情况确认', dept: '运营二分公司' }
+                    ]
+                }
+            }
+        ];
+
+        let activityRowSeed = 0;
+        let pendingPastPlanId = '';
+
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
+            initPastPlanYearFilter();
+            renderPastPlanList();
             addActivityRow('hq', { date: '2024-04-15', startTime: '09:00', endTime: '11:00', auditors: ['wurg'], process: '管理体系范围、方针目标及职责权限', dept: '最高管理者/中心职能' });
             addActivityRow('hq', { date: '2024-04-15', startTime: '13:30', endTime: '15:30', auditors: ['whw'], process: 'QMS过程控制与文件记录', dept: '质量管理部/中心职能' });
             addActivityRow('site1', { date: '2024-04-16', startTime: '09:00', endTime: '11:00', auditors: ['zhangli'], process: 'EMS运行控制及合规性评价', dept: '运营一分公司' });
@@ -1589,7 +1940,7 @@
 
         function addActivityRow(siteId, data = null) {
             const container = document.getElementById(`activityContainer-${siteId}`);
-            const rowId = `${siteId}_act_${Date.now()}`;
+            const rowId = `${siteId}_act_${Date.now()}_${++activityRowSeed}`;
             
             const div = document.createElement('div');
             div.className = 'activity-row';
@@ -1822,6 +2173,106 @@
             };
             reader.readAsArrayBuffer(file);
             event.target.value = '';
+        }
+
+        function openPastPlanModal() {
+            const modal = document.getElementById('pastPlanModal');
+            if (modal) modal.classList.add('show');
+        }
+
+        function closePastPlanModal() {
+            const modal = document.getElementById('pastPlanModal');
+            if (modal) modal.classList.remove('show');
+        }
+
+        function initPastPlanYearFilter() {
+            const filter = document.getElementById('pastPlanYearFilter');
+            if (!filter) return;
+            const years = Array.from(new Set(pastAuditPlans.map(plan => plan.year))).sort((a, b) => b.localeCompare(a));
+            filter.innerHTML = '<option value="">全部年度</option>' + years.map(year => `<option value="${year}">${year}年度</option>`).join('');
+        }
+
+        function renderPastPlanList() {
+            const list = document.getElementById('pastPlanList');
+            if (!list) return;
+            const year = document.getElementById('pastPlanYearFilter')?.value || '';
+            const plans = year ? pastAuditPlans.filter(plan => plan.year === year) : pastAuditPlans;
+
+            if (plans.length === 0) {
+                list.innerHTML = '<div class="text-center text-sm text-slate-500 py-10 bg-slate-50 rounded-lg border border-dashed border-slate-300">该年度暂无过往审核计划</div>';
+                return;
+            }
+
+            list.innerHTML = plans.map(plan => `
+                <div class="past-plan-card">
+                    <div class="past-plan-card-head">
+                        <div>
+                            <div class="past-plan-name">${plan.name}</div>
+                            <div class="past-plan-meta">${plan.customer}</div>
+                        </div>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="requestPastPlanImport('${plan.id}')">
+                            <i class="fas fa-file-import"></i>引用
+                        </button>
+                    </div>
+                    <div class="past-plan-grid">
+                        <div class="past-plan-field"><span>审核时间区间</span><strong>${plan.auditTimeRange}</strong></div>
+                        <div class="past-plan-field"><span>审核类型</span><strong>${plan.auditType}</strong></div>
+                        <div class="past-plan-field"><span>审核阶段</span><strong>${plan.auditStage}</strong></div>
+                        <div class="past-plan-field"><span>认证领域</span><strong>${plan.domains}</strong></div>
+                        <div class="past-plan-field"><span>审核组长</span><strong>${plan.leader}</strong></div>
+                        <div class="past-plan-field"><span>审核组人数</span><strong>${plan.teamCount}</strong></div>
+                        <div class="past-plan-field"><span>审核人天数</span><strong>${plan.personDays}</strong></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function requestPastPlanImport(planId) {
+            const plan = pastAuditPlans.find(item => item.id === planId);
+            if (!plan) return;
+            pendingPastPlanId = planId;
+            const nameEl = document.getElementById('pastPlanConfirmName');
+            if (nameEl) nameEl.textContent = plan.name;
+            const modal = document.getElementById('pastPlanConfirmModal');
+            if (modal) modal.classList.add('show');
+        }
+
+        function closePastPlanConfirmModal() {
+            pendingPastPlanId = '';
+            const modal = document.getElementById('pastPlanConfirmModal');
+            if (modal) modal.classList.remove('show');
+        }
+
+        function confirmPastPlanImport() {
+            if (!pendingPastPlanId) return;
+            const planId = pendingPastPlanId;
+            closePastPlanConfirmModal();
+            applyPastPlan(planId);
+        }
+
+        function applyPastPlan(planId) {
+            const plan = pastAuditPlans.find(item => item.id === planId);
+            if (!plan) return;
+
+            Object.keys(plan.siteDateRanges || {}).forEach(siteId => {
+                const dateEl = document.querySelector(`[data-site-date-range="${siteId}"]`);
+                if (dateEl) dateEl.textContent = plan.siteDateRanges[siteId];
+            });
+
+            Object.keys(sitesData).forEach(siteId => {
+                const container = document.getElementById(`activityContainer-${siteId}`);
+                if (!container) return;
+                container.innerHTML = '';
+                (plan.activities?.[siteId] || []).forEach(activity => addActivityRow(siteId, activity));
+
+                const selectAll = document.querySelector(`.site-card[data-site-id="${siteId}"] .select-all-site`);
+                if (selectAll) selectAll.checked = false;
+                updateSiteBatchDeleteBtn(siteId);
+            });
+
+            updateAuditStats();
+            closePastPlanModal();
+            showToast(`已引用“${plan.name}”`);
         }
 
         function toggleSection(header) {
