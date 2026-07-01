@@ -1,6 +1,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -1765,15 +1766,10 @@
             return domTableToPdf(table, '五、审核组') || makePdfTable('五、审核组', [['审核组', textFromNode(sec)]]);
         }
 
-        function buildActivityTable(doc) {
+                function buildActivityTable(doc) {
             const sec = doc.querySelector('#section-activity');
             if (!sec) return '';
             let html = '<div class="pdf-table-section"><div class="pdf-section-title">六、审核活动安排</div>';
-            const stats = Array.from(sec.querySelectorAll('.stats-bar .stat-item')).map(function (item) { return textFromNode(item); }).filter(Boolean);
-            if (stats.length) {
-                html += '<table class="plan-pdf-table"><tbody><tr><th>审核组已安排时长统计</th><td>' + escapeHtml(stats.join('；')) + '</td></tr></tbody></table>';
-            }
-
             const cards = Array.from(sec.querySelectorAll('.site-card'));
             if (!cards.length) {
                 html += '<table class="plan-pdf-table"><tbody><tr><th>审核活动</th><td>' + escapeHtml(textFromNode(sec)) + '</td></tr></tbody></table>';
@@ -1782,25 +1778,9 @@
 
             cards.forEach(function (card, index) {
                 const siteTitle = textFromNode(card.querySelector('.site-title')) || ('场所 ' + (index + 1));
-                const infoRows = [];
-                const typeTag = Array.from(card.querySelectorAll('.site-type-tag')).map(function (tag) { return textFromNode(tag); }).filter(Boolean).join('、');
-                const scopes = Array.from(card.querySelectorAll('.scope-badge')).map(function (tag) { return textFromNode(tag); }).filter(Boolean).join('、');
-                if (siteTitle) infoRows.push(['场所名称', siteTitle]);
-                if (typeTag) infoRows.push(['场所类型', typeTag]);
-                if (scopes) infoRows.push(['认证体系', scopes]);
-                Array.from(card.querySelectorAll('.site-info-item')).forEach(function (info) {
-                    const label = textFromNode(info.querySelector('.site-info-label'));
-                    const value = textFromNode(info.querySelector('.site-info-value'));
-                    if (label || value) infoRows.push([label, value]);
-                });
-                html += '<table class="plan-pdf-table scope-table"><tbody><tr><th colspan="2">审核场所 ' + (index + 1) + '</th></tr>' + pdfRows(infoRows) + '</tbody></table>';
+                html += '<div class="pdf-site-name">' + escapeHtml(siteTitle) + '</div>';
 
-                const headers = Array.from(card.querySelectorAll('.activity-header > div')).map(function (el, colIndex, arr) {
-                    const txt = textFromNode(el);
-                    if (!txt || txt === '批量删除' || colIndex === 0 || colIndex === arr.length - 1) return '';
-                    return txt;
-                }).filter(Boolean);
-
+                const headers = ['日期', '时间', '审核人员', '拟审核的过程或活动及相关的标准条款', '涉及的部门/场所'];
                 const bodyRows = Array.from(card.querySelectorAll('.activity-row')).map(function (row) {
                     return Array.from(row.children).map(function (cell, colIndex, arr) {
                         if (colIndex === 0 || colIndex === arr.length - 1) return '';
@@ -1808,21 +1788,15 @@
                     }).filter(Boolean);
                 }).filter(function (cells) { return cells.some(Boolean); });
 
-                if (headers.length || bodyRows.length) {
-                    html += '<table class="plan-pdf-table matrix activity-table">';
-                    if (headers.length) {
-                        html += '<thead><tr>' + headers.map(function (h) { return '<th>' + escapeHtml(h) + '</th>'; }).join('') + '</tr></thead>';
-                    }
-                    html += '<tbody>';
-                    if (bodyRows.length) {
-                        html += bodyRows.map(function (cells) {
-                            return '<tr>' + cells.map(function (cell) { return '<td>' + escapeHtml(cell || '-') + '</td>'; }).join('') + '</tr>';
-                        }).join('');
-                    } else {
-                        html += '<tr><td colspan="' + Math.max(headers.length, 1) + '">当前表单暂无已填写的审核活动明细，保留原表单中的场所与表头信息。</td></tr>';
-                    }
-                    html += '</tbody></table>';
+                html += '<table class="plan-pdf-table matrix activity-table"><thead><tr>' + headers.map(function (h) { return '<th>' + escapeHtml(h) + '</th>'; }).join('') + '</tr></thead><tbody>';
+                if (bodyRows.length) {
+                    html += bodyRows.map(function (cells) {
+                        return '<tr>' + cells.map(function (cell) { return '<td>' + escapeHtml(cell || '-') + '</td>'; }).join('') + '</tr>';
+                    }).join('');
+                } else {
+                    html += '<tr><td colspan="' + headers.length + '">暂无已填写的审核活动明细</td></tr>';
                 }
+                html += '</tbody></table>';
             });
 
             return html + '</div>';
@@ -1987,6 +1961,13 @@
     .scope-table {
         margin-bottom: 12px;
     }
+    .pdf-site-name {
+        margin: 12px 0 6px;
+        font-size: 13px;
+        font-weight: 900;
+        color: #0f172a;
+    }
+
     .activity-table {
         font-size: 11px;
     }
