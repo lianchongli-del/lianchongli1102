@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -213,6 +214,36 @@
   } else {
     bindTabs();
   }
+})();
+</script>
+
+<script id="STAGE2_IMPLEMENTATION_RECORD_OUTER_FINAL_PATCH">
+(function () {
+  var finalRecordPatch = "<script id=\"IMPLEMENTATION_RECORD_FINAL_PATCH\">\n(function () {\n  function safe(value) {\n    return String(value == null ? '' : value).replace(/[&<>\"']/g, function (ch) {\n      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', \"'\": '&#39;' })[ch];\n    });\n  }\n  function normalizeStage2RecordStatuses() {\n    try {\n      if (typeof verificationData === 'undefined' || !Array.isArray(verificationData)) return;\n      verificationData.forEach(function (item, index) {\n        if (!item) return;\n        if (index < 3) {\n          item.status = 'unsubmitted';\n          item.submitTime = '-';\n        } else if (index === 3) {\n          item.status = 'submitted';\n          if (!item.submitTime || item.submitTime === '-' || item.submitTime.indexOf('已确认') >= 0) {\n            item.submitTime = '2024-04-17 19:20:00';\n          }\n        } else if (item.status === 'confirmed') {\n          item.status = 'submitted';\n        }\n      });\n    } catch (e) {}\n  }\n  function removeFieldAuditHint() {\n    var hint = document.querySelector('#field-module .card-header .text-xs.text-gray-500');\n    if (hint) hint.remove();\n  }\n  function statNumber(value, type) {\n    if (typeof window.renderStatNumber === 'function') return window.renderStatNumber(value, type);\n    if (!value) return '<span class=\"stat-number stat-zero\">-</span>';\n    return '<span class=\"stat-number\">' + value + '</span>';\n  }\n  function getStats(records) {\n    if (typeof window.calculateProgressStats === 'function') return window.calculateProgressStats(records || []);\n    return { advantage: 0, minor: 0, severe: 0 };\n  }\n  function viewButton(index) {\n    return '<button class=\"btn btn-info btn-sm\" onclick=\"viewVerificationDetails(' + index + ')\"><i class=\"fas fa-eye text-xs\"></i> 查看详情</button>';\n  }\n  function editButton(index) {\n    return '<button class=\"btn btn-primary btn-sm\" onclick=\"editLeaderVerification(' + index + ')\"><i class=\"fas fa-edit text-xs\"></i> 编辑</button>';\n  }\n  window.renderVerificationTable = function () {\n    normalizeStage2RecordStatuses();\n    removeFieldAuditHint();\n    var tbody = document.getElementById('verificationTableBody');\n    if (!tbody || typeof verificationData === 'undefined' || !Array.isArray(verificationData)) return;\n    tbody.innerHTML = '';\n    verificationData.forEach(function (item, index) {\n      var tr = document.createElement('tr');\n      var isSubmitted = item.status === 'submitted';\n      var statusBadge = isSubmitted\n        ? '<span class=\"status-badge-table badge-processing\">已提交</span>'\n        : '<span class=\"status-badge-table badge-draft\">未提交</span>';\n      var stats = getStats(item.records);\n      var actionBtns = '<div class=\"action-btns\">' + viewButton(index);\n      if (index === 0 && item.role === '组长' && item.status === 'unsubmitted') {\n        actionBtns += editButton(index);\n      }\n      actionBtns += '</div>';\n      tr.innerHTML = '<td class=\"font-medium\">' + safe(item.auditorName) + '</td>'\n        + '<td><span class=\"personnel-tag ' + safe(item.roleTag) + '\">' + safe(item.role) + '</span></td>'\n        + '<td style=\"white-space:nowrap;overflow:hidden;text-overflow:ellipsis;\" title=\"' + safe(item.dateRange) + '\">' + safe(item.dateRange) + '</td>'\n        + '<td>' + safe(item.sites) + '</td>'\n        + '<td style=\"text-align:center;\">' + statNumber(Math.max(0, 5 - ((item.records || []).length || 0)), 'unreviewed') + '</td>'\n        + '<td style=\"text-align:center;\">' + statNumber(stats.advantage || 0, 'advantage') + '</td>'\n        + '<td style=\"text-align:center;\">' + statNumber(stats.minor || 0, 'minor') + '</td>'\n        + '<td style=\"text-align:center;\">' + statNumber(stats.severe || 0, 'severe') + '</td>'\n        + '<td>' + statusBadge + '</td>'\n        + '<td class=\"text-gray-500\">' + safe(item.submitTime || '-') + '</td>'\n        + '<td>' + actionBtns + '</td>';\n      tbody.appendChild(tr);\n    });\n  };\n  window.renderSidebar = function (data) {\n    var sidebarContent = document.getElementById('sidebarContent');\n    if (!sidebarContent) return;\n    sidebarContent.innerHTML = '';\n    if (!data.records || data.records.length === 0) {\n      sidebarContent.innerHTML = '<div style=\"padding: 12px; color: #64748b; font-size: 13px;\">暂无记录</div>';\n      return;\n    }\n    data.records.forEach(function (record, idx) {\n      var item = document.createElement('div');\n      item.className = 'sidebar-item ' + (idx === currentActivityIndex ? 'active' : '');\n      item.onclick = function () { switchActivity(idx); };\n      item.innerHTML = '<div style=\"font-weight:600;color:' + (idx === currentActivityIndex ? '#1d4ed8' : '#334155') + ';\">' + safe(record.date) + ' ' + safe(record.time) + '</div>';\n      sidebarContent.appendChild(item);\n    });\n  };\n  if (typeof window.saveVerificationRecords === 'function' && !window.saveVerificationRecords.__stage2FinalWrapped) {\n    var nativeSaveVerificationRecords = window.saveVerificationRecords;\n    var wrappedSaveVerificationRecords = function () {\n      var result = nativeSaveVerificationRecords.apply(this, arguments);\n      setTimeout(function () {\n        normalizeStage2RecordStatuses();\n        if (typeof window.renderVerificationTable === 'function') window.renderVerificationTable();\n      }, 0);\n      return result;\n    };\n    wrappedSaveVerificationRecords.__stage2FinalWrapped = true;\n    window.saveVerificationRecords = wrappedSaveVerificationRecords;\n  }\n  function applyStage2RecordPatch() {\n    normalizeStage2RecordStatuses();\n    removeFieldAuditHint();\n    if (typeof window.renderVerificationTable === 'function') window.renderVerificationTable();\n  }\n  if (document.readyState === 'loading') {\n    document.addEventListener('DOMContentLoaded', applyStage2RecordPatch);\n  } else {\n    applyStage2RecordPatch();\n  }\n  setTimeout(applyStage2RecordPatch, 60);\n  setTimeout(applyStage2RecordPatch, 220);\n})();\n<\\/script>";
+  finalRecordPatch = finalRecordPatch.replace(/<\\\/script>/g, '</' + 'script>');
+  function patchRecordHtml(html) {
+    html = html || '';
+    if (html.indexOf('IMPLEMENTATION_RECORD_FINAL_PATCH') !== -1) return html;
+    if (/<\/body>\s*<\/html>\s*$/i.test(html)) {
+      return html.replace(/<\/body>\s*<\/html>\s*$/i, finalRecordPatch + '\n</body>\n</html>');
+    }
+    return html + finalRecordPatch;
+  }
+  function applyOuterPatch() {
+    if (!Array.isArray(window.pageHtml)) return;
+    window.pageHtml[4] = patchRecordHtml(window.pageHtml[4] || '');
+    var frame = document.getElementById('frame-record');
+    if (frame) {
+      frame.removeAttribute('src');
+      frame.srcdoc = (window.pageHtml[4] || '').replaceAll('__COMBINED_SCRIPT_CLOSE__', '</' + 'script>');
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyOuterPatch);
+  } else {
+    applyOuterPatch();
+  }
+  setTimeout(applyOuterPatch, 120);
 })();
 </script>
 </body>
