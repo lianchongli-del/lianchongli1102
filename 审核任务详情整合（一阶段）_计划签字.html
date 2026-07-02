@@ -27,9 +27,8 @@
         <header class="combined-tabs">
             <nav class="tab-left" aria-label="任务详情模块">
                 <button class="main-tab" type="button" data-target="scheme">审核方案</button>
-                <button class="main-tab" type="button" data-target="task">任务信息</button>
+                <button class="main-tab active" type="button" data-target="task">任务信息</button>
                 <button class="main-tab" type="button" data-target="confirm">确认进度</button>
-                <button class="main-tab active" type="button" data-target="plan">审核计划</button>
             </nav>
             <div class="tab-right" aria-label="辅助入口">
                 <button class="aux-tab" type="button" onclick="alert('历史审核数据')">历史审核数据</button>
@@ -37,9 +36,8 @@
         </header>
         <main class="frame-stage">
             <iframe class="page-frame" id="frame-scheme" title="审核方案" data-page-index="0"></iframe>
-            <iframe class="page-frame" id="frame-task" title="任务信息" data-page-index="1"></iframe>
+            <iframe class="page-frame active" id="frame-task" title="任务信息" data-page-index="1"></iframe>
             <iframe class="page-frame" id="frame-confirm" title="确认进度" data-page-index="2"></iframe>
-            <iframe class="page-frame active" id="frame-plan" title="审核计划" data-page-index="3"></iframe>
         </main>
     </div>
     <script>
