@@ -2,6 +2,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -603,6 +604,10 @@
             border-color: #60a5fa;
             background: #eff6ff;
             color: #1d4ed8;
+        }
+
+        .certificate-selector.is-collapsed {
+            display: none;
         }
 
         .standard-multi-select {
@@ -1489,6 +1494,11 @@ const certificateItems = [
         id: 'soa',
         label: '适用性声明（IS适用）',
         current: '不适用'
+    },
+    {
+        id: 'haccpCount',
+        label: 'HACCP数量（F/H适用）',
+        current: 'FSMS：HACCP数量 2；HACCP：HACCP数量 1'
     }
 ];
 
@@ -1496,24 +1506,28 @@ const unifiedCertificateItemIds = ['orgName', 'registeredAddress', 'soa'];
 const bilingualCertificateItemIds = ['orgName', 'registeredAddress', 'operationAddress', 'certScope'];
 
 const changeItems = [
-    {id: 'topManager', label: '最高管理者', current: '李明，总经理，全面负责管理体系运行'},
-    {id: 'contact', label: '联系人/联系方式', current: '张经理，010-12345678，zhang@example.com'},
-    {id: 'businessScope', label: '营业执照的经营范围、资质许可的有效性和范围', current: '技术开发、技术服务、软件开发、系统集成服务；营业执照和相关资质均在有效期内'},
-    {id: 'systemDocument', label: '管理体系文件的修订', current: '现行管理手册 A/2 版，程序文件清单 2025 版'},
-    {id: 'orgStructure', label: '组织结构', current: '总经理办公室、研发部、项目交付部、运维服务部、质量管理部、行政人事部'},
-    {id: 'organizationCount', label: '组织人数', current: '质量管理体系：组织总人数 204 人'},
-    {id: 'systemCoveredCount', label: '体系覆盖人数', current: '质量管理体系：体系覆盖人数 204 人'},
-    {id: 'mainProcess', label: '管理体系的主要过程', current: '市场与合同评审、软件研发、项目实施、运维服务、采购管理、客户满意度管理'},
-    {id: 'facilities', label: '主要生产（服务）设施设备', current: '研发测试服务器、办公终端、网络交换设备、项目管理平台、运维监控平台'},
-    {id: 'outsourcing', label: '外部提供的职能或过程（外包）', current: '办公网络维护、保洁服务、部分云资源运维支持'},
-    {id: 'externalService', label: '在本组织之外其他场所提供的服务', current: '客户现场实施、驻场运维和远程技术支持服务'},
-    {id: 'tempSite', label: '临时服务场所信息', current: '按项目需要设置客户现场临时服务点，当前无固定临时场所'},
-    {id: 'ims', label: '整合管理体系（IMS）的整合程度', current: '质量、环境、职业健康安全管理体系共用管理手册、内审、管理评审和纠正措施流程'},
-    {id: 'serviceCatalog', label: '服务目录和级别（ITS适用）', current: '软件开发服务、系统集成服务、信息技术运维服务；服务级别按客户合同约定执行'},
-    {id: 'exerciseDate', label: '应急或业务连续性演练活动的日期安排情况（BCMS适用）', current: '最近一次业务连续性演练日期为 2025年11月15日，计划每年至少开展一次'},
-    {id: 'incident', label: '是否发生过不良信息事件（如重大事故/行政检查和抽查发现的问题或不合格）', current: '未发生重大事故、重大投诉、行政检查重大问题或严重不合格'},
-    {id: 'blacklist', label: '是否被市场监管部门列入异常经营名录、严重违法失信名单', current: '未被列入经营异常名录或严重违法失信名单'},
-    {id: 'other', label: '其他事项', current: '无其他需特别说明事项'}
+    {id: 'topManager', label: '最高管理者'},
+    {id: 'contact', label: '联系人/联系方式'},
+    {id: 'businessScope', label: '营业执照的经营范围'},
+    {id: 'qualificationScope', label: '资质许可的有效性和范围'},
+    {id: 'systemDocument', label: '管理体系文件的修订'},
+    {id: 'orgStructure', label: '组织结构'},
+    {id: 'coveredPeople', label: '组织人数和体系覆盖人数'},
+    {id: 'mainProcess', label: '管理体系的主要过程'},
+    {id: 'processFlow', label: '生产/服务的工序流程'},
+    {id: 'shiftSeason', label: '班次及轮班情况和季节性生产信息'},
+    {id: 'keyFactors', label: '关键控制点、重要环境因素、危险源信息等对管理体系影响较大的其他因素'},
+    {id: 'legalObligations', label: '适用法规的有关法律义务'},
+    {id: 'facilities', label: '主要生产（服务）设施设备'},
+    {id: 'outsourcing', label: '外部提供的职能或过程(外包)'},
+    {id: 'externalService', label: '在本组织之外其他场所提供的服务'},
+    {id: 'tempSite', label: '临时服务场所信息'},
+    {id: 'ims', label: '整合管理体系(IMS)的整合程度'},
+    {id: 'serviceCatalog', label: '服务目录和级别(ITS适用)'},
+    {id: 'exerciseDate', label: '应急或业务连续性演练活动的日期安排情况（BCMS适用）'},
+    {id: 'incident', label: '是否发生过不良事件或事故（如重大质量、环境、健康、安全等事故、行政检查和抽查发现的问题或不合格……）'},
+    {id: 'blacklist', label: '是否被市场监管部门列入异常经营名录、严重违法失信名单'},
+    {id: 'other', label: '其他事项'}
 ];
 
 // ===== 初始化 =====
@@ -1711,6 +1725,10 @@ function isBilingualCertificateItem(itemId) {
     return bilingualCertificateItemIds.includes(itemId);
 }
 
+function isHaccpCountItem(itemId) {
+    return itemId === 'haccpCount';
+}
+
 function getCertificateDomains() {
     const domainMap = {};
     allCertificates.forEach(function(cert) {
@@ -1747,6 +1765,59 @@ function getDomainStandardOptions() {
         {domain: 'E', domainName: '环境管理体系', standard: 'GB/T 24001-2015/ISO 14001:2015'},
         {domain: 'E', domainName: '环境管理体系', standard: 'GB/T 24001-2026/ISO 14001:2026'}
     ];
+}
+
+function getHaccpCountDomains() {
+    return [
+        {code: 'F', label: 'FSMS', current: 2},
+        {code: 'H', label: 'HACCP', current: 1}
+    ];
+}
+
+function renderHaccpCountChange(item) {
+    const group = certificateChangeGroups[item.id] && certificateChangeGroups[item.id][0];
+    if(!group) return '';
+    const rows = getHaccpCountDomains().map(function(domain) {
+        const checked = group.selectedDomains && group.selectedDomains[domain.code];
+        const value = typeof group.values[domain.code] === 'number' ? group.values[domain.code] : '';
+        return '<div class="certificate-change-panel">' +
+            '<label class="flex items-start gap-3 mb-4 cursor-pointer">' +
+            '<input type="checkbox" class="mt-1" ' + (checked ? 'checked' : '') + ' onchange="toggleHaccpCountDomain(\'' + domain.code + '\', this.checked)">' +
+            '<span class="min-w-0 flex-1"><span class="block font-semibold text-slate-800">' + escapeHtml(domain.label) + '</span>' +
+            '<span class="block reference-box mt-2"><i class="fas fa-info-circle mr-1"></i><span class="font-semibold">原认证信息：</span>' + escapeHtml(domain.label) + '：HACCP数量 ' + escapeHtml(String(domain.current)) + '</span></span>' +
+            '</label>' +
+            '<div class="grid grid-cols-1 xl:grid-cols-3 gap-4 ' + (checked ? '' : 'opacity-50') + '">' +
+            '<div><label class="block text-sm font-medium text-slate-700 mb-2">' + escapeHtml(domain.label) + ' 拟变更为 <span class="text-red-500">*</span></label>' +
+            '<input type="number" min="0" step="1" inputmode="numeric" pattern="[0-9]*" id="after_haccp_' + domain.code + '" value="' + escapeHtml(value === '' ? '' : String(value)) + '" placeholder="请输入数字" ' + (checked ? '' : 'disabled') + ' oninput="updateHaccpCountValue(\'' + domain.code + '\', this.value)"></div>' +
+            '<div class="xl:col-span-2"><label class="block text-sm font-medium text-slate-700 mb-2">变更情况和原因描述 <span class="text-red-500">*</span></label>' +
+            '<textarea id="desc_haccp_' + domain.code + '" maxlength="500" placeholder="请描述' + escapeHtml(domain.label) + ' HACCP数量变更的情况和原因" ' + (checked ? '' : 'disabled') + ' oninput="updateHaccpCountDesc(\'' + domain.code + '\', this.value)">' + escapeHtml(group.descriptions[domain.code] || '') + '</textarea></div>' +
+            '</div>' +
+            '</div>';
+    }).join('');
+    return rows + '<div class="mt-4">' + renderEvidenceCell(group.id) + '</div>';
+}
+
+function toggleHaccpCountDomain(domainCode, checked) {
+    const group = certificateChangeGroups.haccpCount && certificateChangeGroups.haccpCount[0];
+    if(!group) return;
+    if(!group.selectedDomains) group.selectedDomains = {F: false, H: false};
+    group.selectedDomains[domainCode] = checked;
+    renderCertificateGroups('haccpCount');
+}
+
+function updateHaccpCountValue(domainCode, value) {
+    const group = certificateChangeGroups.haccpCount && certificateChangeGroups.haccpCount[0];
+    if(!group) return;
+    const cleanValue = String(value || '').replace(/\D/g, '');
+    group.values[domainCode] = cleanValue === '' ? '' : Number(cleanValue);
+    const input = document.getElementById('after_haccp_' + domainCode);
+    if(input && input.value !== cleanValue) input.value = cleanValue;
+}
+
+function updateHaccpCountDesc(domainCode, value) {
+    const group = certificateChangeGroups.haccpCount && certificateChangeGroups.haccpCount[0];
+    if(!group) return;
+    group.descriptions[domainCode] = value;
 }
 
 function renderBilingualAfterFields(group, item) {
@@ -1796,10 +1867,10 @@ function renderCertificateRows() {
             '<label class="change-card-header">' +
             '<input type="checkbox" id="change_' + item.id + '" class="change-check" onchange="toggleCertificateItem(\'' + item.id + '\', this.checked)">' +
             '<span class="change-card-title">' + escapeHtml(item.label) + '</span>' +
-            '<span class="ml-auto text-xs text-slate-500">' + (item.id === 'certStandard' ? '按领域统一修改' : (unified ? '全部证书统一修改' : certCount + '本证书')) + '</span>' +
+            '<span class="ml-auto text-xs text-slate-500">' + (item.id === 'certStandard' ? '按领域统一修改' : (item.id === 'haccpCount' ? '按FSMS/HACCP数量修改' : (unified ? '全部证书统一修改' : certCount + '本证书'))) + '</span>' +
             '</label>' +
             '<div id="body_' + item.id + '" class="change-card-body hidden">' +
-            ((item.id === 'multiSite' || item.id === 'certStandard') ? '' : '<div class="reference-box"><i class="fas fa-info-circle mr-1"></i>原认证信息：' + escapeHtml(getCertificateSummary(item)) + '</div>') +
+            ((item.id === 'multiSite' || item.id === 'certStandard' || item.id === 'haccpCount') ? '' : '<div class="reference-box"><i class="fas fa-info-circle mr-1"></i>原认证信息：' + escapeHtml(getCertificateSummary(item)) + '</div>') +
             '<div id="certForms_' + item.id + '" class="' + ((item.id === 'multiSite' || item.id === 'certStandard') ? 'space-y-3' : 'mt-4 space-y-3') + '"></div>' +
             '</div>' +
             '</div>';
@@ -1816,7 +1887,6 @@ function renderChangeRows() {
             '<span class="change-card-title">' + escapeHtml(item.label) + '</span>' +
             '</label>' +
             '<div id="body_' + item.id + '" class="change-card-body hidden">' +
-            '<div class="reference-box mb-4"><i class="fas fa-info-circle mr-1"></i><span class="font-semibold">原' + escapeHtml(item.label) + '：</span>' + escapeHtml(item.current || '暂无原信息') + '</div>' +
             '<label class="block text-sm font-medium text-slate-700 mb-2">变更情况和原因描述 <span class="text-red-500">*</span></label>' +
             '<textarea id="desc_' + item.id + '" maxlength="500" placeholder="请描述变更情况和原因" disabled></textarea>' +
             '<div class="mt-4">' + renderEvidenceCell(item.id) + '</div>' +
@@ -1856,12 +1926,14 @@ function ensureMultiSiteData() {
             removeSiteIds: [],
             removeSiteDomains: {},
             modifySites: [],
+            existingEnabled: false,
             reason: ''
         };
     }
     const data = multiSiteChangeData.global;
     if(typeof data.modifyEnabled === 'undefined') data.modifyEnabled = false;
     if(!Array.isArray(data.modifySites)) data.modifySites = [];
+    if(typeof data.existingEnabled === 'undefined') data.existingEnabled = data.removeEnabled || data.modifyEnabled;
     return data;
 }
 
@@ -1899,17 +1971,15 @@ function renderMultiSiteCertificateChanges() {
     if(!container) return;
     const data = ensureMultiSiteData();
     const addRows = renderAddSiteDomainGroups(data);
-    const removeRows = getAllCurrentSites().map(renderRemoveSiteOption).join('');
-    const modifyRows = getAllCurrentSites().map(renderModifySiteOption).join('');
+    const existingRows = getAllCurrentSites().map(renderExistingSiteActionOption).join('');
+    const existingEnabled = data.existingEnabled || data.removeEnabled || data.modifyEnabled;
+    const existingCount = (data.removeSiteIds || []).length + (data.modifySites || []).length;
     container.innerHTML = '<div class="site-change-card" id="multiSiteGlobal">' +
         '<div class="site-action-grid">' +
         renderMultiSiteActionCard('addEnabled', '新增场所', data.addSites.length, 'green', 'fa-plus-circle', data.addEnabled,
             '<div id="addSites_multiSite">' + addRows + '</div>') +
-        renderMultiSiteActionCard('modifyEnabled', '修改场所', data.modifySites.length, 'blue', 'fa-pen-to-square', data.modifyEnabled,
-            '<div class="text-xs text-slate-500 mb-3">主场所不可修改，其余场所可修改并设置是否发子证。</div><div class="space-y-3" id="modifySites_multiSite">' + modifyRows + '</div>') +
-        renderMultiSiteActionCard('removeEnabled', '删除场所', data.removeSiteIds.length, 'red', 'fa-minus-circle', data.removeEnabled,
-            '<div class="remove-site-grid" id="removeSites_multiSite">' + removeRows + '</div>' +
-            '<div class="mt-3 flex gap-4 text-xs"><button type="button" class="text-blue-600 hover:text-blue-700" onclick="setAllRemoveSites(true)">全选</button><button type="button" class="text-blue-600 hover:text-blue-700" onclick="setAllRemoveSites(false)">取消全选</button></div>') +
+        renderMultiSiteActionCard('existingEnabled', '修改/删除场所', existingCount, 'blue', 'fa-pen-to-square', existingEnabled,
+            '<div class="text-xs text-slate-500 mb-3">每个现有场所只能选择修改或删除一种操作，主场所不可修改或删除。</div><div class="space-y-3" id="existingSites_multiSite">' + existingRows + '</div>') +
         '</div>' +
         ((data.addEnabled || data.removeEnabled || data.modifyEnabled) ? '<div class="site-change-section">' +
         '<label class="block text-sm font-medium text-slate-700 mb-2">变更情况和原因描述 <span class="text-red-500">*</span></label>' +
@@ -1930,9 +2000,12 @@ function renderMultiSiteActionCard(field, title, count, color, icon, enabled, bo
         blue: 'bg-blue-50 text-blue-700 border-blue-200',
         red: 'bg-red-50 text-red-700 border-red-200'
     }[color] || 'bg-slate-50 text-slate-700 border-slate-200';
+    const toggleHandler = field === 'existingEnabled'
+        ? 'toggleExistingSiteActions(this.checked)'
+        : 'toggleMultiSiteAction(\'' + field + '\', this.checked)';
     return '<div class="site-action-card ' + (enabled ? 'is-active' : '') + '">' +
         '<label class="site-action-card-header cursor-pointer">' +
-        '<span class="inline-flex items-center gap-2 font-semibold text-slate-900"><input type="checkbox" ' + (enabled ? 'checked' : '') + ' onchange="toggleMultiSiteAction(\'' + field + '\', this.checked)"><i class="fas ' + icon + '"></i>' + title + '</span>' +
+        '<span class="inline-flex items-center gap-2 font-semibold text-slate-900"><input type="checkbox" ' + (enabled ? 'checked' : '') + ' onchange="' + toggleHandler + '"><i class="fas ' + icon + '"></i>' + title + '</span>' +
         '<span class="px-2 py-1 rounded-full border text-xs ' + colorClass + '">' + count + '</span>' +
         '</label>' +
         (enabled ? '<div class="site-action-card-body">' + bodyHtml + '</div>' : '') +
@@ -2042,6 +2115,44 @@ function renderModifySiteOption(site) {
         '</div>';
 }
 
+function getExistingSiteAction(siteId) {
+    const data = ensureMultiSiteData();
+    if((data.removeSiteIds || []).includes(siteId)) return 'remove';
+    if(getModifiedSite(siteId)) return 'modify';
+    return '';
+}
+
+function renderExistingSiteActionOption(site) {
+    const isHeadquarters = site.id === 'hq';
+    const action = getExistingSiteAction(site.id);
+    const modified = getModifiedSite(site.id);
+    const draft = modified || site;
+    const domainNames = getMultiSiteDomains().filter(function(domain) {
+        return (site.domainCodes || []).includes(domain.domain);
+    }).map(function(domain) { return domain.domainName; }).join('、') || '暂无领域';
+    return '<div class="modify-site-option ' + (isHeadquarters ? 'is-disabled' : '') + (action ? ' is-selected' : '') + '">' +
+        '<div class="min-w-0 flex-1">' +
+        '<div class="font-semibold text-slate-800">' + escapeHtml(site.name) + '</div>' +
+        '<div class="text-xs text-slate-500 mt-1">' + escapeHtml(site.address) + '</div>' +
+        '<div class="text-xs text-blue-700 mt-1">' + escapeHtml(site.scope) + '</div>' +
+        '<div class="text-xs text-slate-500 mt-1">现有领域：' + escapeHtml(domainNames) + '；人数：' + escapeHtml(String(site.people)) + '</div>' +
+        (isHeadquarters ? '<div class="text-xs text-red-500 mt-1">主场所不可修改或删除</div>' : '') +
+        '<div class="mt-3 flex flex-wrap gap-4 text-sm">' +
+        '<label class="' + (isHeadquarters ? 'cursor-not-allowed text-slate-400' : 'cursor-pointer text-slate-700') + '"><input type="radio" name="siteAction_' + escapeHtml(site.id) + '" value="modify" ' + (action === 'modify' ? 'checked' : '') + (isHeadquarters ? ' disabled' : '') + ' onchange="setExistingSiteAction(\'' + site.id + '\', \'modify\')"> 修改</label>' +
+        '<label class="' + (isHeadquarters ? 'cursor-not-allowed text-slate-400' : 'cursor-pointer text-slate-700') + '"><input type="radio" name="siteAction_' + escapeHtml(site.id) + '" value="remove" ' + (action === 'remove' ? 'checked' : '') + (isHeadquarters ? ' disabled' : '') + ' onchange="setExistingSiteAction(\'' + site.id + '\', \'remove\')"> 删除</label>' +
+        (!isHeadquarters && action ? '<button type="button" class="text-xs text-blue-600 hover:text-blue-700" onclick="setExistingSiteAction(\'' + site.id + '\', \'\')">取消</button>' : '') +
+        '</div>' +
+        '</div>' +
+        (action === 'modify' && !isHeadquarters ? '<div class="modify-site-fields">' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">场所名称</label><input type="text" value="' + escapeHtml(draft.name || '') + '" oninput="updateModifiedSiteField(\'' + site.id + '\', \'name\', this.value)"></div>' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">地址</label><input type="text" value="' + escapeHtml(draft.address || '') + '" oninput="updateModifiedSiteField(\'' + site.id + '\', \'address\', this.value)"></div>' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">产品/服务范围</label><input type="text" value="' + escapeHtml(draft.scope || '') + '" oninput="updateModifiedSiteField(\'' + site.id + '\', \'scope\', this.value)"></div>' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">人数</label><input type="number" min="0" value="' + escapeHtml(String(draft.people || 0)) + '" oninput="updateModifiedSiteField(\'' + site.id + '\', \'people\', this.value)"></div>' +
+        '<div><label class="block text-xs font-medium text-slate-600 mb-1">是否发子证</label><select onchange="updateModifiedSiteField(\'' + site.id + '\', \'isSubCertificate\', this.value)"><option value="no" ' + ((draft.isSubCertificate || 'no') === 'no' ? 'selected' : '') + '>否</option><option value="yes" ' + (draft.isSubCertificate === 'yes' ? 'selected' : '') + '>是</option></select></div>' +
+        '</div>' : '') +
+        '</div>';
+}
+
 function renderAddedSiteRow(site) {
     return '<div class="site-row" data-site-row="' + site.id + '">' +
         '<div><label class="block text-xs font-medium text-slate-600 mb-1">场所名称</label><input type="text" value="' + escapeHtml(site.name || '') + '" placeholder="请输入场所名称" oninput="updateMultiSiteField(\'' + site.id + '\', \'name\', this.value)"></div>' +
@@ -2092,6 +2203,20 @@ function toggleMultiSiteAction(field, checked) {
     renderMultiSiteCertificateChanges();
 }
 
+function toggleExistingSiteActions(checked) {
+    const data = ensureMultiSiteData();
+    data.existingEnabled = checked;
+    if(!checked) {
+        data.removeEnabled = false;
+        data.modifyEnabled = false;
+        data.removeSiteIds = [];
+        data.removeSiteDomains = {};
+        data.modifySites = [];
+        if(!data.addEnabled) data.reason = '';
+    }
+    renderMultiSiteCertificateChanges();
+}
+
 function removeMultiSiteRow(siteId) {
     const data = ensureMultiSiteData();
     data.addSites = data.addSites.filter(function(site) {
@@ -2105,6 +2230,48 @@ function updateMultiSiteField(siteId, field, value) {
     const site = data.addSites.find(function(entry) { return entry.id === siteId; });
     if(!site) return;
     site[field] = field === 'people' ? Number(value || 0) : value;
+}
+
+function createModifiedSiteDraft(siteId) {
+    const currentSites = getAllCurrentSites();
+    const original = currentSites.find(function(site) { return site.id === siteId; }) || {};
+    return Object.assign({}, original, {
+        originalName: original.name,
+        originalAddress: original.address,
+        originalScope: original.scope,
+        originalPeople: original.people,
+        originalIsSubCertificate: original.isSubCertificate || 'no',
+        isSubCertificate: original.isSubCertificate || 'no'
+    });
+}
+
+function getDefaultRemoveSiteDomains(site) {
+    return site.domainCodes || [];
+}
+
+function setExistingSiteAction(siteId, action) {
+    const data = ensureMultiSiteData();
+    if(siteId === 'hq') return;
+    data.existingEnabled = true;
+    data.removeSiteIds = (data.removeSiteIds || []).filter(function(id) {
+        return id !== siteId;
+    });
+    delete data.removeSiteDomains[siteId];
+    data.modifySites = (data.modifySites || []).filter(function(site) {
+        return site.id !== siteId;
+    });
+    if(action === 'remove') {
+        const site = getAllCurrentSites().find(function(entry) { return entry.id === siteId; });
+        data.removeSiteIds.push(siteId);
+        if(site) data.removeSiteDomains[siteId] = getDefaultRemoveSiteDomains(site);
+    }
+    if(action === 'modify') {
+        data.modifySites.push(createModifiedSiteDraft(siteId));
+    }
+    data.removeEnabled = data.removeSiteIds.length > 0;
+    data.modifyEnabled = data.modifySites.length > 0;
+    if(!data.addEnabled && !data.removeEnabled && !data.modifyEnabled) data.reason = '';
+    renderMultiSiteCertificateChanges();
 }
 
 function syncModifySites() {
@@ -2243,13 +2410,6 @@ function validateMultiSiteChanges() {
         showNotification('已选择修改场所时需至少勾选一个非主场所', 'error');
         return false;
     }
-    const missingRemoveDomain = data.removeEnabled && (data.removeSiteIds || []).some(function(siteId) {
-        return !(data.removeSiteDomains[siteId] || []).length;
-    });
-    if(missingRemoveDomain) {
-        showNotification('删除场所需选择对应领域', 'error');
-        return false;
-    }
     return true;
 }
 
@@ -2271,6 +2431,19 @@ function toggleCertificateItem(itemId, show) {
 
     if(itemId === 'multiSite') {
         renderMultiSiteCertificateChanges();
+        return;
+    }
+
+    if(itemId === 'haccpCount') {
+        if(show && !certificateChangeGroups[itemId]) {
+            certificateChangeGroups[itemId] = [{
+                id: itemId + '_grp_' + Date.now(),
+                selectedDomains: {F: false, H: false},
+                values: {F: '', H: ''},
+                descriptions: {F: '', H: ''}
+            }];
+        }
+        renderCertificateGroups(itemId);
         return;
     }
 
@@ -2309,6 +2482,24 @@ function renderCertificateGroups(itemId) {
     const container = document.getElementById('certForms_' + itemId);
     if(!item || !container) return;
     const groups = certificateChangeGroups[itemId] || [];
+    if(isHaccpCountItem(itemId)) {
+        if(!groups[0]) {
+            groups[0] = {
+                id: itemId + '_grp_' + Date.now(),
+                selectedDomains: {F: false, H: false},
+                values: {F: '', H: ''},
+                descriptions: {F: '', H: ''}
+            };
+            certificateChangeGroups[itemId] = groups;
+        }
+        if(!groups[0].selectedDomains) groups[0].selectedDomains = {F: false, H: false};
+        if(!groups[0].values) groups[0].values = {F: '', H: ''};
+        if(!groups[0].descriptions) groups[0].descriptions = {F: '', H: ''};
+        container.innerHTML = renderHaccpCountChange(item);
+        enableEvidenceUpload(groups[0].id);
+        updateEvidenceUI(groups[0].id);
+        return;
+    }
     if(isUnifiedCertificateItem(itemId)) {
         const group = groups[0] || {id: itemId + '_grp_' + Date.now(), certIds: []};
         certificateChangeGroups[itemId] = [group];
@@ -2367,13 +2558,16 @@ function renderUnifiedCertificateChangeGroup(item, group) {
 
 function renderDomainCertificateChangeGroup(item, group, index) {
     const domains = getCertificateDomains();
+    if(typeof group.domainSelectorExpanded === 'undefined') group.domainSelectorExpanded = true;
     return '<div class="certificate-change-panel" id="row_' + group.id + '">' +
         '<div class="change-group-header">' +
         '<div class="text-sm font-semibold text-slate-800">领域变更内容组 ' + (index + 1) + '</div>' +
         (index > 0 ? '<button type="button" class="text-xs text-red-600 hover:text-red-700" onclick="removeCertificateChangeGroup(\'' + item.id + '\', \'' + group.id + '\')"><i class="fas fa-trash-alt mr-1"></i>删除本组</button>' : '') +
         '</div>' +
-        '<div class="text-sm font-medium text-slate-700 mb-2">选择变更领域 <span class="text-red-500">*</span></div>' +
-        '<div class="certificate-selector">' +
+        '<button type="button" class="w-full flex items-center justify-between gap-3 text-sm font-medium text-slate-700 mb-2" onclick="toggleCertificateGroupDomainSelector(\'' + item.id + '\', \'' + group.id + '\')">' +
+        '<span>选择变更领域 <span class="text-red-500">*</span></span><span class="text-xs text-slate-500 inline-flex items-center gap-1">' + (group.domainSelectorExpanded ? '收起' : '展开') + '<i class="fas ' + (group.domainSelectorExpanded ? 'fa-chevron-up' : 'fa-chevron-down') + '"></i></span>' +
+        '</button>' +
+        '<div class="certificate-selector ' + (group.domainSelectorExpanded ? '' : 'is-collapsed') + '">' +
         domains.map(function(domain) {
             const checked = group.domainCodes && group.domainCodes.includes(domain.domain);
             const disabled = !checked && isDomainSelectedInOtherGroup(item.id, group.id, domain.domain);
@@ -2453,11 +2647,18 @@ function syncStandardSelection(itemId, groupId) {
     if(hidden) hidden.value = group.afterStandard;
 }
 
+function toggleCertificateGroupDomainSelector(itemId, groupId) {
+    const group = (certificateChangeGroups[itemId] || []).find(function(entry) { return entry.id === groupId; });
+    if(!group) return;
+    group.domainSelectorExpanded = typeof group.domainSelectorExpanded === 'undefined' ? false : !group.domainSelectorExpanded;
+    renderCertificateGroups(itemId);
+}
+
 function addCertificateChangeGroup(itemId) {
     if(isDomainCertificateItem(itemId)) {
         if(areAllDomainsSelected(itemId)) return;
         if(!certificateChangeGroups[itemId]) certificateChangeGroups[itemId] = [];
-        certificateChangeGroups[itemId].push({id: itemId + '_grp_' + Date.now(), domainCodes: [], certIds: []});
+        certificateChangeGroups[itemId].push({id: itemId + '_grp_' + Date.now(), domainCodes: [], certIds: [], domainSelectorExpanded: true});
         renderCertificateGroups(itemId);
         return;
     }
@@ -2633,7 +2834,7 @@ function saveSurvey() {
     }
 
     const certificateItemMissingSelection = certificateItems.some(function(item) {
-        if(item.id === 'multiSite' || isUnifiedCertificateItem(item.id)) return false;
+        if(item.id === 'multiSite' || item.id === 'haccpCount' || isUnifiedCertificateItem(item.id)) return false;
         const checked = document.getElementById('change_' + item.id);
         const groups = certificateChangeGroups[item.id] || [];
         if(isDomainCertificateItem(item.id)) {
@@ -2652,7 +2853,7 @@ function saveSurvey() {
     }
 
     const duplicateCertificateSelection = certificateItems.some(function(item) {
-        if(item.id === 'multiSite' || isUnifiedCertificateItem(item.id)) return false;
+        if(item.id === 'multiSite' || item.id === 'haccpCount' || isUnifiedCertificateItem(item.id)) return false;
         const checked = document.getElementById('change_' + item.id);
         if(!checked || !checked.checked) return false;
         if(isDomainCertificateItem(item.id)) {
