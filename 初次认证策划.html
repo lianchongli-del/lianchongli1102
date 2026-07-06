@@ -4042,7 +4042,7 @@
                 <div class="card-title">选择场所</div>
                 <button type="button" onclick="openTempSiteModal()" class="btn btn-default btn-sm">
                     <i class="fas fa-plus"></i>
-                    新增场所
+                    新增临时场所
                 </button>
             </div>
             <div class="modal-body">
@@ -4097,13 +4097,13 @@
         </div>
     </div>
 
-    <!-- 新增场所弹窗 -->
+    <!-- 新增临时场所弹窗 -->
     <div id="tempSiteModal" class="modal-overlay hidden-section" style="z-index: 1001;">
         <div class="modal-content" style="width: 620px;">
             <div class="modal-header">
                 <div class="card-title">
                     <i class="fas fa-map-pin text-orange-500"></i>
-                    新增场所
+                    新增临时场所
                 </div>
                 <button onclick="closeTempSiteModal()" class="text-gray-400 hover:text-gray-600">
                     <i class="fas fa-times text-lg"></i>
@@ -4121,14 +4121,6 @@
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3 mt-2">
-                    <div class="form-row">
-                        <label class="form-label">场所类型 <span class="text-red-500">*</span></label>
-                        <select class="form-select" id="manualTempSiteType">
-                            <option value="fixed">固定场所</option>
-                            <option value="service">服务点</option>
-                            <option value="temporary">临时场所</option>
-                        </select>
-                    </div>
                     <div class="form-row">
                         <label class="form-label">人数</label>
                         <input type="number" class="form-input" id="manualTempSitePeople" min="0" value="0" placeholder="可选">
@@ -6089,8 +6081,6 @@
                 const input = document.getElementById(id);
                 if (input) input.value = '';
             });
-            const typeSelect = document.getElementById('manualTempSiteType');
-            if (typeSelect) typeSelect.value = 'fixed';
             const peopleInput = document.getElementById('manualTempSitePeople');
             if (peopleInput) peopleInput.value = '0';
             document.getElementById('tempSiteModal').classList.remove('hidden-section');
@@ -6170,7 +6160,7 @@
             const address = document.getElementById('manualTempSiteAddress')?.value.trim() || '';
             const people = document.getElementById('manualTempSitePeople')?.value || '0';
             const products = document.getElementById('manualTempSiteProducts')?.value.trim() || '现场审核活动';
-            const type = document.getElementById('manualTempSiteType')?.value || 'fixed';
+            const type = 'temporary';
 
             if (!name || !address) {
                 alert('请填写场所名称和地址信息');
