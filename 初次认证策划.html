@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -513,8 +514,8 @@
 
         #availableSitesList .available-site-row {
             display: grid;
-            grid-template-columns: 20px 78px minmax(0, 1fr);
-            column-gap: 10px;
+            grid-template-columns: 20px 90px minmax(0, 1fr) 32px;
+            column-gap: 12px;
             align-items: center;
             min-height: 60px;
         }
@@ -535,6 +536,23 @@
         #availableSitesList .available-site-text {
             grid-column: 3;
             min-width: 0;
+        }
+
+        #availableSitesList .available-site-delete {
+            grid-column: 4;
+            justify-self: end;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: var(--radius-sm);
+            color: var(--color-danger);
+            transition: all 0.15s ease;
+        }
+
+        #availableSitesList .available-site-delete:hover {
+            background: var(--color-danger-light);
         }
 
         #availableSitesList .available-site-name {
@@ -861,6 +879,26 @@
         
         .shift-info-wrapper:hover .shift-tooltip {
             display: block;
+        }
+
+        .shift-info-input {
+            width: 100%;
+            min-height: 32px;
+            padding: 6px 10px;
+            border: 1px solid #A7F3D0;
+            border-radius: var(--radius-md);
+            background: var(--color-success-light);
+            color: var(--color-text-body);
+            font-size: 12px;
+            line-height: 1.5;
+            resize: vertical;
+        }
+
+        .shift-info-input:focus {
+            outline: none;
+            border-color: var(--color-success);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+            background: #fff;
         }
         
         .shift-tooltip-row {
@@ -1482,6 +1520,64 @@
             display: block;
         }
 
+        .ai-field-switch {
+            display: grid;
+            grid-template-columns: 160px minmax(0, 1fr);
+            gap: 12px;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .ai-rule-panel {
+            min-height: 72px;
+            padding: 12px 14px;
+            border: 1px solid #bfdbfe;
+            border-radius: var(--radius-lg);
+            background: #eff6ff;
+            color: #1e3a8a;
+            font-size: 13px;
+            line-height: 1.75;
+        }
+
+        .ai-thinking-panel {
+            min-height: 138px;
+            padding: 14px 16px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            background: #fff;
+            color: var(--color-text-body);
+            font-size: 13px;
+            line-height: 1.85;
+            white-space: pre-wrap;
+        }
+
+        .ai-thinking-panel::after {
+            content: '';
+            display: inline-block;
+            width: 7px;
+            height: 1em;
+            margin-left: 2px;
+            vertical-align: -2px;
+            background: var(--color-primary);
+            animation: blinkCursor 0.9s steps(1) infinite;
+        }
+
+        .ai-thinking-panel.done::after {
+            display: none;
+        }
+
+        @keyframes blinkCursor {
+            50% { opacity: 0; }
+        }
+
+        .manual-temp-site-panel {
+            margin-top: 16px;
+            padding: 14px;
+            border: 1px dashed #FDBA74;
+            border-radius: var(--radius-lg);
+            background: #FFF7ED;
+        }
+
         /* 导航按钮组样式 */
         .nav-action-group {
             position: relative;
@@ -1809,6 +1905,10 @@
                             <button class="btn btn-default btn-sm" onclick="openCertContentDrawer()">
                                 <i class="fas fa-certificate text-xs"></i>
                                 证书内容确认件
+                            </button>
+                            <button onclick="openAiManDayModal()" class="btn btn-default btn-sm">
+                                <i class="fas fa-robot"></i>
+                                AI计算人天
                             </button>
                             <button onclick="showAddSiteModalForPhase('initial')" class="btn btn-primary btn-sm">
                                 <i class="fas fa-plus"></i>
@@ -2333,6 +2433,10 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-3">
+                            <button onclick="openAiManDayModal()" class="btn btn-default btn-sm">
+                                <i class="fas fa-robot"></i>
+                                AI计算人天
+                            </button>
                             <button onclick="showAddSiteModalForPhase('surv1')" class="btn btn-primary btn-sm">
                                 <i class="fas fa-plus"></i>
                                 新增场所
@@ -2831,6 +2935,10 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-3">
+                            <button onclick="openAiManDayModal()" class="btn btn-default btn-sm">
+                                <i class="fas fa-robot"></i>
+                                AI计算人天
+                            </button>
                             <button onclick="showAddSiteModalForPhase('surv2')" class="btn btn-primary btn-sm">
                                 <i class="fas fa-plus"></i>
                                 新增场所
@@ -3332,6 +3440,10 @@
                             <button class="btn btn-default btn-sm" onclick="openCertContentDrawer()">
                                 <i class="fas fa-certificate text-xs"></i>
                                 证书内容确认件
+                            </button>
+                            <button onclick="openAiManDayModal()" class="btn btn-default btn-sm">
+                                <i class="fas fa-robot"></i>
+                                AI计算人天
                             </button>
                             <button onclick="showAddSiteModalForPhase('recert')" class="btn btn-primary btn-sm">
                                 <i class="fas fa-plus"></i>
@@ -3926,7 +4038,13 @@
     <!-- 其他原有弹窗保留 -->
     <div id="addSiteModal" class="modal-overlay hidden-section">
         <div class="modal-content">
-            <div class="modal-header">选择场所</div>
+            <div class="modal-header">
+                <div class="card-title">选择场所</div>
+                <button type="button" onclick="openTempSiteModal()" class="btn btn-default btn-sm">
+                    <i class="fas fa-plus"></i>
+                    新增场所
+                </button>
+            </div>
             <div class="modal-body">
                 <p class="text-sm text-gray-600 mb-4">认证申请中上报了以下场所信息，请选择要添加的场所：</p>
                 <div class="space-y-2" id="availableSitesList">
@@ -3975,6 +4093,57 @@
             <div class="modal-footer">
                 <button onclick="closeAddSiteModal()" class="btn btn-default">取消</button>
                 <button onclick="confirmAddSiteToPhase()" class="btn btn-primary">确认添加</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增场所弹窗 -->
+    <div id="tempSiteModal" class="modal-overlay hidden-section" style="z-index: 1001;">
+        <div class="modal-content" style="width: 620px;">
+            <div class="modal-header">
+                <div class="card-title">
+                    <i class="fas fa-map-pin text-orange-500"></i>
+                    新增场所
+                </div>
+                <button onclick="closeTempSiteModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="form-row">
+                        <label class="form-label">场所名称 <span class="text-red-500">*</span></label>
+                        <input type="text" class="form-input" id="manualTempSiteName" placeholder="请输入场所名称">
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">地址信息 <span class="text-red-500">*</span></label>
+                        <input type="text" class="form-input" id="manualTempSiteAddress" placeholder="请输入场所地址">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mt-2">
+                    <div class="form-row">
+                        <label class="form-label">场所类型 <span class="text-red-500">*</span></label>
+                        <select class="form-select" id="manualTempSiteType">
+                            <option value="fixed">固定场所</option>
+                            <option value="service">服务点</option>
+                            <option value="temporary">临时场所</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label">人数</label>
+                        <input type="number" class="form-input" id="manualTempSitePeople" min="0" value="0" placeholder="可选">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 gap-3 mt-2">
+                    <div class="form-row">
+                        <label class="form-label">涉及产品/过程/活动</label>
+                        <input type="text" class="form-input" id="manualTempSiteProducts" placeholder="可选">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeTempSiteModal()" class="btn btn-default">取消</button>
+                <button onclick="confirmAddTempSite()" class="btn btn-primary">确认新增</button>
             </div>
         </div>
     </div>
@@ -4343,6 +4512,43 @@
         </div>
     </div>
 
+    <!-- AI人天计算弹窗 -->
+    <div id="aiManDayModal" class="modal-overlay hidden-section" style="z-index: 1002;">
+        <div class="modal-content" style="width: 920px; max-width: calc(100vw - 48px);">
+            <div class="modal-header">
+                <div class="card-title">
+                    <i class="fas fa-robot text-blue-500"></i>
+                    <span>AI计算人天</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <select class="form-select" id="aiManDayDomain" onchange="changeAiManDayDomain()" style="width: 220px;">
+                        <option value="FSMS">FSMS食品安全管理体系</option>
+                        <option value="HACCP">HACCP管理体系</option>
+                        <option value="EnMS">EnMS能源管理体系</option>
+                    </select>
+                    <button onclick="closeAiManDayModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                <h4 class="font-semibold text-gray-800 mb-2">AI深度思考过程</h4>
+                <div id="aiThinkingSteps" class="ai-thinking-panel mb-4"></div>
+                <div id="aiManDayResultPanel" class="hidden-section">
+                    <h4 class="font-semibold text-gray-800 mb-2">计算结果</h4>
+                    <table class="data-table">
+                        <thead id="aiManDayResultHead"></thead>
+                        <tbody id="aiManDayResultBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeAiManDayModal()" class="btn btn-default">取消</button>
+                <button onclick="applyAiManDayResults()" id="aiManDayConfirmBtn" class="btn btn-primary" disabled>确认同步到表单</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 导入初次认证证书内容确认件弹窗 -->
     <div id="certImportModal" class="modal-overlay hidden-section" style="z-index: 1001;">
         <div class="modal-content" style="width: 700px;">
@@ -4450,6 +4656,8 @@
         let selectedTemplateIndex = 0;
         let currentTemplateSiteId = '';
         let currentAddSitePhase = '';
+        let aiManDayResults = [];
+        let aiThinkingTimer = null;
 
         const professionalCodeData = [
             {code: "19.01.01", category: "办公设备的制造", accreditation: ["CNAS", "UKAS"]},
@@ -4611,6 +4819,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             addInitialSampleSites();
+            initializeEditableShiftInfo();
             ensureSiteTypeBadges();
             updateAllPhaseTotals();
             initAdjustmentReasons();
@@ -4625,6 +4834,374 @@
             if (fieldText.includes('食品')) return 'F';
             if (fieldText.includes('健康') || fieldText.includes('职业')) return 'H';
             return 'Q';
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char]));
+        }
+
+        function initializeEditableShiftInfo(root = document) {
+            root.querySelectorAll('.shift-info-wrapper').forEach(wrapper => {
+                if (wrapper.querySelector('.shift-info-input')) return;
+
+                const display = wrapper.querySelector('.shift-info-display');
+                const tooltipRows = Array.from(wrapper.querySelectorAll('.shift-tooltip-row')).map(row => row.textContent.trim());
+                const displayText = display?.textContent?.replace(/\s+/g, ' ').trim() || tooltipRows.join('；') || '班次：1，08:00-17:30';
+                wrapper.innerHTML = `<textarea class="shift-info-input" rows="2" placeholder="请输入班次信息">${escapeHtml(displayText)}</textarea>`;
+            });
+        }
+
+        const fsmsCategoryRules = {
+            A1: { td: 1, th: 0.25 },
+            A2: { td: 1, th: 0.25 },
+            B1: { td: 1, th: 0.25 },
+            B2: { td: 1, th: 0.25 },
+            B3: { td: 1, th: 0.25 },
+            C0: { td: 2, th: 0.5 },
+            C1: { td: 2, th: 0.5 },
+            C2: { td: 2, th: 0.5 },
+            C3: { td: 2, th: 0.5 },
+            C4: { td: 2, th: 0.5 },
+            D: { td: 1, th: 0.5 },
+            E: { td: 1.5, th: 0.5 },
+            F1: { td: 1, th: 0.5 },
+            F2: { td: 1, th: 0.5 },
+            G: { td: 1.5, th: 0.25 },
+            H: { td: 1.5, th: 0.25 },
+            I: { td: 1.5, th: 0.5 },
+            J: { td: 1.5, th: 0.5 },
+            K: { td: 2, th: 0.5 }
+        };
+
+        function getFteDays(people) {
+            if (people <= 5) return 0;
+            if (people <= 49) return 0.5;
+            if (people <= 99) return 1;
+            if (people <= 199) return 1.5;
+            if (people <= 499) return 2;
+            if (people <= 999) return 2.5;
+            return 3;
+        }
+
+        function roundFsmsDays(value) {
+            const rounded = Math.round(value * 10) / 10;
+            const base = Math.floor(rounded);
+            const decimal = Math.round((rounded - base) * 10) / 10;
+            if (decimal <= 0.2) return base;
+            if (decimal <= 0.7) return base + 0.5;
+            return base + 1;
+        }
+
+        function inferFsmsCategory(siteId) {
+            const codes = getSiteProfessionalCodes(siteId);
+            const direct = codes.map(code => String(code).toUpperCase().match(/\b(A1|A2|B1|B2|B3|C0|C1|C2|C3|C4|D|E|F1|F2|G|H|I|J|K)\b/)?.[1]).filter(Boolean);
+            if (direct.length) return direct;
+            return ['C0'];
+        }
+
+        function getHaccpProjectCount() {
+            const rows = Array.from(document.querySelectorAll('#certFoodScopeTableBody tr')).filter(row => !row.textContent.includes('暂无'));
+            return Math.max(1, rows.length || 1);
+        }
+
+        function getCurrentPhaseCards() {
+            const containerId = currentPhase === 'surv1' ? 'siteCardsContainer_surv1' :
+                                currentPhase === 'surv2' ? 'siteCardsContainer_surv2' :
+                                currentPhase === 'recert' ? 'siteCardsContainer_recert' : 'siteCardsContainer_initial';
+            return Array.from(document.querySelectorAll(`#${containerId} .site-card`));
+        }
+
+        const aiManDayDomainRules = {
+            FSMS: {
+                label: 'FSMS食品安全管理体系',
+                source: 'FSMS食品安全管理体系人天数计算',
+                summary: '按专业代码取最高 TD，按 HACCP 项目数计算 TH，按有效全日制员工数匹配 TFTE，得到 TS = TD + TH + TFTE；初次认证按 TS/4 拆分文审、策划、报告时间，按 20%TS 和 80%TS 拆分一阶段、二阶段。'
+            },
+            HACCP: {
+                label: 'HACCP管理体系',
+                source: 'HACCP管理体系人天数计算.docx',
+                summary: '按专业代码取最高 TD，按 HACCP 项目数计算 TH，按员工总数匹配 TFTE，并得到 TS；再按企业规模计算附加审核时间 TA，最终按审核类型将 TS 与 TA 组合拆分为现场审核和文审、策划、报告时间。'
+            },
+            EnMS: {
+                label: 'EnMS能源管理体系',
+                source: 'EnMS能源管理体系人天数计算.docx',
+                summary: '先用年度综合能耗 FEC、能源种类数量 FET、主要能源使用数量 FSEU 计算复杂程度 C = FEC*0.25 + FET*0.25 + FSEU*0.5，并判定低、中、高复杂程度；再按有效人数、审核类型和复杂程度查表得到审核人天。'
+            }
+        };
+
+        function getSelectedAiDomain() {
+            return document.getElementById('aiManDayDomain')?.value || 'FSMS';
+        }
+
+        function updateAiRulePanel() {
+            const domain = getSelectedAiDomain();
+            const rule = aiManDayDomainRules[domain] || aiManDayDomainRules.FSMS;
+            const panel = document.getElementById('aiManDayRulePanel');
+            if (!panel) return;
+            panel.innerHTML = `<strong>${rule.label}</strong>：依据《${rule.source}》规则，${rule.summary}`;
+        }
+
+        function getAuditPhaseKind() {
+            if (currentPhase === 'recert') return 'recert';
+            if (currentPhase === 'surv1' || currentPhase === 'surv2') return 'surveillance';
+            return 'initial';
+        }
+
+        function calculateFoodAiManDays(domain) {
+            const haccpCount = getHaccpProjectCount();
+            return getCurrentPhaseCards().map(card => {
+                const effectivePeople = parseInt(card.querySelector('.effective-people')?.value || card.querySelector('.people-count')?.value || '0', 10) || 0;
+                const categories = inferFsmsCategory(card.id);
+                const selectedCategory = categories.reduce((best, category) => {
+                    const rule = fsmsCategoryRules[category] || fsmsCategoryRules.C0;
+                    const bestRule = fsmsCategoryRules[best] || fsmsCategoryRules.C0;
+                    return rule.td > bestRule.td ? category : best;
+                }, categories[0] || 'C0');
+                const rule = fsmsCategoryRules[selectedCategory] || fsmsCategoryRules.C0;
+                const td = rule.td;
+                const th = rule.th * Math.max(0, haccpCount - 1);
+                const tfte = getFteDays(effectivePeople);
+                const ts = td + th + tfte;
+                const ta = domain === 'HACCP' ? ((effectivePeople >= 200 || haccpCount > 3) ? 1.5 : 1.0) : 0;
+                const phaseKind = getAuditPhaseKind();
+                let prepBase = Math.max(1, (ts + ta) / 4);
+                let stage1Base = Math.max(1, (ts + ta) * 0.2);
+                let stage2Base = Math.max(2, (ts + ta) * 0.8);
+
+                if (phaseKind === 'surveillance') {
+                    const auditBase = domain === 'HACCP' ? Math.max(2, ts / 3 + ta) : ts / 3;
+                    prepBase = domain === 'HACCP' ? Math.max(0.5, auditBase / 4) : Math.max(0.5, (ts / 3) / 4);
+                    stage1Base = 0;
+                    stage2Base = auditBase;
+                } else if (phaseKind === 'recert') {
+                    const auditBase = domain === 'HACCP' ? Math.max(2, (2 * ts) / 3 + ta) : Math.max(2, (2 * ts) / 3);
+                    prepBase = domain === 'HACCP' ? Math.max(1, auditBase / 4) : Math.max(1, ((2 * ts) / 3) / 4);
+                    stage1Base = 0;
+                    stage2Base = auditBase;
+                }
+
+                return {
+                    domain,
+                    siteId: card.id,
+                    siteName: card.querySelector('.site-name')?.textContent?.trim() || card.id,
+                    effectivePeople,
+                    category: selectedCategory,
+                    haccpCount,
+                    td,
+                    th,
+                    tfte,
+                    ta,
+                    ts,
+                    prep: roundFsmsDays(prepBase),
+                    stage1: roundFsmsDays(stage1Base),
+                    stage2: roundFsmsDays(stage2Base)
+                };
+            });
+        }
+
+        function getEnmsComplexity() {
+            const cards = getCurrentPhaseCards();
+            const maxPeople = Math.max(...cards.map(card => parseInt(card.querySelector('.effective-people')?.value || card.querySelector('.people-count')?.value || '0', 10) || 0), 0);
+            const fec = maxPeople > 275 ? 1.4 : (maxPeople > 85 ? 1.2 : 1.0);
+            const fet = maxPeople > 175 ? 1.2 : 1.0;
+            const fseu = maxPeople > 275 ? 1.3 : (maxPeople > 85 ? 1.2 : 1.0);
+            const c = (fec * 0.25) + (fet * 0.25) + (fseu * 0.5);
+            const level = c > 1.35 ? '高' : (c >= 1.15 ? '中' : '低');
+            return { fec, fet, fseu, c, level };
+        }
+
+        function lookupEnmsDays(people, level, phaseKind) {
+            const row = people <= 8 ? [2.5, 4, 5, 1, 1.5, 1, 2.5, 1.5, 3] :
+                        people <= 15 ? [4, 6, 7, 1, 2.5, 2, 4, 2.5, 5] :
+                        people <= 25 ? [5, 7, 9, 2, 3.5, 2.5, 5, 3, 6] :
+                        people <= 65 ? [6.5, 8, 10, 2.5, 5, 3, 6, 3.5, 7] :
+                        people <= 85 ? [8, 9.5, 11.5, 2.5, 6, 3.5, 6.5, 3.5, 8.5] :
+                        people <= 175 ? [8.5, 11, 12, 2.5, 6, 3.5, 7, 3.5, 8.5] :
+                        people <= 275 ? [9, 11.5, 12.5, 3, 6, 4, 8, 4, 9.5] :
+                        people <= 425 ? [10, 13, 15, 3.5, 7, 4, 8.5, 5, 11] :
+                        [10, 13, 15, 3.5, 7, 4, 8.5, 5, 11];
+            const levelIndex = level === '高' ? 2 : (level === '中' ? 1 : 0);
+            if (phaseKind === 'initial') return row[levelIndex];
+            if (phaseKind === 'surveillance') return row[3 + levelIndex * 2];
+            return row[4 + levelIndex * 2];
+        }
+
+        function calculateEnmsAiManDays() {
+            const complexity = getEnmsComplexity();
+            const phaseKind = getAuditPhaseKind();
+            return getCurrentPhaseCards().map(card => {
+                const effectivePeople = parseInt(card.querySelector('.effective-people')?.value || card.querySelector('.people-count')?.value || '0', 10) || 0;
+                const total = lookupEnmsDays(effectivePeople, complexity.level, phaseKind);
+                const prep = phaseKind === 'surveillance' ? Math.max(0.5, total / 4) : Math.max(1, total / 4);
+                const stage1 = phaseKind === 'initial' ? Math.max(1, total * 0.2) : 0;
+                const stage2 = phaseKind === 'initial' ? Math.max(2, total * 0.8) : total;
+                return {
+                    domain: 'EnMS',
+                    siteId: card.id,
+                    siteName: card.querySelector('.site-name')?.textContent?.trim() || card.id,
+                    effectivePeople,
+                    fec: complexity.fec,
+                    fet: complexity.fet,
+                    fseu: complexity.fseu,
+                    c: complexity.c,
+                    level: complexity.level,
+                    total,
+                    prep: Math.round(prep * 10) / 10,
+                    stage1: Math.round(stage1 * 10) / 10,
+                    stage2: Math.round(stage2 * 10) / 10
+                };
+            });
+        }
+
+        function calculateAiManDays(domain = getSelectedAiDomain()) {
+            return domain === 'EnMS' ? calculateEnmsAiManDays() : calculateFoodAiManDays(domain);
+        }
+
+        function buildAiThinkingText(domain) {
+            const rule = aiManDayDomainRules[domain] || aiManDayDomainRules.FSMS;
+            const phaseLabel = currentPhase === 'initial' ? '初次认证' : (currentPhase === 'recert' ? '再认证' : '监督审核');
+            if (domain === 'EnMS') {
+                return `我已切换到${rule.label}规则，先读取当前${phaseLabel}阶段下所有场所的名称、有效人数和现有策划数据，并把中心职能、固定场所、服务点、临时场所放在同一批次中处理。接着按《${rule.source}》的计算路径，先判断能源管理体系复杂程度：年度综合能耗对应 FEC，能源种类数量对应 FET，主要能源使用数量对应 FSEU，再用 C = FEC*0.25 + FET*0.25 + FSEU*0.5 得到复杂程度值。得到 C 值后，我会把它映射为低、中、高复杂程度等级，并用这个等级去匹配 EnMS 审核人天表。随后逐个场所按有效人数所在区间、当前审核类型和复杂程度等级查表取值；如果是初次认证，会拆成文审策划报告、一阶段和二阶段，如果是监督或再认证，会按对应表值拆成准备时间与现场审核时间。最后我会把每个场所的计算过程收敛成可同步字段，并保留关键中间量，便于你核对为什么得到这个结果。`;
+            }
+            const taText = domain === 'HACCP' ? '，并根据员工规模和 HACCP 项目数补入 TA 附加审核时间' : '';
+            return `我已切换到${rule.label}规则，先读取当前${phaseLabel}阶段的全部场所信息，包括场所名称、有效人数、专业代码、证书覆盖范围以及 HACCP/FSMS 覆盖范围明细。然后我会按《${rule.source}》中的表格逻辑做第一轮匹配：当一个场所存在多个专业代码时，以审核人天要求最高的类别作为 TD 取值依据；HACCP 项目数用于折算 TH，员工规模用于折算 TFTE${taText}。拿到这些基础量后，我会组合得到每个场所的审核时间基数，再结合当前审核类型判断该走初次认证、监督审核还是再认证路径。对于初次认证，我会把时间拆成文审策划报告、一阶段和二阶段；对于监督或再认证，我会转为准备时间和现场审核时间的结构。最后我会把每个场所的中间量和拆分后的人天整理成表格，等你确认后再写回表单，避免直接覆盖人工调整。`;
+        }
+
+        function playAiThinking(text, done) {
+            const target = document.getElementById('aiThinkingSteps');
+            if (!target) return;
+            if (aiThinkingTimer) clearInterval(aiThinkingTimer);
+            target.textContent = '';
+            target.classList.remove('done');
+            let index = 0;
+            aiThinkingTimer = setInterval(() => {
+                const chunk = text.slice(index, index + 3);
+                target.textContent += chunk;
+                index += 3;
+                if (index >= text.length) {
+                    clearInterval(aiThinkingTimer);
+                    aiThinkingTimer = null;
+                    target.classList.add('done');
+                    done?.();
+                }
+            }, 34);
+        }
+
+        function runAiManDayThinking() {
+            const domain = getSelectedAiDomain();
+            const resultPanel = document.getElementById('aiManDayResultPanel');
+            const confirmBtn = document.getElementById('aiManDayConfirmBtn');
+            aiManDayResults = [];
+            resultPanel.classList.add('hidden-section');
+            confirmBtn.disabled = true;
+            updateAiRulePanel();
+            playAiThinking(buildAiThinkingText(domain), () => {
+                aiManDayResults = calculateAiManDays(domain);
+                renderAiManDayResults(domain);
+                resultPanel.classList.remove('hidden-section');
+                confirmBtn.disabled = false;
+            });
+        }
+
+        function openAiManDayModal() {
+            const modal = document.getElementById('aiManDayModal');
+            modal.classList.remove('hidden-section');
+            runAiManDayThinking();
+        }
+
+        function changeAiManDayDomain() {
+            runAiManDayThinking();
+        }
+
+        function closeAiManDayModal() {
+            if (aiThinkingTimer) clearInterval(aiThinkingTimer);
+            aiThinkingTimer = null;
+            document.getElementById('aiManDayModal').classList.add('hidden-section');
+        }
+
+        function renderAiManDayResults(domain = getSelectedAiDomain()) {
+            const head = document.getElementById('aiManDayResultHead');
+            const tbody = document.getElementById('aiManDayResultBody');
+            if (domain === 'EnMS') {
+                head.innerHTML = `<tr>
+                    <th>场所</th>
+                    <th style="width: 90px">有效人数</th>
+                    <th style="width: 80px">FEC</th>
+                    <th style="width: 80px">FET</th>
+                    <th style="width: 80px">FSEU</th>
+                    <th style="width: 80px">C值</th>
+                    <th style="width: 80px">等级</th>
+                    <th style="width: 90px">审核准备</th>
+                    <th style="width: 90px">第一阶段</th>
+                    <th style="width: 90px">现场审核</th>
+                </tr>`;
+                tbody.innerHTML = aiManDayResults.map(item => `
+                    <tr>
+                        <td>${escapeHtml(item.siteName)}</td>
+                        <td>${item.effectivePeople}</td>
+                        <td>${item.fec.toFixed(1)}</td>
+                        <td>${item.fet.toFixed(1)}</td>
+                        <td>${item.fseu.toFixed(1)}</td>
+                        <td>${item.c.toFixed(2)}</td>
+                        <td>${item.level}</td>
+                        <td>${item.prep.toFixed(1)}</td>
+                        <td>${item.stage1.toFixed(1)}</td>
+                        <td>${item.stage2.toFixed(1)}</td>
+                    </tr>
+                `).join('');
+                return;
+            }
+
+            head.innerHTML = `<tr>
+                <th>场所</th>
+                <th style="width: 90px">有效人数</th>
+                <th style="width: 80px">TD</th>
+                <th style="width: 80px">TH</th>
+                <th style="width: 80px">TFTE</th>
+                ${domain === 'HACCP' ? '<th style="width: 80px">TA</th>' : ''}
+                <th style="width: 80px">TS</th>
+                <th style="width: 90px">审核准备</th>
+                <th style="width: 90px">第一阶段</th>
+                <th style="width: 90px">二阶段/现场</th>
+            </tr>`;
+            tbody.innerHTML = aiManDayResults.map(item => `
+                <tr>
+                    <td>${escapeHtml(item.siteName)} <span class="text-gray-400">(${item.category})</span></td>
+                    <td>${item.effectivePeople}</td>
+                    <td>${item.td.toFixed(1)}</td>
+                    <td>${item.th.toFixed(1)}</td>
+                    <td>${item.tfte.toFixed(1)}</td>
+                    ${domain === 'HACCP' ? `<td>${item.ta.toFixed(1)}</td>` : ''}
+                    <td>${item.ts.toFixed(1)}</td>
+                    <td>${item.prep.toFixed(1)}</td>
+                    <td>${item.stage1.toFixed(1)}</td>
+                    <td>${item.stage2.toFixed(1)}</td>
+                </tr>
+            `).join('');
+        }
+
+        function applyAiManDayResults() {
+            aiManDayResults.forEach(item => {
+                const card = document.getElementById(item.siteId);
+                if (!card) return;
+                const prepInput = card.querySelector('[data-type="prep"]');
+                const stage1Input = card.querySelector('[data-type="stage1"]');
+                const stage2Input = card.querySelector('[data-type="stage2"]');
+                const ratioInput = card.querySelector('[data-type="ratio"]');
+                if (prepInput) prepInput.value = item.prep.toFixed(1);
+                if (stage1Input) stage1Input.value = item.stage1.toFixed(1);
+                if (stage2Input) stage2Input.value = item.stage2.toFixed(1);
+                if (ratioInput && !ratioInput.value) ratioInput.value = '1.0';
+                updateCalculations(item.siteId);
+            });
+            closeAiManDayModal();
+            alert('AI计算结果已同步到表单');
         }
 
         function initAdjustmentReasons() {
@@ -5466,6 +6043,153 @@
             
             document.getElementById('addSiteModal').classList.remove('hidden-section');
         }
+
+        function getCurrentAddSiteContainer() {
+            const phase = currentAddSitePhase || currentPhase || 'initial';
+            const containerId = phase === 'surv1' ? 'siteCardsContainer_surv1' :
+                               phase === 'surv2' ? 'siteCardsContainer_surv2' :
+                               phase === 'recert' ? 'siteCardsContainer_recert' : 'siteCardsContainer_initial';
+            return {
+                phase,
+                container: document.getElementById(containerId)
+            };
+        }
+
+        function appendSiteCardToCurrentPhase(siteData) {
+            const { phase, container } = getCurrentAddSiteContainer();
+            if (!container) return null;
+
+            const siteIndex = container.querySelectorAll('.site-card').length;
+            const newSiteId = `site_${phase}_${siteIndex}_${Date.now()}`;
+            const siteCard = createSiteCard(
+                newSiteId,
+                siteData.name,
+                siteData.address,
+                siteData.people || '0',
+                phase,
+                siteData.type || 'fixed'
+            );
+
+            const productsInput = siteCard.querySelector('.site-products');
+            if (productsInput && siteData.products) productsInput.value = siteData.products;
+
+            container.appendChild(siteCard);
+            sites.push(newSiteId);
+            initializeEditableShiftInfo(siteCard);
+            ensureSiteTypeBadges();
+            updateAllPhaseTotals();
+            initAdjustmentReasons();
+            initializeProfessionalCodeAccreditation();
+            return newSiteId;
+        }
+
+        function openTempSiteModal() {
+            if (!currentAddSitePhase) currentAddSitePhase = currentPhase || 'initial';
+            ['manualTempSiteName', 'manualTempSiteAddress', 'manualTempSiteProducts'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) input.value = '';
+            });
+            const typeSelect = document.getElementById('manualTempSiteType');
+            if (typeSelect) typeSelect.value = 'fixed';
+            const peopleInput = document.getElementById('manualTempSitePeople');
+            if (peopleInput) peopleInput.value = '0';
+            document.getElementById('tempSiteModal').classList.remove('hidden-section');
+            setTimeout(() => document.getElementById('manualTempSiteName')?.focus(), 0);
+        }
+
+        function closeTempSiteModal() {
+            document.getElementById('tempSiteModal').classList.add('hidden-section');
+        }
+
+        function addAvailableSiteRow(siteData, checked = true) {
+            const list = document.getElementById('availableSitesList');
+            if (!list) return;
+
+            const exists = Array.from(list.querySelectorAll('.site-select-check')).some(input => input.dataset.name === siteData.name);
+            if (exists) {
+                alert('该场所名称已存在，请勿重复新增');
+                return false;
+            }
+
+            const typeMeta = getSiteTypeMeta(siteData.type || 'fixed');
+            const row = document.createElement('div');
+            row.className = 'available-site-row p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer';
+            row.dataset.manual = 'true';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'w-4 h-4 text-blue-600 rounded site-select-check';
+            checkbox.dataset.name = siteData.name;
+            checkbox.dataset.address = siteData.address;
+            checkbox.dataset.people = siteData.people || '0';
+            checkbox.dataset.type = siteData.type || 'fixed';
+            checkbox.dataset.products = siteData.products || '';
+            checkbox.checked = checked;
+            checkbox.onchange = function() {
+                toggleSiteSelection(siteData.name, this.checked);
+            };
+
+            const badge = document.createElement('span');
+            badge.className = `site-type-badge ${typeMeta.className} available-site-badge`;
+            badge.textContent = typeMeta.label;
+
+            const text = document.createElement('div');
+            text.className = 'available-site-text';
+            text.innerHTML = `
+                <div class="available-site-name">${escapeHtml(siteData.name)}</div>
+                <div class="available-site-desc">${escapeHtml(siteData.address)} | 人数：${escapeHtml(siteData.people || '0')}</div>
+            `;
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.className = 'available-site-delete';
+            deleteBtn.title = '删除';
+            deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteBtn.onclick = function(event) {
+                event.stopPropagation();
+                removeAvailableSiteRow(this, siteData.name);
+            };
+
+            row.appendChild(checkbox);
+            row.appendChild(badge);
+            row.appendChild(text);
+            row.appendChild(deleteBtn);
+            list.appendChild(row);
+
+            if (checked) toggleSiteSelection(siteData.name, true);
+            return true;
+        }
+
+        function removeAvailableSiteRow(button, siteName) {
+            selectedAvailableSites = selectedAvailableSites.filter(name => name !== siteName);
+            button.closest('.available-site-row')?.remove();
+        }
+
+        function confirmAddTempSite() {
+            const name = document.getElementById('manualTempSiteName')?.value.trim() || '';
+            const address = document.getElementById('manualTempSiteAddress')?.value.trim() || '';
+            const people = document.getElementById('manualTempSitePeople')?.value || '0';
+            const products = document.getElementById('manualTempSiteProducts')?.value.trim() || '现场审核活动';
+            const type = document.getElementById('manualTempSiteType')?.value || 'fixed';
+
+            if (!name || !address) {
+                alert('请填写场所名称和地址信息');
+                return;
+            }
+
+            const added = addAvailableSiteRow({
+                name,
+                address,
+                people,
+                products,
+                type
+            });
+
+            if (added) {
+                alert('场所已添加到列表，可勾选后确认添加，也可在列表中删除');
+                closeTempSiteModal();
+            }
+        }
         
         function confirmAddSiteToPhase() {
             if (selectedAvailableSites.length === 0) {
@@ -5473,31 +6197,14 @@
                 return;
             }
             
-            const containerId = currentAddSitePhase === 'surv1' ? 'siteCardsContainer_surv1' :
-                               currentAddSitePhase === 'surv2' ? 'siteCardsContainer_surv2' :
-                               currentAddSitePhase === 'recert' ? 'siteCardsContainer_recert' : 'siteCardsContainer_initial';
-            
-            const container = document.getElementById(containerId);
-            let siteIndex = container.querySelectorAll('.site-card').length;
-            
             selectedAvailableSites.forEach(siteName => {
-                const checkbox = document.querySelector(`.site-select-check[data-name="${siteName}"]`);
+                const checkbox = Array.from(document.querySelectorAll('.site-select-check')).find(input => input.dataset.name === siteName);
                 const address = checkbox?.dataset?.address || '';
                 const people = checkbox?.dataset?.people || '0';
                 const siteType = checkbox?.dataset?.type || 'fixed';
-                
-                const newSiteId = `site_${currentAddSitePhase}_${siteIndex}`;
-                const siteCard = createSiteCard(newSiteId, siteName, address, people, currentAddSitePhase, siteType);
-                
-                container.appendChild(siteCard);
-                sites.push(newSiteId);
-                siteIndex++;
+                const products = checkbox?.dataset?.products || '';
+                appendSiteCardToCurrentPhase({ name: siteName, address, people, products, type: siteType });
             });
-            
-            ensureSiteTypeBadges();
-            updateAllPhaseTotals();
-            initAdjustmentReasons();
-            initializeProfessionalCodeAccreditation();
             
             const phaseName = currentAddSitePhase === 'initial' ? '初次认证' :
                               (currentAddSitePhase === 'surv1' ? '监督一' :
@@ -5784,6 +6491,7 @@
                     </div>
                 </div>
             `;
+            initializeEditableShiftInfo(div);
             
             return div;
         }
@@ -6184,7 +6892,7 @@
 
         function toggleSiteSelection(siteName, checked) {
             if (checked) {
-                selectedAvailableSites.push(siteName);
+                if (!selectedAvailableSites.includes(siteName)) selectedAvailableSites.push(siteName);
             } else {
                 selectedAvailableSites = selectedAvailableSites.filter(n => n !== siteName);
             }
