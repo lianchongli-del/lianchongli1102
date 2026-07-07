@@ -1,4 +1,5 @@
 
+
 <!doctype html>
 <html lang="zh-CN">
 <head>
@@ -187,8 +188,17 @@
       gap: 10px 12px;
     }
 
-    .income-fields.contract-mode { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-    .income-fields.settlement-mode { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .income-fields.contract-mode,
+    .income-fields.settlement-mode { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+
+    .income-source-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px 12px;
+    }
+
+    .income-source-grid .control { height: 30px; }
+    .income-source-grid .source-row { display: block; }
 
     .source-row {
       display: flex;
@@ -719,6 +729,15 @@
           <div><div class="info-label">是否承担交通和住宿费</div><div class="info-value">是</div></div>
           <div><div class="info-label">创建时间</div><div class="info-value">2026-06-16 09:30</div></div>
         </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">收入来源类型</h2>
+      </div>
+      <div class="section-body">
+        <div class="income-source-grid" id="incomeBasicInfo"></div>
       </div>
     </section>
 
@@ -1257,13 +1276,13 @@
       list.style.display = "block";
     }
 
-    function renderIncomes() {
+    function renderIncomeBasicInfo() {
       const row = state.incomes[0];
       calc(row);
       const index = 0;
       const isContract = row.sourceType === "合同";
       const contract = getContract(row.contractId);
-      $("#incomeForm").innerHTML = `
+      $("#incomeBasicInfo").innerHTML = `
         <div class="form-item source-row">
           <label>收入来源类型</label>
           <div class="source-switch">
@@ -1271,7 +1290,6 @@
             <label><input type="radio" name="incomeSourceType" data-scope="income" data-field="sourceType" data-index="${index}" value="结算单" ${!isContract ? "checked" : ""}>结算单</label>
           </div>
         </div>
-        <div class="income-fields ${isContract ? "contract-mode" : "settlement-mode"}">
           ${isContract ? `
             <div class="form-item">
               <label>关联业务合同</label>
@@ -1281,6 +1299,19 @@
               <label>合同剩余金额</label>
               <input class="control num" value="${money(contract.remaining)}" readonly>
             </div>` : ""}
+        <div class="form-item">
+          <label>子项目名称</label>
+          <input class="control" data-scope="income" data-field="subProject" data-index="${index}" value="${row.subProject}" placeholder="请输入">
+        </div>`;
+    }
+
+    function renderIncomes() {
+      const row = state.incomes[0];
+      calc(row);
+      const index = 0;
+      const isContract = row.sourceType === "合同";
+      $("#incomeForm").innerHTML = `
+        <div class="income-fields ${isContract ? "contract-mode" : "settlement-mode"}">
           <div class="form-item">
             <label>收入金额</label>
             <input class="control num" data-scope="income" data-field="amount" data-index="${index}" value="${row.amount}" type="number" min="0">
@@ -1320,10 +1351,6 @@
           <div class="form-item">
             <label>本位币税额</label>
             <input class="control num" value="${money(row.baseTaxAmount)}" readonly>
-          </div>
-          <div class="form-item">
-            <label>子项目名称</label>
-            <input class="control" data-scope="income" data-field="subProject" data-index="${index}" value="${row.subProject}" placeholder="请输入">
           </div>
         </div>`;
     }
@@ -1406,6 +1433,7 @@
     }
 
     function renderAll() {
+      renderIncomeBasicInfo();
       renderIncomes();
       renderExternalCosts();
       renderInternalCosts();
