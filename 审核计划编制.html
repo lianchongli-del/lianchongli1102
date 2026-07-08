@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -422,6 +423,25 @@
             font-weight: 500;
         }
 
+        .site-date-range {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+            align-items: center;
+            gap: 8px;
+        }
+
+        .site-date-range .form-input {
+            min-width: 0;
+            min-height: 32px;
+            padding: 5px 8px;
+            font-size: 12px;
+        }
+
+        .site-date-range-separator {
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
         .site-actions {
             display: flex;
             align-items: center;
@@ -429,16 +449,21 @@
         }
 
         .assigned-days {
-            background: white;
+            background: #f3f4f6;
             padding: 6px 12px;
             border-radius: 6px;
-            border: 1px solid #d1d5db;
+            border: 1px solid #e2e8f0;
             font-size: 13px;
-            color: #374151;
+            color: #64748b;
+            cursor: default;
+            min-height: 32px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .assigned-days strong {
-            color: #2563eb;
+            color: #334155;
             font-weight: 600;
         }
 
@@ -1045,6 +1070,17 @@
             color: #1e293b;
         }
 
+        .scope-domain-list {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .scope-domain-row {
+            display: block;
+            line-height: 1.5;
+        }
+
         .scope-date-row {
             display: flex;
             align-items: center;
@@ -1241,20 +1277,11 @@
                             </div>
                         </div>
                         <div class="scope-line">
-                            <div class="scope-label">认证领域和专业代码</div>
-                            <div class="scope-value">
-                                <span class="font-medium text-blue-700">QMS(31.04.01,31.04.02,31.04.05)：轨道交通运营服务</span>
-                                <span class="font-medium text-green-700">EMS(31.04.01)：城市轨道交通运营环境管理</span>
-                                <span class="font-medium text-amber-700">OHSMS(31.04.01)：轨道交通职业健康安全管理</span>
-                            </div>
-                        </div>
-                        <div class="scope-line">
-                            <div class="scope-label">计划审核时间</div>
-                            <div class="scope-value scope-date-row">
-                                <span>自</span>
-                                <input type="date" class="form-input" value="2023-04-19">
-                                <span>至</span>
-                                <input type="date" class="form-input" value="2024-04-18">
+                            <div class="scope-label">领域/专业代码/范围</div>
+                            <div class="scope-value scope-domain-list">
+                                <span class="scope-domain-row font-medium text-blue-700">QMS / 31.04.01、31.04.02、31.04.05 / 轨道交通运营服务</span>
+                                <span class="scope-domain-row font-medium text-green-700">EMS / 31.04.01 / 城市轨道交通运营环境管理</span>
+                                <span class="scope-domain-row font-medium text-amber-700">OHSMS / 31.04.01 / 轨道交通职业健康安全管理</span>
                             </div>
                         </div>
                         <div class="scope-line">
@@ -1272,18 +1299,9 @@
                             </div>
                         </div>
                         <div class="scope-line">
-                            <div class="scope-label">认证领域和专业代码</div>
-                            <div class="scope-value">
-                                <span class="font-medium text-green-700">EMS(31.04.01)：城市轨道交通运营环境管理</span>
-                            </div>
-                        </div>
-                        <div class="scope-line">
-                            <div class="scope-label">计划审核时间</div>
-                            <div class="scope-value scope-date-row">
-                                <span>自</span>
-                                <input type="date" class="form-input" value="2023-04-19">
-                                <span>至</span>
-                                <input type="date" class="form-input" value="2024-04-18">
+                            <div class="scope-label">领域/专业代码/范围</div>
+                            <div class="scope-value scope-domain-list">
+                                <span class="scope-domain-row font-medium text-green-700">EMS / 31.04.01 / 城市轨道交通运营环境管理</span>
                             </div>
                         </div>
                         <div class="scope-line">
@@ -1301,18 +1319,9 @@
                             </div>
                         </div>
                         <div class="scope-line">
-                            <div class="scope-label">认证领域和专业代码</div>
-                            <div class="scope-value">
-                                <span class="font-medium text-amber-700">OHSMS(31.04.01)：轨道交通职业健康安全管理</span>
-                            </div>
-                        </div>
-                        <div class="scope-line">
-                            <div class="scope-label">计划审核时间</div>
-                            <div class="scope-value scope-date-row">
-                                <span>自</span>
-                                <input type="date" class="form-input" value="2023-04-19">
-                                <span>至</span>
-                                <input type="date" class="form-input" value="2024-04-18">
+                            <div class="scope-label">领域/专业代码/范围</div>
+                            <div class="scope-value scope-domain-list">
+                                <span class="scope-domain-row font-medium text-amber-700">OHSMS / 31.04.01 / 轨道交通职业健康安全管理</span>
                             </div>
                         </div>
                         <div class="scope-line">
@@ -1402,7 +1411,11 @@
                             </div>
                             <div class="site-info-item">
                                 <span class="site-info-label">审核日期区间</span>
-                                <span class="site-info-value" data-site-date-range="hq">2024-04-15 至 2024-04-18</span>
+                                <div class="site-info-value site-date-range" data-site-date-range="hq">
+                                    <input type="date" class="form-input" data-site-date-start="hq" value="2024-04-15">
+                                    <span class="site-date-range-separator">至</span>
+                                    <input type="date" class="form-input" data-site-date-end="hq" value="2024-04-18">
+                                </div>
                             </div>
                             <div class="site-info-item">
                                 <span class="site-info-label">已分配人天</span>
@@ -1470,7 +1483,11 @@
                             </div>
                             <div class="site-info-item">
                                 <span class="site-info-label">审核日期区间</span>
-                                <span class="site-info-value" data-site-date-range="site1">2024-04-16 至 2024-04-17</span>
+                                <div class="site-info-value site-date-range" data-site-date-range="site1">
+                                    <input type="date" class="form-input" data-site-date-start="site1" value="2024-04-16">
+                                    <span class="site-date-range-separator">至</span>
+                                    <input type="date" class="form-input" data-site-date-end="site1" value="2024-04-17">
+                                </div>
                             </div>
                             <div class="site-info-item">
                                 <span class="site-info-label">已分配人天</span>
@@ -1539,7 +1556,11 @@
                             </div>
                             <div class="site-info-item">
                                 <span class="site-info-label">审核日期区间</span>
-                                <span class="site-info-value" data-site-date-range="site2">2024-04-17 至 2024-04-18</span>
+                                <div class="site-info-value site-date-range" data-site-date-range="site2">
+                                    <input type="date" class="form-input" data-site-date-start="site2" value="2024-04-17">
+                                    <span class="site-date-range-separator">至</span>
+                                    <input type="date" class="form-input" data-site-date-end="site2" value="2024-04-18">
+                                </div>
                             </div>
                             <div class="site-info-item">
                                 <span class="site-info-label">已分配人天</span>
@@ -2250,13 +2271,20 @@
             applyPastPlan(planId);
         }
 
+        function setSiteDateRange(siteId, rangeText) {
+            const [startDate = '', endDate = ''] = String(rangeText || '').split(/\s*至\s*/);
+            const startInput = document.querySelector(`[data-site-date-start="${siteId}"]`);
+            const endInput = document.querySelector(`[data-site-date-end="${siteId}"]`);
+            if (startInput) startInput.value = startDate.trim();
+            if (endInput) endInput.value = endDate.trim();
+        }
+
         function applyPastPlan(planId) {
             const plan = pastAuditPlans.find(item => item.id === planId);
             if (!plan) return;
 
             Object.keys(plan.siteDateRanges || {}).forEach(siteId => {
-                const dateEl = document.querySelector(`[data-site-date-range="${siteId}"]`);
-                if (dateEl) dateEl.textContent = plan.siteDateRanges[siteId];
+                setSiteDateRange(siteId, plan.siteDateRanges[siteId]);
             });
 
             Object.keys(sitesData).forEach(siteId => {
