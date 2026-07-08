@@ -1,6 +1,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -927,26 +928,22 @@
         }
 
         .step-footer {
-            position: sticky;
+            position: fixed;
+            left: 0;
+            right: 0;
             bottom: 0;
             z-index: 35;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-end;
             gap: 12px;
-            margin-top: 16px;
-            padding: 14px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            background: rgba(255, 255, 255, .96);
+            padding: 10px 16px;
+            border-top: 1px solid #e2e8f0;
+            background: rgba(255, 255, 255, .95);
             backdrop-filter: blur(10px);
             box-shadow: 0 -6px 20px rgba(15, 23, 42, .08);
         }
 
-        .step-footer-note {
-            color: #64748b;
-            font-size: 13px;
-        }
     </style>
 <base target="_blank">
 </head>
@@ -955,18 +952,6 @@
     <!-- 顶部固定导航 -->
     <div class="fixed top-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
         <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-14">
-                <div class="flex items-center gap-4 overflow-x-auto custom-scrollbar"></div>
-                <div class="flex gap-2 shrink-0">
-                    <button type="button" id="prevStepBtn" onclick="goStep(currentStep - 1)" class="px-3 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-all">
-                        <i class="fas fa-arrow-left mr-1.5"></i>上一步
-                    </button>
-                    <button type="button" id="nextStepBtn" onclick="goStep(currentStep + 1)" class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md shadow-blue-200 transition-all">
-                        下一步<i class="fas fa-arrow-right ml-1.5"></i>
-                    </button>
-                </div>
-            </div>
-
             <!-- 三步填写导航 -->
             <nav class="step-tabs" aria-label="认证申请填写步骤">
                 <button type="button" class="step-tab active" data-step-target="1">
@@ -995,7 +980,7 @@
     </div>
 
     <!-- 主体布局：左侧表单，中间填写说明，右侧快速导航 -->
-    <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 pt-40 pb-32 flex gap-6">
+    <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32 flex gap-6">
 
         <!-- 左侧：表单内容区 -->
         <div class="flex-1 min-w-0 space-y-6" id="mainFormContainer">
@@ -1970,6 +1955,15 @@
         <span id="toastMessage">操作成功</span>
     </div>
 
+    <div class="step-footer">
+        <button type="button" id="prevStepBtn" onclick="goStep(currentStep - 1)" class="px-3 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-all">
+            <i class="fas fa-arrow-left mr-1.5"></i>上一步
+        </button>
+        <button type="button" id="nextStepBtn" onclick="goStep(currentStep + 1)" class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md shadow-blue-200 transition-all">
+            下一步<i class="fas fa-arrow-right ml-1.5"></i>
+        </button>
+    </div>
+
     <script>
         // 全局状态
         let selectedSystems = [];
@@ -2158,11 +2152,6 @@
         };
 
         let currentStep = 1;
-        const stepDescriptions = {
-            1: '第 1 步 / 共 3 步：填写申请单信息、客户基本信息、组织/人员及其他内容',
-            2: '第 2 步 / 共 3 步：填写认证领域需求信息、组织管理体系的整合程度（适用于多体系认证申请）',
-            3: '第 3 步 / 共 3 步：填写IS/ITS专项信息、附件信息'
-        };
 
         function ensureInfoTechStepSection() {
             const infoTechBlock = document.getElementById('infoTechOrgSection');
@@ -2220,13 +2209,11 @@
             });
             const prevBtn = document.getElementById('prevStepBtn');
             const nextBtn = document.getElementById('nextStepBtn');
-            const note = document.getElementById('stepFooterNote');
             if (prevBtn) prevBtn.classList.toggle('hidden', currentStep === 1);
             if (nextBtn) {
                 nextBtn.classList.toggle('hidden', currentStep === 3);
                 nextBtn.innerHTML = '下一步<i class="fas fa-arrow-right ml-1.5"></i>';
             }
-            if (note) note.textContent = stepDescriptions[currentStep];
             updateTopAnchorVisibility();
             const container = document.getElementById('mainFormContainer');
             if (container) container.scrollIntoView({ behavior: 'smooth', block: 'start' });
