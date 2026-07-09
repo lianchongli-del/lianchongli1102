@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -267,6 +268,31 @@
             border-color: #3b82f6; 
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
+        .person-card.external {
+            opacity: 1;
+            border-color: #e2e8f0;
+            background: white;
+            cursor: pointer;
+        }
+        .person-card.external:hover {
+            border-color: #93c5fd;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .person-card.external.selected {
+            background: #eff6ff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .person-card.unavailable {
+            cursor: not-allowed;
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            opacity: 0.78;
+        }
+        .person-card.unavailable:hover {
+            border-color: #cbd5e1;
+            box-shadow: none;
+        }
         
         .person-system-coverage { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
         .person-system-tag { 
@@ -384,6 +410,23 @@
             height: 24px;
             vertical-align: middle;
         }
+
+        .leader-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 2px 8px;
+            background: #eef2ff;
+            border: 1px solid #c7d2fe;
+            color: #3730a3;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            height: 24px;
+            line-height: 1;
+            vertical-align: middle;
+        }
     </style>
 <base target="_blank">
 <base target="_blank">
@@ -448,22 +491,6 @@
                         <div class="text-xs text-slate-500 mb-1">公司总人数</div>
                         <div class="text-sm font-medium text-slate-800">690</div>
                     </div>
-                    <div>
-                        <div class="text-xs text-slate-500 mb-1">联系人</div>
-                        <div class="text-sm font-medium text-slate-800 truncate">张丽</div>
-                    </div>
-                    <div>
-                        <div class="text-xs text-slate-500 mb-1">职务</div>
-                        <div class="text-sm font-medium text-slate-800 truncate">质量管理部经理</div>
-                    </div>
-                    <div>
-                        <div class="text-xs text-slate-500 mb-1">电话</div>
-                        <div class="text-sm font-medium text-slate-800">13800138000</div>
-                    </div>
-                    <div>
-                        <div class="text-xs text-slate-500 mb-1">Email</div>
-                        <div class="text-sm font-medium text-slate-800 truncate">zhangli@bjmetro.com</div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -490,6 +517,10 @@
                                 <th>认证领域</th>
                                 <th>审核阶段</th>
                                 <th>场所数量</th>
+                                <th>联系人</th>
+                                <th>职位</th>
+                                <th>电话</th>
+                                <th>Email</th>
                                 <th style="width: 120px">操作</th>
                             </tr>
                         </thead>
@@ -501,6 +532,10 @@
                                 <td>QMS</td>
                                 <td>二阶段</td>
                                 <td>4</td>
+                                <td>王强</td>
+                                <td>环境管理部主管</td>
+                                <td class="whitespace-nowrap">13900139000</td>
+                                <td class="whitespace-nowrap">wangqiang@bjmetro.com</td>
                                 <td>
                                     <div class="flex items-center gap-3">
                                         <button onclick="viewPlan()" class="text-blue-600 hover:text-blue-800 text-xs font-medium">查看策划方案</button>
@@ -515,6 +550,10 @@
                                 <td>EMS</td>
                                 <td>二阶段</td>
                                 <td>4</td>
+                                <td>张丽</td>
+                                <td>质量管理部经理</td>
+                                <td class="whitespace-nowrap">13800138000</td>
+                                <td class="whitespace-nowrap">zhangli@bjmetro.com</td>
                                 <td>
                                     <div class="flex items-center gap-3">
                                         <button onclick="viewPlan()" class="text-blue-600 hover:text-blue-800 text-xs font-medium">查看策划方案</button>
@@ -1008,6 +1047,27 @@
                 workUnit: "吉林公司", region: "东北区域", type: "专职", 
                 codes: { QMS: ["19.01.01", "19.07.00", "19.08.00"], EMS: ["19.12.00"] }, 
                 isBusy: false, busyPeriod: null, remainingDays: 167 
+            },
+            {
+                name: "赵鹏", phone: "13800138101", cqc: "CQC90231",
+                qualification: "Q/EMS审核员", registrationNumbers: ["2022-N1QMS-5090231", "2022-N1EMS-3090231"], defaultRole: "组员",
+                workUnit: "华北公司", region: "华北区域", type: "专职",
+                codes: { QMS: ["19.01.01", "19.07.00"], EMS: ["19.03.00"] },
+                borrowApprovalRequired: true, isBusy: false, busyPeriod: null, remainingDays: 102
+            },
+            {
+                name: "陈思远", phone: "13800138102", cqc: "CQC90232",
+                qualification: "Q高级审核员(2021-N1QMS-5090232)", defaultRole: "组长",
+                workUnit: "华东公司", region: "华东区域", type: "兼职",
+                codes: { QMS: ["19.01.01", "19.08.00"], EMS: ["19.12.00"] },
+                borrowApprovalRequired: true, isBusy: false, busyPeriod: null, remainingDays: 64
+            },
+            {
+                name: "马晓琳", phone: "13800138103", cqc: "CQC90233",
+                qualification: "EMS审核员(2023-N1EMS-3090233)", defaultRole: "组员",
+                workUnit: "西南公司", region: "西南区域", type: "专职",
+                codes: { QMS: [], EMS: ["19.03.00", "19.12.00"] },
+                borrowApprovalRequired: true, isBusy: true, busyPeriod: "2026-04-18 至 2026-04-24", remainingDays: 141
             }
         ];
         
@@ -1057,6 +1117,12 @@
                     else hasLeader = true;
                 }
             });
+        }
+
+        function renderLeaderBadge(person) {
+            if (!person) return '';
+            const isLeader = person.defaultRole === '组长' || person.role === '组长';
+            return isLeader ? '<span class="leader-badge"><i class="fas fa-user-tie"></i>组长</span>' : '';
         }
 
         function hasOtherLeader(peers = [], person) {
@@ -1563,6 +1629,18 @@
                 return a.name.localeCompare(b.name);
             });
         }
+
+        function isPersonnelSelectable(person) {
+            return !person?.borrowApprovalRequired;
+        }
+
+        function renderBorrowApprovalBadge(person) {
+            if (person.borrowApprovalRequired) return '';
+            if (person.workUnit !== currentUserCompany) {
+                return '<span class="external-badge"><i class="fas fa-lock mr-1"></i>借调审批通过</span>';
+            }
+            return '';
+        }
         
         // 修改：统一标签样式和对齐，确保所有标签水平居中对齐；外部单位人员显示审批调用标识
         function renderPersonnelList() {
@@ -1592,6 +1670,7 @@
             container.innerHTML = filtered.map(person => {
                 const isSelected = selectedPersonnel.has(person.cqc);
                 const isExternal = person.workUnit !== currentUserCompany;
+                const isSelectable = isPersonnelSelectable(person);
                 let daysClass = '';
                 if (person.remainingDays <= 30) daysClass = 'danger';
                 else if (person.remainingDays <= 60) daysClass = 'warning';
@@ -1608,17 +1687,13 @@
                 }
 
                 // 使用full-coverage-tag类统一全覆盖标签样式
-                const fullCoverageBadge = person.coverage.isFullCoverage ? 
-                    '<span class="full-coverage-tag"><i class="fas fa-check mr-1"></i>全覆盖</span>' : '';
-
-                // 外部单位标识
-                const externalBadge = isExternal ? 
-                    '<span class="external-badge"><i class="fas fa-lock mr-1"></i>经审批调用</span>' : '';
-
-                const clickAction = `togglePersonSelection('${person.cqc}')`;
+                const externalBadge = renderBorrowApprovalBadge(person);
+                const clickAction = isSelectable
+                    ? `togglePersonSelection('${person.cqc}')`
+                    : `showBorrowApprovalRequired('${person.name}')`;
 
                 return `
-                <div class="person-card ${isSelected ? 'selected' : ''}" 
+                <div class="person-card ${isSelected ? 'selected' : ''} ${isExternal ? 'external' : ''} ${isSelectable ? '' : 'unavailable'}" 
                      onclick="${clickAction}"
                      data-cqc="${person.cqc}">
                     <div class="flex justify-between items-start mb-2">
@@ -1626,13 +1701,12 @@
                             <span class="font-semibold text-slate-900" style="height: 24px; display: inline-flex; align-items: center; margin-right: 4px;">${person.name}</span>
                             <span class="remaining-days-badge ${daysClass}">${person.remainingDays}天/180天</span>
                             <span class="personnel-tag ${person.type === '专职' ? 'tag-fulltime' : 'tag-parttime'}">${person.type}</span>
-                            ${person.qualification.includes('Q') ? '<span class="personnel-tag tag-qms">QMS</span>' : ''}
+                            ${renderLeaderBadge(person)}
                             ${conflictBadge}
                             ${assignedBadge}
-                            ${fullCoverageBadge}
                             ${externalBadge}
                         </div>
-                        ${isSelected ? '<i class="fas fa-check-circle text-blue-600 text-xl"></i>' : '<i class="far fa-circle text-slate-300 text-xl"></i>'}
+                        ${isSelectable ? (isSelected ? '<i class="fas fa-check-circle text-blue-600 text-xl"></i>' : '<i class="far fa-circle text-slate-300 text-xl"></i>') : '<i class="fas fa-ban text-slate-400 text-xl"></i>'}
                     </div>
                     <div class="text-xs text-slate-500 space-y-1 mb-2">
                         <div class="flex justify-between">
@@ -1672,6 +1746,7 @@
             container.innerHTML = sortedList.map(person => {
                 const isSelected = selectedPersonnel.has(person.cqc);
                 const isExternal = person.workUnit !== currentUserCompany;
+                const isSelectable = isPersonnelSelectable(person);
                 let daysClass = '';
                 if (person.remainingDays <= 30) daysClass = 'danger';
                 else if (person.remainingDays <= 60) daysClass = 'warning';
@@ -1686,16 +1761,13 @@
                     assignedBadge = `<span class="site-assigned-info"><i class="fas fa-map-marker-alt mr-1"></i>已在：${person.assignedInfo.siteName} (${person.assignedInfo.dateRange})</span>`;
                 }
 
-                const fullCoverageBadge = person.coverage.isFullCoverage ? 
-                    '<span class="full-coverage-tag"><i class="fas fa-check mr-1"></i>全覆盖</span>' : '';
-
-                const externalBadge = isExternal ? 
-                    '<span class="external-badge"><i class="fas fa-lock mr-1"></i>经审批调用</span>' : '';
-
-                const clickAction = `togglePersonSelection('${person.cqc}')`;
+                const externalBadge = renderBorrowApprovalBadge(person);
+                const clickAction = isSelectable
+                    ? `togglePersonSelection('${person.cqc}')`
+                    : `showBorrowApprovalRequired('${person.name}')`;
 
                 return `
-                <div class="person-card ${isSelected ? 'selected' : ''}" 
+                <div class="person-card ${isSelected ? 'selected' : ''} ${isExternal ? 'external' : ''} ${isSelectable ? '' : 'unavailable'}" 
                      onclick="${clickAction}"
                      data-cqc="${person.cqc}">
                     <div class="flex justify-between items-start mb-2">
@@ -1703,13 +1775,12 @@
                             <span class="font-semibold text-slate-900" style="height: 24px; display: inline-flex; align-items: center; margin-right: 4px;">${person.name}</span>
                             <span class="remaining-days-badge ${daysClass}">${person.remainingDays}天/180天</span>
                             <span class="personnel-tag ${person.type === '专职' ? 'tag-fulltime' : 'tag-parttime'}">${person.type}</span>
-                            ${person.qualification.includes('Q') ? '<span class="personnel-tag tag-qms">QMS</span>' : ''}
+                            ${renderLeaderBadge(person)}
                             ${conflictBadge}
                             ${assignedBadge}
-                            ${fullCoverageBadge}
                             ${externalBadge}
                         </div>
-                        ${isSelected ? '<i class="fas fa-check-circle text-blue-600 text-xl"></i>' : '<i class="far fa-circle text-slate-300 text-xl"></i>'}
+                        ${isSelectable ? (isSelected ? '<i class="fas fa-check-circle text-blue-600 text-xl"></i>' : '<i class="far fa-circle text-slate-300 text-xl"></i>') : '<i class="fas fa-ban text-slate-400 text-xl"></i>'}
                     </div>
                     <div class="text-xs text-slate-500 space-y-1 mb-2">
                         <div class="flex justify-between">
@@ -1731,8 +1802,17 @@
             if (isVenueMode && currentSiteId) renderSitePersonnelList();
             else renderPersonnelList();
         }
+
+        function showBorrowApprovalRequired(name) {
+            alert(`${name} 需完成借调审批后才可选择`);
+        }
         
         function togglePersonSelection(cqc) {
+            const person = personnelDB.find(item => item.cqc === cqc);
+            if (!isPersonnelSelectable(person)) {
+                showBorrowApprovalRequired(person?.name || '该人员');
+                return;
+            }
             if (selectedPersonnel.has(cqc)) selectedPersonnel.delete(cqc);
             else selectedPersonnel.add(cqc);
             
@@ -2108,6 +2188,19 @@
             selectedRows.forEach(row => {
                 const cells = row.querySelectorAll('td');
                 const projectNo = row.dataset.projectNo;
+                const contact = projectNo === '1100-Q1-2026-0002'
+                    ? {
+                        name: '王强',
+                        position: '环境管理部主管',
+                        phone: '13900139000',
+                        email: 'wangqiang@bjmetro.com'
+                    }
+                    : {
+                        name: '张丽',
+                        position: '质量管理部经理',
+                        phone: '13800138000',
+                        email: 'zhangli@bjmetro.com'
+                    };
                 projectTable.insertAdjacentHTML('beforeend', `
                     <tr data-project-no="${projectNo}">
                         <td></td>
@@ -2116,6 +2209,10 @@
                         <td>${cells[3].textContent.trim()}</td>
                         <td>${cells[4].textContent.trim()}</td>
                         <td>${cells[5].textContent.trim()}</td>
+                        <td>${contact.name}</td>
+                        <td>${contact.position}</td>
+                        <td class="whitespace-nowrap">${contact.phone}</td>
+                        <td class="whitespace-nowrap">${contact.email}</td>
                         <td>
                             <div class="flex items-center gap-3">
                                 <button onclick="viewPlan()" class="text-blue-600 hover:text-blue-800 text-xs font-medium">查看策划方案</button>
