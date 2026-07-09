@@ -1,6 +1,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -276,7 +277,7 @@
             border-color: #3b82f6; 
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
-        /* 经审批调用人员样式 - 背景与普通卡片一致 */
+        /* 借调审批通过人员样式 - 背景与普通卡片一致 */
         .person-card.external { 
             opacity: 1; 
             border-color: #e2e8f0; 
@@ -291,6 +292,16 @@
             background: #eff6ff;
             border-color: #3b82f6;
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .person-card.unavailable {
+            cursor: not-allowed;
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            opacity: 0.78;
+        }
+        .person-card.unavailable:hover {
+            border-color: #cbd5e1;
+            box-shadow: none;
         }
         
         .person-system-coverage { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
@@ -383,7 +394,7 @@
             gap: 4px;
         }
         
-        /* 外部单位审批调用标识 */
+        /* 外部单位借调审批标识 */
         .external-badge {
             display: inline-flex;
             align-items: center;
@@ -427,6 +438,70 @@
             line-height: 1;
             vertical-align: middle;
         }
+        .external-badge.pending {
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: #b91c1c;
+        }
+        .witness-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            border: 1px solid;
+            line-height: 1.4;
+            white-space: nowrap;
+        }
+        .witness-badge.witnessing { background: #ecfeff; color: #0e7490; border-color: #a5f3fc; }
+        .witness-badge.witnessed { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+        .witness-badge.required { background: #fff7ed; color: #c2410c; border-color: #fed7aa; }
+        .witness-control {
+            display: grid;
+            grid-template-columns: minmax(92px, 0.8fr) minmax(110px, 1fr);
+            gap: 6px;
+            min-width: 220px;
+        }
+        .witness-control select { min-width: 0; }
+        .witness-config-panel {
+            border: 1px solid #dbeafe;
+            background: #f8fbff;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .witness-config-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-bottom: 1px solid #dbeafe;
+            background: #eff6ff;
+        }
+        .witness-config-body { padding: 12px 16px; }
+        .witness-empty {
+            padding: 16px;
+            color: #94a3b8;
+            font-size: 13px;
+            text-align: center;
+            border: 1px dashed #cbd5e1;
+            border-radius: 8px;
+            background: white;
+        }
+        .witness-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            z-index: 2100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .witness-modal.show { display: flex; }
         .selected-coverage-panel {
             background: #ffffff;
             border: 1px solid #bbf7d0;
@@ -504,22 +579,6 @@
                         <div class="text-xs text-slate-500 mb-1">公司总人数</div>
                         <div class="text-sm font-medium text-slate-800">690</div>
                     </div>
-                    <div>
-                        <div class="text-xs text-slate-500 mb-1">联系人</div>
-                        <div class="text-sm font-medium text-slate-800 truncate">张丽</div>
-                    </div>
-                    <div>
-                        <div class="text-xs text-slate-500 mb-1">职务</div>
-                        <div class="text-sm font-medium text-slate-800 truncate">质量管理部经理</div>
-                    </div>
-                    <div>
-                        <div class="text-xs text-slate-500 mb-1">电话</div>
-                        <div class="text-sm font-medium text-slate-800">13800138000</div>
-                    </div>
-                    <div>
-                        <div class="text-xs text-slate-500 mb-1">Email</div>
-                        <div class="text-sm font-medium text-slate-800 truncate">zhangli@bjmetro.com</div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -543,6 +602,10 @@
                                 <th>认证领域</th>
                                 <th>审核阶段</th>
                                 <th>场所数量</th>
+                                <th>联系人</th>
+                                <th>职位</th>
+                                <th>电话</th>
+                                <th>Email</th>
                                 <th style="width: 120px">操作</th>
                             </tr>
                         </thead>
@@ -554,6 +617,10 @@
                                 <td>QMS</td>
                                 <td>一阶段</td>
                                 <td>4</td>
+                                <td>王强</td>
+                                <td>环境管理部主管</td>
+                                <td class="whitespace-nowrap">13900139000</td>
+                                <td class="whitespace-nowrap">wangqiang@bjmetro.com</td>
                                 <td>
                                     <button onclick="viewPlan()" class="text-blue-600 hover:text-blue-800 text-xs font-medium">查看策划方案</button>
                                 </td>
@@ -565,6 +632,10 @@
                                 <td>EMS</td>
                                 <td>一阶段</td>
                                 <td>4</td>
+                                <td>张丽</td>
+                                <td>质量管理部经理</td>
+                                <td class="whitespace-nowrap">13800138000</td>
+                                <td class="whitespace-nowrap">zhangli@bjmetro.com</td>
                                 <td>
                                     <button onclick="viewPlan()" class="text-blue-600 hover:text-blue-800 text-xs font-medium">查看策划方案</button>
                                 </td>
@@ -820,6 +891,7 @@
                             <tbody id="nonVenuePersonnelBody"></tbody>
                         </table>
                     </div>
+                    <div id="nonVenueWitnessConfig" class="mt-4"></div>
                 </div>
 
                 <!-- 场所模式：场所卡片容器 -->
@@ -931,6 +1003,9 @@
                         <option value="辽宁公司">辽宁公司</option>
                         <option value="黑龙江公司">黑龙江公司</option>
                         <option value="吉林公司">吉林公司</option>
+                        <option value="华北公司">华北公司</option>
+                        <option value="华东公司">华东公司</option>
+                        <option value="西南公司">西南公司</option>
                     </select>
                 </div>
                 <div>
@@ -1033,6 +1108,45 @@
         </div>
     </div>
 
+    <!-- 新增见证配置弹窗 -->
+    <div class="witness-modal" id="witnessConfigModal">
+        <div class="bg-white rounded-xl shadow-2xl w-[560px] max-w-[95vw] overflow-hidden">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-900">新增见证配置</h3>
+                    <p class="text-sm text-slate-500 mt-1" id="witnessModalSubtitle">请选择见证类型、见证人和被见证人</p>
+                </div>
+                <button onclick="closeWitnessConfigModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">见证类型 <span class="text-red-500">*</span></label>
+                    <select id="witnessModalType" class="editable-field">
+                        <option value="">请选择见证类型</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">见证人 <span class="text-red-500">*</span></label>
+                    <select id="witnessModalWitness" class="editable-field">
+                        <option value="">请选择见证人</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-700 mb-1">被见证人 <span class="text-red-500">*</span></label>
+                    <select id="witnessModalTarget" class="editable-field">
+                        <option value="">请选择被见证人</option>
+                    </select>
+                </div>
+            </div>
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
+                <button onclick="closeWitnessConfigModal()" class="px-4 py-2 border border-slate-300 rounded-lg hover:bg-white text-sm font-medium text-slate-700 transition-all">取消</button>
+                <button onclick="confirmWitnessConfig()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md shadow-blue-200 transition-all">确认新增</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 查看策划方案弹窗 -->
     <div class="plan-modal" id="planModal">
         <div class="bg-white rounded-xl shadow-lg w-[1200px] max-w-[95vw] overflow-hidden">
@@ -1126,6 +1240,7 @@
         let sitePersonnelMap = new Map();
         let stageTwoPrearrangePersonnel = [];
         let personnelSelectionContext = 'audit';
+        let witnessConfigContext = { mode: 'nonVenue', siteId: '' };
 
         // 当前登录人所属公司（东北区域/辽宁公司）
         const currentUserCompany = '辽宁公司';
@@ -1159,6 +1274,7 @@
                 qualification: "Q审核员(2022-N1QMS-6028373)", defaultRole: "组长", 
                 workUnit: "辽宁公司", region: "东北区域", type: "专职", 
                 codes: { QMS: ["19.01.01", "19.07.00", "19.08.00"], EMS: ["19.03.00"] }, 
+                witnessCapabilities: ["leader", "trainee", "professional", "transfer"],
                 isBusy: false, busyPeriod: null, remainingDays: 88 
             },
             { 
@@ -1166,6 +1282,7 @@
                 qualification: "Q审核员(2022-N1QMS-6028374)", defaultRole: "组长", 
                 workUnit: "辽宁公司", region: "东北区域", type: "专职", 
                 codes: { QMS: ["19.01.01", "19.07.00"], EMS: [] }, 
+                witnessCapabilities: ["leader", "trainee", "transfer"],
                 isBusy: true, busyPeriod: "2026-04-01 至 2026-04-30", remainingDays: 45 
             },
             { 
@@ -1173,6 +1290,7 @@
                 qualification: "Q高级审核员(2021-N1QMS-5012345)", defaultRole: "组员", 
                 workUnit: "黑龙江公司", region: "东北区域", type: "兼职", 
                 codes: { QMS: ["19.07.00", "19.08.00"], EMS: ["19.03.00", "19.12.00"] }, 
+                witnessCapabilities: ["leader", "trainee", "professional"],
                 isBusy: true, busyPeriod: "2026-04-10 至 2026-04-20", remainingDays: 120 
             },
             { 
@@ -1194,6 +1312,7 @@
                 qualification: "Q审核员，EMS实习审核员", registrationNumbers: ["2024-N1QMS-3223150", "2024-N0EMS-0081266"], defaultRole: "组员", 
                 workUnit: "辽宁公司", region: "东北区域", type: "专职", 
                 codes: { QMS: ["19.01.01", "19.07.00"], EMS: ["19.03.00"] }, 
+                witnessRequiredType: "trainee",
                 isBusy: false, busyPeriod: null, remainingDays: 112 
             },            { 
                 name: "刘娜", phone: "13800138007", cqc: "CQC40876", 
@@ -1207,6 +1326,7 @@
                 qualification: "Q审核员(2024-N1QMS-7012900)", defaultRole: "组员", 
                 workUnit: "吉林公司", region: "东北区域", type: "专职", 
                 codes: { QMS: ["19.08.00"], EMS: ["19.12.00"] }, 
+                transferIn: true, witnessRequiredType: "transfer",
                 isBusy: true, busyPeriod: "2026-04-05 至 2026-04-12", remainingDays: 78 
             },
             { 
@@ -1214,6 +1334,7 @@
                 qualification: "Q审核员(2024-N1QMS-6015922)", defaultRole: "组员", 
                 workUnit: "辽宁公司", region: "东北区域", type: "专职", 
                 codes: { QMS: ["19.01.01", "19.07.00"], EMS: ["19.03.00", "19.12.00"] }, 
+                witnessCapabilities: ["trainee", "professional", "transfer"],
                 isBusy: false, busyPeriod: null, remainingDays: 134 
             },
             { 
@@ -1222,6 +1343,27 @@
                 workUnit: "吉林公司", region: "东北区域", type: "专职", 
                 codes: { QMS: ["19.01.01", "19.07.00", "19.08.00"], EMS: ["19.12.00"] }, 
                 isBusy: false, busyPeriod: null, remainingDays: 167 
+            },
+            { 
+                name: "赵鹏", phone: "13800138101", cqc: "CQC90231", 
+                qualification: "Q/EMS审核员", registrationNumbers: ["2022-N1QMS-5090231", "2022-N1EMS-3090231"], defaultRole: "组员", 
+                workUnit: "华北公司", region: "华北区域", type: "专职", 
+                codes: { QMS: ["19.01.01", "19.07.00"], EMS: ["19.03.00"] }, 
+                borrowApprovalRequired: true, isBusy: false, busyPeriod: null, remainingDays: 102 
+            },
+            { 
+                name: "陈思远", phone: "13800138102", cqc: "CQC90232", 
+                qualification: "Q高级审核员(2021-N1QMS-5090232)", defaultRole: "组长", 
+                workUnit: "华东公司", region: "华东区域", type: "兼职", 
+                codes: { QMS: ["19.01.01", "19.08.00"], EMS: ["19.12.00"] }, 
+                borrowApprovalRequired: true, isBusy: false, busyPeriod: null, remainingDays: 64 
+            },
+            { 
+                name: "马晓琳", phone: "13800138103", cqc: "CQC90233", 
+                qualification: "EMS审核员(2023-N1EMS-3090233)", defaultRole: "组员", 
+                workUnit: "西南公司", region: "西南区域", type: "专职", 
+                codes: { QMS: [], EMS: ["19.03.00", "19.12.00"] }, 
+                borrowApprovalRequired: true, isBusy: true, busyPeriod: "2026-04-18 至 2026-04-24", remainingDays: 141 
             }
         ];
         
@@ -1338,6 +1480,7 @@
             updateSelectedPersonnelDisplay();
             updateAuditGroupCombination();
             updateNonVenueStats();
+            renderNonVenueWitnessConfig();
             initTimeSelects();
         });
         
@@ -1503,6 +1646,264 @@
             if (!person) return '';
             const isLeader = person.defaultRole === '组长' || person.role === '组长';
             return isLeader ? '<span class="leader-badge"><i class="fas fa-user-tie"></i>组长</span>' : '';
+        }
+
+        const witnessTypeOptions = [
+            { value: 'leader', label: '组长见证' },
+            { value: 'trainee', label: '实习见证' },
+            { value: 'professional', label: '专业见证' },
+            { value: 'transfer', label: '转入见证' }
+        ];
+
+        function getWitnessTypeLabel(type) {
+            const item = witnessTypeOptions.find(option => option.value === type);
+            return item ? item.label : '';
+        }
+
+        function getWitnessCapabilities(person) {
+            if (!person) return [];
+            if (Array.isArray(person.witnessCapabilities)) return person.witnessCapabilities;
+            const qualification = formatQualification(person);
+            const capabilities = [];
+            if (person.defaultRole === '组长' || person.role === '组长' || qualification.includes('高级')) capabilities.push('leader');
+            if (!qualification.includes('实习') && !isTechnicalExpert(person)) capabilities.push('trainee');
+            if ((person.codes?.QMS?.length || 0) + (person.codes?.EMS?.length || 0) >= 3) capabilities.push('professional');
+            if (person.type === '专职' && !qualification.includes('实习')) capabilities.push('transfer');
+            return Array.from(new Set(capabilities));
+        }
+
+        function getWitnessRequiredType(person) {
+            if (!person) return '';
+            if (person.witnessRequiredType) return person.witnessRequiredType;
+            const qualification = formatQualification(person);
+            if (qualification.includes('实习')) return 'trainee';
+            if (person.transferIn || person.transferWitnessRequired) return 'transfer';
+            if (person.professionalWitnessRequired) return 'professional';
+            return '';
+        }
+
+        function renderWitnessConfig(personnelList = [], mode = 'nonVenue', siteId = '') {
+            const people = personnelList || [];
+            normalizeWitnessAssignments(people);
+            const contextLabel = mode === 'site' ? '本场所' : '统一审核组';
+            const openAction = mode === 'site' ? `openWitnessConfigModal('site', '${siteId}')` : `openWitnessConfigModal('nonVenue')`;
+            if (people.length === 0) {
+                return `
+                    <div class="witness-config-panel">
+                        <div class="witness-config-header">
+                            <div class="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                                <i class="fas fa-eye text-cyan-600"></i>见证配置
+                            </div>
+                        </div>
+                        <div class="witness-config-body">
+                            <div class="witness-empty">暂无${contextLabel}人员，选择人员后可配置见证与被见证关系</div>
+                        </div>
+                    </div>
+                `;
+            }
+            const configured = people.filter(person => person.witnessType && person.witnessTargetCqc && people.some(item => item.cqc === person.witnessTargetCqc));
+            const rows = configured.map((person, idx) => {
+                const target = people.find(item => item.cqc === person.witnessTargetCqc);
+                const removeAction = mode === 'site'
+                    ? `removeSiteWitness('${siteId}', '${person.cqc}')`
+                    : `removeNonVenueWitness('${person.cqc}')`;
+                return `
+                    <tr>
+                        <td>${idx + 1}</td>
+                        <td><span class="witness-badge witnessing">${getWitnessTypeLabel(person.witnessType)}</span></td>
+                        <td class="font-medium text-slate-900">${person.name}</td>
+                        <td class="font-medium text-slate-900">${target ? target.name : '-'}</td>
+                        <td>
+                            <button onclick="${removeAction}" class="text-red-500 hover:text-red-700 text-xs font-medium">
+                                <i class="fas fa-trash mr-1"></i>删除
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            return `
+                <div class="witness-config-panel">
+                    <div class="witness-config-header">
+                        <div>
+                            <div class="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                                <i class="fas fa-eye text-cyan-600"></i>见证配置
+                            </div>
+                            <div class="text-xs text-slate-500 mt-1">在${contextLabel}内配置见证人、见证类型和被见证人，人员表不承载见证字段。</div>
+                        </div>
+                        <button onclick="${openAction}" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs font-medium shadow-sm shadow-blue-200 transition-all">
+                            <i class="fas fa-plus mr-1"></i>新增配置
+                        </button>
+                    </div>
+                    <div class="witness-config-body">
+                        ${configured.length ? `<div class="overflow-x-auto">
+                            <table class="process-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px">序号</th>
+                                        <th style="width: 110px">见证类型</th>
+                                        <th style="min-width: 150px">见证人</th>
+                                        <th style="min-width: 150px">被见证人</th>
+                                        <th style="width: 80px">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${rows}</tbody>
+                            </table>
+                        </div>` : `<div class="witness-empty">暂无已配置见证关系，请点击“新增配置”添加</div>`}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderNonVenueWitnessConfig() {
+            const container = document.getElementById('nonVenueWitnessConfig');
+            if (!container) return;
+            container.innerHTML = renderWitnessConfig(assignedPersonnel, 'nonVenue');
+        }
+
+        function getWitnessContextPeople() {
+            if (witnessConfigContext.mode === 'site') {
+                return sitePersonnelMap.get(witnessConfigContext.siteId) || [];
+            }
+            return assignedPersonnel;
+        }
+
+        function refreshWitnessModalTargets() {
+            const people = getWitnessContextPeople();
+            const witnessCqc = document.getElementById('witnessModalWitness')?.value || '';
+            const targetSelect = document.getElementById('witnessModalTarget');
+            if (!targetSelect) return;
+            targetSelect.innerHTML = '<option value="">请选择被见证人</option>' + people
+                .filter(person => person.cqc !== witnessCqc)
+                .map(person => `<option value="${person.cqc}">${person.name} (${person.cqc})</option>`)
+                .join('');
+        }
+
+        function resetWitnessModalFields() {
+            document.getElementById('witnessModalType').value = '';
+            document.getElementById('witnessModalWitness').value = '';
+            refreshWitnessModalTargets();
+            document.getElementById('witnessModalTarget').value = '';
+        }
+
+        function openWitnessConfigModal(mode = 'nonVenue', siteId = '') {
+            witnessConfigContext = { mode, siteId };
+            const people = getWitnessContextPeople();
+            if (people.length < 2) {
+                alert('至少需要 2 名审核人员才能配置见证关系');
+                return;
+            }
+            const contextLabel = mode === 'site'
+                ? (venues.find(item => item.id === siteId)?.name || '本场所')
+                : '统一审核组';
+            document.getElementById('witnessModalSubtitle').textContent = `${contextLabel}内新增见证关系`;
+            document.getElementById('witnessModalType').innerHTML = '<option value="">请选择见证类型</option>' + witnessTypeOptions
+                .map(option => `<option value="${option.value}">${option.label}</option>`)
+                .join('');
+            const witnessSelect = document.getElementById('witnessModalWitness');
+            witnessSelect.innerHTML = '<option value="">请选择见证人</option>' + people
+                .map(person => `<option value="${person.cqc}">${person.name} (${person.cqc})</option>`)
+                .join('');
+            witnessSelect.onchange = refreshWitnessModalTargets;
+            refreshWitnessModalTargets();
+            document.getElementById('witnessConfigModal').classList.add('show');
+        }
+
+        function closeWitnessConfigModal() {
+            document.getElementById('witnessConfigModal').classList.remove('show');
+            resetWitnessModalFields();
+        }
+
+        function confirmWitnessConfig() {
+            const type = document.getElementById('witnessModalType').value;
+            const witnessCqc = document.getElementById('witnessModalWitness').value;
+            const targetCqc = document.getElementById('witnessModalTarget').value;
+            const people = getWitnessContextPeople();
+            if (!type || !witnessCqc || !targetCqc) {
+                alert('请选择见证类型、见证人和被见证人');
+                return;
+            }
+            if (witnessCqc === targetCqc) {
+                alert('见证人和被见证人不能为同一人');
+                return;
+            }
+            const witness = people.find(person => person.cqc === witnessCqc);
+            if (!witness) return;
+            witness.witnessType = type;
+            witness.witnessTargetCqc = targetCqc;
+            if (witnessConfigContext.mode === 'site') refreshSiteCard(witnessConfigContext.siteId);
+            else renderNonVenueWitnessConfig();
+            resetWitnessModalFields();
+        }
+
+        function removeNonVenueWitness(cqc) {
+            const person = assignedPersonnel.find(item => item.cqc === cqc);
+            if (!person) return;
+            person.witnessType = '';
+            person.witnessTargetCqc = '';
+            renderNonVenueWitnessConfig();
+        }
+
+        function removeSiteWitness(siteId, cqc) {
+            const list = sitePersonnelMap.get(siteId) || [];
+            const person = list.find(item => item.cqc === cqc);
+            if (!person) return;
+            person.witnessType = '';
+            person.witnessTargetCqc = '';
+            refreshSiteCard(siteId);
+        }
+
+        function updateWitnessFields(person, field, value, peers) {
+            if (!person) return;
+            person[field] = value;
+            if (field === 'witnessType' && !value) person.witnessTargetCqc = '';
+            if (person.witnessTargetCqc === person.cqc) person.witnessTargetCqc = '';
+            if (person.witnessType && person.witnessTargetCqc && !peers.some(item => item.cqc === person.witnessTargetCqc)) {
+                person.witnessTargetCqc = '';
+            }
+        }
+
+        function normalizeWitnessAssignments(peers = []) {
+            const cqcs = new Set(peers.map(person => person.cqc));
+            peers.forEach(person => {
+                if (!person.witnessType) person.witnessTargetCqc = '';
+                if (person.witnessTargetCqc === person.cqc || !cqcs.has(person.witnessTargetCqc)) {
+                    person.witnessTargetCqc = '';
+                }
+            });
+        }
+
+        function collectWitnessValidationIssues(list, label) {
+            const issues = [];
+            const people = list || [];
+            normalizeWitnessAssignments(people);
+            people.forEach(person => {
+                if (person.witnessType && !person.witnessTargetCqc) {
+                    issues.push(`${label}：${person.name}已选择${getWitnessTypeLabel(person.witnessType)}，请指定被见证人`);
+                }
+                const requiredType = getWitnessRequiredType(person);
+                const hasWitnessed = people.some(item => item.witnessType && item.witnessTargetCqc === person.cqc);
+                if (requiredType && !hasWitnessed) {
+                    issues.push(`${label}：${person.name}需要${getWitnessTypeLabel(requiredType)}，请安排见证人`);
+                }
+            });
+            return issues;
+        }
+
+        function validateWitnessAssignments() {
+            let issues = [];
+            if (isVenueMode) {
+                sitePersonnelMap.forEach((list, siteId) => {
+                    const site = venues.find(item => item.id === siteId);
+                    issues = issues.concat(collectWitnessValidationIssues(list, site ? site.name : siteId));
+                });
+            } else {
+                issues = collectWitnessValidationIssues(assignedPersonnel, '审核组');
+            }
+            if (issues.length) {
+                alert(issues.slice(0, 6).join('\n'));
+                return false;
+            }
+            return true;
         }
 
         function renderCoverageSummaryHtml(summary, compact = false) {
@@ -1924,8 +2325,9 @@
                                         <th>姓名</th>
                                         <th style="width: 100px">组内身份</th>
                                         <th>资格</th>
-                                    <th>注册编号</th>
+                                        <th>注册编号</th>
                                         <th style="width: 100px">CQC编号</th>
+                                        <th style="width: 180px">工作单位</th>
                                         <th>联系电话</th>
                                         <th style="width: 320px">审核日期区间</th>
                                         <th style="width: 80px">操作</th>
@@ -1935,6 +2337,9 @@
                                     ${renderPersonnelRows(personnelList, venue.id)}
                                 </tbody>
                             </table>
+                        </div>
+                        <div id="witnessConfig_${venue.id}" class="mt-4">
+                            ${renderWitnessConfig(personnelList, 'site', venue.id)}
                         </div>
                     </div>
                     ${!hasPersonnel ? `
@@ -1961,6 +2366,7 @@
                     <td class="text-xs">${formatQualification(person)}</td>
                     <td class="font-mono text-xs">${formatRegistration(person)}</td>
                     <td class="font-mono text-xs">${person.cqc}</td>
+                    <td>${person.region}/${person.workUnit}</td>
                     <td>${person.phone}</td>
                     <td>
                         <div class="date-time-group">
@@ -2129,7 +2535,7 @@
             if (type === 'start') stageTwoPrearrangePersonnel[idx].startPeriod = value;
             else stageTwoPrearrangePersonnel[idx].endPeriod = value;
         }
-        
+
         function toggleVenueMode(toggleElement) {
             const text = document.getElementById('venueModeText');
             isVenueMode = !isVenueMode;
@@ -2245,8 +2651,34 @@
                 return a.name.localeCompare(b.name);
             });
         }
+
+        function isPersonnelSelectable(person) {
+            return !person?.borrowApprovalRequired;
+        }
+
+        function getBorrowApprovalSamples() {
+            return personnelDB.filter(person => person.borrowApprovalRequired);
+        }
+
+        function mergePersonnelByCqc(...lists) {
+            const map = new Map();
+            lists.flat().filter(Boolean).forEach(person => {
+                if (person.cqc && !map.has(person.cqc)) map.set(person.cqc, person);
+            });
+            return Array.from(map.values());
+        }
+
+        function renderBorrowApprovalBadge(person) {
+            if (person.borrowApprovalRequired) {
+                return '';
+            }
+            if (person.workUnit !== currentUserCompany) {
+                return '<span class="external-badge"><i class="fas fa-lock mr-1"></i>借调审批通过</span>';
+            }
+            return '';
+        }
         
-        // 修改：统一标签样式和对齐，确保所有标签水平居中对齐；外部单位人员显示审批调用标识
+        // 修改：统一标签样式和对齐，确保所有标签水平居中对齐；外部单位人员显示借调审批标识
         function renderPersonnelList() {
             const container = document.getElementById('personnelList');
             const search = document.getElementById('personnelSearch').value.toLowerCase();
@@ -2274,6 +2706,7 @@
             container.innerHTML = filtered.map(person => {
                 const isSelected = selectedPersonnel.has(person.cqc);
                 const isExternal = person.workUnit !== currentUserCompany;
+                const isSelectable = isPersonnelSelectable(person);
                 let daysClass = '';
                 if (person.remainingDays <= 30) daysClass = 'danger';
                 else if (person.remainingDays <= 60) daysClass = 'warning';
@@ -2289,15 +2722,11 @@
                     assignedBadge = `<span class="site-assigned-info"><i class="fas fa-map-marker-alt mr-1"></i>已分配：${person.assignedInfo.siteName}</span>`;
                 }
                 
-                // 外部单位标识
-                const externalBadge = isExternal ? 
-                    '<span class="external-badge"><i class="fas fa-lock mr-1"></i>经审批调用</span>' : '';
-                
-                
-                const clickAction = `togglePersonSelection('${person.cqc}')`;
+                const externalBadge = renderBorrowApprovalBadge(person);
+                const clickAction = isSelectable ? `togglePersonSelection('${person.cqc}')` : `showBorrowApprovalRequired('${person.name}')`;
                 
                 return `
-                <div class="person-card ${isSelected ? 'selected' : ''} ${isExternal ? 'external' : ''}" 
+                <div class="person-card ${isSelected ? 'selected' : ''} ${isExternal ? 'external' : ''} ${isSelectable ? '' : 'unavailable'}" 
                      onclick="${clickAction}"
                      data-cqc="${person.cqc}">
                     <div class="flex justify-between items-start mb-2">
@@ -2310,7 +2739,7 @@
                             ${assignedBadge}
                             ${externalBadge}
                         </div>
-                        ${isSelected ? '<i class="fas fa-check-circle text-blue-600 text-xl"></i>' : '<i class="far fa-circle text-slate-300 text-xl"></i>'}
+                        ${isSelectable ? (isSelected ? '<i class="fas fa-check-circle text-blue-600 text-xl"></i>' : '<i class="far fa-circle text-slate-300 text-xl"></i>') : '<i class="fas fa-ban text-slate-400 text-xl"></i>'}
                     </div>
                     <div class="text-xs text-slate-500 space-y-1 mb-2">
                         <div class="flex justify-between">
@@ -2354,6 +2783,7 @@
             container.innerHTML = sortedList.map(person => {
                 const isSelected = selectedPersonnel.has(person.cqc);
                 const isExternal = person.workUnit !== currentUserCompany;
+                const isSelectable = isPersonnelSelectable(person);
                 let daysClass = '';
                 if (person.remainingDays <= 30) daysClass = 'danger';
                 else if (person.remainingDays <= 60) daysClass = 'warning';
@@ -2368,13 +2798,12 @@
                     assignedBadge = `<span class="site-assigned-info"><i class="fas fa-map-marker-alt mr-1"></i>已在：${person.assignedInfo.siteName} (${person.assignedInfo.dateRange})</span>`;
                 }
                 
-                const externalBadge = isExternal ? 
-                    '<span class="external-badge"><i class="fas fa-lock mr-1"></i>经审批调用</span>' : '';
+                const externalBadge = renderBorrowApprovalBadge(person);
                 
-                const clickAction = `togglePersonSelection('${person.cqc}')`;
+                const clickAction = isSelectable ? `togglePersonSelection('${person.cqc}')` : `showBorrowApprovalRequired('${person.name}')`;
                 
                 return `
-                <div class="person-card ${isSelected ? 'selected' : ''} ${isExternal ? 'external' : ''}" 
+                <div class="person-card ${isSelected ? 'selected' : ''} ${isExternal ? 'external' : ''} ${isSelectable ? '' : 'unavailable'}" 
                      onclick="${clickAction}"
                      data-cqc="${person.cqc}">
                     <div class="flex justify-between items-start mb-2">
@@ -2387,7 +2816,7 @@
                             ${assignedBadge}
                             ${externalBadge}
                         </div>
-                        ${isSelected ? '<i class="fas fa-check-circle text-blue-600 text-xl"></i>' : '<i class="far fa-circle text-slate-300 text-xl"></i>'}
+                        ${isSelectable ? (isSelected ? '<i class="fas fa-check-circle text-blue-600 text-xl"></i>' : '<i class="far fa-circle text-slate-300 text-xl"></i>') : '<i class="fas fa-ban text-slate-400 text-xl"></i>'}
                     </div>
                     <div class="text-xs text-slate-500 space-y-1 mb-2">
                         <div class="flex justify-between">
@@ -2411,8 +2840,17 @@
             if (isVenueMode && currentSiteId) renderSitePersonnelList();
             else renderPersonnelList();
         }
+
+        function showBorrowApprovalRequired(name) {
+            alert(`${name} 需完成借调审批后才可选择`);
+        }
         
         function togglePersonSelection(cqc) {
+            const person = personnelDB.find(p => p.cqc === cqc);
+            if (!isPersonnelSelectable(person)) {
+                showBorrowApprovalRequired(person?.name || '该人员');
+                return;
+            }
             if (selectedPersonnel.has(cqc)) selectedPersonnel.delete(cqc);
             else selectedPersonnel.add(cqc);
             
@@ -2509,7 +2947,7 @@
                     ${person.name}
                     <span class="personnel-tag ${person.type === '专职' ? 'tag-fulltime' : 'tag-parttime'}" style="margin:0 4px">${person.type}</span>
                     ${renderLeaderBadge(person)}
-                    ${isExternal ? '<span style="color:#92400e;font-size:11px;">(经审批)</span>' : ''}
+                    ${isExternal ? '<span style="color:#92400e;font-size:11px;">(借调审批通过)</span>' : ''}
                     <i class="fas fa-times remove-btn" onclick="removeFromGlobalSelection('${person.cqc}', event)"></i>
                 </span>
             `}).join('');
@@ -2547,13 +2985,16 @@
             const section = document.getElementById(`personnelSection_${siteId}`);
             const emptyState = document.getElementById(`emptyState_${siteId}`);
             const clearBtn = document.getElementById(`clearBtn_${siteId}`);
+            const witnessConfig = document.getElementById(`witnessConfig_${siteId}`);
             
             if (hasPersonnel) {
                 tbody.innerHTML = renderPersonnelRows(personnelList, siteId);
+                if (witnessConfig) witnessConfig.innerHTML = renderWitnessConfig(personnelList, 'site', siteId);
                 section.classList.remove('hidden-section');
                 if (emptyState) emptyState.classList.add('hidden-section');
                 if (clearBtn) clearBtn.classList.remove('hidden-section');
             } else {
+                if (witnessConfig) witnessConfig.innerHTML = renderWitnessConfig([], 'site', siteId);
                 section.classList.add('hidden-section');
                 if (emptyState) emptyState.classList.remove('hidden-section');
                 if (clearBtn) clearBtn.classList.add('hidden-section');
@@ -2570,6 +3011,7 @@
             if (assignedPersonnel.length === 0) {
                 emptyState.classList.remove('hidden');
                 table.classList.add('hidden');
+                renderNonVenueWitnessConfig();
                 return;
             }
             
@@ -2613,6 +3055,7 @@
             `).join('');
             
             updateNonVenueStats();
+            renderNonVenueWitnessConfig();
         }
         
         function updateNonVenueDate(idx, type, value) {
@@ -2625,6 +3068,11 @@
             if (type === 'start') assignedPersonnel[idx].startPeriod = value;
             else assignedPersonnel[idx].endPeriod = value;
             updateNonVenueStats();
+        }
+
+        function updateNonVenueWitness(idx, field, value) {
+            updateWitnessFields(assignedPersonnel[idx], field, value, assignedPersonnel);
+            renderNonVenuePersonnel();
         }
         
         function updateNonVenueAllDates() {
@@ -2704,6 +3152,13 @@
                 else person.endPeriod = value;
                 updateSiteStats(siteId);
             }
+        }
+
+        function updateSiteWitness(siteId, cqc, field, value) {
+            const list = sitePersonnelMap.get(siteId) || [];
+            const person = list.find(p => p.cqc === cqc);
+            updateWitnessFields(person, field, value, list);
+            refreshSiteCard(siteId);
         }
         
         function updateNonVenueRole(idx, role) {
@@ -2854,6 +3309,9 @@
                     alert('请至少指派一名审核人员'); 
                     return; 
                 }
+            }
+            if (!validateWitnessAssignments()) {
+                return;
             }
             if (confirm('确定提交审核任务？提交后组长及组员将收到任务通知。')) {
                 alert('提交成功！任务状态已变更为"已提交"。');
