@@ -4,6 +4,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -175,62 +176,6 @@
         }
 
 
-        /* 客户线上/线下签章选择 */
-        .customer-sign-choice {
-            margin-bottom: 18px;
-            padding-bottom: 18px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .sign-choice-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #0f172a;
-            font-size: 14px;
-            font-weight: 800;
-            margin-bottom: 12px;
-        }
-        .sign-method-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-        }
-        .sign-method-card {
-            min-height: 92px;
-            text-align: left;
-            border: 1px solid #dbe3ef;
-            border-radius: 12px;
-            background: #ffffff;
-            padding: 14px 15px;
-            cursor: pointer;
-            transition: all .18s ease;
-            color: #334155;
-            font: inherit;
-        }
-        .sign-method-card:hover {
-            border-color: #93c5fd;
-            background: #eff6ff;
-        }
-        .sign-method-card.active {
-            border-color: #2563eb;
-            background: #eff6ff;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, .10);
-        }
-        .sign-method-card .method-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #0f172a;
-            font-size: 14px;
-            font-weight: 900;
-            margin-bottom: 6px;
-        }
-        .sign-method-card.active .method-title { color: #1d4ed8; }
-        .sign-method-card .method-desc {
-            color: #64748b;
-            font-size: 12px;
-            line-height: 1.55;
-        }
         .sign-mode-panel { margin-top: 0; }
         .offline-upload-card {
             border: 1px dashed #93c5fd;
@@ -395,7 +340,7 @@
             flex-wrap: wrap;
         }
         @media (max-width: 640px) {
-            .sign-method-grid, .signature-file-grid { grid-template-columns: 1fr; }
+            .signature-file-grid { grid-template-columns: 1fr; }
             .offline-file-row { align-items: flex-start; flex-direction: column; }
             .offline-file-actions { width: 100%; }
         }
@@ -850,19 +795,6 @@
             </div>
             <div class="sign-modal-body">
                 <div class="sign-platform-card">
-                    <div class="customer-sign-choice" id="customerSignChoice" style="display:none;">
-                        <div class="sign-choice-title"><i class="fas fa-signature"></i><span>客户签章方式</span></div>
-                        <div class="sign-method-grid">
-                            <button type="button" class="sign-method-card active" id="onlineMethodCard" onclick="setCustomerSignMethod('online')">
-                                <div class="method-title"><i class="fas fa-cloud-arrow-up"></i>线上签章</div>
-                                <div class="method-desc">保持现有线上签章平台流程，点击签章后由平台完成盖章并自动流转。</div>
-                            </button>
-                            <button type="button" class="sign-method-card" id="offlineMethodCard" onclick="setCustomerSignMethod('offline')">
-                                <div class="method-title"><i class="fas fa-file-arrow-up"></i>线下签章</div>
-                                <div class="method-desc">客户线下完成盖章后上传已签章 PDF，系统作为独立文件保存，不合并进线上签章 PDF。</div>
-                            </button>
-                        </div>
-                    </div>
                     <div class="sign-platform-info">
                         <div>
                             <small>当前签章节点</small>
@@ -928,10 +860,10 @@
         const signNodes = [
             { key: 'leader', title: '组长', role: '审核组长', signer: '武荣刚', status: 'signed', signedAt: '2024-04-12 09:18:26', signMethod: 'online', rejectReason: '', rejectedAt: '' },
             { key: 'pm', title: '项目管理', role: '项目管理', signer: '周静', status: 'pending', signedAt: '', signMethod: 'online', rejectReason: '', rejectedAt: '' },
-            { key: 'customer', title: '客户', role: '客户代表', signer: '刘海峰', status: 'waiting', signedAt: '', signMethod: 'online', offlineFileName: '', offlineFileSize: '', offlinePdfUrl: '', rejectReason: '', rejectedAt: '' }
+            { key: 'customer', title: '客户', role: '客户代表', signer: '刘海峰', status: 'waiting', signedAt: '', signMethod: 'offline', offlineFileName: '', offlineFileSize: '', offlinePdfUrl: '', rejectReason: '', rejectedAt: '' }
         ];
         let signingIndex = -1;
-        let customerSignMethod = 'online';
+        let customerSignMethod = 'offline';
         let offlinePdfFile = null;
         let offlinePdfUrl = '';
 
@@ -1128,30 +1060,19 @@
             info.innerHTML = '<div class="offline-file-row"><div><div class="offline-file-name"><i class="fas fa-file-pdf" style="color:#dc2626;"></i><span>' + escapeHtml(name) + '</span></div><div style="margin-top:4px;">文件大小：' + escapeHtml(formatFileSize(size)) + '</div></div><div class="offline-file-actions"><button type="button" class="mini-link-btn" onclick="previewOfflineUploadedPdf()"><i class="fas fa-eye"></i> 预览PDF</button></div></div>';
         }
 
-        function setCustomerSignMethod(method) {
-            customerSignMethod = method === 'offline' ? 'offline' : 'online';
-            updateSignModalMode();
-        }
-
         function updateSignModalMode() {
             const node = signNodes[signingIndex];
             const isCustomer = isCustomerNode(node);
             const title = document.getElementById('onlineSignTitle');
-            const choice = document.getElementById('customerSignChoice');
             const onlinePanel = document.getElementById('onlineSignPanel');
             const offlinePanel = document.getElementById('offlineSignPanel');
-            const onlineCard = document.getElementById('onlineMethodCard');
-            const offlineCard = document.getElementById('offlineMethodCard');
             const btn = document.getElementById('confirmSignBtn');
             if (title) {
                 title.innerHTML = isCustomer ? '<i class="fas fa-signature text-blue-600"></i>客户签章处理' : '<i class="fas fa-stamp text-blue-600"></i>线上签章平台处理';
             }
-            if (choice) choice.style.display = isCustomer ? '' : 'none';
-            if (!isCustomer) customerSignMethod = 'online';
-            if (onlinePanel) onlinePanel.style.display = (!isCustomer || customerSignMethod === 'online') ? '' : 'none';
-            if (offlinePanel) offlinePanel.style.display = (isCustomer && customerSignMethod === 'offline') ? '' : 'none';
-            if (onlineCard) onlineCard.classList.toggle('active', customerSignMethod === 'online');
-            if (offlineCard) offlineCard.classList.toggle('active', customerSignMethod === 'offline');
+            customerSignMethod = isCustomer ? 'offline' : 'online';
+            if (onlinePanel) onlinePanel.style.display = isCustomer ? 'none' : '';
+            if (offlinePanel) offlinePanel.style.display = isCustomer ? '' : 'none';
             if (btn) {
                 btn.disabled = false;
                 btn.innerHTML = customerSignMethod === 'offline' ? '<i class="fas fa-upload"></i>确认线下签章' : '<i class="fas fa-paper-plane"></i>签章';
@@ -1199,7 +1120,7 @@
 
         function confirmCurrentSign() {
             const node = signNodes[signingIndex];
-            if (isCustomerNode(node) && customerSignMethod === 'offline') {
+            if (isCustomerNode(node)) {
                 confirmOfflineSign();
                 return;
             }
@@ -1218,7 +1139,6 @@
             }
             node.status = 'signed';
             node.signedAt = nowText();
-            node.signMethod = 'online';
             node.signMethod = 'offline';
             node.offlineFileName = (offlinePdfFile && offlinePdfFile.name) || node.offlineFileName || '客户线下签章文件.pdf';
             node.offlineFileSize = (offlinePdfFile && offlinePdfFile.size) || node.offlineFileSize || '';
@@ -1317,7 +1237,7 @@
             document.getElementById('modalNodeName').textContent = node.title;
             document.getElementById('modalSigner').textContent = node.signer;
             setModalStatus(node.status);
-            customerSignMethod = isCustomerNode(node) ? (node.signMethod || 'online') : 'online';
+            customerSignMethod = isCustomerNode(node) ? 'offline' : 'online';
             offlinePdfFile = null;
             offlinePdfUrl = node.offlinePdfUrl || '';
             const input = document.getElementById('offlinePdfInput');
