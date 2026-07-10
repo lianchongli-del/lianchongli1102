@@ -1,6 +1,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -221,6 +222,148 @@
   } else {
     bindTabs();
   }
+})();
+</script>
+<script id="STAGE2_RECTIFY_CUSTOMER_OFFLINE_UPLOAD_PATCH">
+(function () {
+  var frame = document.getElementById('frame-rectify');
+  if (!frame) return;
+
+  function installPatch() {
+    var doc = frame.contentDocument;
+    if (!doc || doc.getElementById('customerOfflineUploadPatch')) return;
+    var script = doc.createElement('script');
+    script.id = 'customerOfflineUploadPatch';
+    script.textContent = '(' + function () {
+      function isCustomerSigning() {
+        return typeof signTarget !== 'undefined' && signTarget && signTarget.stage === 'customerSign';
+      }
+
+      function formatSize(size) {
+        if (!size) return '';
+        return size < 1024 * 1024 ? (size / 1024).toFixed(1) + ' KB' : (size / 1024 / 1024).toFixed(1) + ' MB';
+      }
+
+      function renderUploadInfo() {
+        var box = document.getElementById('offlineUploadInfo');
+        var file = isCustomerSigning() && signTarget.offlineFile;
+        if (!box) return;
+        if (!file) {
+          box.innerHTML = '<span><i class="fas fa-circle-info"></i> 请上传客户线下签署完成的 PDF 文件</span>';
+          return;
+        }
+        box.innerHTML = '<div class="offline-upload-file"><span class="offline-file-name"><i class="fas fa-file-pdf"></i>' + file.name + '<em>' + formatSize(file.size) + '</em></span><span class="offline-file-actions"><button type="button" class="btn" onclick="previewOfflineSignedPdf()"><i class="fas fa-eye"></i>预览</button><button type="button" class="btn" onclick="downloadOfflineSignedPdf()"><i class="fas fa-download"></i>下载</button><button type="button" class="btn btn-danger" onclick="removeOfflineSignedPdf()"><i class="fas fa-trash"></i>删除</button></span></div>';
+      }
+
+      function configureCustomerModal() {
+        if (!isCustomerSigning()) return;
+        var modeBox = document.getElementById('customerSignModeBox');
+        var help = document.getElementById('signHelpText');
+        var title = document.getElementById('onlineSignTitle');
+        var subtitle = document.querySelector('#onlineSignModal .sign-modal-subtitle');
+        if (modeBox) {
+          modeBox.style.display = 'block';
+          modeBox.innerHTML = '<div class="offline-upload-compact"><div class="offline-upload-title"><span class="offline-upload-icon"><i class="fas fa-file-arrow-up"></i></span><span><strong>上传已签署 PDF</strong><em>文件支持预览、下载和删除</em></span><button type="button" class="btn btn-primary" onclick="document.getElementById(\'offlineSignedPdfInput\').click()"><i class="fas fa-upload"></i>上传文件</button></div><input type="file" id="offlineSignedPdfInput" accept="application/pdf,.pdf" style="display:none" onchange="handleOfflineSignedPdf(this.files)"><div class="offline-upload-box" id="offlineUploadInfo"></div></div>';
+        }
+        if (help) help.style.display = 'none';
+        if (title) title.innerHTML = '<i class="fas fa-file-arrow-up" style="color:#2563eb;"></i>客户线下签字确认';
+        if (subtitle) subtitle.textContent = '上传已签署的 PDF 文件，确认后自动流转至下一节点。';
+        var platformInfo = document.querySelector('#onlineSignModal .sign-platform-info');
+        var reportNo = document.getElementById('modalReportNo');
+        var nodeName = document.getElementById('modalNodeName');
+        var signer = document.getElementById('modalSigner');
+        if (platformInfo && reportNo && nodeName && signer) platformInfo.innerHTML = '<div class="offline-report-chip"><span>不符合项报告</span><strong id="modalReportNo">' + reportNo.textContent + '</strong></div><span class="offline-hidden-meta"><strong id="modalNodeName">' + nodeName.textContent + '</strong><strong id="modalSigner">' + signer.textContent + '</strong></span>';
+        var progress = document.getElementById('platformProgress');
+        if (progress) progress.style.display = 'none';
+        document.querySelectorAll('#onlineSignModal .sign-modal-footer button[onclick*="previewPdf"]').forEach(function (btn) { btn.style.display = 'none'; });
+        var confirm = document.getElementById('confirmSignBtn');
+        if (confirm) confirm.innerHTML = '<i class="fas fa-check"></i>确认线下签章完成';
+        var status = document.getElementById('modalSignStatus');
+        if (status) {
+          status.className = 'sign-status-pill sign-status-pending';
+          status.innerHTML = '<i class="fas fa-file-upload"></i>待上传';
+        }
+        customerSignMode = 'offline';
+        renderUploadInfo();
+      }
+
+      window.handleOfflineSignedPdf = function (files) {
+        var file = files && files[0];
+        if (!file) return;
+        if (file.type && file.type !== 'application/pdf' && !/\.pdf$/i.test(file.name)) {
+          alert('请上传 PDF 格式文件');
+          return;
+        }
+        if (!isCustomerSigning()) return;
+        signTarget.offlineFile = file;
+        renderUploadInfo();
+      };
+
+      window.removeOfflineSignedPdf = function () {
+        if (!isCustomerSigning()) return;
+        signTarget.offlineFile = null;
+        var input = document.getElementById('offlineSignedPdfInput');
+        if (input) input.value = '';
+        renderUploadInfo();
+      };
+
+      window.downloadOfflineSignedPdf = function () {
+        if (!isCustomerSigning() || !signTarget.offlineFile) return;
+        var url = URL.createObjectURL(signTarget.offlineFile);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = signTarget.offlineFile.name;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 500);
+      };
+
+      window.previewOfflineSignedPdf = function () {
+        if (!isCustomerSigning() || !signTarget.offlineFile) return;
+        var modal = document.getElementById('offlinePdfPreviewModal');
+        if (!modal) {
+          modal = document.createElement('div');
+          modal.id = 'offlinePdfPreviewModal';
+          modal.className = 'modal-mask';
+          modal.innerHTML = '<div class="modal offline-pdf-preview-modal" onclick="event.stopPropagation()"><div class="modal-head"><span><i class="fas fa-file-pdf"></i>已上传签章文件预览</span><button class="btn btn-link danger" type="button" onclick="closeOfflineSignedPdfPreview()"><i class="fas fa-times"></i></button></div><div class="modal-body"><iframe id="offlinePdfPreviewFrame" title="已上传签章文件预览"></iframe></div><div class="modal-foot"><button class="btn" type="button" onclick="downloadOfflineSignedPdf()"><i class="fas fa-download"></i>下载</button><button class="btn" type="button" onclick="closeOfflineSignedPdfPreview()">关闭</button></div></div>';
+          modal.onclick = function (event) { if (event.target === modal) window.closeOfflineSignedPdfPreview(); };
+          document.body.appendChild(modal);
+        }
+        var frame = document.getElementById('offlinePdfPreviewFrame');
+        if (frame) frame.src = URL.createObjectURL(signTarget.offlineFile);
+        modal.classList.add('show');
+      };
+
+      window.closeOfflineSignedPdfPreview = function () {
+        var modal = document.getElementById('offlinePdfPreviewModal');
+        var frame = document.getElementById('offlinePdfPreviewFrame');
+        if (frame && frame.src.indexOf('blob:') === 0) URL.revokeObjectURL(frame.src);
+        if (frame) frame.removeAttribute('src');
+        if (modal) modal.classList.remove('show');
+      };
+
+      var originalSelect = selectCustomerSignMode;
+      selectCustomerSignMode = function (mode, silent) {
+        if (!isCustomerSigning()) return originalSelect(mode, silent);
+        customerSignMode = 'offline';
+        configureCustomerModal();
+      };
+
+      var modal = document.getElementById('onlineSignModal');
+      if (modal) new MutationObserver(function () {
+        if (modal.classList.contains('show')) setTimeout(configureCustomerModal, 0);
+      }).observe(modal, { attributes: true, attributeFilter: ['class'] });
+
+      var style = document.createElement('style');
+      style.textContent = '#onlineSignModal .sign-modal-header{min-height:92px;padding:20px 28px}#onlineSignModal .sign-platform-card{padding:16px 18px;background:#fff;border:0;box-shadow:none}#onlineSignModal .sign-modal-body{padding:0 28px 22px}.offline-report-chip{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 0 14px;border-bottom:1px solid #eef2f7}.offline-report-chip span{font-size:13px;color:#94a3b8}.offline-report-chip strong{font-size:16px;color:#1e293b}.offline-hidden-meta{display:none}.offline-upload-compact{padding-top:18px}.offline-upload-title{display:flex;align-items:center;gap:10px}.offline-upload-title>span:nth-child(2){display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}.offline-upload-title strong{color:#1e293b;font-size:14px}.offline-upload-title em{font-style:normal;color:#94a3b8;font-size:12px}.offline-upload-icon{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:#eff6ff;color:#2563eb}.offline-upload-box{margin-top:14px;min-height:72px;padding:12px 14px;border:1px dashed #cbd5e1;border-radius:10px;background:#fafcff;display:flex;align-items:center}.offline-upload-box>span{color:#94a3b8;font-size:13px}.offline-upload-file{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%}.offline-file-name{display:flex;align-items:center;gap:7px;min-width:0;color:#334155;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.offline-file-name i{color:#dc2626}.offline-file-name em{font-style:normal;font-weight:400;color:#94a3b8;white-space:nowrap}.offline-file-actions{display:flex;gap:6px;flex:0 0 auto}.offline-pdf-preview-modal{width:min(960px,calc(100vw - 32px));height:min(760px,calc(100vh - 40px));display:flex;flex-direction:column}.offline-pdf-preview-modal .modal-body{padding:0;flex:1;min-height:0}.offline-pdf-preview-modal iframe{display:block;width:100%;height:100%;border:0;background:#f8fafc}@media(max-width:640px){#onlineSignModal .sign-modal-body{padding:0 18px 18px}.offline-upload-title{align-items:flex-start;flex-wrap:wrap}.offline-upload-title .btn{margin-left:44px}.offline-upload-file{align-items:flex-start;flex-direction:column}.offline-file-actions{width:100%;flex-wrap:wrap}}';
+      document.head.appendChild(style);
+    }.toString() + ')();';
+    doc.head.appendChild(script);
+  }
+
+  frame.addEventListener('load', function () { setTimeout(installPatch, 0); });
+  setTimeout(installPatch, 300);
 })();
 </script>
 </body>
