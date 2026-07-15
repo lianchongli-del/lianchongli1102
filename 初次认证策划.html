@@ -1740,6 +1740,10 @@
                     <span class="value">ISO 9001质量管理体系</span>
                 </div>
                 <div class="header-info-item">
+                    <span class="label">风险等级：</span>
+                    <span class="value" id="headerRiskLevel">一级（高风险）</span>
+                </div>
+                <div class="header-info-item">
                     <span class="label">业务评审编号：</span>
                     <span class="value">BR-2024-089</span>
                 </div>
@@ -4506,17 +4510,22 @@
 
     <!-- AI人天计算弹窗 -->
     <div id="aiManDayModal" class="modal-overlay hidden-section" style="z-index: 1002;">
-        <div class="modal-content" style="width: 920px; max-width: calc(100vw - 48px);">
+        <div class="modal-content" style="width: 1120px; max-width: calc(100vw - 48px);">
             <div class="modal-header">
                 <div class="card-title">
                     <i class="fas fa-robot text-blue-500"></i>
                     <span>AI计算人天</span>
                 </div>
                 <div class="flex items-center gap-3">
-                    <select class="form-select" id="aiManDayDomain" onchange="changeAiManDayDomain()" style="width: 220px;">
+                    <select class="form-select" id="aiManDayDomain" onchange="changeAiManDayDomain()" style="width: 260px;">
+                        <option value="QMS">QMS质量管理体系</option>
+                        <option value="EMS">EMS环境管理体系</option>
+                        <option value="OHSMS">OHSMS职业健康安全管理体系</option>
                         <option value="FSMS">FSMS食品安全管理体系</option>
                         <option value="HACCP">HACCP管理体系</option>
                         <option value="EnMS">EnMS能源管理体系</option>
+                        <option value="ISMS">ISMS信息安全管理体系</option>
+                        <option value="ITSMS">ITSMS信息技术服务管理体系</option>
                     </select>
                     <button onclick="closeAiManDayModal()" class="text-gray-400 hover:text-gray-600">
                         <i class="fas fa-times text-lg"></i>
@@ -4525,6 +4534,7 @@
             </div>
             <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                 <h4 class="font-semibold text-gray-800 mb-2">AI深度思考过程</h4>
+                <div id="aiManDayRulePanel" class="ai-rule-panel mb-4"></div>
                 <div id="aiThinkingSteps" class="ai-thinking-panel mb-4"></div>
                 <div id="aiManDayResultPanel" class="hidden-section">
                     <h4 class="font-semibold text-gray-800 mb-2">计算结果</h4>
@@ -4910,33 +4920,67 @@
         }
 
         const aiManDayDomainRules = {
+            QMS: {
+                label: 'QMS质量管理体系',
+                source: 'QES管理体系人天数计算.docx',
+                summary: '按场所有效人数、认证领域和风险等级查 QMS 初次/监督/再认证人天表，输出风险等级及审核准备、第一阶段、第二阶段人天。',
+                fields: ['场所', '有效人数', '风险等级', '审核准备', '第一阶段', '第二阶段']
+            },
+            EMS: {
+                label: 'EMS环境管理体系',
+                source: 'QES管理体系人天数计算.docx',
+                summary: '按场所有效人数、认证领域和风险等级查 EMS 初次/监督/再认证人天表，输出风险等级及审核准备、第一阶段、第二阶段人天。',
+                fields: ['场所', '有效人数', '风险等级', '审核准备', '第一阶段', '第二阶段']
+            },
+            OHSMS: {
+                label: 'OHSMS职业健康安全管理体系',
+                source: 'QES管理体系人天数计算.docx',
+                summary: '按场所有效人数、认证领域和风险等级查 OHSMS 初次/监督/再认证人天表，输出风险等级及审核准备、第一阶段、第二阶段人天。',
+                fields: ['场所', '有效人数', '风险等级', '审核准备', '第一阶段', '第二阶段']
+            },
             FSMS: {
                 label: 'FSMS食品安全管理体系',
                 source: 'FSMS食品安全管理体系人天数计算',
-                summary: '按专业代码取最高 TD，按 HACCP 项目数计算 TH，按有效全日制员工数匹配 TFTE，得到 TS = TD + TH + TFTE；初次认证按 TS/4 拆分文审、策划、报告时间，按 20%TS 和 80%TS 拆分一阶段、二阶段。'
+                summary: '按专业代码取最高 TD，按 HACCP 项目数计算 TH，按有效全日制员工数匹配 TFTE，得到 TS = TD + TH + TFTE；初次认证按 TS/4 拆分文审、策划、报告时间，按 20%TS 和 80%TS 拆分一阶段、二阶段。',
+                fields: ['场所', '有效人数', 'TD', 'TH', 'TFTE', 'TS', '审核准备', '第一阶段', '第二阶段']
             },
             HACCP: {
                 label: 'HACCP管理体系',
                 source: 'HACCP管理体系人天数计算.docx',
-                summary: '按专业代码取最高 TD，按 HACCP 项目数计算 TH，按员工总数匹配 TFTE，并得到 TS；再按企业规模计算附加审核时间 TA，最终按审核类型将 TS 与 TA 组合拆分为现场审核和文审、策划、报告时间。'
+                summary: '按专业代码取最高 TD，按 HACCP 项目数计算 TH，按员工总数匹配 TFTE，并得到 TS；再按企业规模计算附加审核时间 TA，最终按审核类型将 TS 与 TA 组合拆分为现场审核和文审、策划、报告时间。',
+                fields: ['场所', '有效人数', 'TD', 'TH', 'TFTE', 'TS', 'TA', '审核准备', '第一阶段', '第二阶段']
             },
             EnMS: {
                 label: 'EnMS能源管理体系',
                 source: 'EnMS能源管理体系人天数计算.docx',
-                summary: '先用年度综合能耗 FEC、能源种类数量 FET、主要能源使用数量 FSEU 计算复杂程度 C = FEC*0.25 + FET*0.25 + FSEU*0.5，并判定低、中、高复杂程度；再按有效人数、审核类型和复杂程度查表得到审核人天。'
+                summary: '先用年度综合能耗 FEC、能源种类数量 FET、主要能源使用数量 FSEU 计算复杂程度 C = FEC*0.25 + FET*0.25 + FSEU*0.5，并判定低、中、高复杂程度；再按有效人数、审核类型和复杂程度查表得到审核人天。',
+                fields: ['场所', '有效人数', 'FEC', 'FET', 'FSEU', 'C值', '等级', '审核准备', '第一阶段', '第二阶段']
+            },
+            ISMS: {
+                label: 'ISMS信息安全管理体系',
+                source: 'ISMS审核人天规则.docx',
+                summary: '按企业有效人数查基础审核人日，再结合业务复杂性与 IT 复杂系数确定各阶段审核人天；结果按场所分别输出。',
+                fields: ['场所', '有效人数', '业务复杂性', 'IT复杂系数', '审核准备', '一阶段', '二阶段']
+            },
+            ITSMS: {
+                label: 'ITSMS信息技术服务管理体系',
+                source: 'ITSMS审核人天规则.docx',
+                summary: '按有效人数取基础审核人天，并结合 SLA 数量、供应商数量、服务风险、服务类别、物理场所、服务点、工作语言及其它因素计算最终三段人天。',
+                fields: ['场所', '有效人数', '审核准备', '一阶段', '二阶段']
             }
         };
 
         function getSelectedAiDomain() {
-            return document.getElementById('aiManDayDomain')?.value || 'FSMS';
+            return document.getElementById('aiManDayDomain')?.value || 'QMS';
         }
 
         function updateAiRulePanel() {
             const domain = getSelectedAiDomain();
-            const rule = aiManDayDomainRules[domain] || aiManDayDomainRules.FSMS;
+            const rule = aiManDayDomainRules[domain] || aiManDayDomainRules.QMS;
             const panel = document.getElementById('aiManDayRulePanel');
-            if (!panel) return;
-            panel.innerHTML = `<strong>${rule.label}</strong>：依据《${rule.source}》规则，${rule.summary}`;
+            if (panel) {
+                panel.innerHTML = `<strong>${rule.label}</strong>：依据《${rule.source}》规则，${rule.summary}`;
+            }
         }
 
         function getAuditPhaseKind() {
@@ -5051,13 +5095,90 @@
             });
         }
 
+        function getExistingStageDays(card) {
+            const readDays = (type) => {
+                const value = parseFloat(card.querySelector(`[data-type="${type}"]`)?.value || '0');
+                return Number.isFinite(value) ? value : 0;
+            };
+            return {
+                prep: readDays('prep'),
+                stage1: readDays('stage1'),
+                stage2: readDays('stage2')
+            };
+        }
+
+        function calculateQesAiManDays(domain) {
+            const headerRiskLevel = document.getElementById('headerRiskLevel')?.textContent?.trim();
+            return getCurrentPhaseCards().map(card => {
+                const effectivePeople = parseInt(card.querySelector('.effective-people')?.value || card.querySelector('.people-count')?.value || '0', 10) || 0;
+                const existing = getExistingStageDays(card);
+                return {
+                    domain,
+                    siteId: card.id,
+                    siteName: card.querySelector('.site-name')?.textContent?.trim() || card.id,
+                    effectivePeople,
+                    riskLevel: headerRiskLevel || (domain === 'EMS' ? '二级（中风险）' : (domain === 'OHSMS' ? '二级（中风险）' : '一级（高风险）')),
+                    prep: existing.prep,
+                    stage1: existing.stage1,
+                    stage2: existing.stage2
+                };
+            });
+        }
+
+        function calculateIsmsAiManDays() {
+            return getCurrentPhaseCards().map(card => {
+                const effectivePeople = parseInt(card.querySelector('.effective-people')?.value || card.querySelector('.people-count')?.value || '0', 10) || 0;
+                const existing = getExistingStageDays(card);
+                return {
+                    domain: 'ISMS',
+                    siteId: card.id,
+                    siteName: card.querySelector('.site-name')?.textContent?.trim() || card.id,
+                    effectivePeople,
+                    businessComplexity: '中',
+                    itComplexityFactor: '1.0',
+                    prep: existing.prep,
+                    stage1: existing.stage1,
+                    stage2: existing.stage2
+                };
+            });
+        }
+
+        function calculateItsmsAiManDays() {
+            return getCurrentPhaseCards().map(card => {
+                const effectivePeople = parseInt(card.querySelector('.effective-people')?.value || card.querySelector('.people-count')?.value || '0', 10) || 0;
+                const existing = getExistingStageDays(card);
+                return {
+                    domain: 'ITSMS',
+                    siteId: card.id,
+                    siteName: card.querySelector('.site-name')?.textContent?.trim() || card.id,
+                    effectivePeople,
+                    prep: existing.prep,
+                    stage1: existing.stage1,
+                    stage2: existing.stage2
+                };
+            });
+        }
+
         function calculateAiManDays(domain = getSelectedAiDomain()) {
-            return domain === 'EnMS' ? calculateEnmsAiManDays() : calculateFoodAiManDays(domain);
+            if (domain === 'EnMS') return calculateEnmsAiManDays();
+            if (domain === 'FSMS' || domain === 'HACCP') return calculateFoodAiManDays(domain);
+            if (domain === 'ISMS') return calculateIsmsAiManDays();
+            if (domain === 'ITSMS') return calculateItsmsAiManDays();
+            return calculateQesAiManDays(domain);
         }
 
         function buildAiThinkingText(domain) {
-            const rule = aiManDayDomainRules[domain] || aiManDayDomainRules.FSMS;
+            const rule = aiManDayDomainRules[domain] || aiManDayDomainRules.QMS;
             const phaseLabel = currentPhase === 'initial' ? '初次认证' : (currentPhase === 'recert' ? '再认证' : '监督审核');
+            if (['QMS', 'EMS', 'OHSMS'].includes(domain)) {
+                return `我已切换到${rule.label}规则，先读取当前${phaseLabel}阶段的场所、有效人数和已填写的人天数据。根据《${rule.source}》，该领域计算结果表需要按场所输出：${rule.fields.join('、')}。实际计算时会用有效人数、认证领域、风险等级和审核类型查对应人天表；当前弹窗先按文档列出应输出字段，并把页面中已有的审核准备、第一阶段和第二阶段人天带入结果表，方便你核对字段结构。`;
+            }
+            if (domain === 'ISMS') {
+                return `我已切换到${rule.label}规则，先读取当前${phaseLabel}阶段的场所、有效人数和已填写的人天数据。根据《${rule.source}》，ISMS 计算结果表除三段人天外，还需要输出业务复杂性和 IT 复杂系数，因此结果表字段为：${rule.fields.join('、')}。`;
+            }
+            if (domain === 'ITSMS') {
+                return `我已切换到${rule.label}规则，先读取当前${phaseLabel}阶段的场所、有效人数和已填写的人天数据。根据《${rule.source}》，ITSMS 最终结果表按场所输出：${rule.fields.join('、')}；SLA、供应商、服务风险等中间因子用于计算最终三段人天，但不进入结果表字段。`;
+            }
             if (domain === 'EnMS') {
                 return `我已切换到${rule.label}规则，先读取当前${phaseLabel}阶段下所有场所的名称、有效人数和现有策划数据，并把中心职能、固定场所、服务点、临时场所放在同一批次中处理。接着按《${rule.source}》的计算路径，先判断能源管理体系复杂程度：年度综合能耗对应 FEC，能源种类数量对应 FET，主要能源使用数量对应 FSEU，再用 C = FEC*0.25 + FET*0.25 + FSEU*0.5 得到复杂程度值。得到 C 值后，我会把它映射为低、中、高复杂程度等级，并用这个等级去匹配 EnMS 审核人天表。随后逐个场所按有效人数所在区间、当前审核类型和复杂程度等级查表取值；如果是初次认证，会拆成文审策划报告、一阶段和二阶段，如果是监督或再认证，会按对应表值拆成准备时间与现场审核时间。最后我会把每个场所的计算过程收敛成可同步字段，并保留关键中间量，便于你核对为什么得到这个结果。`;
             }
@@ -5120,6 +5241,72 @@
         function renderAiManDayResults(domain = getSelectedAiDomain()) {
             const head = document.getElementById('aiManDayResultHead');
             const tbody = document.getElementById('aiManDayResultBody');
+            if (['QMS', 'EMS', 'OHSMS'].includes(domain)) {
+                head.innerHTML = `<tr>
+                    <th>场所</th>
+                    <th style="width: 90px">有效人数</th>
+                    <th style="width: 130px">风险等级</th>
+                    <th style="width: 90px">审核准备</th>
+                    <th style="width: 90px">第一阶段</th>
+                    <th style="width: 90px">第二阶段</th>
+                </tr>`;
+                tbody.innerHTML = aiManDayResults.map(item => `
+                    <tr>
+                        <td>${escapeHtml(item.siteName)}</td>
+                        <td>${item.effectivePeople}</td>
+                        <td>${escapeHtml(item.riskLevel)}</td>
+                        <td>${item.prep.toFixed(1)}</td>
+                        <td>${item.stage1.toFixed(1)}</td>
+                        <td>${item.stage2.toFixed(1)}</td>
+                    </tr>
+                `).join('');
+                return;
+            }
+
+            if (domain === 'ISMS') {
+                head.innerHTML = `<tr>
+                    <th>场所</th>
+                    <th style="width: 90px">有效人数</th>
+                    <th style="width: 110px">业务复杂性</th>
+                    <th style="width: 110px">IT复杂系数</th>
+                    <th style="width: 90px">审核准备</th>
+                    <th style="width: 90px">一阶段</th>
+                    <th style="width: 90px">二阶段</th>
+                </tr>`;
+                tbody.innerHTML = aiManDayResults.map(item => `
+                    <tr>
+                        <td>${escapeHtml(item.siteName)}</td>
+                        <td>${item.effectivePeople}</td>
+                        <td>${escapeHtml(item.businessComplexity)}</td>
+                        <td>${escapeHtml(item.itComplexityFactor)}</td>
+                        <td>${item.prep.toFixed(1)}</td>
+                        <td>${item.stage1.toFixed(1)}</td>
+                        <td>${item.stage2.toFixed(1)}</td>
+                    </tr>
+                `).join('');
+                return;
+            }
+
+            if (domain === 'ITSMS') {
+                head.innerHTML = `<tr>
+                    <th>场所</th>
+                    <th style="width: 90px">有效人数</th>
+                    <th style="width: 90px">审核准备</th>
+                    <th style="width: 90px">一阶段</th>
+                    <th style="width: 90px">二阶段</th>
+                </tr>`;
+                tbody.innerHTML = aiManDayResults.map(item => `
+                    <tr>
+                        <td>${escapeHtml(item.siteName)}</td>
+                        <td>${item.effectivePeople}</td>
+                        <td>${item.prep.toFixed(1)}</td>
+                        <td>${item.stage1.toFixed(1)}</td>
+                        <td>${item.stage2.toFixed(1)}</td>
+                    </tr>
+                `).join('');
+                return;
+            }
+
             if (domain === 'EnMS') {
                 head.innerHTML = `<tr>
                     <th>场所</th>
