@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -262,20 +263,71 @@
         .file-tag {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 8px 10px;
             background: #dcfce7;
             border: 1px solid #86efac;
             border-radius: 6px;
             font-size: 13px;
             color: #166534;
             transition: all 0.2s ease;
-            max-width: 200px;
+            width: 100%;
+            max-width: 420px;
         }
 
         .file-tag:hover {
             background: #bbf7d0;
             border-color: #4ade80;
+        }
+
+        .file-tag-name {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .file-tag-name span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .file-tag-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .file-action-btn {
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            background: transparent;
+            color: #2563eb;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .file-action-btn:hover {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+        }
+
+        .file-action-btn.danger {
+            color: #dc2626;
+        }
+
+        .file-action-btn.danger:hover {
+            background: #fee2e2;
+            border-color: #fecaca;
         }
 
         .upload-btn {
@@ -620,38 +672,6 @@
             font-size: 13px;
         }
 
-        /* 问题清单表格样式 */
-        .problem-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-
-        .problem-table th {
-            background: #f9fafb;
-            color: #374151;
-            font-weight: 600;
-            padding: 10px 16px;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-            font-size: 12px;
-            white-space: nowrap;
-        }
-
-        .problem-table td {
-            padding: 12px 16px;
-            border-bottom: 1px solid #f3f4f6;
-            vertical-align: top;
-        }
-
-        .problem-table tr:hover td {
-            background: #fafafa;
-        }
-
-        .problem-table tr:last-child td {
-            border-bottom: none;
-        }
-
         /* 按钮禁用样式 */
         button:disabled {
             opacity: 0.5;
@@ -667,7 +687,6 @@
             <div class="flex items-center justify-between h-14">
                 <div class="flex items-center gap-4 overflow-x-auto custom-scrollbar">
                     <h1 class="text-lg font-bold text-slate-900">一阶段审核报告</h1>
-                    <span class="status-badge badge-warning" id="headerStatusBadge">审核进行中</span>
                 </div>
 
                 <div class="flex items-center gap-2 shrink-0">
@@ -693,7 +712,6 @@
                 <a href="#section-info" class="nav-item py-2" data-section="section-info">体系信息</a>
                 <a href="#section-adjust" class="nav-item py-2" data-section="section-adjust">待调整内容</a>
                 <a href="#section-other" class="nav-item py-2" data-section="section-other">其他内容</a>
-                <a href="#section-problem" class="nav-item py-2" data-section="section-problem">问题清单</a>
                 <a href="#section-next-stage" class="nav-item py-2" data-section="section-next-stage">下一阶段建议</a>
                 <a href="#section-attachment" class="nav-item py-2" data-section="section-attachment">附件</a>
             </nav>
@@ -731,10 +749,6 @@
                 <div>
                     <span class="text-slate-500 block text-xs mb-1">审核日期</span>
                     <span class="font-medium text-slate-900">2024-04-15 至 2024-04-18</span>
-                </div>
-                <div>
-                    <span class="text-slate-500 block text-xs mb-1">当前节点</span>
-                    <span class="font-medium text-blue-600">审核进行中</span>
                 </div>
             </div>
 
@@ -1365,92 +1379,11 @@
                 </div>
             </div>
 
-            <!-- 6. 问题清单（无折叠功能） -->
-            <div id="section-problem" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">6</div>
-                        <h3 class="font-semibold text-slate-900">问题清单</h3>
-                        <span id="problemStatusBadge" class="status-badge badge-processing ml-2">待组长确认</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs text-slate-500 mr-2">状态切换（演示用）：</span>
-                        <div class="flex gap-1">
-                            <button onclick="setProblemStatus('pending')" class="px-2 py-1 text-xs border border-slate-300 rounded hover:bg-slate-50 bg-white">待确认</button>
-                            <button onclick="setProblemStatus('rectifying')" class="px-2 py-1 text-xs border border-slate-300 rounded hover:bg-slate-50 bg-white">整改中</button>
-                            <button onclick="setProblemStatus('completed')" class="px-2 py-1 text-xs border border-slate-300 rounded hover:bg-slate-50 bg-white">已完成</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-6">
-
-                    <!-- 状态1: 待组长确认 - 显示提示信息 -->
-                    <div id="problem-empty-state" class="hidden">
-                        <div class="text-center py-12 text-slate-400 bg-slate-50 rounded-lg border border-dashed border-slate-300">
-                            <i class="fas fa-clipboard-list text-4xl mb-4 text-slate-300"></i>
-                            <p class="text-sm font-medium text-slate-600">待组长确认清单</p>
-                            <p class="text-xs mt-2 text-slate-400">组长确认后将显示问题列表</p>
-                        </div>
-                    </div>
-
-                    <!-- 状态2&3: 显示问题列表（只读） -->
-                    <div id="problem-content-state">
-                        <!-- 需整改问题清单 -->
-                        <div class="mb-8">
-                            <div class="flex items-center gap-2 mb-4">
-                                <i class="fas fa-exclamation-triangle text-red-500"></i>
-                                <span class="text-sm font-semibold text-slate-900">需完成整改后方可进入第二阶段审核的问题</span>
-                                <span id="rectify-count" class="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded">3项</span>
-                            </div>
-
-                            <div class="overflow-x-auto border border-slate-200 rounded-lg">
-                                <table class="problem-table">
-                                    <thead>
-                                        <tr>
-                                            <th class="w-20">序号</th>
-                                            <th class="w-1/3">问题描述</th>
-                                            <th>最终整改情况</th>
-                                            <th class="w-40">确认时间</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="rectify-problem-list">
-                                        <!-- 动态生成 -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- 其他关注项 -->
-                        <div>
-                            <div class="flex items-center gap-2 mb-4">
-                                <i class="fas fa-eye text-blue-500"></i>
-                                <span class="text-sm font-semibold text-slate-900">其他应关注的问题</span>
-                                <span id="other-count" class="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded">2项</span>
-                            </div>
-
-                            <div class="overflow-x-auto border border-slate-200 rounded-lg">
-                                <table class="problem-table">
-                                    <thead>
-                                        <tr>
-                                            <th class="w-20">序号</th>
-                                            <th>关注内容</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="other-problem-list">
-                                        <!-- 动态生成 -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 7. 审核组对下一阶段审核的建议 -->
+            <!-- 6. 审核组对下一阶段审核的建议 -->
             <div id="section-next-stage" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleSection(this)">
                     <div class="flex items-center gap-2">
-                        <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">7</div>
+                        <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">6</div>
                         <h3 class="font-semibold text-slate-900">审核组对下一阶段审核的建议</h3>
                     </div>
                     <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 text-xs"></i>
@@ -1476,11 +1409,11 @@
                 </div>
             </div>
 
-            <!-- 8. 上传附件 -->
+            <!-- 7. 上传附件 -->
             <div id="section-attachment" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleSection(this)">
                     <div class="flex items-center gap-2">
-                        <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">8</div>
+                        <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">7</div>
                         <h3 class="font-semibold text-slate-900">上传附件</h3>
                     </div>
                     <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 text-xs"></i>
@@ -1512,7 +1445,7 @@
                             </div>
                         </div>
                         <div class="file-tags-container hidden" id="attachmentFileTags"></div>
-                        <input type="file" accept=".pdf" class="hidden-file-input" id="fileInput" onchange="handleFileSelect(event)">
+                        <input type="file" accept=".pdf" multiple class="hidden-file-input" id="fileInput" onchange="handleFileSelect(event)">
                     </div>
                 </div>
             </div>
@@ -1528,48 +1461,15 @@
     </div>
 
     <script>
-        // 问题清单数据
-        let rectifyIssues = [
-            {
-                id: 1,
-                description: '组织的环境因素识别不充分，未包含新开通线路的环境影响评价。',
-                rectification: '已补充新开通线路的环境影响评价报告，更新了环境因素识别清单。',
-                status: 'completed',
-                confirmTime: '2024/4/9 15:14:18',
-                isAutoImported: true
-            },
-            {
-                id: 2,
-                description: '危险源辨识缺少对地铁施工期间交叉作业的风险评估。',
-                rectification: '已完成地铁施工期间交叉作业的风险评估，制定了专项安全管理方案。',
-                status: 'completed',
-                confirmTime: '2024/4/9 15:14:18',
-                isAutoImported: true
-            },
-            {
-                id: 3,
-                description: '应急预案演练记录不完整，缺少2024年第一季度演练记录。',
-                rectification: '已补充2024年第一季度应急演练记录，包括演练方案、照片和总结报告。',
-                status: 'completed',
-                confirmTime: '2024/4/9 15:14:18',
-                isAutoImported: false
-            }
-        ];
-
-        let otherIssues = [
-            { id: 1, description: '建议关注员工心理健康管理，特别是高压岗位的心理疏导机制。' },
-            { id: 2, description: '建议完善供应商管理体系，特别是对关键零部件供应商的二方审核频次。' }
-        ];
-
-        let currentProblemStatus = 'pending'; // pending, rectifying, completed
+        let uploadedAttachments = [];
 
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
             showFieldsByCertScope();
             initScrollSpy();
             initAnchorNav();
-            setProblemStatus('pending'); // 默认状态为待确认
             updateButtonStatus();
+            renderAttachmentFiles();
         });
 
         // 根据认证领域显示/隐藏字段
@@ -1579,25 +1479,26 @@
 
         // 检查是否可以提交
         function canSubmit() {
-            return currentProblemStatus === 'completed';
+            return true;
         }
 
         // 更新按钮状态
         function updateButtonStatus() {
             const submitBtn = document.getElementById('submitBtn');
+            if (!submitBtn) return;
             if (canSubmit()) {
                 submitBtn.disabled = false;
                 submitBtn.title = '';
             } else {
                 submitBtn.disabled = true;
-                submitBtn.title = '问题清单未完成整改，无法提交，请先保存';
+                submitBtn.title = '当前报告暂不可提交，请先保存';
             }
         }
 
         // 全局提交
         function submitAll() {
             if (!canSubmit()) {
-                showToast('问题清单状态未完成，无法提交，请先保存', 'warning');
+                showToast('当前报告暂不可提交，请先保存', 'warning');
                 return;
             }
             showToast('提交成功', 'success');
@@ -1608,82 +1509,6 @@
             // 这里可以添加实际的保存逻辑，如收集表单数据发送到后端
             showToast('报告已保存', 'success');
             console.log('保存报告数据...');
-        }
-
-        // 设置问题清单状态
-        function setProblemStatus(status) {
-            currentProblemStatus = status;
-            const badge = document.getElementById('problemStatusBadge');
-            const emptyState = document.getElementById('problem-empty-state');
-            const contentState = document.getElementById('problem-content-state');
-
-            if (status === 'pending') {
-                badge.textContent = '待组长确认';
-                badge.className = 'status-badge badge-processing ml-2';
-                emptyState.classList.remove('hidden');
-                contentState.classList.add('hidden');
-            } else if (status === 'rectifying') {
-                badge.textContent = '整改中';
-                badge.className = 'status-badge badge-warning ml-2';
-                emptyState.classList.add('hidden');
-                contentState.classList.remove('hidden');
-                // 整改中状态：清空确认时间，整改情况显示待填写
-                renderProblemList(true);
-            } else if (status === 'completed') {
-                badge.textContent = '整改完成';
-                badge.className = 'status-badge badge-success ml-2';
-                emptyState.classList.add('hidden');
-                contentState.classList.remove('hidden');
-                renderProblemList(false);
-            }
-
-            // 更新按钮状态
-            updateButtonStatus();
-
-        }
-
-        // 渲染问题清单
-        function renderProblemList(isRectifying = false) {
-            // 渲染需整改问题
-            const rectifyTbody = document.getElementById('rectify-problem-list');
-            let rectifyHtml = '';
-
-            rectifyIssues.forEach((issue, idx) => {
-                const rectificationText = isRectifying ? 
-                    '<span class="text-slate-400 italic">待客户填写整改情况...</span>' : 
-                    issue.rectification;
-                const confirmTimeText = isRectifying ? 
-                    '<span class="text-slate-400">-</span>' : 
-                    issue.confirmTime;
-
-                rectifyHtml += `<tr>
-                    <td class="text-center text-slate-500 font-medium">${idx + 1}</td>
-                    <td>
-                        <div class="text-sm text-slate-700" title="${issue.description}">${issue.description}</div>
-                    </td>
-                    <td>
-                        <div class="text-sm text-slate-600 bg-slate-50 p-2 rounded">${rectificationText}</div>
-                    </td>
-                    <td class="text-sm text-emerald-600">${confirmTimeText}</td>
-                </tr>`;
-            });
-
-            rectifyTbody.innerHTML = rectifyHtml;
-            document.getElementById('rectify-count').textContent = rectifyIssues.length + '项';
-
-            // 渲染其他关注项
-            const otherTbody = document.getElementById('other-problem-list');
-            let otherHtml = '';
-
-            otherIssues.forEach((issue, idx) => {
-                otherHtml += `<tr>
-                    <td class="text-center text-slate-500 font-medium">${idx + 1}</td>
-                    <td class="text-sm text-slate-700">${issue.description}</td>
-                </tr>`;
-            });
-
-            otherTbody.innerHTML = otherHtml;
-            document.getElementById('other-count').textContent = otherIssues.length + '项';
         }
 
         // 区块折叠展开
@@ -1901,14 +1726,125 @@
 
         // 附件上传处理
         function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (file) {
-                if (file.type !== 'application/pdf') {
-                    showToast('仅支持PDF文件', 'error');
+            const files = Array.from(event.target.files || []);
+            if (!files.length) return;
+
+            const validFiles = [];
+            files.forEach(file => {
+                const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+                if (!isPdf) {
+                    showToast('仅支持PDF文件：' + file.name, 'error');
                     return;
                 }
-                showToast('文件上传成功：' + file.name, 'success');
+                if (file.size > 20 * 1024 * 1024) {
+                    showToast('文件不能超过20MB：' + file.name, 'error');
+                    return;
+                }
+                validFiles.push(file);
+            });
+
+            validFiles.forEach(file => {
+                uploadedAttachments.push({
+                    id: Date.now() + Math.random(),
+                    name: file.name,
+                    size: file.size,
+                    url: URL.createObjectURL(file)
+                });
+            });
+
+            event.target.value = '';
+            renderAttachmentFiles();
+
+            if (validFiles.length) {
+                showToast('文件上传成功：' + validFiles.map(file => file.name).join('、'), 'success');
             }
+        }
+
+        function renderAttachmentFiles() {
+            const uploadCard = document.getElementById('attachmentUploadCard');
+            const tagContainer = document.getElementById('attachmentFileTags');
+            const count = document.getElementById('attachmentCount');
+            const uploadBtn = document.getElementById('attachmentUploadBtn');
+            const continueBtn = document.getElementById('attachmentContinueBtn');
+
+            if (!uploadCard || !tagContainer || !count || !uploadBtn || !continueBtn) return;
+
+            if (!uploadedAttachments.length) {
+                uploadCard.classList.add('empty');
+                tagContainer.classList.add('hidden');
+                tagContainer.innerHTML = '';
+                count.classList.add('hidden');
+                count.textContent = '';
+                uploadBtn.classList.remove('hidden');
+                continueBtn.classList.add('hidden');
+                return;
+            }
+
+            uploadCard.classList.remove('empty');
+            tagContainer.classList.remove('hidden');
+            count.classList.remove('hidden');
+            count.textContent = `已上传 ${uploadedAttachments.length} 个文件`;
+            uploadBtn.classList.add('hidden');
+            continueBtn.classList.remove('hidden');
+
+            tagContainer.innerHTML = uploadedAttachments.map(file => `
+                <div class="file-tag" title="${escapeHtml(file.name)}">
+                    <div class="file-tag-name">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>${escapeHtml(file.name)}</span>
+                    </div>
+                    <div class="file-tag-actions">
+                        <button type="button" class="file-action-btn" title="预览" onclick="previewAttachment(${file.id})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button type="button" class="file-action-btn" title="下载" onclick="downloadAttachment(${file.id})">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button type="button" class="file-action-btn danger" title="删除" onclick="deleteAttachment(${file.id})">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function previewAttachment(id) {
+            const file = uploadedAttachments.find(item => item.id === id);
+            if (!file) return;
+            const preview = window.open(file.url, '_blank');
+            if (!preview) {
+                showToast('浏览器已拦截预览窗口，请允许弹窗后重试', 'warning');
+            }
+        }
+
+        function downloadAttachment(id) {
+            const file = uploadedAttachments.find(item => item.id === id);
+            if (!file) return;
+            const link = document.createElement('a');
+            link.href = file.url;
+            link.download = file.name;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        }
+
+        function deleteAttachment(id) {
+            const index = uploadedAttachments.findIndex(item => item.id === id);
+            if (index === -1) return;
+            URL.revokeObjectURL(uploadedAttachments[index].url);
+            const fileName = uploadedAttachments[index].name;
+            uploadedAttachments.splice(index, 1);
+            renderAttachmentFiles();
+            showToast('已删除附件：' + fileName, 'success');
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
         }
     </script>
 </body>
