@@ -903,14 +903,13 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- 文件化信息符合性 -->
                     <div class="info-row">
                         <div class="info-label">管理体系文件化信息与认证标准的符合性及与实际运作情况的一致性</div>
                         <div class="info-value">
                             <div class="mb-2 flex items-center gap-2">
                                 <span class="text-xs text-slate-500">对客户</span>
-                                <input type="text" placeholder="客户名称" maxlength="100" class="w-96 max-w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all">
+                                <input type="text" placeholder="文件名称" maxlength="100" class="w-96 max-w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all">
                                 <span class="text-xs text-slate-500">文件（包括版本号或发布日期）进行了评审</span>
                             </div>
                             <div class="radio-group mb-2">
@@ -926,7 +925,44 @@
                             </div>
                         </div>
                     </div>
-
+                    <!-- 标准不适用条款合理性 -->
+                    <div class="info-row">
+                        <div class="info-label">组织确定的标准不适用条款或要求的合理性（QMS）</div>
+                        <div class="info-value">
+                            <div class="space-y-3">
+                                <div class="evaluation-inline">
+                                    <label class="radio-item">
+                                    <input type="radio" name="standardApplicability" value="reasonable" checked class="text-blue-600" onchange="toggleStandardApplicability(true)">
+                                        <span>合理，不适用的具体条款或要求：</span>
+                                    </label>
+                                    <div id="standardApplicabilityReasonableInput">
+                                        <input type="text" class="evaluation-inline-input px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="填写条款或要求">
+                                    </div>
+                                </div>
+                                <div class="evaluation-inline">
+                                    <label class="radio-item">
+                                        <input type="radio" name="standardApplicability" value="unreasonable" class="text-blue-600" onchange="toggleStandardApplicability(false)">
+                                        <span>不合理，说明：</span>
+                                    </label>
+                                </div>
+                                <div id="standardApplicabilityDesc" class="hidden conditional-field">
+                                    <textarea rows="2" placeholder="请填写不合理说明..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">ISMS 范围与边界的描述、适用性声明的版本及发布日期（ISMS）</div>
+                        <div class="info-value">
+                            <textarea rows="2" placeholder="请填写ISMS范围与边界、适用性声明的版本及发布日期..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">ITSMS 范围的描述、服务目录\SLA\相关方接口\服务点概况（ITSMS）</div>
+                        <div class="info-value">
+                            <textarea rows="2" placeholder="请填写ITSMS范围、服务目录、SLA、相关方接口、服务点概况..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
+                        </div>
+                    </div>
                     <!-- 方针和目标适宜性 -->
                     <div class="info-row">
                         <div class="info-label">方针和目标的适宜性以及对管理体系关键绩效的识别情况</div>
@@ -944,7 +980,6 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- 法律法规识别 -->
                     <div class="info-row">
                         <div class="info-label">适用法律法规和其他要求的识别</div>
@@ -962,7 +997,6 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- 违反法律法规情况 -->
                     <div class="info-row">
                         <div class="info-label">是否存在违反法律法规和强制性标准的情况</div>
@@ -980,7 +1014,6 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- 过程确定的充分性 -->
                     <div class="info-row">
                         <div class="info-label">管理体系过程（包括外部提供服务和过程）确定的充分性</div>
@@ -998,7 +1031,78 @@
                             </div>
                         </div>
                     </div>
-
+                    <div class="info-row">
+                        <div class="info-label">认证范围内风险因素（如环境因素、危险源、食品安全危害）识别的全面性和重要因素/风险确定的合理性（E/S/F/H）</div>
+                        <div class="info-value">
+                            <div class="radio-group mb-2">
+                                <label class="radio-item"><input type="radio" name="riskIdentify" value="conform" checked class="text-blue-600" onchange="toggleField('riskIdentifyDesc', false)"> 符合</label>
+                                <label class="radio-item"><input type="radio" name="riskIdentify" value="nonconform" class="text-blue-600" onchange="toggleField('riskIdentifyDesc', true)"> 不符合</label>
+                            </div>
+                            <div id="riskIdentifyDesc" class="hidden conditional-field">
+                                <textarea rows="2" placeholder="请填写不符合说明..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">针对风险因素控制策划（方案、计划、过程、运行控制等）的充分性和适宜性（E/S/F/H）<br><span class="text-xs text-slate-500">注：F/H 包含危害分析/前提方案/HACCP 计划的评价</span></div>
+                        <div class="info-value">
+                            <div class="radio-group mb-2">
+                                <label class="radio-item"><input type="radio" name="riskControlPlan" value="conform" checked class="text-blue-600" onchange="toggleField('riskControlPlanDesc', false)"> 符合</label>
+                                <label class="radio-item"><input type="radio" name="riskControlPlan" value="nonconform" class="text-blue-600" onchange="toggleField('riskControlPlanDesc', true)"> 不符合</label>
+                            </div>
+                            <div id="riskControlPlanDesc" class="hidden conditional-field">
+                                <textarea rows="2" placeholder="请填写不符合说明..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">确认活动实施的有效性和验证策划的充分性、合理性（F/H）</div>
+                        <div class="info-value">
+                            <div class="radio-group mb-2">
+                                <label class="radio-item"><input type="radio" name="validationPlan" value="conform" checked class="text-blue-600" onchange="toggleField('validationPlanDesc', false)"> 符合</label>
+                                <label class="radio-item"><input type="radio" name="validationPlan" value="nonconform" class="text-blue-600" onchange="toggleField('validationPlanDesc', true)"> 不符合</label>
+                            </div>
+                            <div id="validationPlanDesc" class="hidden conditional-field">
+                                <textarea rows="2" placeholder="请填写不符合说明..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">“需要应对的风险和机遇”及策划的措施（Q/E/S）</div>
+                        <div class="info-value">
+                            <div class="radio-group mb-2">
+                                <label class="radio-item"><input type="radio" name="riskOpportunity" value="conform" checked class="text-blue-600" onchange="toggleField('riskOpportunityDesc', false)"> 符合</label>
+                                <label class="radio-item"><input type="radio" name="riskOpportunity" value="nonconform" class="text-blue-600" onchange="toggleField('riskOpportunityDesc', true)"> 不符合</label>
+                            </div>
+                            <div id="riskOpportunityDesc" class="hidden conditional-field">
+                                <textarea rows="2" placeholder="请填写不符合说明..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">潜在紧急情况的识别及应急准备和响应措施的策划情况（E/S）</div>
+                        <div class="info-value">
+                            <div class="radio-group mb-2">
+                                <label class="radio-item"><input type="radio" name="emergencyPlan" value="conform" checked class="text-blue-600" onchange="toggleField('emergencyPlanDesc', false)"> 符合</label>
+                                <label class="radio-item"><input type="radio" name="emergencyPlan" value="nonconform" class="text-blue-600" onchange="toggleField('emergencyPlanDesc', true)"> 不符合</label>
+                            </div>
+                            <div id="emergencyPlanDesc" class="hidden conditional-field">
+                                <textarea rows="2" placeholder="请填写不符合说明..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">信息安全风险评估方法的适宜性，风险评价的充分性，风险控制措施及措施删减的适宜性（IS）</div>
+                        <div class="info-value">
+                            <div class="radio-group mb-2">
+                                <label class="radio-item"><input type="radio" name="isRiskAssessment" value="conform" checked class="text-blue-600" onchange="toggleField('isRiskAssessmentDesc', false)"> 符合</label>
+                                <label class="radio-item"><input type="radio" name="isRiskAssessment" value="nonconform" class="text-blue-600" onchange="toggleField('isRiskAssessmentDesc', true)"> 不符合</label>
+                            </div>
+                            <div id="isRiskAssessmentDesc" class="hidden conditional-field">
+                                <textarea rows="2" placeholder="请填写不符合说明..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
+                            </div>
+                        </div>
+                    </div>
                     <!-- 内审和管评 -->
                     <div class="info-row">
                         <div class="info-label">是否实施了内部审核和管理评审</div>
@@ -1028,7 +1132,6 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- 事故投诉 -->
                     <div class="info-row">
                         <div class="info-label">一年内是否发生事故、职业病、投诉、行政监管处罚及处理和回应</div>
@@ -1046,143 +1149,12 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- 标准不适用条款合理性 -->
-                    <div class="info-row">
-                        <div class="info-label">组织确定的标准不适用条款或要求的合理性（QMS）</div>
-                        <div class="info-value">
-                            <div class="space-y-3">
-                                <div class="evaluation-inline">
-                                    <label class="radio-item">
-                                    <input type="radio" name="standardApplicability" value="reasonable" checked class="text-blue-600" onchange="toggleField('standardApplicabilityDesc', false)">
-                                        <span>合理，不适用的具体条款或要求：</span>
-                                    </label>
-                                    <input type="text" class="evaluation-inline-input px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all" placeholder="填写条款或要求">
-                                </div>
-                                <div class="evaluation-inline">
-                                    <label class="radio-item">
-                                        <input type="radio" name="standardApplicability" value="unreasonable" class="text-blue-600" onchange="toggleField('standardApplicabilityDesc', true)">
-                                        <span>不合理，说明：</span>
-                                    </label>
-                                </div>
-                                <div id="standardApplicabilityDesc" class="hidden conditional-field">
-                                    <textarea rows="2" placeholder="请填写不合理说明..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="info-row">
-                        <div class="info-label">ISMS 范围与边界的描述、适用性声明的版本及发布日期（ISMS）</div>
-                        <div class="info-value">
-                            <div class="radio-group mb-2">
-                                <label class="radio-item"><input type="radio" name="ismsScope" value="conform" checked class="text-blue-600" onchange="toggleField('ismsScopeDesc', false)"> 符合</label>
-                                <label class="radio-item"><input type="radio" name="ismsScope" value="nonconform" class="text-blue-600" onchange="toggleField('ismsScopeDesc', true)"> 不符合</label>
-                            </div>
-                            <div id="ismsScopeDesc" class="hidden conditional-field">
-                                <textarea rows="2" placeholder="请填写不符合说明..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="info-row">
-                        <div class="info-label">ITSMS 范围的描述、服务目录\SLA\相关方接口\服务点概况（ITSMS）</div>
-                        <div class="info-value">
-                            <div class="radio-group mb-2">
-                                <label class="radio-item"><input type="radio" name="itsmsScope" value="conform" checked class="text-blue-600" onchange="toggleField('itsmsScopeDesc', false)"> 符合</label>
-                                <label class="radio-item"><input type="radio" name="itsmsScope" value="nonconform" class="text-blue-600" onchange="toggleField('itsmsScopeDesc', true)"> 不符合</label>
-                            </div>
-                            <div id="itsmsScopeDesc" class="hidden conditional-field">
-                                <textarea rows="2" placeholder="请填写不符合说明..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="info-row">
-                        <div class="info-label">认证范围内风险因素（如环境因素、危险源、食品安全危害）识别的全面性和重要因素/风险确定的合理性（E/S/F/H）</div>
-                        <div class="info-value">
-                            <div class="radio-group mb-2">
-                                <label class="radio-item"><input type="radio" name="riskIdentify" value="conform" checked class="text-blue-600" onchange="toggleField('riskIdentifyDesc', false)"> 符合</label>
-                                <label class="radio-item"><input type="radio" name="riskIdentify" value="nonconform" class="text-blue-600" onchange="toggleField('riskIdentifyDesc', true)"> 不符合</label>
-                            </div>
-                            <div id="riskIdentifyDesc" class="hidden conditional-field">
-                                <textarea rows="2" placeholder="请填写不符合说明..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="info-row">
-                        <div class="info-label">针对风险因素控制策划（方案、计划、过程、运行控制等）的充分性和适宜性（E/S/F/H）<br><span class="text-xs text-slate-500">注：F/H 包含危害分析/前提方案/HACCP 计划的评价</span></div>
-                        <div class="info-value">
-                            <div class="radio-group mb-2">
-                                <label class="radio-item"><input type="radio" name="riskControlPlan" value="conform" checked class="text-blue-600" onchange="toggleField('riskControlPlanDesc', false)"> 符合</label>
-                                <label class="radio-item"><input type="radio" name="riskControlPlan" value="nonconform" class="text-blue-600" onchange="toggleField('riskControlPlanDesc', true)"> 不符合</label>
-                            </div>
-                            <div id="riskControlPlanDesc" class="hidden conditional-field">
-                                <textarea rows="2" placeholder="请填写不符合说明..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="info-row">
-                        <div class="info-label">确认活动实施的有效性和验证策划的充分性、合理性（F/H）</div>
-                        <div class="info-value">
-                            <div class="radio-group mb-2">
-                                <label class="radio-item"><input type="radio" name="validationPlan" value="conform" checked class="text-blue-600" onchange="toggleField('validationPlanDesc', false)"> 符合</label>
-                                <label class="radio-item"><input type="radio" name="validationPlan" value="nonconform" class="text-blue-600" onchange="toggleField('validationPlanDesc', true)"> 不符合</label>
-                            </div>
-                            <div id="validationPlanDesc" class="hidden conditional-field">
-                                <textarea rows="2" placeholder="请填写不符合说明..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="info-row">
-                        <div class="info-label">“需要应对的风险和机遇”及策划的措施（Q/E/S）</div>
-                        <div class="info-value">
-                            <div class="radio-group mb-2">
-                                <label class="radio-item"><input type="radio" name="riskOpportunity" value="conform" checked class="text-blue-600" onchange="toggleField('riskOpportunityDesc', false)"> 符合</label>
-                                <label class="radio-item"><input type="radio" name="riskOpportunity" value="nonconform" class="text-blue-600" onchange="toggleField('riskOpportunityDesc', true)"> 不符合</label>
-                            </div>
-                            <div id="riskOpportunityDesc" class="hidden conditional-field">
-                                <textarea rows="2" placeholder="请填写不符合说明..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="info-row">
-                        <div class="info-label">潜在紧急情况的识别及应急准备和响应措施的策划情况（E/S）</div>
-                        <div class="info-value">
-                            <div class="radio-group mb-2">
-                                <label class="radio-item"><input type="radio" name="emergencyPlan" value="conform" checked class="text-blue-600" onchange="toggleField('emergencyPlanDesc', false)"> 符合</label>
-                                <label class="radio-item"><input type="radio" name="emergencyPlan" value="nonconform" class="text-blue-600" onchange="toggleField('emergencyPlanDesc', true)"> 不符合</label>
-                            </div>
-                            <div id="emergencyPlanDesc" class="hidden conditional-field">
-                                <textarea rows="2" placeholder="请填写不符合说明..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="info-row">
-                        <div class="info-label">信息安全风险评估方法的适宜性，风险评价的充分性，风险控制措施及措施删减的适宜性（IS）</div>
-                        <div class="info-value">
-                            <div class="radio-group mb-2">
-                                <label class="radio-item"><input type="radio" name="isRiskAssessment" value="conform" checked class="text-blue-600" onchange="toggleField('isRiskAssessmentDesc', false)"> 符合</label>
-                                <label class="radio-item"><input type="radio" name="isRiskAssessment" value="nonconform" class="text-blue-600" onchange="toggleField('isRiskAssessmentDesc', true)"> 不符合</label>
-                            </div>
-                            <div id="isRiskAssessmentDesc" class="hidden conditional-field">
-                                <textarea rows="2" placeholder="请填写不符合说明..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="info-row">
                         <div class="info-label">生鲜乳日供应与企业日加工能力的匹配程度（乳 GMP）</div>
                         <div class="info-value">
                             <textarea rows="2" placeholder="请填写生鲜乳日供应与企业日加工能力的匹配程度..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
                         </div>
                     </div>
-
                     <!-- 其他 -->
                     <div class="info-row">
                         <div class="info-label">其他</div>
@@ -1209,28 +1181,30 @@
                             <textarea rows="3" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none">QMS：城市轨道交通运营管理服务&#10;EMS：城市轨道交通运营管理服务及相关管理活动&#10;OHSMS：城市轨道交通运营管理服务及相关管理活动</textarea>
                         </div>
                     </div>
-
                     <div class="info-row">
                         <div class="info-label">管理体系范围内的场所（地址）</div>
                         <div class="info-value">
                             <textarea rows="5" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none">中心职能：北京市西城区西直门外大街2号&#10;多场所1：北京市海淀区中关村大街1号&#10;多场所2：北京市昌平区生产基地&#10;多场所3：北京市朝阳区轨道交通运营调度中心</textarea>
                         </div>
                     </div>
-
                     <div class="info-row">
                         <div class="info-label">临时服务现场信息</div>
                         <div class="info-value">
                             <textarea rows="2" placeholder="如存在临时场所，请填写..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
                         </div>
                     </div>
-
                     <div class="info-row">
                         <div class="info-label">外部提供的职能或过程（外包）</div>
                         <div class="info-value">
                             <textarea rows="2" placeholder="自动带入认证申请单中的信息，可修改..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
                         </div>
                     </div>
-
+                    <div class="info-row">
+                        <div class="info-label">组织人员在其他组织场所提供的服务（S）</div>
+                        <div class="info-value">
+                            <textarea rows="2" placeholder="如存在组织人员在其他组织场所提供的服务，请填写..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
+                        </div>
+                    </div>
                     <div class="info-row">
                         <div class="info-label">管理体系范围内的有效人数</div>
                         <div class="info-value">
@@ -1238,7 +1212,6 @@
                             <textarea rows="2" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none">QMS：850人&#10;EMS：850人&#10;OHSMS：850人</textarea>
                         </div>
                     </div>
-
                     <div class="info-row">
                         <div class="info-label">整合管理体系（IMS）的整合程度</div>
                         <div class="info-value">
@@ -1546,6 +1519,18 @@
                 el.classList.add('hidden');
                 el.classList.remove('active');
             }
+        }
+
+        function toggleStandardApplicability(isReasonable) {
+            const reasonableInput = document.getElementById('standardApplicabilityReasonableInput');
+            if (reasonableInput) {
+                reasonableInput.classList.toggle('hidden', !isReasonable);
+                if (!isReasonable) {
+                    const input = reasonableInput.querySelector('input');
+                    if (input) input.value = '';
+                }
+            }
+            toggleField('standardApplicabilityDesc', !isReasonable);
         }
 
         function toggleCriteriaItem(item, event) {
