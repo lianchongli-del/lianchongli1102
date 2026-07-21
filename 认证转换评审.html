@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -726,28 +727,46 @@
             <div id="section-doc-review" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
                     <div class="flex items-center gap-2"><i class="fas fa-file-alt text-blue-600"></i><h3 class="font-semibold text-slate-900">转换前评审--文件评审</h3></div>
-                    <div class="flex items-center gap-2 text-xs">
-                        <span class="text-slate-500">文件评审人员：</span>
-                        <button type="button" onclick="openPersonModal('reviewer')" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition-colors inline-flex items-center gap-1">
-                            <i class="fas fa-user-check"></i>选择
-                        </button>
-                        <span id="selectedReviewersInline" class="font-medium text-slate-700">未选择</span>
-                        <span class="text-slate-500 ml-2">日期：</span>
-                        <input type="date" class="editable-field w-32 py-1" value="2026-03-25">
-                    </div>
                 </div>
                 <div class="p-6 space-y-6">
                     
-                    <!-- 专业人员 -->
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <label class="block text-xs font-medium text-slate-700">专业人员（多领域分别注明专业代码）</label>
-                            <button type="button" onclick="openPersonModal('professional')" class="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium hover:bg-blue-700 transition-colors inline-flex items-center gap-1">
-                                <i class="fas fa-users"></i>选择专业人员
-                            </button>
+                    <!-- 文件评审三部分 -->
+                    <div class="space-y-4">
+                        <div class="rounded-lg border border-blue-100 bg-blue-50/60 p-4">
+                            <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                                <label class="block text-sm font-semibold text-slate-800">
+                                    <span class="inline-flex items-center justify-center w-5 h-5 mr-2 rounded-full bg-blue-600 text-white text-xs">1</span>文件评审人员
+                                </label>
+                                <button type="button" onclick="openPersonModal('reviewer')" class="h-9 px-4 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors inline-flex items-center gap-2">
+                                    <i class="fas fa-user-check"></i>选择人员
+                                </button>
+                            </div>
+                            <div id="selectedReviewersInline" class="space-y-2 min-h-[54px] rounded-lg border border-slate-200 bg-white p-3">
+                                <div class="text-sm text-slate-500 leading-7">暂无已选择人员</div>
+                            </div>
                         </div>
-                        <div id="selectedProfessionals" class="space-y-2 bg-slate-50 border border-slate-200 rounded-lg p-3">
-                            <div class="text-sm text-slate-500">暂无已选择专业人员</div>
+
+                        <div class="rounded-lg border border-blue-100 bg-blue-50/60 p-4">
+                            <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+                                <label class="block text-sm font-semibold text-slate-800">
+                                    <span class="inline-flex items-center justify-center w-5 h-5 mr-2 rounded-full bg-blue-600 text-white text-xs">2</span>专业人员
+                                </label>
+                                <button type="button" onclick="openPersonModal('professional')" class="h-9 px-4 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors inline-flex items-center gap-2">
+                                    <i class="fas fa-users"></i>选择人员
+                                </button>
+                            </div>
+                            <div id="selectedProfessionals" class="space-y-2 min-h-[54px] rounded-lg border border-slate-200 bg-white p-3">
+                                <div class="text-sm text-slate-500 leading-7">暂无已选择人员</div>
+                            </div>
+                        </div>
+
+                        <div class="rounded-lg border border-blue-100 bg-blue-50/60 p-4">
+                            <label class="block text-sm font-semibold text-slate-800 mb-3">
+                                <span class="inline-flex items-center justify-center w-5 h-5 mr-2 rounded-full bg-blue-600 text-white text-xs">3</span>文件评审日期
+                            </label>
+                            <div class="max-w-sm">
+                                <input type="date" class="editable-field h-[54px] text-base" value="2026-03-25">
+                            </div>
                         </div>
                     </div>
 
@@ -1002,6 +1021,28 @@
                                 <button onclick="formatText('insertOrderedList')"><i class="fas fa-list-ol"></i></button>
                             </div>
                             <div class="rich-editor-content" id="siteVisitDescription" contenteditable="true" data-placeholder="上述提示文字保留，在此处详细描述现场访问情况..." oninput="updateSiteVisitDescStatus()"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-2">现场访问附件</label>
+                        <div class="attachment-card">
+                            <div class="attachment-info">
+                                <div class="file-icon default" style="background: #eff6ff; color: #2563eb;">
+                                    <i class="fas fa-folder-open text-lg"></i>
+                                </div>
+                                <div class="attachment-meta">
+                                    <div class="attachment-title">
+                                        现场访问记录、照片或相关证据
+                                        <span class="badge badge-optional">选填</span>
+                                    </div>
+                                    <div class="file-count">0个文件</div>
+                                </div>
+                            </div>
+                            <button class="upload-btn" onclick="uploadFile(this)">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>上传</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1530,7 +1571,7 @@
                 document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
                 document.querySelector('a[href="#section-conclusion"]').classList.add('active');
             } else {
-                showToast('需要现场访问时无需填写转换评审结论');
+                showToast('未找到转换评审结论区域');
             }
         }
 
@@ -1625,16 +1666,16 @@
                 toast: count => `已选择 ${count} 名现场访问人员`
             },
             reviewer: {
-                title: '选择文件评审人员',
-                desc: '从人员资质系统选择文件评审人员',
+                title: '选择人员',
+                desc: '从人员资质系统选择人员',
                 multiple: false,
                 confirmText: '确认选择',
                 selectedIds: () => selectedReviewPersonIds,
                 setSelectedIds: ids => { selectedReviewPersonIds = ids; renderSelectedReviewers(); },
-                toast: count => count ? '已选择文件评审人员' : '未选择文件评审人员'
+                toast: count => count ? '已选择人员' : '未选择人员'
             },
             professional: {
-                title: '选择专业人员',
+                title: '选择人员',
                 desc: '从人员资质系统选择参与文件评审的专业人员',
                 multiple: true,
                 confirmText: '确认添加',
@@ -1723,22 +1764,46 @@
         }
 
         function renderSelectedReviewers() {
-            const inline = document.getElementById('selectedReviewersInline');
+            const container = document.getElementById('selectedReviewersInline');
+            if (!container) return;
             const selected = visitPersonOptions.filter(person => selectedReviewPersonIds.includes(person.id));
-            inline.textContent = selected.length ? selected.map(person => `${person.name}（${person.code}）`).join('、') : '未选择';
+            if (selected.length === 0) {
+                container.innerHTML = '<div class="text-sm text-slate-500">暂无已选择人员</div>';
+                return;
+            }
+            container.innerHTML = selected.map(person => {
+                const typeClass = person.type === '专职' ? 'fulltime' : 'parttime';
+                return `
+                    <div class="bg-white border border-blue-100 rounded-lg px-4 py-3 flex items-center justify-between gap-3 shadow-sm">
+                        <div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="font-medium text-slate-900">${person.name}</span>
+                                <span class="person-tag days">${person.days}天/180天</span>
+                                <span class="person-tag ${typeClass}">${person.type}</span>
+                            </div>
+                            <div class="text-xs text-slate-500 mt-1">CQC编号：${person.code} · 资格：${person.qualifications}</div>
+                        </div>
+                        <button type="button" onclick="removeSelectedReviewer('${person.id}')" class="text-slate-400 hover:text-red-600"><i class="fas fa-times"></i></button>
+                    </div>`;
+            }).join('');
+        }
+
+        function removeSelectedReviewer(id) {
+            selectedReviewPersonIds = selectedReviewPersonIds.filter(item => item !== id);
+            renderSelectedReviewers();
         }
 
         function renderSelectedProfessionals() {
             const container = document.getElementById('selectedProfessionals');
             const selected = visitPersonOptions.filter(person => selectedProfessionalIds.includes(person.id));
             if (selected.length === 0) {
-                container.innerHTML = '<div class="text-sm text-slate-500">暂无已选择专业人员</div>';
+                container.innerHTML = '<div class="text-sm text-slate-500">暂无已选择人员</div>';
                 return;
             }
             container.innerHTML = selected.map(person => {
                 const typeClass = person.type === '专职' ? 'fulltime' : 'parttime';
                 return `
-                    <div class="bg-white border border-blue-100 rounded-lg p-3 flex items-start justify-between gap-3">
+                    <div class="bg-white border border-blue-100 rounded-lg px-4 py-3 flex items-center justify-between gap-3 shadow-sm">
                         <div>
                             <div class="flex flex-wrap items-center gap-2">
                                 <span class="font-medium text-slate-900">${person.name}</span>
@@ -1767,7 +1832,7 @@
             container.innerHTML = selected.map(person => {
                 const typeClass = person.type === '专职' ? 'fulltime' : 'parttime';
                 return `
-                    <div class="bg-white border border-blue-100 rounded-lg p-3 flex items-start justify-between gap-3">
+                    <div class="bg-white border border-blue-100 rounded-lg px-4 py-3 flex items-center justify-between gap-3 shadow-sm">
                         <div>
                             <div class="flex flex-wrap items-center gap-2">
                                 <span class="font-medium text-slate-900">${person.name}</span>
@@ -2057,17 +2122,14 @@
             const conclusionSection = document.getElementById('section-conclusion');
             const conclusionNav = document.querySelector('a[href="#section-conclusion"]');
             const conclusionFloatingBtn = document.getElementById('conclusionFloatingBtn');
+
+            conclusionSection?.classList.remove('hidden');
+            conclusionNav?.classList.remove('hidden');
+            conclusionNav?.classList.add('block');
+            conclusionFloatingBtn?.classList.remove('hidden');
             
             if (value === 'Y') {
                 reason.classList.remove('hidden');
-                conclusionSection?.classList.add('hidden');
-                conclusionNav?.classList.remove('block');
-                conclusionNav?.classList.add('hidden');
-                conclusionFloatingBtn?.classList.add('hidden');
-                if (conclusionNav?.classList.contains('active')) {
-                    conclusionNav.classList.remove('active');
-                    nav?.classList.add('active');
-                }
                 setTimeout(() => {
                     section.classList.remove('hidden');
                     nav.classList.remove('hidden');
@@ -2079,10 +2141,6 @@
                 section.classList.add('hidden');
                 nav.classList.remove('block');
                 nav.classList.add('hidden');
-                conclusionSection?.classList.remove('hidden');
-                conclusionNav?.classList.remove('hidden');
-                conclusionNav?.classList.add('block');
-                conclusionFloatingBtn?.classList.remove('hidden');
                 const status = document.getElementById('siteVisitDescStatus');
                 if (status) status.classList.add('hidden');
             }
