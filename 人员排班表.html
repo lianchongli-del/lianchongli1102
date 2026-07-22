@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -591,54 +592,6 @@
             white-space: nowrap;
         }
 
-        .tooltip {
-            position: fixed;
-            background: #fff;
-            color: var(--text-primary);
-            padding: 12px 14px;
-            border-radius: 8px;
-            font-size: 12px;
-            max-width: 320px;
-            z-index: 1000;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.2s;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid var(--border-color);
-            line-height: 1.5;
-        }
-
-        .tooltip.visible {
-            opacity: 1;
-        }
-
-        .tooltip-title {
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 14px;
-            border-bottom: 1px solid var(--border-light);
-            padding-bottom: 8px;
-            color: var(--text-primary);
-        }
-
-        .tooltip-row {
-            display: flex;
-            gap: 6px;
-            margin: 3px 0;
-        }
-
-        .tooltip-label {
-            color: var(--text-muted);
-            min-width: 65px;
-            flex-shrink: 0;
-            font-size: 11px;
-        }
-
-        .tooltip-value {
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -873,6 +826,100 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
+        .form-input:disabled,
+        .person-picker:disabled {
+            background: #f8fafc;
+            color: #475569;
+            cursor: not-allowed;
+        }
+
+        .modal.detail-mode .form-label {
+            margin-bottom: 4px;
+            color: var(--text-muted);
+        }
+
+        .modal.detail-mode .form-input,
+        .modal.detail-mode .person-picker {
+            height: auto;
+            min-height: 28px;
+            padding: 0;
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+            color: var(--text-primary);
+            box-shadow: none;
+            cursor: default;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .modal.detail-mode textarea.form-input {
+            min-height: 44px;
+            line-height: 1.6;
+            resize: none;
+        }
+
+        .modal.detail-mode select.form-input {
+            appearance: none;
+            -webkit-appearance: none;
+            pointer-events: none;
+        }
+
+        .modal.detail-mode input[type="date"].form-input {
+            pointer-events: none;
+        }
+
+        .modal.detail-mode input[type="date"].form-input::-webkit-calendar-picker-indicator {
+            display: none;
+        }
+
+        .modal.detail-mode .application-form {
+            gap: 18px;
+        }
+
+        .modal.detail-mode .attachment-chip {
+            padding: 0;
+            border: 0;
+            background: transparent;
+        }
+
+        .audit-detail {
+            display: none;
+            gap: 18px;
+        }
+
+        .modal.audit-detail-mode .application-form {
+            display: none;
+        }
+
+        .modal.audit-detail-mode .audit-detail {
+            display: grid;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px 28px;
+        }
+
+        .detail-item.full {
+            grid-column: 1 / -1;
+        }
+
+        .detail-label {
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.6;
+        }
+
         textarea.form-input {
             min-height: 88px;
             height: auto;
@@ -905,31 +952,6 @@
         .required {
             color: var(--exceed-color);
             margin-left: 2px;
-        }
-
-        .approval-flow {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 10px;
-        }
-
-        .approval-step {
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px;
-            background: #f8fafc;
-        }
-
-        .approval-step-title {
-            font-weight: 700;
-            color: var(--text-primary);
-            font-size: 13px;
-        }
-
-        .approval-step-meta {
-            color: var(--text-secondary);
-            font-size: 12px;
-            margin-top: 4px;
         }
 
         .attachment-list {
@@ -1087,7 +1109,7 @@
             <button class="btn btn-primary" onclick="querySchedule()">查询</button>
             <button class="btn btn-secondary" onclick="resetFilter()">重置</button>
             <div class="filter-actions">
-                <button class="btn btn-primary" onclick="openApplicationModal()">新增申请</button>
+                <button class="btn btn-primary" onclick="openApplicationModal()">非审核活动登记</button>
                 <button class="btn btn-secondary" onclick="exportData()">导出Excel</button>
             </div>
         </div>
@@ -1132,26 +1154,24 @@
         </div>
     </main>
 
-    <div class="tooltip" id="tooltip"></div>
-
     <div class="modal-overlay" id="editModal">
         <div class="modal">
             <div class="modal-header">
-                <div class="modal-title">新增申请</div>
+                <div class="modal-title">非审核活动登记</div>
                 <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="application-form">
                     <div class="application-row-grid">
                         <div class="form-group">
-                            <label class="form-label">申请人员<span class="required">*</span></label>
+                            <label class="form-label">登记人员<span class="required">*</span></label>
                             <div class="person-picker-wrap">
                                 <input type="text" class="person-picker" id="modalPerson" placeholder="输入姓名/CQC编号搜索" autocomplete="off" onfocus="openPersonDropdown()" oninput="filterPersonDropdown()" onkeydown="handlePersonPickerKeydown(event)">
                                 <div class="person-dropdown" id="personDropdown"></div>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">申请类别<span class="required">*</span></label>
+                            <label class="form-label">登记类别<span class="required">*</span></label>
                             <select class="form-input" id="modalApplicationType" onchange="syncAttachmentRequirement()">
                                 <optgroup label="非审核活动">
                                     <option value="非审核活动|内部培训">内部培训</option>
@@ -1184,8 +1204,8 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">申请理由<span class="required">*</span></label>
-                        <textarea class="form-input" id="modalReason" placeholder="填写申请原因、事项说明或借调理由"></textarea>
+                        <label class="form-label">登记事由<span class="required">*</span></label>
+                        <textarea class="form-input" id="modalReason" placeholder="填写登记原因、事项说明或借调理由"></textarea>
                     </div>
                     <div class="form-group">
                         <label class="form-label" id="attachmentLabel">上传附件</label>
@@ -1194,10 +1214,38 @@
                         <div class="attachment-list" id="attachmentList"></div>
                     </div>
                 </div>
+                <div class="audit-detail" id="auditDetail">
+                    <div class="detail-grid">
+                        <div class="detail-item full">
+                            <div class="detail-label">公司名称</div>
+                            <div class="detail-value" id="auditCompanyName">-</div>
+                        </div>
+                        <div class="detail-item full">
+                            <div class="detail-label">公司地址</div>
+                            <div class="detail-value" id="auditCompanyAddress">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">审核组长</div>
+                            <div class="detail-value" id="auditLeader">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">占用时间</div>
+                            <div class="detail-value" id="auditDays">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">计划审核开始时间</div>
+                            <div class="detail-value" id="auditStartDate">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">计划审核结束时间</div>
+                            <div class="detail-value" id="auditEndDate">-</div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal()">取消</button>
-                <button class="btn btn-primary" onclick="saveSchedule()">提交申请</button>
+                <button class="btn btn-primary" id="modalPrimaryBtn" onclick="handleModalPrimaryAction()">提交登记</button>
             </div>
         </div>
     </div>
@@ -1211,6 +1259,11 @@
         const auditTypes = ['初次认证','监督一','监督二','再认证'];
         const nonAuditTypes = ['内部培训','外部培训','会议'];
         const leaveTypes = ['年假','事假','病假','调休'];
+        const sampleAttachmentTemplates = [
+            { name: '培训通知.pdf', content: '示例附件：内部培训通知\n培训主题：体系认证业务能力提升\n请按计划参加。' },
+            { name: '会议纪要.docx', content: '示例附件：会议纪要\n主题：审核人员排班协调会\n结论：按登记信息执行。' },
+            { name: '借调函扫描件.pdf', content: '示例附件：借调函扫描件\n该文件用于演示预览和下载。' }
+        ];
         const applicationTypeOptions = {
             '审核活动': auditTypes,
             '非审核活动': nonAuditTypes,
@@ -1225,6 +1278,8 @@
         let manualApplications = [];
         let selectedRows = new Set();
         let currentEditing = null;
+        let currentDetail = null;
+        let modalMode = 'create';
         let selectedApplicationPersonId = '';
         let applicationAttachments = [];
         let sortDirection = 'desc';
@@ -1359,7 +1414,8 @@
                         address: '-',
                         remainingAtStart: remaining.toFixed(1),
                         status: '',
-                        approvalSteps: []
+                        attachments: [],
+                        attachmentFiles: []
                     };
 
                     if (taskCategory === 'non-audit') {
@@ -1369,6 +1425,7 @@
                         planObj.auditType = type;
                         planObj.isNonAudit = true;
                         planObj.status = 'non-audit';
+                        if (Math.random() > 0.45) planObj.attachmentFiles = [createSampleAttachment(type === '会议' ? 1 : 0)];
                     } else if (taskCategory === 'leave') {
                         const type = leaveTypes[Math.floor(Math.random() * leaveTypes.length)];
                         planObj.id = 'LV' + Math.random().toString(36).substr(2, 9);
@@ -1382,6 +1439,7 @@
                         planObj.companyName = company + '有限公司';
                         planObj.auditType = '二方审核';
                         planObj.isExternal = true;
+                        planObj.attachmentFiles = Math.random() > 0.55 ? [createSampleAttachment(1)] : [];
                         planObj.members = Math.random() > 0.6 ? generateMembers() : '';
                         planObj.address = addresses[Math.floor(Math.random() * addresses.length)];
                         planObj.leader = Math.random() > 0.5 ? auditor.name : 
@@ -1426,6 +1484,16 @@
             return members.join('、');
         }
 
+        function createSampleAttachment(index) {
+            const template = sampleAttachmentTemplates[index % sampleAttachmentTemplates.length];
+            const blob = new Blob([template.content], { type: 'text/plain;charset=utf-8' });
+            return {
+                id: Date.now().toString(36) + Math.random().toString(36).slice(2),
+                file: { name: template.name },
+                url: URL.createObjectURL(blob)
+            };
+        }
+
         // ==================== 初始化 ====================
         document.addEventListener('DOMContentLoaded', function() {
             try {
@@ -1454,6 +1522,7 @@
                         closePersonDropdown();
                     }
                 });
+
             } catch (err) {
                 console.error('初始化错误:', err);
                 document.getElementById('tableBody').innerHTML = 
@@ -1688,9 +1757,7 @@
                     if (holiday) cellClass += ' holiday';
 
                     html += `<td class="${cellClass}" 
-                        ondblclick="openPlanEditor('${person.id}', ${year}, ${month}, ${day}, event)"
-                        onmouseenter="showTooltip(event, '${person.id}', ${day}, ${month}, ${year})"
-                        onmouseleave="hideTooltip()">`;
+                        ondblclick="openPlanEditor('${person.id}', ${year}, ${month}, ${day}, event)">`;
 
                     // 渲染任务条 - 只在任务开始日渲染
                     if (plan && plan.isStart) {
@@ -1720,8 +1787,11 @@
                         } else {
                             const company = plan.companyName.length > 4 ? 
                                 plan.companyName.substring(0, 4) + '..' : plan.companyName;
+                            const displayInfo = (!plan.isLeave && !plan.isNonAudit && !plan.isBorrowed && !plan.isExternal)
+                                ? (plan.address || '-')
+                                : plan.auditType;
                             taskContent = `<div class="task-company" title="${plan.companyName}">${company}</div>
-                                           <div class="task-type">${plan.auditType}</div>
+                                           <div class="task-type" title="${displayInfo}">${displayInfo}</div>
                                            <div class="task-days">
                                                <span>${plan.days}天</span>
                                                <span class="task-remaining">剩${plan.remainingAtStart}</span>
@@ -1732,7 +1802,7 @@
                         const dataAttr = hasHalfDay ? ' data-has-half="true"' : '';
 
                         html += `<div class="${barClass}" style="width:${width}px;"${dataAttr}
-                            onclick="showPlanDetail('${plan.id}', event)">
+                            onclick="showPlanDetail('${person.id}', '${plan.id}', ${year}, ${month}, event)">
                             ${taskContent}
                         </div>`;
                     }
@@ -1799,131 +1869,23 @@
             }
         }
 
-        // ==================== 提示框 ====================
-        function showTooltip(e, personId, day, month, year) {
-            const person = currentData.find(p => p.id === personId);
+        function revokePlanRegistration(personId, planId) {
+            manualApplications = manualApplications.filter(item => item.id !== planId);
+            const person = currentData.find(p => p.id === personId) || scheduleData.find(p => p.id === personId);
             if (!person) return;
-
-            const dayPlans = buildDayPlanMap(person.plans, 31, year, month);
-            const plan = dayPlans[day];
-
-            if (!plan) return;
-
-            const tooltip = document.getElementById('tooltip');
-            if (!tooltip) return;
-
-            let content = `<div class="tooltip-title">${plan.companyName}</div>`;
-
-            content += `
-                <div class="tooltip-row">
-                    <span class="tooltip-label">审核人员:</span>
-                    <span class="tooltip-value">${person.name} (${person.id})</span>
-                </div>
-                <div class="tooltip-row">
-                    <span class="tooltip-label">计划时间:</span>
-                    <span class="tooltip-value">${month+1}月${plan.startDay}日 - ${month+1}月${plan.endDay}日</span>
-                </div>
-                <div class="tooltip-row">
-                    <span class="tooltip-label">占用天数:</span>
-                    <span class="tooltip-value">${plan.days}天</span>
-                </div>
-            `;
-
-            if (plan.approvalSteps && plan.approvalSteps.length) {
-                content += `
-                    <div class="tooltip-row">
-                        <span class="tooltip-label">审批流程:</span>
-                        <span class="tooltip-value">${plan.approvalSteps.map(s => s.name + '待审批').join(' → ')}</span>
-                    </div>
-                `;
-            }
-
-            if (plan.isLeave) {
-                content += `
-                    <div class="tooltip-row">
-                        <span class="tooltip-label">请假类型:</span>
-                        <span class="tooltip-value">${plan.auditType}</span>
-                    </div>
-                    <div class="tooltip-row">
-                        <span class="tooltip-label">剩余可用:</span>
-                        <span class="tooltip-value">${plan.remainingAtStart}天</span>
-                    </div>
-                `;
-            } else if (plan.isNonAudit) {
-                content += `
-                    <div class="tooltip-row">
-                        <span class="tooltip-label">活动类型:</span>
-                        <span class="tooltip-value">${plan.auditType}</span>
-                    </div>
-                    <div class="tooltip-row">
-                        <span class="tooltip-label">剩余可用:</span>
-                        <span class="tooltip-value">${plan.remainingAtStart}天</span>
-                    </div>
-                `;
-            } else if (plan.isBorrowed) {
-                content += `
-                    <div class="tooltip-row">
-                        <span class="tooltip-label">承担角色:</span>
-                        <span class="tooltip-value">${plan.role || '-'}</span>
-                    </div>
-                    <div class="tooltip-row">
-                        <span class="tooltip-label">认证领域:</span>
-                        <span class="tooltip-value">${plan.certification || '-'}</span>
-                    </div>
-                    <div class="tooltip-row">
-                        <span class="tooltip-label">附件:</span>
-                        <span class="tooltip-value">${plan.attachments && plan.attachments.length ? plan.attachments.join('、') : '-'}</span>
-                    </div>
-                `;
-            } else if (plan.isExternal) {
-                content += `
-                    <div class="tooltip-row">
-                        <span class="tooltip-label">审核类型:</span>
-                        <span class="tooltip-value">二方审核</span>
-                    </div>
-                    <div class="tooltip-row">
-                        <span class="tooltip-label">公司地址:</span>
-                        <span class="tooltip-value">${plan.address || '-'}</span>
-                    </div>
-                    <div class="tooltip-row">
-                        <span class="tooltip-label">剩余人天数:</span>
-                        <span class="tooltip-value">${plan.remainingAtStart}天</span>
-                    </div>
-                `;
-            } else {
-                content += `
-                    <div class="tooltip-row">
-                        <span class="tooltip-label">公司地址:</span>
-                        <span class="tooltip-value">${plan.address || '-'}</span>
-                    </div>
-                    <div class="tooltip-row">
-                        <span class="tooltip-label">剩余人天数:</span>
-                        <span class="tooltip-value">${plan.remainingAtStart}天</span>
-                    </div>
-                `;
-            }
-
-            tooltip.innerHTML = content;
-            tooltip.classList.add('visible');
-
-            const rect = e.target.getBoundingClientRect();
-            let left = rect.right + 8;
-            let top = rect.top;
-
-            if (left + 320 > window.innerWidth) {
-                left = rect.left - 330;
-            }
-            if (top + 250 > window.innerHeight) {
-                top = window.innerHeight - 260;
-            }
-
-            tooltip.style.left = left + 'px';
-            tooltip.style.top = top + 'px';
+            person.plans = (person.plans || []).filter(item => item.id !== planId);
+            person.monthlyDays = person.plans.reduce((sum, item) => sum + parseFloat(item.days), 0);
+            person.remainingDays = person.initialRemaining - person.plans
+                .filter(item => !item.isLeave && !item.isNonAudit)
+                .reduce((sum, item) => sum + parseFloat(item.days), 0);
         }
 
-        function hideTooltip() {
-            const tooltip = document.getElementById('tooltip');
-            if (tooltip) tooltip.classList.remove('visible');
+        function isPlanBeforeToday(plan, year, month) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const endDate = new Date(year, month, parseInt(plan.endDay));
+            endDate.setHours(0, 0, 0, 0);
+            return endDate < today;
         }
 
         // ==================== 编辑弹窗 ====================
@@ -1931,7 +1893,7 @@
             const selectedId = selectedRows.size ? Array.from(selectedRows)[0] : null;
             const person = currentData.find(p => p.id === selectedId) || currentData[0] || scheduleData[0];
             if (!person) {
-                alert('暂无可申请人员，请先查询人员排班');
+                alert('暂无可登记人员，请先查询人员排班');
                 return;
             }
             const year = parseInt(document.getElementById('yearSelect').value) || 2026;
@@ -1944,6 +1906,7 @@
             const person = currentData.find(p => p.id === personId) || scheduleData.find(p => p.id === personId);
             if (!person) return;
 
+            setModalMode('create');
             renderAuditorOptions();
             document.getElementById('modalPerson').value = formatPersonOption(person);
             selectedApplicationPersonId = person.id;
@@ -1960,15 +1923,18 @@
             document.getElementById('editModal').classList.add('active');
         }
 
-        function showPlanDetail(planId, event) {
+        function showPlanDetail(personId, planId, year, month, event) {
             if (event) event.stopPropagation();
-            const plan = currentData.flatMap(p => p.plans || []).find(p => p.id === planId);
+            const person = currentData.find(p => p.id === personId);
+            const plan = person ? (person.plans || []).find(p => p.id === planId) : null;
             if (!plan) return;
-            const approvals = plan.approvalSteps && plan.approvalSteps.length ?
-                '\n审批流程：' + plan.approvalSteps.map(s => s.name + '待审批').join(' → ') : '';
-            const attachments = plan.attachments && plan.attachments.length ?
-                '\n附件：' + plan.attachments.join('、') : '';
-            alert(`${plan.auditType}：${plan.companyName}\n时间：${plan.startDay}日-${plan.endDay}日，共${plan.days}天${approvals}${attachments}`);
+
+            if (!plan.isLeave && !plan.isNonAudit && !plan.isBorrowed && !plan.isExternal) {
+                openAuditDetail(person, plan, year, month);
+                return;
+            }
+
+            openRegistrationDetail(person, plan, year, month);
         }
 
         function closeModal() {
@@ -1976,6 +1942,93 @@
             if (modal) modal.classList.remove('active');
             closePersonDropdown();
             currentEditing = null;
+            currentDetail = null;
+            setModalMode('create');
+        }
+
+        function handleModalPrimaryAction() {
+            if (modalMode === 'detail') {
+                revokeCurrentDetailRegistration();
+            } else {
+                saveSchedule();
+            }
+        }
+
+        function setModalMode(mode) {
+            modalMode = mode;
+            const isDetail = mode === 'detail';
+            const isAuditDetail = mode === 'audit-detail';
+            const modal = document.querySelector('#editModal .modal');
+            if (modal) modal.classList.toggle('detail-mode', isDetail);
+            if (modal) modal.classList.toggle('audit-detail-mode', isAuditDetail);
+            document.querySelector('.modal-title').textContent = isAuditDetail ? '审核活动详情' : (isDetail ? '非审核活动登记详情' : '非审核活动登记');
+            const primaryBtn = document.getElementById('modalPrimaryBtn');
+            primaryBtn.textContent = isDetail ? '撤销登记' : '提交登记';
+            primaryBtn.style.display = isAuditDetail ? 'none' : 'inline-flex';
+            ['modalPerson', 'modalStartDate', 'modalEndDate', 'modalApplicationType', 'modalReason'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.disabled = isDetail || isAuditDetail;
+            });
+            const uploadButton = document.querySelector('.upload-button');
+            if (uploadButton) uploadButton.style.display = (isDetail || isAuditDetail) ? 'none' : 'inline-flex';
+        }
+
+        function openAuditDetail(person, plan, year, month) {
+            setModalMode('audit-detail');
+            currentDetail = { personId: person.id, planId: plan.id, year, month };
+            document.getElementById('auditCompanyName').textContent = plan.companyName || '-';
+            document.getElementById('auditCompanyAddress').textContent = plan.address || '-';
+            document.getElementById('auditLeader').textContent = plan.leader || person.name || '-';
+            document.getElementById('auditStartDate').textContent = formatDateText(year, month, plan.startDay);
+            document.getElementById('auditEndDate').textContent = formatDateText(year, month, plan.endDay);
+            document.getElementById('auditDays').textContent = `${plan.days}天`;
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        function openRegistrationDetail(person, plan, year, month) {
+            setModalMode('detail');
+            selectedApplicationPersonId = person.id;
+            currentDetail = { personId: person.id, planId: plan.id, year, month };
+            document.getElementById('modalPerson').value = formatPersonOption(person);
+            document.getElementById('modalStartDate').value = formatDateInput(year, month, plan.startDay);
+            document.getElementById('modalEndDate').value = formatDateInput(year, month, plan.endDay);
+            document.getElementById('modalApplicationType').value = getApplicationTypeValue(plan);
+            document.getElementById('modalReason').value = plan.remark || plan.companyName || '';
+            applicationAttachments = plan.attachmentFiles && plan.attachmentFiles.length
+                ? plan.attachmentFiles.slice()
+                : (plan.attachments || []).map(name => ({
+                    id: Date.now().toString(36) + Math.random().toString(36).slice(2),
+                    file: { name },
+                    url: ''
+                }));
+            renderAttachmentList();
+            syncAttachmentRequirement();
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        function getApplicationTypeValue(plan) {
+            if (plan.isLeave) return `休假/请假|${plan.auditType}`;
+            if (plan.isExternal) return '二方审核|二方审核';
+            if (plan.isBorrowed) return '借调|借调';
+            return `非审核活动|${plan.auditType}`;
+        }
+
+        function revokeCurrentDetailRegistration() {
+            if (!currentDetail) return;
+            const person = currentData.find(p => p.id === currentDetail.personId);
+            const plan = person ? (person.plans || []).find(item => item.id === currentDetail.planId) : null;
+            if (!plan) return;
+            if (!isPlanBeforeToday(plan, currentDetail.year, currentDetail.month)) {
+                alert('当前日期之前的登记才可以撤销');
+                return;
+            }
+            if (!confirm('是否撤销登记？')) return;
+
+            const year = currentDetail.year;
+            const month = currentDetail.month;
+            revokePlanRegistration(currentDetail.personId, currentDetail.planId);
+            closeModal();
+            renderSchedule(currentData, year, month);
         }
 
         function saveSchedule() {
@@ -1989,7 +2042,7 @@
             const attachments = applicationAttachments.map(item => item.file.name);
 
             if (!selectedPerson) {
-                alert('请选择申请人员');
+                alert('请选择登记人员');
                 return;
             }
             if (!startDate || !endDate) {
@@ -2001,18 +2054,17 @@
                 return;
             }
             if (!reason) {
-                alert('请输入申请理由');
+                alert('请输入登记事由');
                 return;
             }
             if (category === '借调' && applicationAttachments.length === 0) {
-                alert('借调申请必须上传附件');
+                alert('借调登记必须上传附件');
                 return;
             }
 
             const start = parseDateInput(startDate);
             const end = parseDateInput(endDate);
             const days = countWorkdaysBetween(start, end);
-            const approvalSteps = buildApprovalSteps(category);
             const application = {
                 id: (category === '借调' ? 'BD' : 'AP') + Date.now(),
                 personId: selectedPerson.id,
@@ -2040,29 +2092,13 @@
                 fee: '',
                 remark: reason,
                 attachments: attachments,
-                approvalSteps: approvalSteps
+                attachmentFiles: applicationAttachments.slice()
             };
 
             manualApplications.push(application);
-            alert(`申请已提交！${approvalSteps.length ? '审批流程：' + approvalSteps.map(s => s.name).join(' → ') : '待主管审批'}`);
+            alert('登记已提交！');
             closeModal();
             querySchedule();
-        }
-
-        function buildApprovalSteps(category) {
-            if (category === '二方审核' || category === '借调') {
-                return [
-                    { name: '借用单位', description: '确认业务需要和人员借用安排' },
-                    { name: '所在单位', description: '确认人员可借调并审批放行' }
-                ];
-            }
-            if (category === '非审核活动') {
-                return [{ name: '部门负责人', description: '确认培训、会议等非审核活动安排' }];
-            }
-            if (category === '休假/请假') {
-                return [{ name: '所在部门', description: '确认假期类型、余额和工作交接' }];
-            }
-            return [{ name: '项目负责人', description: '确认审核任务安排' }];
         }
 
         function renderAuditorOptions() {
@@ -2159,6 +2195,10 @@
             return `${year}-${mm}-${dd}`;
         }
 
+        function formatDateText(year, month, day) {
+            return `${year}年${month + 1}月${day}日`;
+        }
+
         function parseDateInput(value) {
             const [year, month, day] = value.split('-').map(Number);
             return { year, month: month - 1, day };
@@ -2192,12 +2232,15 @@
 
         function renderAttachmentList() {
             const list = document.getElementById('attachmentList');
+            const canDelete = modalMode === 'create';
             list.innerHTML = applicationAttachments.map(item => `
                 <span class="attachment-chip" title="${item.file.name}">
                     <span class="attachment-name">${item.file.name}</span>
+                    ${item.url ? `
                     <button type="button" class="attachment-action" onclick="previewAttachment('${item.id}')">预览</button>
                     <button type="button" class="attachment-action" onclick="downloadAttachment('${item.id}')">下载</button>
-                    <button type="button" class="attachment-action delete" onclick="removeAttachment('${item.id}')">删除</button>
+                    ${canDelete ? `<button type="button" class="attachment-action delete" onclick="removeAttachment('${item.id}')">删除</button>` : ''}
+                    ` : ''}
                 </span>
             `).join('');
         }
