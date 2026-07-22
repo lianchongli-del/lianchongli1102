@@ -1386,6 +1386,16 @@
             padding: 5px 7px;
         }
 
+        #certSitesTable {
+            min-width: 1500px;
+        }
+
+        .cert-sites-table-scroll {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
         .cert-row-index {
             display: inline-flex;
             align-items: center;
@@ -4209,33 +4219,6 @@
             </button>
         </div>
         <div class="cert-drawer-body">
-            <!-- 标题栏信息 -->
-            <div class="bg-gray-50 p-4 rounded-lg mb-4 border border-gray-200">
-                <h4 class="font-semibold text-gray-800 mb-3 text-sm">客户基本信息</h4>
-                <div class="grid grid-cols-2 gap-4 text-sm">
-                    <div class="flex items-center gap-2">
-                        <span class="text-gray-500">客户名称：</span>
-                        <span class="font-medium text-gray-900" id="certDrawerCustomerName">华信环境监测技术中心</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-gray-500">注册地址：</span>
-                        <span class="font-medium text-gray-900" id="certDrawerRegAddress">北京市海淀区中关村大街1号</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-gray-500">运营地址：</span>
-                        <span class="font-medium text-gray-900" id="certDrawerCertAddress">北京市海淀区中关村大街1号</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-gray-500">法人代表/负责人：</span>
-                        <span class="font-medium text-gray-900" id="certDrawerLegalRep">张先生</span>
-                    </div>
-                    <div class="flex items-center gap-2 col-span-2">
-                        <span class="text-gray-500">统一社会信用代码/注册编号：</span>
-                        <span class="font-medium text-gray-900" id="certDrawerCreditCode">91110108XXXXXXXXXX</span>
-                    </div>
-                </div>
-            </div>
-
             <!-- 操作按钮 -->
             <div class="flex justify-between items-center mb-3">
                 <h3 class="font-semibold text-gray-800">证书内容列表</h3>
@@ -4298,7 +4281,7 @@
                     </div>
                     <div class="form-row">
                         <label class="form-label">客户名称（英文）</label>
-                        <input type="text" class="form-input" id="certEdit_customerNameEn" value="Huaxin Environmental Monitoring Technology Center">
+                        <input type="text" class="form-input" id="certEdit_customerNameEn" value="Huaxin Environmental Monitoring Technology Center" oninput="syncMainCertSiteFromCustomerInfo()">
                     </div>
                 </div>
 
@@ -4320,7 +4303,7 @@
                     </div>
                     <div class="form-row">
                         <label class="form-label">运营地址（英文）</label>
-                        <input type="text" class="form-input" id="certEdit_certAddressEn" value="No.1 Zhongguancun Street, Haidian District, Beijing, P.R.China">
+                        <input type="text" class="form-input" id="certEdit_certAddressEn" value="No.1 Zhongguancun Street, Haidian District, Beijing, P.R.China" oninput="syncMainCertSiteFromCustomerInfo()">
                     </div>
                 </div>
 
@@ -4345,7 +4328,7 @@
                 </div>
                 <div class="form-row">
                     <label class="form-label">认证范围（英文）</label>
-                    <textarea class="form-textarea" id="certEdit_scopeEn" rows="3" placeholder="English scope..."></textarea>
+                    <textarea class="form-textarea" id="certEdit_scopeEn" rows="3" placeholder="English scope..." oninput="syncMainCertSiteFromCustomerInfo()"></textarea>
                 </div>
                 <div id="certFoodScopePanel" class="scope-extra-panel">
                     <div class="cert-subsection-title">HACCP/FSMS 认证证书覆盖范围（F/H适用）</div>
@@ -4429,6 +4412,12 @@
                         </label>
                     </div>
                 </div>
+                <div class="form-row" style="margin-top: 12px;">
+                    <label class="checkbox-label" style="width: fit-content;">
+                        <input type="checkbox" id="certEdit_issueEnglishCert" checked>
+                        是否出具英文证书
+                    </label>
+                </div>
                 </div>
 
                 <!-- 7. 是否有证书附件（默认有，不可修改） -->
@@ -4456,14 +4445,18 @@
                 <div class="cert-section-panel">
                 <div class="cert-section-title"><span class="cert-section-index">5</span><span>证书附件【多场所】</span></div>
                 
+                <div class="cert-sites-table-scroll">
                 <table class="data-table" id="certSitesTable">
                     <thead>
                         <tr>
                             <th style="width: 50px">序号</th>
                             <th>（组织/场所）名称</th>
+                            <th>（组织/场所）名称（英）</th>
                             <th style="width: 150px">统一信用代码</th>
                             <th>运营地址</th>
+                            <th>运营地址（英）</th>
                             <th>覆盖的产品和服务</th>
+                            <th>覆盖的产品和服务（英）</th>
                             <th style="width: 140px">客户需要子证/是否出子证</th>
                             <th style="width: 150px">备注</th>
                         </tr>
@@ -4472,6 +4465,7 @@
                         <!-- 动态填充：1行中心职能+4行多场所 -->
                     </tbody>
                 </table>
+                </div>
                 </div>
 
                 <!-- 12 证书附件【产品信息】 -->
@@ -4488,7 +4482,9 @@
                         <tr>
                             <th style="width: 50px">序号</th>
                             <th>产品类别</th>
+                            <th>产品类别（英）</th>
                             <th>产品名称</th>
+                            <th>产品名称（英）</th>
                             <th style="width: 100px">备注</th>
                             <th style="width: 80px">操作</th>
                         </tr>
@@ -4698,15 +4694,16 @@
                 scopeEn: '',
                 standard: 'ISO 9001:2015',
                 certMark: 'CNAS',
+                issueEnglishCert: true,
                 hasAttachment: 'yes',
                 hasSubCert: 'yes',
                 isMultiSite: '是',
                 sites: [
-                    { name: '华信环境监测技术中心', code: '91110108XXXXXXXXXX', address: '北京市海淀区中关村大街1号', products: '软件开发、系统集成', subCert: 'no', remark: '-' },
-                    { name: '生产现场一', code: '91110108XXXXXXXX01', address: '北京市昌平区生产基地', products: '硬件制造', subCert: 'yes', remark: '颁发子证书' },
-                    { name: '研发中心', code: '91110108XXXXXXXX02', address: '北京市朝阳区研发大厦', products: '软件研发', subCert: 'yes', remark: '颁发子证书' },
-                    { name: '分公司', code: '91110108XXXXXXXX03', address: '上海市浦东新区', products: '销售服务', subCert: 'no', remark: '-' },
-                    { name: '办事处', code: '91110108XXXXXXXX04', address: '广州市天河区', products: '客户服务', subCert: 'no', remark: '-' }
+                    { name: '华信环境监测技术中心', nameEn: 'Huaxin Environmental Monitoring Technology Center', code: '91110108XXXXXXXXXX', address: '北京市海淀区中关村大街1号', addressEn: 'No.1 Zhongguancun Street, Haidian District, Beijing', products: '软件开发、系统集成', productsEn: 'Software development and system integration', subCert: 'no', remark: '-' },
+                    { name: '生产现场一', nameEn: 'Production Site 1', code: '91110108XXXXXXXX01', address: '北京市昌平区生产基地', addressEn: 'Changping Production Base, Beijing', products: '硬件制造', productsEn: 'Hardware manufacturing', subCert: 'yes', remark: '颁发子证书' },
+                    { name: '研发中心', nameEn: 'R&D Center', code: '91110108XXXXXXXX02', address: '北京市朝阳区研发大厦', addressEn: 'R&D Building, Chaoyang District, Beijing', products: '软件研发', productsEn: 'Software research and development', subCert: 'yes', remark: '颁发子证书' },
+                    { name: '分公司', nameEn: 'Branch Office', code: '91110108XXXXXXXX03', address: '上海市浦东新区', addressEn: 'Pudong New Area, Shanghai', products: '销售服务', productsEn: 'Sales services', subCert: 'no', remark: '-' },
+                    { name: '办事处', nameEn: 'Representative Office', code: '91110108XXXXXXXX04', address: '广州市天河区', addressEn: 'Tianhe District, Guangzhou', products: '客户服务', productsEn: 'Customer services', subCert: 'no', remark: '-' }
                 ],
                 products: []
             },
@@ -4724,11 +4721,12 @@
                 scopeEn: '',
                 standard: 'ISO 9001:2015',
                 certMark: 'DAKKS',
+                issueEnglishCert: true,
                 hasAttachment: 'no',
                 hasSubCert: 'no',
                 isMultiSite: '否',
                 sites: [
-                    { name: '华信环境监测技术中心', code: '91110108XXXXXXXXXX', address: '北京市海淀区中关村大街1号', products: '环境监测服务', subCert: 'no', remark: '-' }
+                    { name: '华信环境监测技术中心', nameEn: 'Huaxin Environmental Monitoring Technology Center', code: '91110108XXXXXXXXXX', address: '北京市海淀区中关村大街1号', addressEn: 'No.1 Zhongguancun Street, Haidian District, Beijing', products: '环境监测服务', productsEn: 'Environmental monitoring services', subCert: 'no', remark: '-' }
                 ],
                 products: []
             }
@@ -5579,16 +5577,28 @@
             return document.getElementById('certEdit_customerName')?.value || document.getElementById('headerCustomerName')?.textContent || '客户名称';
         }
 
+        function getCertMainSiteNameEn() {
+            return document.getElementById('certEdit_customerNameEn')?.value || '';
+        }
+
         function getCertMainSiteAddress() {
-            return document.getElementById('certEdit_certAddress')?.value || document.getElementById('certDrawerCertAddress')?.textContent || '';
+            return document.getElementById('certEdit_certAddress')?.value || '';
+        }
+
+        function getCertMainSiteAddressEn() {
+            return document.getElementById('certEdit_certAddressEn')?.value || '';
         }
 
         function getCertMainSiteCode() {
-            return document.getElementById('certEdit_creditCode')?.value || document.getElementById('certDrawerCreditCode')?.textContent || '';
+            return document.getElementById('certEdit_creditCode')?.value || '';
         }
 
         function getCertMainSiteProducts() {
             return document.getElementById('certEdit_scope')?.value || '';
+        }
+
+        function getCertMainSiteProductsEn() {
+            return document.getElementById('certEdit_scopeEn')?.value || '';
         }
 
         function syncMainCertSiteFromCustomerInfo() {
@@ -5596,13 +5606,19 @@
             if (!firstRow) return;
 
             const nameInput = firstRow.querySelector('.cert-site-name-input');
+            const nameEnInput = firstRow.querySelector('.cert-site-name-en-input');
             const codeInput = firstRow.querySelector('.cert-site-code-input');
             const addressInput = firstRow.querySelector('.cert-site-address-input');
+            const addressEnInput = firstRow.querySelector('.cert-site-address-en-input');
             const productsInput = firstRow.querySelector('.cert-site-products-input');
+            const productsEnInput = firstRow.querySelector('.cert-site-products-en-input');
             if (nameInput) nameInput.value = getCertMainSiteName();
+            if (nameEnInput) nameEnInput.value = getCertMainSiteNameEn();
             if (codeInput) codeInput.value = getCertMainSiteCode();
             if (addressInput) addressInput.value = getCertMainSiteAddress();
+            if (addressEnInput) addressEnInput.value = getCertMainSiteAddressEn();
             if (productsInput) productsInput.value = getCertMainSiteProducts();
+            if (productsEnInput) productsEnInput.value = getCertMainSiteProductsEn();
         }
 
         function normalizeCertStandards(standard) {
@@ -5737,17 +5753,20 @@
             
             const mainSite = sitesInfo.find(s => s.isMain) || {
                 name: getCertMainSiteName(),
+                nameEn: getCertMainSiteNameEn(),
                 code: getCertMainSiteCode(),
                 address: getCertMainSiteAddress(),
-                products: getCertMainSiteProducts()
+                addressEn: getCertMainSiteAddressEn(),
+                products: getCertMainSiteProducts(),
+                productsEn: getCertMainSiteProductsEn()
             };
             
             const tableData = [
                 { ...mainSite, isMain: true, subCert: 'no', remark: '-' },
-                { name: '生产现场一', code: '91110108XXXXXXXX01', address: '北京市昌平区生产基地', products: '硬件制造', subCert: 'yes', remark: '' },
-                { name: '研发中心', code: '91110108XXXXXXXX02', address: '北京市朝阳区研发大厦', products: '软件研发', subCert: 'yes', remark: '' },
-                { name: '分公司', code: '91110108XXXXXXXX03', address: '上海市浦东新区', products: '销售服务', subCert: 'no', remark: '' },
-                { name: '办事处', code: '91110108XXXXXXXX04', address: '广州市天河区', products: '客户服务', subCert: 'no', remark: '' }
+                { name: '生产现场一', nameEn: '', code: '91110108XXXXXXXX01', address: '北京市昌平区生产基地', addressEn: '', products: '硬件制造', productsEn: '', subCert: 'yes', remark: '' },
+                { name: '研发中心', nameEn: '', code: '91110108XXXXXXXX02', address: '北京市朝阳区研发大厦', addressEn: '', products: '软件研发', productsEn: '', subCert: 'yes', remark: '' },
+                { name: '分公司', nameEn: '', code: '91110108XXXXXXXX03', address: '上海市浦东新区', addressEn: '', products: '销售服务', productsEn: '', subCert: 'no', remark: '' },
+                { name: '办事处', nameEn: '', code: '91110108XXXXXXXX04', address: '广州市天河区', addressEn: '', products: '客户服务', productsEn: '', subCert: 'no', remark: '' }
             ];
             
             const savedData = currentEditCertId ? certContentData.find(item => item.id === currentEditCertId)?.sites : null;
@@ -5758,7 +5777,7 @@
                     }
                 }
             }
-            tableData[0] = { ...tableData[0], name: getCertMainSiteName(), code: getCertMainSiteCode(), address: getCertMainSiteAddress(), products: getCertMainSiteProducts(), isMain: true };
+            tableData[0] = { ...tableData[0], name: getCertMainSiteName(), nameEn: getCertMainSiteNameEn(), code: getCertMainSiteCode(), address: getCertMainSiteAddress(), addressEn: getCertMainSiteAddressEn(), products: getCertMainSiteProducts(), productsEn: getCertMainSiteProductsEn(), isMain: true };
             
             tableData.forEach((site, index) => {
                 const isMain = site.isMain || index === 0;
@@ -5773,9 +5792,12 @@
                 tr.innerHTML = `
                     <td><span class="cert-row-index">${index + 1}</span></td>
                     <td><input type="text" class="form-input cert-site-name-input" value="${site.name || ''}" ${isMain ? 'readonly style="background:#f5f5f5; cursor:not-allowed;"' : ''}></td>
+                    <td><input type="text" class="form-input cert-site-name-en-input" value="${site.nameEn || ''}" ${isMain ? 'readonly style="background:#f5f5f5; cursor:not-allowed;"' : ''}></td>
                     <td><textarea class="form-input cert-site-code-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.code || ''}</textarea></td>
                     <td><textarea class="form-input cert-site-address-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.address || ''}</textarea></td>
+                    <td><textarea class="form-input cert-site-address-en-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.addressEn || ''}</textarea></td>
                     <td><textarea class="form-input cert-site-products-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.products || ''}</textarea></td>
+                    <td><textarea class="form-input cert-site-products-en-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.productsEn || ''}</textarea></td>
                     <td>
                         <div style="display:flex;align-items:center;gap:4px;">
                             <span class="subcert-readonly" style="font-size:12px;color:var(--color-text-muted);white-space:nowrap;">${subCertValue}</span>
@@ -5789,7 +5811,6 @@
         }
         
         function openCertContentDrawer() {
-            document.getElementById('certDrawerCustomerName').textContent = document.getElementById('headerCustomerName').textContent;
             document.getElementById('certContentDrawer').classList.add('open');
             document.getElementById('certDrawerOverlay').classList.add('open');
 
@@ -5861,6 +5882,7 @@
                     markRadios.forEach(radio => {
                         radio.checked = (data.certMark === radio.value);
                     });
+                    document.getElementById('certEdit_issueEnglishCert').checked = data.issueEnglishCert !== false;
                     
                     updateCertAttachmentAndSubCertStatus(sitesInfo);
                     updateCertFoodScopeVisibility();
@@ -5891,6 +5913,7 @@
                 markRadios.forEach(radio => {
                     radio.checked = (radio.value === 'CNAS');
                 });
+                document.getElementById('certEdit_issueEnglishCert').checked = true;
                 
                 updateCertAttachmentAndSubCertStatus(sitesInfo);
                 updateCertFoodScopeVisibility();
@@ -5912,11 +5935,11 @@
             tbody.innerHTML = '';
             
             const defaultSites = [
-                { name: getCertMainSiteName(), code: getCertMainSiteCode(), address: getCertMainSiteAddress(), products: getCertMainSiteProducts(), subCert: 'no', remark: '-', isMain: true },
-                { name: '生产现场一', code: '91110108XXXXXXXX01', address: '北京市昌平区生产基地', products: '硬件制造', subCert: 'yes', remark: '' },
-                { name: '研发中心', code: '91110108XXXXXXXX02', address: '北京市朝阳区研发大厦', products: '软件研发', subCert: 'yes', remark: '' },
-                { name: '分公司', code: '91110108XXXXXXXX03', address: '上海市浦东新区', products: '销售服务', subCert: 'no', remark: '' },
-                { name: '办事处', code: '91110108XXXXXXXX04', address: '广州市天河区', products: '客户服务', subCert: 'no', remark: '' }
+                { name: getCertMainSiteName(), nameEn: getCertMainSiteNameEn(), code: getCertMainSiteCode(), address: getCertMainSiteAddress(), addressEn: getCertMainSiteAddressEn(), products: getCertMainSiteProducts(), productsEn: getCertMainSiteProductsEn(), subCert: 'no', remark: '-', isMain: true },
+                { name: '生产现场一', nameEn: '', code: '91110108XXXXXXXX01', address: '北京市昌平区生产基地', addressEn: '', products: '硬件制造', productsEn: '', subCert: 'yes', remark: '' },
+                { name: '研发中心', nameEn: '', code: '91110108XXXXXXXX02', address: '北京市朝阳区研发大厦', addressEn: '', products: '软件研发', productsEn: '', subCert: 'yes', remark: '' },
+                { name: '分公司', nameEn: '', code: '91110108XXXXXXXX03', address: '上海市浦东新区', addressEn: '', products: '销售服务', productsEn: '', subCert: 'no', remark: '' },
+                { name: '办事处', nameEn: '', code: '91110108XXXXXXXX04', address: '广州市天河区', addressEn: '', products: '客户服务', productsEn: '', subCert: 'no', remark: '' }
             ];
             
             const displaySites = [];
@@ -5927,7 +5950,7 @@
                     displaySites.push(defaultSites[i]);
                 }
             }
-            displaySites[0] = { ...displaySites[0], name: getCertMainSiteName(), code: getCertMainSiteCode(), address: getCertMainSiteAddress(), products: getCertMainSiteProducts(), isMain: true };
+            displaySites[0] = { ...displaySites[0], name: getCertMainSiteName(), nameEn: getCertMainSiteNameEn(), code: getCertMainSiteCode(), address: getCertMainSiteAddress(), addressEn: getCertMainSiteAddressEn(), products: getCertMainSiteProducts(), productsEn: getCertMainSiteProductsEn(), isMain: true };
             
             displaySites.forEach((site, index) => {
                 const isMain = site.isMain || index === 0;
@@ -5942,9 +5965,12 @@
                 tr.innerHTML = `
                     <td><span class="cert-row-index">${index + 1}</span></td>
                     <td><input type="text" class="form-input cert-site-name-input" value="${site.name || ''}" ${isMain ? 'readonly style="background:#f5f5f5; cursor:not-allowed;"' : ''}></td>
+                    <td><input type="text" class="form-input cert-site-name-en-input" value="${site.nameEn || ''}" ${isMain ? 'readonly style="background:#f5f5f5; cursor:not-allowed;"' : ''}></td>
                     <td><textarea class="form-input cert-site-code-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.code || ''}</textarea></td>
                     <td><textarea class="form-input cert-site-address-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.address || ''}</textarea></td>
+                    <td><textarea class="form-input cert-site-address-en-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.addressEn || ''}</textarea></td>
                     <td><textarea class="form-input cert-site-products-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.products || ''}</textarea></td>
+                    <td><textarea class="form-input cert-site-products-en-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.productsEn || ''}</textarea></td>
                     <td>
                         <div style="display:flex;align-items:center;gap:4px;">
                             <span class="subcert-readonly" style="font-size:12px;color:var(--color-text-muted);white-space:nowrap;">${subCertValue}</span>
@@ -5963,7 +5989,8 @@
             
             if (products.length === 0) {
                 const tr = document.createElement('tr');
-                tr.innerHTML = '<td colspan="5" class="text-center text-gray-400">暂无产品信息</td>';
+                tr.className = 'cert-products-empty-row';
+                tr.innerHTML = '<td colspan="7" class="text-center text-gray-400">暂无产品信息</td>';
                 tbody.appendChild(tr);
                 return;
             }
@@ -5973,7 +6000,9 @@
                 tr.innerHTML = `
                     <td><span class="cert-row-index">${index + 1}</span></td>
                     <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">${prod.category || ''}</textarea></td>
+                    <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">${prod.categoryEn || ''}</textarea></td>
                     <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">${prod.name || ''}</textarea></td>
+                    <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">${prod.nameEn || ''}</textarea></td>
                     <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">${prod.remark || ''}</textarea></td>
                     <td>
                         <button onclick="deleteCertProductRow(this)" class="cert-icon-btn" title="删除">
@@ -5988,16 +6017,20 @@
         function addCertProductRow() {
             const tbody = document.getElementById('certProductsTableBody');
             
-            if (tbody.children.length === 1 && tbody.children[0].cells.length === 5 && tbody.children[0].textContent.includes('暂无')) {
-                tbody.innerHTML = '';
-            }
+            tbody.querySelectorAll('.cert-products-empty-row, tr').forEach(row => {
+                if (row.classList.contains('cert-products-empty-row') || row.textContent.includes('暂无产品信息')) {
+                    row.remove();
+                }
+            });
             
             const index = tbody.children.length + 1;
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td><span class="cert-row-index">${index}</span></td>
                 <td><input type="text" class="form-input" placeholder="产品类别"></td>
+                <td><input type="text" class="form-input" placeholder="产品类别（英）"></td>
                 <td><input type="text" class="form-input" placeholder="产品名称"></td>
+                <td><input type="text" class="form-input" placeholder="产品名称（英）"></td>
                 <td><input type="text" class="form-input" placeholder="备注"></td>
                 <td>
                     <button onclick="deleteCertProductRow(this)" class="cert-icon-btn" title="删除">
@@ -6017,7 +6050,7 @@
             
             const tbody = document.getElementById('certProductsTableBody');
             if (tbody.children.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-gray-400">暂无产品信息</td></tr>';
+                tbody.innerHTML = '<tr class="cert-products-empty-row"><td colspan="7" class="text-center text-gray-400">暂无产品信息</td></tr>';
             }
         }
         
@@ -6071,6 +6104,7 @@
                 hasAttachment: document.getElementById('certEdit_hasAttachment').value,
                 hasSubCert: document.getElementById('certEdit_hasSubCert').value,
                 certMark: document.querySelector('input[name="certMark"]:checked')?.value || 'CNAS',
+                issueEnglishCert: document.getElementById('certEdit_issueEnglishCert').checked,
                 isMultiSite: isMultiSite() ? '是' : '否',
                 foodScopeRows: getCertFoodScopeRows(),
                 sites: [],
@@ -6079,16 +6113,26 @@
             
             const siteRows = document.querySelectorAll('#certSitesTableBody tr');
             siteRows.forEach((row, index) => {
-                const inputs = row.querySelectorAll('input, textarea');
                 const select = row.querySelector('.cert-subcert-select');
-                if (inputs.length >= 4) {
+                const nameInput = row.querySelector('.cert-site-name-input');
+                const nameEnInput = row.querySelector('.cert-site-name-en-input');
+                const codeInput = row.querySelector('.cert-site-code-input');
+                const addressInput = row.querySelector('.cert-site-address-input');
+                const addressEnInput = row.querySelector('.cert-site-address-en-input');
+                const productsInput = row.querySelector('.cert-site-products-input');
+                const productsEnInput = row.querySelector('.cert-site-products-en-input');
+                const remarkInput = row.querySelector('.cert-remark-input');
+                if (nameInput && codeInput && addressInput && productsInput) {
                     data.sites.push({
-                        name: index === 0 ? data.customerName : inputs[0].value,
-                        code: index === 0 ? data.creditCode : inputs[1].value,
-                        address: index === 0 ? data.certAddress : inputs[2].value,
-                        products: index === 0 ? data.scope : inputs[3].value,
+                        name: index === 0 ? data.customerName : nameInput.value,
+                        nameEn: index === 0 ? data.customerNameEn : (nameEnInput?.value || ''),
+                        code: index === 0 ? data.creditCode : codeInput.value,
+                        address: index === 0 ? data.certAddress : addressInput.value,
+                        addressEn: index === 0 ? data.certAddressEn : (addressEnInput?.value || ''),
+                        products: index === 0 ? data.scope : productsInput.value,
+                        productsEn: index === 0 ? data.scopeEn : (productsEnInput?.value || ''),
                         subCert: select ? select.value : 'no',
-                        remark: inputs[4] ? inputs[4].value : '',
+                        remark: remarkInput ? remarkInput.value : '',
                         isMain: index === 0
                     });
                 }
@@ -6098,11 +6142,13 @@
             prodRows.forEach(row => {
                 if (row.cells.length > 1) {
                     const inputs = row.querySelectorAll('input, textarea');
-                    if (inputs.length >= 2) {
+                    if (inputs.length >= 4) {
                         data.products.push({
                             category: inputs[0].value,
-                            name: inputs[1].value,
-                            remark: inputs[2] ? inputs[2].value : ''
+                            categoryEn: inputs[1].value,
+                            name: inputs[2].value,
+                            nameEn: inputs[3].value,
+                            remark: inputs[4] ? inputs[4].value : ''
                         });
                     }
                 }
@@ -7197,15 +7243,16 @@
                 scopeEn: '',
                 standard: 'ISO 9001:2015',
                 certMark: 'CNAS',
+                issueEnglishCert: true,
                 hasAttachment: 'yes',
                 hasSubCert: 'yes',
                 isMultiSite: '是',
                 sites: [
-                    { name: '华信环境监测技术中心', code: '91110108XXXXXXXXXX', address: '北京市海淀区中关村大街1号', products: '软件开发、系统集成', subCert: 'no', remark: '-' },
-                    { name: '生产现场一', code: '91110108XXXXXXXX01', address: '北京市昌平区生产基地', products: '硬件制造', subCert: 'yes', remark: '颁发子证书' },
-                    { name: '研发中心', code: '91110108XXXXXXXX02', address: '北京市朝阳区研发大厦', products: '软件研发', subCert: 'yes', remark: '颁发子证书' },
-                    { name: '分公司', code: '91110108XXXXXXXX03', address: '上海市浦东新区', products: '销售服务', subCert: 'no', remark: '-' },
-                    { name: '办事处', code: '91110108XXXXXXXX04', address: '广州市天河区', products: '客户服务', subCert: 'no', remark: '-' }
+                    { name: '华信环境监测技术中心', nameEn: 'Huaxin Environmental Monitoring Technology Center', code: '91110108XXXXXXXXXX', address: '北京市海淀区中关村大街1号', addressEn: 'No.1 Zhongguancun Street, Haidian District, Beijing', products: '软件开发、系统集成', productsEn: 'Software development and system integration', subCert: 'no', remark: '-' },
+                    { name: '生产现场一', nameEn: 'Production Site 1', code: '91110108XXXXXXXX01', address: '北京市昌平区生产基地', addressEn: 'Changping Production Base, Beijing', products: '硬件制造', productsEn: 'Hardware manufacturing', subCert: 'yes', remark: '颁发子证书' },
+                    { name: '研发中心', nameEn: 'R&D Center', code: '91110108XXXXXXXX02', address: '北京市朝阳区研发大厦', addressEn: 'R&D Building, Chaoyang District, Beijing', products: '软件研发', productsEn: 'Software research and development', subCert: 'yes', remark: '颁发子证书' },
+                    { name: '分公司', nameEn: 'Branch Office', code: '91110108XXXXXXXX03', address: '上海市浦东新区', addressEn: 'Pudong New Area, Shanghai', products: '销售服务', productsEn: 'Sales services', subCert: 'no', remark: '-' },
+                    { name: '办事处', nameEn: 'Representative Office', code: '91110108XXXXXXXX04', address: '广州市天河区', addressEn: 'Tianhe District, Guangzhou', products: '客户服务', productsEn: 'Customer services', subCert: 'no', remark: '-' }
                 ],
                 products: []
             },
@@ -7223,11 +7270,12 @@
                 scopeEn: '',
                 standard: 'ISO 9001:2015',
                 certMark: 'DAKKS',
+                issueEnglishCert: true,
                 hasAttachment: 'no',
                 hasSubCert: 'no',
                 isMultiSite: '否',
                 sites: [
-                    { name: '华信环境监测技术中心', code: '91110108XXXXXXXXXX', address: '北京市海淀区中关村大街1号', products: '环境监测服务', subCert: 'no', remark: '-' }
+                    { name: '华信环境监测技术中心', nameEn: 'Huaxin Environmental Monitoring Technology Center', code: '91110108XXXXXXXXXX', address: '北京市海淀区中关村大街1号', addressEn: 'No.1 Zhongguancun Street, Haidian District, Beijing', products: '环境监测服务', productsEn: 'Environmental monitoring services', subCert: 'no', remark: '-' }
                 ],
                 products: []
             }
