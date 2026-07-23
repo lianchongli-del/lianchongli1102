@@ -41,6 +41,9 @@
             --radius-md: 6px;
             --radius-lg: 8px;
             --radius-xl: 10px;
+            --project-header-sticky-offset: 16px;
+            --phase-summary-sticky-offset: 72px;
+            --phase-card-header-sticky-offset: 190px;
         }
         
         body {
@@ -101,6 +104,33 @@
             gap: 16px;
             align-items: stretch;
             margin-bottom: 20px;
+        }
+
+        .phase-content.active > .phase-audit-options-row {
+            position: sticky;
+            top: var(--project-header-sticky-offset);
+            z-index: 43;
+            background: #f8fafc;
+            padding: 8px 0 10px;
+            margin-top: -8px;
+            box-shadow: 0 -16px 0 16px #f8fafc;
+        }
+
+        .phase-content.active > .summary-cards {
+            position: sticky;
+            top: var(--phase-summary-sticky-offset);
+            z-index: 42;
+            background: #f8fafc;
+            padding: 0 0 12px;
+            box-shadow: 0 -16px 0 16px #f8fafc;
+        }
+
+        .phase-content.active > .content-card > .card-header {
+            position: sticky;
+            top: var(--phase-card-header-sticky-offset);
+            z-index: 41;
+            background: #f8fafc;
+            box-shadow: 0 -16px 0 16px #f8fafc, 0 2px 8px rgba(15, 23, 42, 0.06);
         }
 
         .contract-signer-inline {
@@ -363,6 +393,139 @@
             align-items: center;
             border-radius: var(--radius-lg) var(--radius-lg) 0 0;
         }
+
+        .site-type-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 58px;
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.4;
+            border: 1px solid transparent;
+            white-space: nowrap;
+        }
+
+        .site-type-badge.type-center {
+            background: var(--color-primary-light);
+            color: var(--color-primary);
+            border-color: #BFDBFE;
+        }
+
+        .site-type-badge.type-fixed {
+            background: #ECFDF5;
+            color: #047857;
+            border-color: #A7F3D0;
+        }
+
+        .site-type-badge.type-service {
+            background: #F5F3FF;
+            color: #6D28D9;
+            border-color: #DDD6FE;
+        }
+
+        .site-type-badge.type-temporary {
+            background: #FFF7ED;
+            color: #C2410C;
+            border-color: #FED7AA;
+        }
+
+        .site-no-badge {
+            display: inline-flex;
+            align-items: center;
+            flex: 0 0 auto;
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            border: 1px solid #BFDBFE;
+            background: var(--color-primary-light);
+            color: var(--color-primary);
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.4;
+            white-space: nowrap;
+        }
+
+        .site-card-header > div:first-child {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            min-width: 0;
+        }
+
+        .site-card-header .site-name {
+            order: 0;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .site-card-header .site-type-badge {
+            order: 1;
+            flex: 0 0 auto;
+        }
+
+        .site-card-header .site-no-badge {
+            order: 2;
+        }
+
+        #availableSitesList .available-site-row {
+            display: grid;
+            grid-template-columns: 20px 90px minmax(0, 1fr);
+            column-gap: 12px;
+            align-items: center;
+            min-height: 60px;
+        }
+
+        #availableSitesList .available-site-row.is-selected {
+            border-color: var(--color-primary);
+            background: var(--color-primary-light);
+        }
+
+        #availableSitesList .available-site-row .site-select-check {
+            grid-column: 1;
+            justify-self: center;
+        }
+
+        #availableSitesList .available-site-badge {
+            grid-column: 2;
+            grid-row: 1 / span 2;
+            align-self: center;
+            justify-self: start;
+            width: fit-content;
+        }
+
+        #availableSitesList .available-site-text {
+            grid-column: 3;
+            min-width: 0;
+        }
+
+        #availableSitesList .available-site-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            line-height: 1.35;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        #availableSitesList .available-site-desc {
+            margin-top: 2px;
+            font-size: 12px;
+            color: var(--color-text-muted);
+            line-height: 1.35;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .available-site-no {
+            color: var(--color-primary);
+            font-weight: 600;
+        }
         
         .site-card-body {
             display: flex;
@@ -475,6 +638,11 @@
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
+            position: sticky;
+            top: var(--project-header-sticky-offset);
+            align-self: flex-start;
+            max-height: calc(100vh - var(--project-header-sticky-offset) - 16px);
+            overflow-y: auto;
         }
         
         .nav-header-title-static {
@@ -1819,9 +1987,6 @@
                             </span>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="text-sm text-amber-700 bg-amber-50 px-3 py-1 rounded border border-amber-200" id="samplingRuleHint_initial">
-                                根据抽样规则，本次策划需要选择全部场所
-                            </span>
                             <button class="btn btn-default btn-sm" onclick="openCertContentDrawer()">
                                 <i class="fas fa-certificate text-xs"></i>
                                 证书内容确认件
@@ -2338,9 +2503,6 @@
                             <h3 class="font-semibold text-gray-800">场所抽样方案</h3>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="text-sm text-amber-700 bg-amber-50 px-3 py-1 rounded border border-amber-200">
-                                根据抽样规则，本次策划至少选择 1 个场所（共2个场所）
-                            </span>
                             <button class="btn btn-default btn-sm" onclick="openInvestigationForm()">
                                 <i class="fas fa-clipboard-list text-xs"></i>
                                 获证方情况调查表
@@ -2841,9 +3003,6 @@
                             <h3 class="font-semibold text-gray-800">场所抽样方案</h3>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="text-sm text-amber-700 bg-amber-50 px-3 py-1 rounded border border-amber-200">
-                                根据抽样规则，本次策划至少选择 1 个场所（共2个场所）
-                            </span>
                             <button class="btn btn-default btn-sm" onclick="openInvestigationForm()">
                                 <i class="fas fa-clipboard-list text-xs"></i>
                                 获证方情况调查表
@@ -3345,9 +3504,6 @@
                             <h3 class="font-semibold text-gray-800">场所抽样方案</h3>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="text-sm text-amber-700 bg-amber-50 px-3 py-1 rounded border border-amber-200">
-                                根据抽样规则，本次策划需要选择全部场所
-                            </span>
                             <button class="btn btn-default btn-sm" onclick="openInvestigationForm()">
                                 <i class="fas fa-clipboard-list text-xs"></i>
                                 获证方情况调查表
@@ -3858,9 +4014,6 @@
                             <h3 class="font-semibold text-gray-800">场所抽样方案</h3>
                         </div>
                         <div class="flex items-center gap-3">
-                            <span class="text-sm text-amber-700 bg-amber-50 px-3 py-1 rounded border border-amber-200">
-                                根据抽样规则，本次策划至少选择 1 个场所（共2个场所）
-                            </span>
                             <button class="btn btn-default btn-sm" onclick="openInvestigationForm()">
                                 <i class="fas fa-clipboard-list text-xs"></i>
                                 获证方情况调查表
@@ -4216,29 +4369,54 @@
     <!-- 其他原有弹窗保留 -->
     <div id="addSiteModal" class="modal-overlay hidden-section">
         <div class="modal-content">
-            <div class="modal-header">选择场所</div>
+            <div class="modal-header">
+                <div class="card-title">选择场所</div>
+                <button type="button" onclick="openTempSiteModal()" class="btn btn-default btn-sm">
+                    <i class="fas fa-plus"></i>
+                    新增临时场所
+                </button>
+            </div>
             <div class="modal-body">
-                <p class="text-sm text-gray-600 mb-4">认证申请中上报了以下场所信息，请选择要添加的场所：</p>
+                <p class="text-sm text-gray-600 mb-4">请从客户管理中维护的场所中进行选择</p>
                 <div class="space-y-2" id="availableSitesList">
-                    <div class="flex items-center gap-3 p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-name="分公司现场" data-address="上海市浦东新区办公区" data-people="45" onchange="toggleSiteSelection('分公司现场', this.checked)">
-                        <div class="flex-1">
-                            <div class="font-medium text-sm">分公司现场</div>
-                            <div class="text-xs text-gray-500">上海市浦东新区办公区 | 人数：45</div>
+                    <div class="available-site-row p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="02" data-name="分公司现场" data-address="上海市浦东新区办公区" data-people="45" data-type="fixed" onchange="toggleSiteSelection('分公司现场', this.checked)">
+                        <span class="site-type-badge type-fixed available-site-badge">固定场所</span>
+                        <div class="available-site-text">
+                            <div class="available-site-name">分公司现场</div>
+                            <div class="available-site-desc"><span class="available-site-no">场所编号：02</span> | 上海市浦东新区办公区 | 人数：45</div>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3 p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-name="研发中心" data-address="深圳市南山区科技园" data-people="120" onchange="toggleSiteSelection('研发中心', this.checked)">
-                        <div class="flex-1">
-                            <div class="font-medium text-sm">研发中心</div>
-                            <div class="text-xs text-gray-500">深圳市南山区科技园 | 人数：120</div>
+                    <div class="available-site-row p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="03" data-name="研发中心" data-address="深圳市南山区科技园" data-people="120" data-type="fixed" onchange="toggleSiteSelection('研发中心', this.checked)">
+                        <span class="site-type-badge type-fixed available-site-badge">固定场所</span>
+                        <div class="available-site-text">
+                            <div class="available-site-name">研发中心</div>
+                            <div class="available-site-desc"><span class="available-site-no">场所编号：03</span> | 深圳市南山区科技园 | 人数：120</div>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3 p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-name="生产基地" data-address="广州市番禺区工业园" data-people="200" onchange="toggleSiteSelection('生产基地', this.checked)">
-                        <div class="flex-1">
-                            <div class="font-medium text-sm">生产基地</div>
-                            <div class="text-xs text-gray-500">广州市番禺区工业园 | 人数：200</div>
+                    <div class="available-site-row p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="04" data-name="生产基地" data-address="广州市番禺区工业园" data-people="200" data-type="fixed" onchange="toggleSiteSelection('生产基地', this.checked)">
+                        <span class="site-type-badge type-fixed available-site-badge">固定场所</span>
+                        <div class="available-site-text">
+                            <div class="available-site-name">生产基地</div>
+                            <div class="available-site-desc"><span class="available-site-no">场所编号：04</span> | 广州市番禺区工业园 | 人数：200</div>
+                        </div>
+                    </div>
+                    <div class="available-site-row p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="05" data-name="客户服务点" data-address="杭州市西湖区客户驻场服务点" data-people="18" data-type="service" onchange="toggleSiteSelection('客户服务点', this.checked)">
+                        <span class="site-type-badge type-service available-site-badge">服务点</span>
+                        <div class="available-site-text">
+                            <div class="available-site-name">客户服务点</div>
+                            <div class="available-site-desc"><span class="available-site-no">场所编号：05</span> | 杭州市西湖区客户驻场服务点 | 人数：18</div>
+                        </div>
+                    </div>
+                    <div class="available-site-row p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="06" data-name="项目实施现场" data-address="成都市高新区临时项目现场" data-people="26" data-type="temporary" onchange="toggleSiteSelection('项目实施现场', this.checked)">
+                        <span class="site-type-badge type-temporary available-site-badge">临时场所</span>
+                        <div class="available-site-text">
+                            <div class="available-site-name">项目实施现场</div>
+                            <div class="available-site-desc"><span class="available-site-no">场所编号：06</span> | 成都市高新区临时项目现场 | 人数：26</div>
                         </div>
                     </div>
                 </div>
@@ -4877,10 +5055,161 @@
         ];
 
         document.addEventListener('DOMContentLoaded', function() {
+            updateStickyOffsets();
+            initializeSiteHeaderLabels();
             updateAllPhaseTotals();
             initAdjustmentReasons();
             initializeProfessionalCodeAccreditation();
         });
+        window.addEventListener('resize', updateStickyOffsets);
+
+        function updateStickyOffsets() {
+            const header = document.querySelector('.project-header');
+            const headerHeight = header ? Math.ceil(header.getBoundingClientRect().height) : 0;
+            const activePhase = document.querySelector('.phase-content.active');
+            const topRow = activePhase?.querySelector(':scope > .phase-audit-options-row');
+            const summary = activePhase?.querySelector(':scope > .summary-cards');
+            const firstStickyOffset = headerHeight;
+            const summaryOffset = firstStickyOffset + (topRow ? Math.ceil(topRow.getBoundingClientRect().height) : 56);
+            const cardHeaderOffset = summaryOffset + (summary ? Math.ceil(summary.getBoundingClientRect().height) : 118);
+            document.documentElement.style.setProperty('--project-header-sticky-offset', `${firstStickyOffset}px`);
+            document.documentElement.style.setProperty('--phase-summary-sticky-offset', `${summaryOffset}px`);
+            document.documentElement.style.setProperty('--phase-card-header-sticky-offset', `${cardHeaderOffset}px`);
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char]));
+        }
+
+        function formatSiteNo(index) {
+            return String(index).padStart(2, '0');
+        }
+
+        function getSiteTypeMeta(type) {
+            const typeMap = {
+                center: { label: '中心职能', className: 'type-center' },
+                fixed: { label: '固定场所', className: 'type-fixed' },
+                service: { label: '服务点', className: 'type-service' },
+                temporary: { label: '临时场所', className: 'type-temporary' }
+            };
+            return typeMap[type] || typeMap.fixed;
+        }
+
+        function getNextAvailableSiteNo() {
+            const availableNos = Array.from(document.querySelectorAll('#availableSitesList .site-select-check'))
+                .map(input => parseInt(input.dataset.siteNo || '', 10));
+            const cardNos = Array.from(document.querySelectorAll('.site-card[data-site-no]'))
+                .map(card => parseInt(card.dataset.siteNo || '', 10));
+            const maxNo = [...availableNos, ...cardNos]
+                .filter(num => Number.isFinite(num))
+                .reduce((max, num) => Math.max(max, num), 0);
+            return formatSiteNo(maxNo + 1);
+        }
+
+        function addAvailableSiteRow(siteData, checked = true) {
+            const list = document.getElementById('availableSitesList');
+            if (!list) return false;
+
+            const exists = Array.from(list.querySelectorAll('.site-select-check')).some(input => input.dataset.name === siteData.name);
+            if (exists) {
+                alert('该场所名称已存在，请勿重复新增');
+                return false;
+            }
+
+            const siteNo = siteData.siteNo || getNextAvailableSiteNo();
+            const typeMeta = getSiteTypeMeta(siteData.type || 'fixed');
+            const row = document.createElement('div');
+            row.className = 'available-site-row p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer';
+
+            row.innerHTML = `
+                <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="${escapeHtml(siteNo)}" data-name="${escapeHtml(siteData.name)}" data-address="${escapeHtml(siteData.address)}" data-people="${escapeHtml(siteData.people || '0')}" data-type="${escapeHtml(siteData.type || 'fixed')}">
+                <span class="site-type-badge ${typeMeta.className} available-site-badge">${typeMeta.label}</span>
+                <div class="available-site-text">
+                    <div class="available-site-name">${escapeHtml(siteData.name)}</div>
+                    <div class="available-site-desc"><span class="available-site-no">场所编号：${escapeHtml(siteNo)}</span> | ${escapeHtml(siteData.address)} | 人数：${escapeHtml(siteData.people || '0')}</div>
+                </div>
+            `;
+
+            const checkbox = row.querySelector('.site-select-check');
+            checkbox.checked = checked;
+            checkbox.onchange = () => toggleSiteSelection(siteData.name, checkbox.checked);
+            row.onclick = event => {
+                if (event.target === checkbox) return;
+                checkbox.checked = !checkbox.checked;
+                toggleSiteSelection(siteData.name, checkbox.checked);
+            };
+            list.appendChild(row);
+            toggleSiteSelection(siteData.name, checked);
+            return true;
+        }
+
+        function openTempSiteModal() {
+            const name = prompt('请输入临时场所名称');
+            if (!name) return;
+            const address = prompt('请输入临时场所地址') || '';
+            const people = prompt('请输入人数') || '0';
+            addAvailableSiteRow({
+                name: name.trim(),
+                address: address.trim(),
+                people: people.replace(/\D/g, '') || '0',
+                type: 'temporary'
+            });
+        }
+
+        function initializeSiteHeaderLabels() {
+            const customerName = document.getElementById('headerCustomerName')?.textContent?.trim() || '华信环境监测技术中心';
+            document.querySelectorAll('.site-card').forEach(card => {
+                const headerTitle = card.querySelector('.site-card-header > div:first-child');
+                const siteName = card.querySelector('.site-card-header .site-name');
+                if (!headerTitle || !siteName) return;
+
+                const isMain = card.dataset.isMain === 'true';
+                const type = card.dataset.siteType || (isMain ? 'center' : 'fixed');
+                const typeMeta = getSiteTypeMeta(type);
+                if (isMain) {
+                    card.dataset.siteType = 'center';
+                    card.dataset.siteNo = '00';
+                    siteName.textContent = customerName;
+                } else {
+                    card.dataset.siteType = type;
+                    if (!card.dataset.siteNo && type !== 'temporary') {
+                        card.dataset.siteNo = siteName.textContent.trim() === '生产现场一' ? '01' : getNextAvailableSiteNo();
+                    }
+                }
+
+                headerTitle.querySelectorAll('span').forEach(span => {
+                    if (!span.classList.contains('site-name') && !span.classList.contains('site-type-badge') && !span.classList.contains('site-no-badge')) {
+                        span.remove();
+                    }
+                });
+
+                let typeBadge = headerTitle.querySelector('.site-type-badge');
+                if (!typeBadge) {
+                    typeBadge = document.createElement('span');
+                    siteName.insertAdjacentElement('afterend', typeBadge);
+                }
+                typeBadge.className = `site-type-badge ${typeMeta.className}`;
+                typeBadge.textContent = typeMeta.label;
+
+                let noBadge = headerTitle.querySelector('.site-no-badge');
+                if (type === 'temporary') {
+                    noBadge?.remove();
+                    return;
+                }
+                if (!noBadge) {
+                    noBadge = document.createElement('span');
+                    typeBadge.insertAdjacentElement('afterend', noBadge);
+                }
+                noBadge.className = 'site-no-badge';
+                noBadge.textContent = `场所编号:${card.dataset.siteNo}`;
+            });
+        }
 
         // ==================== 调整理由多选组件 ====================
         function getCurrentField() {
@@ -5812,6 +6141,7 @@
             
             document.querySelectorAll('.site-select-check').forEach(cb => {
                 cb.checked = false;
+                cb.closest('.available-site-row')?.classList.remove('is-selected');
             });
             
             document.getElementById('addSiteModal').classList.remove('hidden-section');
@@ -5834,15 +6164,18 @@
                 const checkbox = document.querySelector(`.site-select-check[data-name="${siteName}"]`);
                 const address = checkbox?.dataset?.address || '';
                 const people = checkbox?.dataset?.people || '0';
+                const siteType = checkbox?.dataset?.type || 'fixed';
+                const siteNo = checkbox?.dataset?.siteNo || '';
                 
                 const newSiteId = `site_${currentAddSitePhase}_${siteIndex}`;
-                const siteCard = createSiteCard(newSiteId, siteName, address, people, currentAddSitePhase);
+                const siteCard = createSiteCard(newSiteId, siteName, address, people, currentAddSitePhase, siteType, siteNo);
                 
                 container.appendChild(siteCard);
                 sites.push(newSiteId);
                 siteIndex++;
             });
             
+            initializeSiteHeaderLabels();
             updateAllPhaseTotals();
             initAdjustmentReasons();
             initializeProfessionalCodeAccreditation();
@@ -5851,15 +6184,18 @@
             closeAddSiteModal();
         }
         
-        function createSiteCard(siteId, siteName, address, people, phase) {
+        function createSiteCard(siteId, siteName, address, people, phase, siteType = 'fixed', siteNo = '') {
             const div = document.createElement('div');
             div.className = 'site-card';
             div.id = siteId;
             div.dataset.isMain = 'false';
+            div.dataset.siteType = siteType;
+            if (siteNo) div.dataset.siteNo = siteNo;
             
             const planTime = phase === 'surv1' ? '2024-10' : '2025-10';
             const field = getCurrentField();
             const reasons = fieldReasons[field] || fieldReasons['Q'];
+            const typeMeta = getSiteTypeMeta(siteType);
             
             let reasonHtml = `<div class="form-row mt-2 mb-0 adjustment-reason-wrapper" data-site-id="${siteId}">
                 <div class="adjustment-reason-display" onclick="toggleAdjustmentReason(this, event)">
@@ -5878,6 +6214,7 @@
                 <div class="site-card-header">
                     <div class="flex items-center gap-2">
                         <span class="font-semibold text-gray-800 site-name">${siteName}</span>
+                        <span class="site-type-badge ${typeMeta.className}">${typeMeta.label}</span>
                     </div>
                     <div class="flex items-center gap-3 site-actions">
                         <button onclick="removeSite('${siteId}')" class="text-red-500 hover:text-red-700 delete-site-btn non-main-controls">
@@ -6077,6 +6414,7 @@
             document.getElementById('phase_' + phase).classList.add('active');
             
             currentPhase = phase;
+            requestAnimationFrame(updateStickyOffsets);
         }
 
         function savePhase(phase) {
@@ -6455,6 +6793,7 @@
         function toggleCustomerRequirements() {
             const panel = document.getElementById('customerRequirementsPanel');
             if (panel) panel.classList.toggle('collapsed');
+            requestAnimationFrame(updateStickyOffsets);
         }
 
         function goBack() {
@@ -6471,10 +6810,12 @@
 
         function toggleSiteSelection(siteName, checked) {
             if (checked) {
-                selectedAvailableSites.push(siteName);
+                if (!selectedAvailableSites.includes(siteName)) selectedAvailableSites.push(siteName);
             } else {
                 selectedAvailableSites = selectedAvailableSites.filter(n => n !== siteName);
             }
+            const checkbox = document.querySelector(`.site-select-check[data-name="${siteName}"]`);
+            checkbox?.closest('.available-site-row')?.classList.toggle('is-selected', checked);
         }
 
         function closeAddSiteModal() {
