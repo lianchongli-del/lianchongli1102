@@ -120,6 +120,27 @@
             min-width: 220px;
         }
 
+        .contract-signer-row {
+            margin: 0 0 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .contract-signer-row .form-label {
+            display: inline-flex;
+            align-items: center;
+            flex: 0 0 auto;
+            margin-bottom: 0;
+            white-space: nowrap;
+        }
+
+        .contract-signer-row .contract-signer-select {
+            flex: 1 1 auto;
+            width: auto;
+            min-width: 260px;
+        }
+
         
         .summary-card-item {
             flex: 1;
@@ -512,7 +533,8 @@
             white-space: nowrap;
         }
 
-        #availableSitesList .available-site-row {
+        #availableSitesList .available-site-row,
+        #certAvailableSitesList .available-site-row {
             display: grid;
             grid-template-columns: 20px 90px minmax(0, 1fr) 32px;
             column-gap: 12px;
@@ -520,12 +542,24 @@
             min-height: 60px;
         }
 
-        #availableSitesList .available-site-row .site-select-check {
+        #certAvailableSitesList .available-site-row {
+            grid-template-columns: 20px 90px minmax(0, 1fr);
+        }
+
+        #availableSitesList .available-site-row.is-selected,
+        #certAvailableSitesList .available-site-row.is-selected {
+            border-color: var(--color-primary);
+            background: var(--color-primary-light);
+        }
+
+        #availableSitesList .available-site-row .site-select-check,
+        #certAvailableSitesList .available-site-row .cert-site-select-check {
             grid-column: 1;
             justify-self: center;
         }
 
-        #availableSitesList .available-site-badge {
+        #availableSitesList .available-site-badge,
+        #certAvailableSitesList .available-site-badge {
             grid-column: 2;
             grid-row: 1 / span 2;
             align-self: center;
@@ -533,7 +567,8 @@
             width: fit-content;
         }
 
-        #availableSitesList .available-site-text {
+        #availableSitesList .available-site-text,
+        #certAvailableSitesList .available-site-text {
             grid-column: 3;
             min-width: 0;
         }
@@ -555,7 +590,8 @@
             background: var(--color-danger-light);
         }
 
-        #availableSitesList .available-site-name {
+        #availableSitesList .available-site-name,
+        #certAvailableSitesList .available-site-name {
             font-size: 13px;
             font-weight: 600;
             color: var(--color-text-secondary);
@@ -565,7 +601,8 @@
             white-space: nowrap;
         }
 
-        #availableSitesList .available-site-desc {
+        #availableSitesList .available-site-desc,
+        #certAvailableSitesList .available-site-desc {
             margin-top: 2px;
             font-size: 12px;
             color: var(--color-text-muted);
@@ -573,6 +610,11 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+        }
+
+        .available-site-no {
+            color: var(--color-primary);
+            font-weight: 600;
         }
 
         .site-type-badge.type-fixed {
@@ -728,16 +770,19 @@
 
 
         /* 选择场所弹窗：按钮区必须留在弹窗内部底部，避免被提前闭合或页面内容挤出 */
-        #addSiteModal .modal-content {
+        #addSiteModal .modal-content,
+        #certSiteSelectModal .modal-content {
             overflow: hidden;
         }
 
-        #addSiteModal .modal-body {
+        #addSiteModal .modal-body,
+        #certSiteSelectModal .modal-body {
             flex: 1 1 auto;
             min-height: 0;
         }
 
-        #addSiteModal .modal-footer {
+        #addSiteModal .modal-footer,
+        #certSiteSelectModal .modal-footer {
             flex: 0 0 auto;
             width: 100%;
             box-sizing: border-box;
@@ -1778,7 +1823,6 @@
                     <span class="value">2024-03-23</span>
                 </div>
             </div>
-
             <section class="customer-requirements-panel collapsed" id="customerRequirementsPanel" aria-label="客户备注信息或特殊要求">
                 <button type="button" class="customer-requirements-header" onclick="toggleCustomerRequirements()">
                     <div class="customer-requirements-title">
@@ -1860,6 +1904,17 @@
         <div class="main-content-area">
             <!-- 初次认证内容 -->
             <div class="phase-content active" id="phase_initial">
+                <div class="contract-signer-row">
+                    <label class="form-label">合同签署方</label>
+                    <select class="form-select contract-signer-select" id="contractSigner_initial">
+                        <option value="" selected disabled>请选择合同签署方</option>
+                        <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
+                        <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
+                        <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
+                        <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
+                        <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
+                    </select>
+                </div>
                 <!-- 初次认证人天数统计 -->
                 <div class="summary-cards">
                     <div class="summary-card-item">
@@ -1904,16 +1959,6 @@
                     <div class="flex justify-between items-center mb-4">
                         <div class="flex items-center gap-3">
                             <h3 class="font-semibold text-gray-800">场所抽样方案</h3>
-                            <div class="contract-signer-inline">
-                            <select class="form-select contract-signer-select">
-                                <option value="" selected disabled>请选择合同签署方</option>
-                                <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
-                                <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
-                                <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
-                                <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
-                                <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
-                            </select>
-                            </div>
                         </div>
                         <div class="flex items-center gap-3">
                             <button class="btn btn-default btn-sm" onclick="openCertContentDrawer()">
@@ -1937,7 +1982,7 @@
 
                     <div id="siteCardsContainer_initial">
                         <!-- 示例场所卡片 -->
-                        <div class="site-card" id="site_0" data-is-main="true" data-site-type="center">
+                        <div class="site-card" id="site_0" data-is-main="true" data-site-type="center" data-site-no="00">
                             <div class="site-card-header">
                                 <div class="flex items-center gap-2">
                                     <span class="site-type-badge type-center">中心职能</span>
@@ -1995,15 +2040,6 @@
                                                 <input type="text" class="tag-input" list="profCodeList_global" placeholder="选择代码" 
                                                     onkeydown="handleTagInput(event, 'site_0', 'prof')" 
                                                     onchange="handleTagChange(this, 'site_0', 'prof')">
-                                            </div>
-                                        </div>
-                                        <div class="form-row">
-                                            <label class="form-label">认可机构</label>
-                                            <div class="tags-display-box" id="accBox_site_0" onclick="focusTagInput(this)">
-                                                <span class="inline-tag accreditation" data-code="CNAS">CNAS<i class="fas fa-times remove-tag" onclick="removeTag(event, 'site_0', 'CNAS', 'acc')"></i></span>
-                                                <input type="text" class="tag-input" list="accList_global" placeholder="选择机构" 
-                                                    onkeydown="handleTagInput(event, 'site_0', 'acc')" 
-                                                    onchange="handleTagChange(this, 'site_0', 'acc')">
                                             </div>
                                         </div>
                                     </div>
@@ -2165,7 +2201,7 @@
                         </div>
 
                         <!-- 第二个场所（多班次示例） -->
-                        <div class="site-card" id="site_1" data-is-main="false" data-site-type="fixed">
+                        <div class="site-card" id="site_1" data-is-main="false" data-site-type="fixed" data-site-no="01">
                             <div class="site-card-header">
                                 <div class="flex items-center gap-2">
                                     <span class="site-type-badge type-fixed">固定场所</span>
@@ -2230,16 +2266,6 @@
                                                 <input type="text" class="tag-input" list="profCodeList_global" placeholder="选择代码" 
                                                     onkeydown="handleTagInput(event, 'site_1', 'prof')" 
                                                     onchange="handleTagChange(this, 'site_1', 'prof')">
-                                            </div>
-                                        </div>
-                                        <div class="form-row">
-                                            <label class="form-label">认可机构</label>
-                                            <div class="tags-display-box" id="accBox_site_1" onclick="focusTagInput(this)">
-                                                <span class="inline-tag accreditation" data-code="CNAS">CNAS<i class="fas fa-times remove-tag" onclick="removeTag(event, 'site_1', 'CNAS', 'acc')"></i></span>
-                                                <span class="inline-tag accreditation" data-code="UKAS">UKAS<i class="fas fa-times remove-tag" onclick="removeTag(event, 'site_1', 'UKAS', 'acc')"></i></span>
-                                                <input type="text" class="tag-input" list="accList_global" placeholder="选择机构" 
-                                                    onkeydown="handleTagInput(event, 'site_1', 'acc')" 
-                                                    onchange="handleTagChange(this, 'site_1', 'acc')">
                                             </div>
                                         </div>
                                     </div>
@@ -2391,6 +2417,17 @@
 
             <!-- 监督一内容 -->
             <div class="phase-content" id="phase_surv1">
+                <div class="contract-signer-row">
+                    <label class="form-label">合同签署方</label>
+                    <select class="form-select contract-signer-select" id="contractSigner_surv1">
+                        <option value="" selected disabled>请选择合同签署方</option>
+                        <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
+                        <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
+                        <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
+                        <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
+                        <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
+                    </select>
+                </div>
                 <!-- 监督一人天数统计 -->
                 <div class="summary-cards">
                     <div class="summary-card-item">
@@ -2435,16 +2472,6 @@
                     <div class="flex justify-between items-center mb-4">
                         <div class="flex items-center gap-3">
                             <h3 class="font-semibold text-gray-800">场所抽样方案</h3>
-                            <div class="contract-signer-inline">
-                            <select class="form-select contract-signer-select">
-                                <option value="" selected disabled>请选择合同签署方</option>
-                                <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
-                                <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
-                                <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
-                                <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
-                                <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
-                            </select>
-                            </div>
                         </div>
                         <div class="flex items-center gap-3">
                             <button onclick="openAiManDayModal()" class="btn btn-default btn-sm">
@@ -2464,7 +2491,7 @@
 
                     <div id="siteCardsContainer_surv1">
                         <!-- 监督一场所1 -->
-                        <div class="site-card" id="site_surv1_0" data-is-main="true" data-site-type="center">
+                        <div class="site-card" id="site_surv1_0" data-is-main="true" data-site-type="center" data-site-no="00">
                             <div class="site-card-header">
                                 <div class="flex items-center gap-2">
                                     <span class="site-type-badge type-center">中心职能</span>
@@ -2521,15 +2548,6 @@
                                                 <input type="text" class="tag-input" list="profCodeList_global" placeholder="选择代码" 
                                                     onkeydown="handleTagInput(event, 'site_surv1_0', 'prof')" 
                                                     onchange="handleTagChange(this, 'site_surv1_0', 'prof')">
-                                            </div>
-                                        </div>
-                                        <div class="form-row">
-                                            <label class="form-label">认可机构</label>
-                                            <div class="tags-display-box" id="accBox_site_surv1_0" onclick="focusTagInput(this)">
-                                                <span class="inline-tag accreditation" data-code="CNAS">CNAS<i class="fas fa-times remove-tag" onclick="removeTag(event, 'site_surv1_0', 'CNAS', 'acc')"></i></span>
-                                                <input type="text" class="tag-input" list="accList_global" placeholder="选择机构" 
-                                                    onkeydown="handleTagInput(event, 'site_surv1_0', 'acc')" 
-                                                    onchange="handleTagChange(this, 'site_surv1_0', 'acc')">
                                             </div>
                                         </div>
                                     </div>
@@ -2680,7 +2698,7 @@
                         </div>
 
                         <!-- 监督一场所2 -->
-                        <div class="site-card" id="site_surv1_1" data-is-main="false" data-site-type="fixed">
+                        <div class="site-card" id="site_surv1_1" data-is-main="false" data-site-type="fixed" data-site-no="01">
                             <div class="site-card-header">
                                 <div class="flex items-center gap-2">
                                     <span class="site-type-badge type-fixed">固定场所</span>
@@ -2743,15 +2761,6 @@
                                                 <input type="text" class="tag-input" list="profCodeList_global" placeholder="选择代码" 
                                                     onkeydown="handleTagInput(event, 'site_surv1_1', 'prof')" 
                                                     onchange="handleTagChange(this, 'site_surv1_1', 'prof')">
-                                            </div>
-                                        </div>
-                                        <div class="form-row">
-                                            <label class="form-label">认可机构</label>
-                                            <div class="tags-display-box" id="accBox_site_surv1_1" onclick="focusTagInput(this)">
-                                                <span class="inline-tag accreditation" data-code="CNAS">CNAS<i class="fas fa-times remove-tag" onclick="removeTag(event, 'site_surv1_1', 'CNAS', 'acc')"></i></span>
-                                                <input type="text" class="tag-input" list="accList_global" placeholder="选择机构" 
-                                                    onkeydown="handleTagInput(event, 'site_surv1_1', 'acc')" 
-                                                    onchange="handleTagChange(this, 'site_surv1_1', 'acc')">
                                             </div>
                                         </div>
                                     </div>
@@ -2893,6 +2902,17 @@
 
             <!-- 监督二内容 -->
             <div class="phase-content" id="phase_surv2">
+                <div class="contract-signer-row">
+                    <label class="form-label">合同签署方</label>
+                    <select class="form-select contract-signer-select" id="contractSigner_surv2">
+                        <option value="" selected disabled>请选择合同签署方</option>
+                        <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
+                        <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
+                        <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
+                        <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
+                        <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
+                    </select>
+                </div>
                 <!-- 监督二人天数统计 -->
                 <div class="summary-cards">
                     <div class="summary-card-item">
@@ -2937,16 +2957,6 @@
                     <div class="flex justify-between items-center mb-4">
                         <div class="flex items-center gap-3">
                             <h3 class="font-semibold text-gray-800">场所抽样方案</h3>
-                            <div class="contract-signer-inline">
-                            <select class="form-select contract-signer-select">
-                                <option value="" selected disabled>请选择合同签署方</option>
-                                <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
-                                <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
-                                <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
-                                <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
-                                <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
-                            </select>
-                            </div>
                         </div>
                         <div class="flex items-center gap-3">
                             <button onclick="openAiManDayModal()" class="btn btn-default btn-sm">
@@ -2966,7 +2976,7 @@
 
                     <div id="siteCardsContainer_surv2">
                         <!-- 监督二场所1 -->
-                        <div class="site-card" id="site_surv2_0" data-is-main="true" data-site-type="center">
+                        <div class="site-card" id="site_surv2_0" data-is-main="true" data-site-type="center" data-site-no="00">
                             <div class="site-card-header">
                                 <div class="flex items-center gap-2">
                                     <span class="site-type-badge type-center">中心职能</span>
@@ -3023,15 +3033,6 @@
                                                 <input type="text" class="tag-input" list="profCodeList_global" placeholder="选择代码" 
                                                     onkeydown="handleTagInput(event, 'site_surv2_0', 'prof')" 
                                                     onchange="handleTagChange(this, 'site_surv2_0', 'prof')">
-                                            </div>
-                                        </div>
-                                        <div class="form-row">
-                                            <label class="form-label">认可机构</label>
-                                            <div class="tags-display-box" id="accBox_site_surv2_0" onclick="focusTagInput(this)">
-                                                <span class="inline-tag accreditation" data-code="CNAS">CNAS<i class="fas fa-times remove-tag" onclick="removeTag(event, 'site_surv2_0', 'CNAS', 'acc')"></i></span>
-                                                <input type="text" class="tag-input" list="accList_global" placeholder="选择机构" 
-                                                    onkeydown="handleTagInput(event, 'site_surv2_0', 'acc')" 
-                                                    onchange="handleTagChange(this, 'site_surv2_0', 'acc')">
                                             </div>
                                         </div>
                                     </div>
@@ -3182,7 +3183,7 @@
                         </div>
 
                         <!-- 监督二场所2 -->
-                        <div class="site-card" id="site_surv2_1" data-is-main="false" data-site-type="fixed">
+                        <div class="site-card" id="site_surv2_1" data-is-main="false" data-site-type="fixed" data-site-no="01">
                             <div class="site-card-header">
                                 <div class="flex items-center gap-2">
                                     <span class="site-type-badge type-fixed">固定场所</span>
@@ -3245,15 +3246,6 @@
                                                 <input type="text" class="tag-input" list="profCodeList_global" placeholder="选择代码" 
                                                     onkeydown="handleTagInput(event, 'site_surv2_1', 'prof')" 
                                                     onchange="handleTagChange(this, 'site_surv2_1', 'prof')">
-                                            </div>
-                                        </div>
-                                        <div class="form-row">
-                                            <label class="form-label">认可机构</label>
-                                            <div class="tags-display-box" id="accBox_site_surv2_1" onclick="focusTagInput(this)">
-                                                <span class="inline-tag accreditation" data-code="CNAS">CNAS<i class="fas fa-times remove-tag" onclick="removeTag(event, 'site_surv2_1', 'CNAS', 'acc')"></i></span>
-                                                <input type="text" class="tag-input" list="accList_global" placeholder="选择机构" 
-                                                    onkeydown="handleTagInput(event, 'site_surv2_1', 'acc')" 
-                                                    onchange="handleTagChange(this, 'site_surv2_1', 'acc')">
                                             </div>
                                         </div>
                                     </div>
@@ -3395,6 +3387,17 @@
 
             <!-- 再认证内容 -->
             <div class="phase-content" id="phase_recert">
+                <div class="contract-signer-row">
+                    <label class="form-label">合同签署方</label>
+                    <select class="form-select contract-signer-select" id="contractSigner_recert">
+                        <option value="" selected disabled>请选择合同签署方</option>
+                        <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
+                        <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
+                        <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
+                        <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
+                        <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
+                    </select>
+                </div>
                 <!-- 再认证人天数统计 -->
                 <div class="summary-cards">
                     <div class="summary-card-item">
@@ -3439,16 +3442,6 @@
                     <div class="flex justify-between items-center mb-4">
                         <div class="flex items-center gap-3">
                             <h3 class="font-semibold text-gray-800">场所抽样方案</h3>
-                            <div class="contract-signer-inline">
-                            <select class="form-select contract-signer-select">
-                                <option value="" selected disabled>请选择合同签署方</option>
-                                <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
-                                <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
-                                <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
-                                <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
-                                <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
-                            </select>
-                            </div>
                         </div>
                         <div class="flex items-center gap-3">
                             <button class="btn btn-default btn-sm" onclick="openCertContentDrawer()">
@@ -3472,7 +3465,7 @@
 
                     <div id="siteCardsContainer_recert">
                         <!-- 再认证场所1 -->
-                        <div class="site-card" id="site_recert_0" data-is-main="true" data-site-type="center">
+                        <div class="site-card" id="site_recert_0" data-is-main="true" data-site-type="center" data-site-no="00">
                             <div class="site-card-header">
                                 <div class="flex items-center gap-2">
                                     <span class="site-type-badge type-center">中心职能</span>
@@ -3529,15 +3522,6 @@
                                                 <input type="text" class="tag-input" list="profCodeList_global" placeholder="选择代码" 
                                                     onkeydown="handleTagInput(event, 'site_recert_0', 'prof')" 
                                                     onchange="handleTagChange(this, 'site_recert_0', 'prof')">
-                                            </div>
-                                        </div>
-                                        <div class="form-row">
-                                            <label class="form-label">认可机构</label>
-                                            <div class="tags-display-box" id="accBox_site_recert_0" onclick="focusTagInput(this)">
-                                                <span class="inline-tag accreditation" data-code="CNAS">CNAS<i class="fas fa-times remove-tag" onclick="removeTag(event, 'site_recert_0', 'CNAS', 'acc')"></i></span>
-                                                <input type="text" class="tag-input" list="accList_global" placeholder="选择机构" 
-                                                    onkeydown="handleTagInput(event, 'site_recert_0', 'acc')" 
-                                                    onchange="handleTagChange(this, 'site_recert_0', 'acc')">
                                             </div>
                                         </div>
                                     </div>
@@ -3694,7 +3678,7 @@
                         </div>
 
                         <!-- 再认证场所2 -->
-                        <div class="site-card" id="site_recert_1" data-is-main="false" data-site-type="fixed">
+                        <div class="site-card" id="site_recert_1" data-is-main="false" data-site-type="fixed" data-site-no="01">
                             <div class="site-card-header">
                                 <div class="flex items-center gap-2">
                                     <span class="site-type-badge type-fixed">固定场所</span>
@@ -3757,15 +3741,6 @@
                                                 <input type="text" class="tag-input" list="profCodeList_global" placeholder="选择代码" 
                                                     onkeydown="handleTagInput(event, 'site_recert_1', 'prof')" 
                                                     onchange="handleTagChange(this, 'site_recert_1', 'prof')">
-                                            </div>
-                                        </div>
-                                        <div class="form-row">
-                                            <label class="form-label">认可机构</label>
-                                            <div class="tags-display-box" id="accBox_site_recert_1" onclick="focusTagInput(this)">
-                                                <span class="inline-tag accreditation" data-code="CNAS">CNAS<i class="fas fa-times remove-tag" onclick="removeTag(event, 'site_recert_1', 'CNAS', 'acc')"></i></span>
-                                                <input type="text" class="tag-input" list="accList_global" placeholder="选择机构" 
-                                                    onkeydown="handleTagInput(event, 'site_recert_1', 'acc')" 
-                                                    onchange="handleTagChange(this, 'site_recert_1', 'acc')">
                                             </div>
                                         </div>
                                     </div>
@@ -4060,46 +4035,46 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p class="text-sm text-gray-600 mb-4">认证申请中上报了以下场所信息，请选择要添加的场所：</p>
+                <p class="text-sm text-gray-600 mb-4">请从客户管理中维护的场所中进行选择</p>
                 <div class="space-y-2" id="availableSitesList">
                     <div class="available-site-row p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-name="分公司现场" data-address="上海市浦东新区办公区" data-people="45" data-type="fixed" onchange="toggleSiteSelection('分公司现场', this.checked)">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="01" data-name="分公司现场" data-name-en="Branch Site" data-code="91310115XXXXXXXX01" data-address="上海市浦东新区办公区" data-address-en="Office Area, Pudong New Area, Shanghai" data-people="45" data-type="fixed" data-products="销售服务、客户支持" data-products-en="Sales services and customer support" data-sub-cert="no" data-remark="" onchange="toggleSiteSelection('分公司现场', this.checked)">
                         <span class="site-type-badge type-fixed available-site-badge">固定场所</span>
                         <div class="available-site-text">
                             <div class="available-site-name">分公司现场</div>
-                            <div class="available-site-desc">上海市浦东新区办公区 | 人数：45</div>
+                            <div class="available-site-desc"><span class="available-site-no">场所编号：01</span> | 上海市浦东新区办公区 | 人数：45</div>
                         </div>
                     </div>
                     <div class="available-site-row p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-name="研发中心" data-address="深圳市南山区科技园" data-people="120" data-type="fixed" onchange="toggleSiteSelection('研发中心', this.checked)">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="02" data-name="研发中心" data-name-en="R&D Center" data-code="91440305XXXXXXXX02" data-address="深圳市南山区科技园" data-address-en="Science and Technology Park, Nanshan District, Shenzhen" data-people="120" data-type="fixed" data-products="软件研发、测试验证" data-products-en="Software research and development, testing and verification" data-sub-cert="yes" data-remark="颁发子证书" onchange="toggleSiteSelection('研发中心', this.checked)">
                         <span class="site-type-badge type-fixed available-site-badge">固定场所</span>
                         <div class="available-site-text">
                             <div class="available-site-name">研发中心</div>
-                            <div class="available-site-desc">深圳市南山区科技园 | 人数：120</div>
+                            <div class="available-site-desc"><span class="available-site-no">场所编号：02</span> | 深圳市南山区科技园 | 人数：120</div>
                         </div>
                     </div>
                     <div class="available-site-row p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-name="生产基地" data-address="广州市番禺区工业园" data-people="200" data-type="fixed" onchange="toggleSiteSelection('生产基地', this.checked)">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="03" data-name="生产基地" data-name-en="Production Base" data-code="91440113XXXXXXXX03" data-address="广州市番禺区工业园" data-address-en="Industrial Park, Panyu District, Guangzhou" data-people="200" data-type="fixed" data-products="硬件制造、设备组装" data-products-en="Hardware manufacturing and equipment assembly" data-sub-cert="yes" data-remark="颁发子证书" onchange="toggleSiteSelection('生产基地', this.checked)">
                         <span class="site-type-badge type-fixed available-site-badge">固定场所</span>
                         <div class="available-site-text">
                             <div class="available-site-name">生产基地</div>
-                            <div class="available-site-desc">广州市番禺区工业园 | 人数：200</div>
+                            <div class="available-site-desc"><span class="available-site-no">场所编号：03</span> | 广州市番禺区工业园 | 人数：200</div>
                         </div>
                     </div>
                     <div class="available-site-row p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-name="客户服务点" data-address="杭州市西湖区客户驻场服务点" data-people="18" data-type="service" onchange="toggleSiteSelection('客户服务点', this.checked)">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="04" data-name="客户服务点" data-name-en="Customer Service Point" data-code="91330106XXXXXXXX04" data-address="杭州市西湖区客户驻场服务点" data-address-en="Customer On-site Service Point, Xihu District, Hangzhou" data-people="18" data-type="service" data-products="系统运维、客户支持" data-products-en="System operation and maintenance, customer support" data-sub-cert="no" data-remark="" onchange="toggleSiteSelection('客户服务点', this.checked)">
                         <span class="site-type-badge type-service available-site-badge">服务点</span>
                         <div class="available-site-text">
                             <div class="available-site-name">客户服务点</div>
-                            <div class="available-site-desc">杭州市西湖区客户驻场服务点 | 人数：18</div>
+                            <div class="available-site-desc"><span class="available-site-no">场所编号：04</span> | 杭州市西湖区客户驻场服务点 | 人数：18</div>
                         </div>
                     </div>
                     <div class="available-site-row p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-name="项目实施现场" data-address="成都市高新区临时项目现场" data-people="26" data-type="temporary" onchange="toggleSiteSelection('项目实施现场', this.checked)">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="05" data-name="项目实施现场" data-name-en="Project Implementation Site" data-code="91510100XXXXXXXX05" data-address="成都市高新区临时项目现场" data-address-en="Temporary Project Site, High-tech Zone, Chengdu" data-people="26" data-type="temporary" data-products="项目实施、现场调试" data-products-en="Project implementation and on-site commissioning" data-sub-cert="no" data-remark="临时场所" onchange="toggleSiteSelection('项目实施现场', this.checked)">
                         <span class="site-type-badge type-temporary available-site-badge">临时场所</span>
                         <div class="available-site-text">
                             <div class="available-site-name">项目实施现场</div>
-                            <div class="available-site-desc">成都市高新区临时项目现场 | 人数：26</div>
+                            <div class="available-site-desc"><span class="available-site-no">场所编号：05</span> | 成都市高新区临时项目现场 | 人数：26</div>
                         </div>
                     </div>
                 </div>
@@ -4443,13 +4418,18 @@
 
                 <!-- 9. 证书附件【多场所】表格 -->
                 <div class="cert-section-panel">
-                <div class="cert-section-title"><span class="cert-section-index">5</span><span>证书附件【多场所】</span></div>
+                <div class="flex justify-between items-center mb-2">
+                    <div class="cert-section-title" style="margin-bottom: 0;"><span class="cert-section-index">5</span><span>证书附件【多场所】</span></div>
+                    <button onclick="openCertSiteSelectModal()" class="btn btn-default btn-sm">
+                        <i class="fas fa-plus"></i> 添加场所
+                    </button>
+                </div>
                 
                 <div class="cert-sites-table-scroll">
                 <table class="data-table" id="certSitesTable">
                     <thead>
                         <tr>
-                            <th style="width: 50px">序号</th>
+                            <th style="width: 70px">场所编号</th>
                             <th>（组织/场所）名称</th>
                             <th>（组织/场所）名称（英）</th>
                             <th style="width: 150px">统一信用代码</th>
@@ -4459,10 +4439,11 @@
                             <th>覆盖的产品和服务（英）</th>
                             <th style="width: 140px">客户需要子证/是否出子证</th>
                             <th style="width: 150px">备注</th>
+                            <th style="width: 80px">操作</th>
                         </tr>
                     </thead>
                     <tbody id="certSitesTableBody">
-                        <!-- 动态填充：1行中心职能+4行多场所 -->
+                        <!-- 动态填充：中心职能+多场所 -->
                     </tbody>
                 </table>
                 </div>
@@ -4500,6 +4481,26 @@
                 <button onclick="closeCertEditModal()" class="btn btn-default">取消</button>
                 <button onclick="saveCertContent()" class="btn btn-default">保存</button>
                 <button onclick="submitCertContent()" class="btn btn-primary">提交</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 证书附件多场所选择弹窗 -->
+    <div id="certSiteSelectModal" class="modal-overlay hidden-section" style="z-index: 1003;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="card-title">选择证书附件场所</div>
+                <button onclick="closeCertSiteSelectModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="text-sm text-gray-600 mb-4">请从客户管理中维护的场所中进行选择</p>
+                <div class="space-y-2" id="certAvailableSitesList"></div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeCertSiteSelectModal()" class="btn btn-default">取消</button>
+                <button onclick="confirmAddCertSites()" class="btn btn-primary">确认添加</button>
             </div>
         </div>
     </div>
@@ -4651,6 +4652,7 @@
         let currentPhase = 'initial';
         let sites = ['site_0', 'site_1', 'site_surv1_0', 'site_surv1_1', 'site_surv2_0', 'site_surv2_1', 'site_recert_0', 'site_recert_1'];
         let selectedAvailableSites = [];
+        let selectedCertAvailableSites = [];
         let selectedTemplateIndex = 0;
         let currentTemplateSiteId = '';
         let currentAddSitePhase = '';
@@ -4844,6 +4846,18 @@
                 '"': '&quot;',
                 "'": '&#39;'
             }[char]));
+        }
+
+        function formatSiteNo(index) {
+            return String(index).padStart(2, '0');
+        }
+
+        function getNextAvailableSiteNo() {
+            const maxNo = Array.from(document.querySelectorAll('#availableSitesList .site-select-check'))
+                .map(input => parseInt(input.dataset.siteNo || '', 10))
+                .filter(num => Number.isFinite(num))
+                .reduce((max, num) => Math.max(max, num), 0);
+            return formatSiteNo(maxNo + 1);
         }
 
         function initializeEditableShiftInfo(root = document) {
@@ -5517,15 +5531,23 @@
                     const address = card.querySelector('.site-address')?.value || '';
                     const products = card.querySelector('.site-products')?.value || '';
                     const hasSubCert = card.querySelector('.sub-cert-checkbox')?.checked || false;
+                    const type = card.dataset.siteType || (isMain ? 'center' : 'fixed');
+                    const siteNo = card.dataset.siteNo || (isMain ? '00' : '');
                     
                     sitesInfo.push({
                         id: siteId,
                         isMain: isMain,
+                        type: type,
+                        siteNo: siteNo,
                         name: siteName,
+                        nameEn: card.dataset.siteNameEn || '',
                         address: address,
+                        addressEn: card.dataset.siteAddressEn || '',
                         products: products,
+                        productsEn: card.dataset.siteProductsEn || '',
                         hasSubCert: hasSubCert,
-                        code: document.getElementById('certEdit_creditCode')?.value || '91110108XXXXXXXXXX'
+                        code: card.dataset.siteCode || document.getElementById('certEdit_creditCode')?.value || '91110108XXXXXXXXXX',
+                        remark: card.dataset.siteRemark || ''
                     });
                 }
             });
@@ -5748,9 +5770,6 @@
         }
 
         function autoFillCertSites(sitesInfo) {
-            const tbody = document.getElementById('certSitesTableBody');
-            tbody.innerHTML = '';
-            
             const mainSite = sitesInfo.find(s => s.isMain) || {
                 name: getCertMainSiteName(),
                 nameEn: getCertMainSiteNameEn(),
@@ -5760,54 +5779,21 @@
                 products: getCertMainSiteProducts(),
                 productsEn: getCertMainSiteProductsEn()
             };
-            
+
             const tableData = [
                 { ...mainSite, isMain: true, subCert: 'no', remark: '-' },
-                { name: '生产现场一', nameEn: '', code: '91110108XXXXXXXX01', address: '北京市昌平区生产基地', addressEn: '', products: '硬件制造', productsEn: '', subCert: 'yes', remark: '' },
-                { name: '研发中心', nameEn: '', code: '91110108XXXXXXXX02', address: '北京市朝阳区研发大厦', addressEn: '', products: '软件研发', productsEn: '', subCert: 'yes', remark: '' },
-                { name: '分公司', nameEn: '', code: '91110108XXXXXXXX03', address: '上海市浦东新区', addressEn: '', products: '销售服务', productsEn: '', subCert: 'no', remark: '' },
-                { name: '办事处', nameEn: '', code: '91110108XXXXXXXX04', address: '广州市天河区', addressEn: '', products: '客户服务', productsEn: '', subCert: 'no', remark: '' }
+                ...sitesInfo
+                    .filter(site => !site.isMain && site.type !== 'temporary')
+                    .map((site, index) => ({ ...site, siteNo: site.siteNo || formatSiteNo(index + 1), subCert: site.hasSubCert ? 'yes' : 'no', remark: site.remark || '' }))
             ];
             
             const savedData = currentEditCertId ? certContentData.find(item => item.id === currentEditCertId)?.sites : null;
             if (savedData && savedData.length > 0) {
-                for (let i = 0; i < 5; i++) {
-                    if (savedData[i]) {
-                        tableData[i] = { ...tableData[i], ...savedData[i] };
-                    }
-                }
+                renderCertSitesTable(savedData);
+                return;
             }
-            tableData[0] = { ...tableData[0], name: getCertMainSiteName(), nameEn: getCertMainSiteNameEn(), code: getCertMainSiteCode(), address: getCertMainSiteAddress(), addressEn: getCertMainSiteAddressEn(), products: getCertMainSiteProducts(), productsEn: getCertMainSiteProductsEn(), isMain: true };
-            
-            tableData.forEach((site, index) => {
-                const isMain = site.isMain || index === 0;
-                const subCertValue = site.subCert === 'yes' ? '是' : '否';
-                const tr = document.createElement('tr');
-                
-                const subCertSelect = `<select class="form-select cert-subcert-select"  style="font-size:12px; padding: 4px 6px;">
-                    <option value="yes" ${site.subCert === 'yes' ? 'selected' : ''}>是</option>
-                    <option value="no" ${(!site.subCert && isMain) || site.subCert === 'no' ? 'selected' : ''}>否</option>
-                </select>`;
-                
-                tr.innerHTML = `
-                    <td><span class="cert-row-index">${index + 1}</span></td>
-                    <td><input type="text" class="form-input cert-site-name-input" value="${site.name || ''}" ${isMain ? 'readonly style="background:#f5f5f5; cursor:not-allowed;"' : ''}></td>
-                    <td><input type="text" class="form-input cert-site-name-en-input" value="${site.nameEn || ''}" ${isMain ? 'readonly style="background:#f5f5f5; cursor:not-allowed;"' : ''}></td>
-                    <td><textarea class="form-input cert-site-code-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.code || ''}</textarea></td>
-                    <td><textarea class="form-input cert-site-address-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.address || ''}</textarea></td>
-                    <td><textarea class="form-input cert-site-address-en-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.addressEn || ''}</textarea></td>
-                    <td><textarea class="form-input cert-site-products-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.products || ''}</textarea></td>
-                    <td><textarea class="form-input cert-site-products-en-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.productsEn || ''}</textarea></td>
-                    <td>
-                        <div style="display:flex;align-items:center;gap:4px;">
-                            <span class="subcert-readonly" style="font-size:12px;color:var(--color-text-muted);white-space:nowrap;">${subCertValue}</span>
-                            ${subCertSelect}
-                        </div>
-                    </td>
-                    <td><input type="text" class="form-input cert-remark-input" value="${site.remark || ''}" placeholder="可填写备注"></td>
-                `;
-                tbody.appendChild(tr);
-            });
+
+            renderCertSitesTable(tableData);
         }
         
         function openCertContentDrawer() {
@@ -5934,53 +5920,210 @@
             const tbody = document.getElementById('certSitesTableBody');
             tbody.innerHTML = '';
             
-            const defaultSites = [
-                { name: getCertMainSiteName(), nameEn: getCertMainSiteNameEn(), code: getCertMainSiteCode(), address: getCertMainSiteAddress(), addressEn: getCertMainSiteAddressEn(), products: getCertMainSiteProducts(), productsEn: getCertMainSiteProductsEn(), subCert: 'no', remark: '-', isMain: true },
-                { name: '生产现场一', nameEn: '', code: '91110108XXXXXXXX01', address: '北京市昌平区生产基地', addressEn: '', products: '硬件制造', productsEn: '', subCert: 'yes', remark: '' },
-                { name: '研发中心', nameEn: '', code: '91110108XXXXXXXX02', address: '北京市朝阳区研发大厦', addressEn: '', products: '软件研发', productsEn: '', subCert: 'yes', remark: '' },
-                { name: '分公司', nameEn: '', code: '91110108XXXXXXXX03', address: '上海市浦东新区', addressEn: '', products: '销售服务', productsEn: '', subCert: 'no', remark: '' },
-                { name: '办事处', nameEn: '', code: '91110108XXXXXXXX04', address: '广州市天河区', addressEn: '', products: '客户服务', productsEn: '', subCert: 'no', remark: '' }
-            ];
-            
-            const displaySites = [];
-            for (let i = 0; i < 5; i++) {
-                if (savedSites && savedSites[i]) {
-                    displaySites.push({ ...defaultSites[i], ...savedSites[i] });
-                } else {
-                    displaySites.push(defaultSites[i]);
-                }
+            const displaySites = (savedSites && savedSites.length ? savedSites : [
+                { name: getCertMainSiteName(), nameEn: getCertMainSiteNameEn(), code: getCertMainSiteCode(), address: getCertMainSiteAddress(), addressEn: getCertMainSiteAddressEn(), products: getCertMainSiteProducts(), productsEn: getCertMainSiteProductsEn(), subCert: 'no', remark: '-', isMain: true }
+            ]).filter((site, index) => index === 0 || site.type !== 'temporary');
+
+            if (!displaySites.length) {
+                displaySites.push({ name: getCertMainSiteName(), nameEn: getCertMainSiteNameEn(), code: getCertMainSiteCode(), address: getCertMainSiteAddress(), addressEn: getCertMainSiteAddressEn(), products: getCertMainSiteProducts(), productsEn: getCertMainSiteProductsEn(), subCert: 'no', remark: '-', isMain: true });
             }
-            displaySites[0] = { ...displaySites[0], name: getCertMainSiteName(), nameEn: getCertMainSiteNameEn(), code: getCertMainSiteCode(), address: getCertMainSiteAddress(), addressEn: getCertMainSiteAddressEn(), products: getCertMainSiteProducts(), productsEn: getCertMainSiteProductsEn(), isMain: true };
+
+            displaySites[0] = { ...displaySites[0], siteNo: displaySites[0].siteNo || '00', name: getCertMainSiteName(), nameEn: getCertMainSiteNameEn(), code: getCertMainSiteCode(), address: getCertMainSiteAddress(), addressEn: getCertMainSiteAddressEn(), products: getCertMainSiteProducts(), productsEn: getCertMainSiteProductsEn(), isMain: true };
             
             displaySites.forEach((site, index) => {
-                const isMain = site.isMain || index === 0;
-                const subCertValue = site.subCert === 'yes' ? '是' : '否';
-                const tr = document.createElement('tr');
-                
-                const subCertSelect = `<select class="form-select cert-subcert-select"  style="font-size:12px; padding: 4px 6px;">
-                    <option value="yes" ${site.subCert === 'yes' ? 'selected' : ''}>是</option>
-                    <option value="no" ${(!site.subCert && isMain) || site.subCert === 'no' ? 'selected' : ''}>否</option>
-                </select>`;
-                
-                tr.innerHTML = `
-                    <td><span class="cert-row-index">${index + 1}</span></td>
-                    <td><input type="text" class="form-input cert-site-name-input" value="${site.name || ''}" ${isMain ? 'readonly style="background:#f5f5f5; cursor:not-allowed;"' : ''}></td>
-                    <td><input type="text" class="form-input cert-site-name-en-input" value="${site.nameEn || ''}" ${isMain ? 'readonly style="background:#f5f5f5; cursor:not-allowed;"' : ''}></td>
-                    <td><textarea class="form-input cert-site-code-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.code || ''}</textarea></td>
-                    <td><textarea class="form-input cert-site-address-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.address || ''}</textarea></td>
-                    <td><textarea class="form-input cert-site-address-en-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.addressEn || ''}</textarea></td>
-                    <td><textarea class="form-input cert-site-products-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.products || ''}</textarea></td>
-                    <td><textarea class="form-input cert-site-products-en-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${isMain ? 'background:#f5f5f5; cursor:not-allowed;' : ''}" ${isMain ? 'readonly' : ''}>${site.productsEn || ''}</textarea></td>
-                    <td>
-                        <div style="display:flex;align-items:center;gap:4px;">
-                            <span class="subcert-readonly" style="font-size:12px;color:var(--color-text-muted);white-space:nowrap;">${subCertValue}</span>
-                            ${subCertSelect}
-                        </div>
-                    </td>
-                    <td><input type="text" class="form-input cert-remark-input" value="${site.remark || ''}" placeholder="可填写备注"></td>
-                `;
+                const tr = createCertSiteRow(site, index);
                 tbody.appendChild(tr);
             });
+        }
+
+        function createCertSiteRow(site, index) {
+            const isMain = site.isMain || index === 0;
+            const subCertValue = site.subCert === 'yes' ? '是' : '否';
+            const readonlyAttrs = isMain ? 'readonly style="background:#f5f5f5; cursor:not-allowed;"' : '';
+            const readonlyTextareaStyle = isMain ? 'background:#f5f5f5; cursor:not-allowed;' : '';
+            const tr = document.createElement('tr');
+            tr.dataset.siteType = site.type || (isMain ? 'center' : 'fixed');
+            const siteNo = site.siteNo || (isMain ? '00' : formatSiteNo(index));
+            tr.dataset.siteNo = siteNo;
+            
+            const subCertSelect = `<select class="form-select cert-subcert-select" onchange="updateSubCertReadonly(this)" style="font-size:12px; padding: 4px 6px;">
+                <option value="yes" ${site.subCert === 'yes' ? 'selected' : ''}>是</option>
+                <option value="no" ${(!site.subCert && isMain) || site.subCert === 'no' ? 'selected' : ''}>否</option>
+            </select>`;
+            
+            tr.innerHTML = `
+                <td><span class="cert-row-index">${escapeHtml(siteNo)}</span></td>
+                <td><input type="text" class="form-input cert-site-name-input" value="${escapeHtml(site.name || '')}" ${readonlyAttrs}></td>
+                <td><input type="text" class="form-input cert-site-name-en-input" value="${escapeHtml(site.nameEn || '')}" ${readonlyAttrs}></td>
+                <td><textarea class="form-input cert-site-code-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${readonlyTextareaStyle}" ${isMain ? 'readonly' : ''}>${escapeHtml(site.code || '')}</textarea></td>
+                <td><textarea class="form-input cert-site-address-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${readonlyTextareaStyle}" ${isMain ? 'readonly' : ''}>${escapeHtml(site.address || '')}</textarea></td>
+                <td><textarea class="form-input cert-site-address-en-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${readonlyTextareaStyle}" ${isMain ? 'readonly' : ''}>${escapeHtml(site.addressEn || '')}</textarea></td>
+                <td><textarea class="form-input cert-site-products-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${readonlyTextareaStyle}" ${isMain ? 'readonly' : ''}>${escapeHtml(site.products || '')}</textarea></td>
+                <td><textarea class="form-input cert-site-products-en-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit; ${readonlyTextareaStyle}" ${isMain ? 'readonly' : ''}>${escapeHtml(site.productsEn || '')}</textarea></td>
+                <td>
+                    <div style="display:flex;align-items:center;gap:4px;">
+                        <span class="subcert-readonly" style="font-size:12px;color:var(--color-text-muted);white-space:nowrap;">${subCertValue}</span>
+                        ${subCertSelect}
+                    </div>
+                </td>
+                <td><input type="text" class="form-input cert-remark-input" value="${escapeHtml(site.remark || '')}" placeholder="可填写备注"></td>
+                <td>
+                    ${isMain ? '<span class="text-gray-400 text-xs">-</span>' : '<button onclick="deleteCertSiteRow(this)" class="cert-icon-btn" title="删除"><i class="fas fa-trash"></i></button>'}
+                </td>
+            `;
+            return tr;
+        }
+
+        function getCertSitesFromTable() {
+            const sites = [];
+            document.querySelectorAll('#certSitesTableBody tr').forEach((row, index) => {
+                const select = row.querySelector('.cert-subcert-select');
+                const nameInput = row.querySelector('.cert-site-name-input');
+                const nameEnInput = row.querySelector('.cert-site-name-en-input');
+                const codeInput = row.querySelector('.cert-site-code-input');
+                const addressInput = row.querySelector('.cert-site-address-input');
+                const addressEnInput = row.querySelector('.cert-site-address-en-input');
+                const productsInput = row.querySelector('.cert-site-products-input');
+                const productsEnInput = row.querySelector('.cert-site-products-en-input');
+                const remarkInput = row.querySelector('.cert-remark-input');
+                if (!nameInput) return;
+                sites.push({
+                    name: nameInput.value,
+                    nameEn: nameEnInput?.value || '',
+                    code: codeInput?.value || '',
+                    address: addressInput?.value || '',
+                    addressEn: addressEnInput?.value || '',
+                    products: productsInput?.value || '',
+                    productsEn: productsEnInput?.value || '',
+                    subCert: select ? select.value : 'no',
+                    remark: remarkInput ? remarkInput.value : '',
+                    isMain: index === 0,
+                    siteNo: row.dataset.siteNo || (index === 0 ? '00' : formatSiteNo(index)),
+                    type: row.dataset.siteType || (index === 0 ? 'center' : 'fixed')
+                });
+            });
+            return sites;
+        }
+
+        function refreshCertSiteRowNumbers() {
+            document.querySelectorAll('#certSitesTableBody tr').forEach((row, index) => {
+                const indexEl = row.querySelector('.cert-row-index');
+                const siteNo = row.dataset.siteNo || indexEl?.textContent?.trim() || (index === 0 ? '00' : formatSiteNo(index));
+                if (indexEl) indexEl.textContent = siteNo;
+                row.dataset.siteNo = siteNo;
+            });
+        }
+
+        function deleteCertSiteRow(btn) {
+            btn.closest('tr')?.remove();
+            refreshCertSiteRowNumbers();
+        }
+
+        function getCertSelectableSites() {
+            const currentNames = new Set(getCertSitesFromTable().map(site => site.name));
+            return Array.from(document.querySelectorAll('#availableSitesList .site-select-check'))
+                .filter(input => (input.dataset.type || 'fixed') !== 'temporary')
+                .filter(input => !currentNames.has(input.dataset.name || ''))
+                .map((input, index) => ({
+                    name: input.dataset.name || '',
+                    nameEn: input.dataset.nameEn || '',
+                    code: input.dataset.code || '',
+                    address: input.dataset.address || '',
+                    addressEn: input.dataset.addressEn || '',
+                    people: input.dataset.people || '0',
+                    type: input.dataset.type || 'fixed',
+                    siteNo: input.dataset.siteNo || formatSiteNo(index + 1),
+                    products: input.dataset.products || '',
+                    productsEn: input.dataset.productsEn || '',
+                    subCert: input.dataset.subCert || 'no',
+                    remark: input.dataset.remark || ''
+                }))
+                .filter(site => site.name);
+        }
+
+        function openCertSiteSelectModal() {
+            selectedCertAvailableSites = [];
+            const list = document.getElementById('certAvailableSitesList');
+            if (!list) return;
+            list.innerHTML = '';
+
+            const selectableSites = getCertSelectableSites();
+            if (!selectableSites.length) {
+                list.innerHTML = '<div class="text-center text-gray-400 py-4">暂无可添加场所</div>';
+            } else {
+                selectableSites.forEach(site => {
+                    const typeMeta = getSiteTypeMeta(site.type);
+                    const row = document.createElement('div');
+                    row.className = 'available-site-row p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer';
+                    row.innerHTML = `
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded cert-site-select-check" data-name="${escapeHtml(site.name)}">
+                        <span class="site-type-badge ${typeMeta.className} available-site-badge">${typeMeta.label}</span>
+                        <div class="available-site-text">
+                            <div class="available-site-name">${escapeHtml(site.name)}</div>
+                            <div class="available-site-desc"><span class="available-site-no">场所编号：${escapeHtml(site.siteNo)}</span> | ${escapeHtml(site.address)} | 人数：${escapeHtml(site.people)}</div>
+                        </div>
+                    `;
+                    const syncSelectedState = function() {
+                        const checkbox = row.querySelector('.cert-site-select-check');
+                        row.classList.toggle('is-selected', !!checkbox?.checked);
+                    };
+                    row.onclick = function(event) {
+                        const checkbox = row.querySelector('.cert-site-select-check');
+                        if (event.target !== checkbox) checkbox.checked = !checkbox.checked;
+                        if (checkbox.checked) {
+                            if (!selectedCertAvailableSites.includes(site.name)) selectedCertAvailableSites.push(site.name);
+                        } else {
+                            selectedCertAvailableSites = selectedCertAvailableSites.filter(name => name !== site.name);
+                        }
+                        syncSelectedState();
+                    };
+                    row.querySelector('.cert-site-select-check').onchange = function(event) {
+                        event.stopPropagation();
+                        if (this.checked) {
+                            if (!selectedCertAvailableSites.includes(site.name)) selectedCertAvailableSites.push(site.name);
+                        } else {
+                            selectedCertAvailableSites = selectedCertAvailableSites.filter(name => name !== site.name);
+                        }
+                        syncSelectedState();
+                    };
+                    list.appendChild(row);
+                });
+            }
+
+            document.getElementById('certSiteSelectModal').classList.remove('hidden-section');
+        }
+
+        function closeCertSiteSelectModal() {
+            document.getElementById('certSiteSelectModal').classList.add('hidden-section');
+            selectedCertAvailableSites = [];
+        }
+
+        function confirmAddCertSites() {
+            if (!selectedCertAvailableSites.length) {
+                alert('请至少选择一个场所');
+                return;
+            }
+
+            const selectableSites = getCertSelectableSites();
+            const addedSites = selectableSites
+                .filter(site => selectedCertAvailableSites.includes(site.name))
+                .map(site => ({
+                    name: site.name,
+                    nameEn: site.nameEn,
+                    code: site.code,
+                    address: site.address,
+                    addressEn: site.addressEn,
+                    products: site.products,
+                    productsEn: site.productsEn,
+                    subCert: site.subCert,
+                    remark: site.remark,
+                    isMain: false,
+                    siteNo: site.siteNo,
+                    type: site.type
+                }));
+
+            renderCertSitesTable([...getCertSitesFromTable(), ...addedSites]);
+            closeCertSiteSelectModal();
         }
         
         function renderCertProductsTable(products) {
@@ -6133,7 +6276,9 @@
                         productsEn: index === 0 ? data.scopeEn : (productsEnInput?.value || ''),
                         subCert: select ? select.value : 'no',
                         remark: remarkInput ? remarkInput.value : '',
-                        isMain: index === 0
+                        isMain: index === 0,
+                        siteNo: row.dataset.siteNo || (index === 0 ? '00' : ''),
+                        type: row.dataset.siteType || (index === 0 ? 'center' : 'fixed')
                     });
                 }
             });
@@ -6292,11 +6437,17 @@
                 siteData.address,
                 siteData.people || '0',
                 phase,
-                siteData.type || 'fixed'
+                siteData.type || 'fixed',
+                siteData.siteNo || ''
             );
 
             const productsInput = siteCard.querySelector('.site-products');
             if (productsInput && siteData.products) productsInput.value = siteData.products;
+            siteCard.dataset.siteNameEn = siteData.nameEn || '';
+            siteCard.dataset.siteCode = siteData.code || '';
+            siteCard.dataset.siteAddressEn = siteData.addressEn || '';
+            siteCard.dataset.siteProductsEn = siteData.productsEn || '';
+            siteCard.dataset.siteRemark = siteData.remark || '';
 
             container.appendChild(siteCard);
             sites.push(newSiteId);
@@ -6334,6 +6485,7 @@
                 return false;
             }
 
+            const siteNo = siteData.siteNo || getNextAvailableSiteNo();
             const typeMeta = getSiteTypeMeta(siteData.type || 'fixed');
             const row = document.createElement('div');
             row.className = 'available-site-row p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer';
@@ -6342,11 +6494,18 @@
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.className = 'w-4 h-4 text-blue-600 rounded site-select-check';
+            checkbox.dataset.siteNo = siteNo;
             checkbox.dataset.name = siteData.name;
+            checkbox.dataset.nameEn = siteData.nameEn || '';
+            checkbox.dataset.code = siteData.code || '';
             checkbox.dataset.address = siteData.address;
+            checkbox.dataset.addressEn = siteData.addressEn || '';
             checkbox.dataset.people = siteData.people || '0';
             checkbox.dataset.type = siteData.type || 'fixed';
             checkbox.dataset.products = siteData.products || '';
+            checkbox.dataset.productsEn = siteData.productsEn || '';
+            checkbox.dataset.subCert = siteData.subCert || 'no';
+            checkbox.dataset.remark = siteData.remark || '';
             checkbox.checked = checked;
             checkbox.onchange = function() {
                 toggleSiteSelection(siteData.name, this.checked);
@@ -6360,7 +6519,7 @@
             text.className = 'available-site-text';
             text.innerHTML = `
                 <div class="available-site-name">${escapeHtml(siteData.name)}</div>
-                <div class="available-site-desc">${escapeHtml(siteData.address)} | 人数：${escapeHtml(siteData.people || '0')}</div>
+                <div class="available-site-desc"><span class="available-site-no">场所编号：${escapeHtml(siteNo)}</span> | ${escapeHtml(siteData.address)} | 人数：${escapeHtml(siteData.people || '0')}</div>
             `;
 
             const deleteBtn = document.createElement('button');
@@ -6425,8 +6584,21 @@
                 const address = checkbox?.dataset?.address || '';
                 const people = checkbox?.dataset?.people || '0';
                 const siteType = checkbox?.dataset?.type || 'fixed';
+                const siteNo = checkbox?.dataset?.siteNo || '';
                 const products = checkbox?.dataset?.products || '';
-                appendSiteCardToCurrentPhase({ name: siteName, address, people, products, type: siteType });
+                appendSiteCardToCurrentPhase({
+                    name: siteName,
+                    nameEn: checkbox?.dataset?.nameEn || '',
+                    code: checkbox?.dataset?.code || '',
+                    address,
+                    addressEn: checkbox?.dataset?.addressEn || '',
+                    people,
+                    products,
+                    productsEn: checkbox?.dataset?.productsEn || '',
+                    remark: checkbox?.dataset?.remark || '',
+                    type: siteType,
+                    siteNo
+                });
             });
             
             const phaseName = currentAddSitePhase === 'initial' ? '初次认证' :
@@ -6480,7 +6652,7 @@
 
             samples.forEach(sample => {
                 if (document.getElementById(sample.id)) return;
-                const card = createSiteCard(sample.id, sample.name, sample.address, sample.people, 'initial', sample.type);
+                const card = createSiteCard(sample.id, sample.name, sample.address, sample.people, 'initial', sample.type, sample.siteNo || '');
                 const productsInput = card.querySelector('.site-products');
                 const prepInput = card.querySelector('[data-type="prep"]');
                 const stage1Input = card.querySelector('[data-type="stage1"]');
@@ -6496,12 +6668,13 @@
             container.dataset.samplesAdded = 'true';
         }
 
-        function createSiteCard(siteId, siteName, address, people, phase, siteType = 'fixed') {
+        function createSiteCard(siteId, siteName, address, people, phase, siteType = 'fixed', siteNo = '') {
             const div = document.createElement('div');
             div.className = 'site-card';
             div.id = siteId;
             div.dataset.isMain = 'false';
             div.dataset.siteType = siteType;
+            if (siteNo) div.dataset.siteNo = siteNo;
             
             const planTime = phase === 'surv1' ? '2024-10' : (phase === 'surv2' ? '2025-10' : (phase === 'recert' ? '2026-04' : '2024-04'));
             const field = getCurrentField();
@@ -6587,14 +6760,6 @@
                                     <input type="text" class="tag-input" list="profCodeList_global" placeholder="选择代码" 
                                         onkeydown="handleTagInput(event, '${siteId}', 'prof')" 
                                         onchange="handleTagChange(this, '${siteId}', 'prof')">
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <label class="form-label">认可机构</label>
-                                <div class="tags-display-box" id="accBox_${siteId}" onclick="focusTagInput(this)">
-                                    <input type="text" class="tag-input" list="accList_global" placeholder="选择机构" 
-                                        onkeydown="handleTagInput(event, '${siteId}', 'acc')" 
-                                        onchange="handleTagChange(this, '${siteId}', 'acc')">
                                 </div>
                             </div>
                         </div>
