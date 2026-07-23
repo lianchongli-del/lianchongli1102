@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -117,6 +118,36 @@
         .contract-signer-select {
             width: 280px;
             min-width: 220px;
+        }
+
+        .phase-audit-options-row {
+            margin: 0 0 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .phase-audit-options-row .contract-signer-row {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+            flex: 1 1 420px;
+        }
+
+        .phase-audit-options-row .form-label {
+            display: inline-flex;
+            align-items: center;
+            flex: 0 0 auto;
+            margin-bottom: 0;
+            white-space: nowrap;
+        }
+
+        .phase-audit-options-row .contract-signer-select {
+            flex: 1 1 auto;
+            width: auto;
+            min-width: 260px;
         }
 
         .unannounced-audit-inline {
@@ -1719,6 +1750,26 @@
         <div class="main-content-area">
             <!-- 初次认证内容 -->
             <div class="phase-content readonly-phase" id="phase_initial">
+                <div class="phase-audit-options-row">
+                    <div class="contract-signer-row">
+                        <label class="form-label">合同签署方</label>
+                        <select class="form-select contract-signer-select" id="contractSigner_initial">
+                        <option value="" selected disabled>请选择合同签署方</option>
+                        <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
+                        <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
+                        <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
+                        <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
+                        <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
+                        </select>
+                    </div>
+                    <label class="unannounced-audit-inline switch-control" for="initialUnannouncedAudit" title="开启后，本次初次认证按不预先通知客户的审核方式策划。">
+                        <i class="fas fa-user-secret text-blue-600"></i>
+                        <span>不通知审核</span>
+                        <input type="checkbox" id="initialUnannouncedAudit" onchange="updateUnannouncedAuditText(this)">
+                        <span class="switch-track" aria-hidden="true"></span>
+                        <span class="switch-text">关闭</span>
+                    </label>
+                </div>
                 <!-- 初次认证人天数统计 -->
                 <div class="summary-cards">
                     <div class="summary-card-item">
@@ -1763,16 +1814,6 @@
                     <div class="flex justify-between items-center mb-4">
                         <div class="flex items-center gap-3">
                             <h3 class="font-semibold text-gray-800">场所抽样方案</h3>
-                            <div class="contract-signer-inline">
-                                <select class="form-select contract-signer-select">
-                                <option value="" selected disabled>请选择合同签署方</option>
-                                <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
-                                <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
-                                <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
-                                <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
-                                <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
-                                </select>
-                            </div>
                             <span class="readonly-badge">
                                 <i class="fas fa-lock"></i> 已完成 - 只读
                             </span>
@@ -1851,13 +1892,8 @@
                                             </div>
                                         </div>
                                         <div class="form-row">
-                                            <label class="form-label">认可机构</label>
-                                            <div class="tags-display-box" id="accBox_site_0" onclick="focusTagInput(this)">
-                                                <span class="inline-tag accreditation" data-code="CNAS">CNAS<i class="fas fa-times remove-tag" onclick="removeTag(event, 'site_0', 'CNAS', 'acc')"></i></span>
-                                                <input type="text" class="tag-input" list="accList_global" placeholder="选择机构" 
-                                                    onkeydown="handleTagInput(event, 'site_0', 'acc')" 
-                                                    onchange="handleTagChange(this, 'site_0', 'acc')">
-                                            </div>
+                                            <label class="form-label">HACCP项目数</label>
+                                            <input type="number" min="0" step="1" inputmode="numeric" pattern="[0-9]*" class="form-input haccp-project-count" value="3" onkeydown="if (['e', 'E', '+', '-', '.'].includes(event.key)) event.preventDefault()" oninput="this.value = this.value.replace(/\D/g, '')">
                                         </div>
                                     </div>
                                     
@@ -2085,14 +2121,8 @@
                                             </div>
                                         </div>
                                         <div class="form-row">
-                                            <label class="form-label">认可机构</label>
-                                            <div class="tags-display-box" id="accBox_site_1" onclick="focusTagInput(this)">
-                                                <span class="inline-tag accreditation" data-code="CNAS">CNAS<i class="fas fa-times remove-tag" onclick="removeTag(event, 'site_1', 'CNAS', 'acc')"></i></span>
-                                                <span class="inline-tag accreditation" data-code="UKAS">UKAS<i class="fas fa-times remove-tag" onclick="removeTag(event, 'site_1', 'UKAS', 'acc')"></i></span>
-                                                <input type="text" class="tag-input" list="accList_global" placeholder="选择机构" 
-                                                    onkeydown="handleTagInput(event, 'site_1', 'acc')" 
-                                                    onchange="handleTagChange(this, 'site_1', 'acc')">
-                                            </div>
+                                            <label class="form-label">HACCP项目数</label>
+                                            <input type="number" min="0" step="1" inputmode="numeric" pattern="[0-9]*" class="form-input haccp-project-count" value="3" onkeydown="if (['e', 'E', '+', '-', '.'].includes(event.key)) event.preventDefault()" oninput="this.value = this.value.replace(/\D/g, '')">
                                         </div>
                                     </div>
                                     
@@ -2243,6 +2273,26 @@
 
             <!-- 监督一内容 -->
             <div class="phase-content active" id="phase_surv1">
+                <div class="phase-audit-options-row">
+                    <div class="contract-signer-row">
+                        <label class="form-label">合同签署方</label>
+                        <select class="form-select contract-signer-select" id="contractSigner_surv1">
+                        <option value="" selected disabled>请选择合同签署方</option>
+                        <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
+                        <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
+                        <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
+                        <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
+                        <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
+                        </select>
+                    </div>
+                    <label class="unannounced-audit-inline switch-control" for="surv1UnannouncedAudit" title="开启后，本次监督一按不预先通知客户的审核方式策划。">
+                        <i class="fas fa-user-secret text-blue-600"></i>
+                        <span>不通知审核</span>
+                        <input type="checkbox" id="surv1UnannouncedAudit" checked onchange="updateUnannouncedAuditText(this)">
+                        <span class="switch-track" aria-hidden="true"></span>
+                        <span class="switch-text">开启</span>
+                    </label>
+                </div>
                 <!-- 监督一人天数统计 -->
                 <div class="summary-cards">
                     <div class="summary-card-item">
@@ -2286,23 +2336,6 @@
                     <div class="flex justify-between items-center mb-4">
                         <div class="flex items-center gap-3">
                             <h3 class="font-semibold text-gray-800">场所抽样方案</h3>
-                            <div class="contract-signer-inline">
-                            <select class="form-select contract-signer-select">
-                                <option value="" selected disabled>请选择合同签署方</option>
-                                <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
-                                <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
-                                <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
-                                <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
-                                <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
-                            </select>
-                            <label class="unannounced-audit-inline switch-control" for="surv1UnannouncedAudit" title="开启后，本次监督一按不预先通知客户的审核方式策划。">
-                                <i class="fas fa-user-secret text-blue-600"></i>
-                                <span>不通知审核</span>
-                                <input type="checkbox" id="surv1UnannouncedAudit" checked onchange="updateUnannouncedAuditText(this)">
-                                <span class="switch-track" aria-hidden="true"></span>
-                                <span class="switch-text">开启</span>
-                            </label>
-                            </div>
                         </div>
                         <div class="flex items-center gap-3">
                             <span class="text-sm text-amber-700 bg-amber-50 px-3 py-1 rounded border border-amber-200">
@@ -2385,13 +2418,8 @@
                                             </div>
                                         </div>
                                         <div class="form-row">
-                                            <label class="form-label">认可机构</label>
-                                            <div class="tags-display-box" id="accBox_site_surv1_0" onclick="focusTagInput(this)">
-                                                <span class="inline-tag accreditation" data-code="CNAS">CNAS<i class="fas fa-times remove-tag" onclick="removeTag(event, 'site_surv1_0', 'CNAS', 'acc')"></i></span>
-                                                <input type="text" class="tag-input" list="accList_global" placeholder="选择机构" 
-                                                    onkeydown="handleTagInput(event, 'site_surv1_0', 'acc')" 
-                                                    onchange="handleTagChange(this, 'site_surv1_0', 'acc')">
-                                            </div>
+                                            <label class="form-label">HACCP项目数</label>
+                                            <input type="number" min="0" step="1" inputmode="numeric" pattern="[0-9]*" class="form-input haccp-project-count" value="3" onkeydown="if (['e', 'E', '+', '-', '.'].includes(event.key)) event.preventDefault()" oninput="this.value = this.value.replace(/\D/g, '')">
                                         </div>
                                     </div>
                                     
@@ -2606,13 +2634,8 @@
                                             </div>
                                         </div>
                                         <div class="form-row">
-                                            <label class="form-label">认可机构</label>
-                                            <div class="tags-display-box" id="accBox_site_surv1_1" onclick="focusTagInput(this)">
-                                                <span class="inline-tag accreditation" data-code="CNAS">CNAS<i class="fas fa-times remove-tag" onclick="removeTag(event, 'site_surv1_1', 'CNAS', 'acc')"></i></span>
-                                                <input type="text" class="tag-input" list="accList_global" placeholder="选择机构" 
-                                                    onkeydown="handleTagInput(event, 'site_surv1_1', 'acc')" 
-                                                    onchange="handleTagChange(this, 'site_surv1_1', 'acc')">
-                                            </div>
+                                            <label class="form-label">HACCP项目数</label>
+                                            <input type="number" min="0" step="1" inputmode="numeric" pattern="[0-9]*" class="form-input haccp-project-count" value="3" onkeydown="if (['e', 'E', '+', '-', '.'].includes(event.key)) event.preventDefault()" oninput="this.value = this.value.replace(/\D/g, '')">
                                         </div>
                                     </div>
                                     
@@ -2753,6 +2776,26 @@
 
             <!-- 监督二内容 -->
             <div class="phase-content" id="phase_surv2">
+                <div class="phase-audit-options-row">
+                    <div class="contract-signer-row">
+                        <label class="form-label">合同签署方</label>
+                        <select class="form-select contract-signer-select" id="contractSigner_surv2">
+                        <option value="" selected disabled>请选择合同签署方</option>
+                        <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
+                        <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
+                        <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
+                        <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
+                        <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
+                        </select>
+                    </div>
+                    <label class="unannounced-audit-inline switch-control" for="surv2UnannouncedAudit" title="开启后，本次监督二按不预先通知客户的审核方式策划。">
+                        <i class="fas fa-user-secret text-blue-600"></i>
+                        <span>不通知审核</span>
+                        <input type="checkbox" id="surv2UnannouncedAudit" onchange="updateUnannouncedAuditText(this)">
+                        <span class="switch-track" aria-hidden="true"></span>
+                        <span class="switch-text">关闭</span>
+                    </label>
+                </div>
                 <!-- 监督二人天数统计 -->
                 <div class="summary-cards">
                     <div class="summary-card-item">
@@ -2796,23 +2839,6 @@
                     <div class="flex justify-between items-center mb-4">
                         <div class="flex items-center gap-3">
                             <h3 class="font-semibold text-gray-800">场所抽样方案</h3>
-                            <div class="contract-signer-inline">
-                            <select class="form-select contract-signer-select">
-                                <option value="" selected disabled>请选择合同签署方</option>
-                                <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
-                                <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
-                                <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
-                                <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
-                                <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
-                            </select>
-                            <label class="unannounced-audit-inline switch-control" for="surv2UnannouncedAudit" title="开启后，本次监督二按不预先通知客户的审核方式策划。">
-                                <i class="fas fa-user-secret text-blue-600"></i>
-                                <span>不通知审核</span>
-                                <input type="checkbox" id="surv2UnannouncedAudit" onchange="updateUnannouncedAuditText(this)">
-                                <span class="switch-track" aria-hidden="true"></span>
-                                <span class="switch-text">关闭</span>
-                            </label>
-                            </div>
                         </div>
                         <div class="flex items-center gap-3">
                             <span class="text-sm text-amber-700 bg-amber-50 px-3 py-1 rounded border border-amber-200">
@@ -2895,13 +2921,8 @@
                                             </div>
                                         </div>
                                         <div class="form-row">
-                                            <label class="form-label">认可机构</label>
-                                            <div class="tags-display-box" id="accBox_site_surv2_0" onclick="focusTagInput(this)">
-                                                <span class="inline-tag accreditation" data-code="CNAS">CNAS<i class="fas fa-times remove-tag" onclick="removeTag(event, 'site_surv2_0', 'CNAS', 'acc')"></i></span>
-                                                <input type="text" class="tag-input" list="accList_global" placeholder="选择机构" 
-                                                    onkeydown="handleTagInput(event, 'site_surv2_0', 'acc')" 
-                                                    onchange="handleTagChange(this, 'site_surv2_0', 'acc')">
-                                            </div>
+                                            <label class="form-label">HACCP项目数</label>
+                                            <input type="number" min="0" step="1" inputmode="numeric" pattern="[0-9]*" class="form-input haccp-project-count" value="3" onkeydown="if (['e', 'E', '+', '-', '.'].includes(event.key)) event.preventDefault()" oninput="this.value = this.value.replace(/\D/g, '')">
                                         </div>
                                     </div>
                                     
@@ -3116,13 +3137,8 @@
                                             </div>
                                         </div>
                                         <div class="form-row">
-                                            <label class="form-label">认可机构</label>
-                                            <div class="tags-display-box" id="accBox_site_surv2_1" onclick="focusTagInput(this)">
-                                                <span class="inline-tag accreditation" data-code="CNAS">CNAS<i class="fas fa-times remove-tag" onclick="removeTag(event, 'site_surv2_1', 'CNAS', 'acc')"></i></span>
-                                                <input type="text" class="tag-input" list="accList_global" placeholder="选择机构" 
-                                                    onkeydown="handleTagInput(event, 'site_surv2_1', 'acc')" 
-                                                    onchange="handleTagChange(this, 'site_surv2_1', 'acc')">
-                                            </div>
+                                            <label class="form-label">HACCP项目数</label>
+                                            <input type="number" min="0" step="1" inputmode="numeric" pattern="[0-9]*" class="form-input haccp-project-count" value="3" onkeydown="if (['e', 'E', '+', '-', '.'].includes(event.key)) event.preventDefault()" oninput="this.value = this.value.replace(/\D/g, '')">
                                         </div>
                                     </div>
                                     
@@ -3263,6 +3279,26 @@
 
             <!-- 再认证内容 -->
             <div class="phase-content" id="phase_recert">
+                <div class="phase-audit-options-row">
+                    <div class="contract-signer-row">
+                        <label class="form-label">合同签署方</label>
+                        <select class="form-select contract-signer-select" id="contractSigner_recert">
+                        <option value="" selected disabled>请选择合同签署方</option>
+                        <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
+                        <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
+                        <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
+                        <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
+                        <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
+                        </select>
+                    </div>
+                    <label class="unannounced-audit-inline switch-control" for="recertUnannouncedAudit" title="开启后，本次再认证按不预先通知客户的审核方式策划。">
+                        <i class="fas fa-user-secret text-blue-600"></i>
+                        <span>不通知审核</span>
+                        <input type="checkbox" id="recertUnannouncedAudit" onchange="updateUnannouncedAuditText(this)">
+                        <span class="switch-track" aria-hidden="true"></span>
+                        <span class="switch-text">关闭</span>
+                    </label>
+                </div>
                 <!-- 再认证人天数统计 -->
                 <div class="summary-cards">
                     <div class="summary-card-item">
@@ -3307,16 +3343,6 @@
                     <div class="flex justify-between items-center mb-4">
                         <div class="flex items-center gap-3">
                             <h3 class="font-semibold text-gray-800">场所抽样方案</h3>
-                            <div class="contract-signer-inline">
-                            <select class="form-select contract-signer-select">
-                                <option value="" selected disabled>请选择合同签署方</option>
-                                <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
-                                <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
-                                <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
-                                <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
-                                <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
-                            </select>
-                            </div>
                         </div>
                         <div class="flex items-center gap-3">
                             <span class="text-sm text-amber-700 bg-amber-50 px-3 py-1 rounded border border-amber-200">
@@ -3399,13 +3425,8 @@
                                             </div>
                                         </div>
                                         <div class="form-row">
-                                            <label class="form-label">认可机构</label>
-                                            <div class="tags-display-box" id="accBox_site_recert_0" onclick="focusTagInput(this)">
-                                                <span class="inline-tag accreditation" data-code="CNAS">CNAS<i class="fas fa-times remove-tag" onclick="removeTag(event, 'site_recert_0', 'CNAS', 'acc')"></i></span>
-                                                <input type="text" class="tag-input" list="accList_global" placeholder="选择机构" 
-                                                    onkeydown="handleTagInput(event, 'site_recert_0', 'acc')" 
-                                                    onchange="handleTagChange(this, 'site_recert_0', 'acc')">
-                                            </div>
+                                            <label class="form-label">HACCP项目数</label>
+                                            <input type="number" min="0" step="1" inputmode="numeric" pattern="[0-9]*" class="form-input haccp-project-count" value="3" onkeydown="if (['e', 'E', '+', '-', '.'].includes(event.key)) event.preventDefault()" oninput="this.value = this.value.replace(/\D/g, '')">
                                         </div>
                                     </div>
                                     
@@ -3623,13 +3644,8 @@
                                             </div>
                                         </div>
                                         <div class="form-row">
-                                            <label class="form-label">认可机构</label>
-                                            <div class="tags-display-box" id="accBox_site_recert_1" onclick="focusTagInput(this)">
-                                                <span class="inline-tag accreditation" data-code="CNAS">CNAS<i class="fas fa-times remove-tag" onclick="removeTag(event, 'site_recert_1', 'CNAS', 'acc')"></i></span>
-                                                <input type="text" class="tag-input" list="accList_global" placeholder="选择机构" 
-                                                    onkeydown="handleTagInput(event, 'site_recert_1', 'acc')" 
-                                                    onchange="handleTagChange(this, 'site_recert_1', 'acc')">
-                                            </div>
+                                            <label class="form-label">HACCP项目数</label>
+                                            <input type="number" min="0" step="1" inputmode="numeric" pattern="[0-9]*" class="form-input haccp-project-count" value="3" onkeydown="if (['e', 'E', '+', '-', '.'].includes(event.key)) event.preventDefault()" oninput="this.value = this.value.replace(/\D/g, '')">
                                         </div>
                                     </div>
                                     
@@ -3776,6 +3792,26 @@
         </div>
             <!-- 临时审核内容 -->
             <div class="phase-content" id="phase_tempaudit">
+                <div class="phase-audit-options-row">
+                    <div class="contract-signer-row">
+                        <label class="form-label">合同签署方</label>
+                        <select class="form-select contract-signer-select" id="contractSigner_tempaudit">
+                        <option value="" selected disabled>请选择合同签署方</option>
+                        <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
+                        <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
+                        <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
+                        <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
+                        <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
+                        </select>
+                    </div>
+                    <label class="unannounced-audit-inline switch-control" for="tempauditUnannouncedAudit" title="开启后，本次临时审核按不预先通知客户的审核方式策划。">
+                        <i class="fas fa-user-secret text-blue-600"></i>
+                        <span>不通知审核</span>
+                        <input type="checkbox" id="tempauditUnannouncedAudit" onchange="updateUnannouncedAuditText(this)">
+                        <span class="switch-track" aria-hidden="true"></span>
+                        <span class="switch-text">关闭</span>
+                    </label>
+                </div>
                 <!-- 临时审核人天数统计 -->
                 <div class="summary-cards">
                     <div class="summary-card-item">
@@ -3820,16 +3856,6 @@
                     <div class="flex justify-between items-center mb-4">
                         <div class="flex items-center gap-3">
                             <h3 class="font-semibold text-gray-800">场所抽样方案</h3>
-                            <div class="contract-signer-inline">
-                            <select class="form-select contract-signer-select">
-                                <option value="" selected disabled>请选择合同签署方</option>
-                                <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
-                                <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
-                                <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
-                                <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
-                                <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
-                            </select>
-                            </div>
                         </div>
                         <div class="flex items-center gap-3">
                             <span class="text-sm text-amber-700 bg-amber-50 px-3 py-1 rounded border border-amber-200">
@@ -3912,13 +3938,8 @@
                                             </div>
                                         </div>
                                         <div class="form-row">
-                                            <label class="form-label">认可机构</label>
-                                            <div class="tags-display-box" id="accBox_site_tempaudit_0" onclick="focusTagInput(this)">
-                                                <span class="inline-tag accreditation" data-code="CNAS">CNAS<i class="fas fa-times remove-tag" onclick="removeTag(event, 'site_tempaudit_0', 'CNAS', 'acc')"></i></span>
-                                                <input type="text" class="tag-input" list="accList_global" placeholder="选择机构" 
-                                                    onkeydown="handleTagInput(event, 'site_tempaudit_0', 'acc')" 
-                                                    onchange="handleTagChange(this, 'site_tempaudit_0', 'acc')">
-                                            </div>
+                                            <label class="form-label">HACCP项目数</label>
+                                            <input type="number" min="0" step="1" inputmode="numeric" pattern="[0-9]*" class="form-input haccp-project-count" value="3" onkeydown="if (['e', 'E', '+', '-', '.'].includes(event.key)) event.preventDefault()" oninput="this.value = this.value.replace(/\D/g, '')">
                                         </div>
                                     </div>
 
@@ -5915,14 +5936,10 @@
                                         onchange="handleTagChange(this, '${siteId}', 'prof')">
                                 </div>
                             </div>
-                            <div class="form-row">
-                                <label class="form-label">认可机构</label>
-                                <div class="tags-display-box" id="accBox_${siteId}" onclick="focusTagInput(this)">
-                                    <input type="text" class="tag-input" list="accList_global" placeholder="选择机构" 
-                                        onkeydown="handleTagInput(event, '${siteId}', 'acc')" 
-                                        onchange="handleTagChange(this, '${siteId}', 'acc')">
-                                </div>
-                            </div>
+                                        <div class="form-row">
+                                            <label class="form-label">HACCP项目数</label>
+                                            <input type="number" min="0" step="1" inputmode="numeric" pattern="[0-9]*" class="form-input haccp-project-count" value="3" onkeydown="if (['e', 'E', '+', '-', '.'].includes(event.key)) event.preventDefault()" oninput="this.value = this.value.replace(/\D/g, '')">
+                                        </div>
                         </div>
                         
                         <div class="compact-row-2">
