@@ -41,6 +41,9 @@
             --radius-md: 6px;
             --radius-lg: 8px;
             --radius-xl: 10px;
+            --project-header-sticky-offset: 16px;
+            --phase-summary-sticky-offset: 72px;
+            --phase-card-header-sticky-offset: 190px;
         }
         
         body {
@@ -101,6 +104,33 @@
             gap: 16px;
             align-items: stretch;
             margin-bottom: 20px;
+        }
+
+        .phase-content.active > .contract-signer-row {
+            position: sticky;
+            top: var(--project-header-sticky-offset);
+            z-index: 43;
+            background: #f8fafc;
+            padding: 8px 0 10px;
+            margin-top: -8px;
+            box-shadow: 0 -16px 0 16px #f8fafc;
+        }
+
+        .phase-content.active > .summary-cards {
+            position: sticky;
+            top: var(--phase-summary-sticky-offset);
+            z-index: 42;
+            background: #f8fafc;
+            padding: 0 0 12px;
+            box-shadow: 0 -16px 0 16px #f8fafc;
+        }
+
+        .phase-content.active > .content-card > .card-header {
+            position: sticky;
+            top: var(--phase-card-header-sticky-offset);
+            z-index: 41;
+            background: #f8fafc;
+            box-shadow: 0 -16px 0 16px #f8fafc, 0 2px 8px rgba(15, 23, 42, 0.06);
         }
 
         .contract-signer-inline {
@@ -421,6 +451,11 @@
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
+            position: sticky;
+            top: var(--project-header-sticky-offset);
+            align-self: flex-start;
+            max-height: calc(100vh - var(--project-header-sticky-offset) - 16px);
+            overflow-y: auto;
         }
         
         .nav-header-title-static {
@@ -531,6 +566,32 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+        }
+
+        .site-no-badge {
+            display: inline-flex;
+            align-items: center;
+            flex: 0 0 auto;
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+            border: 1px solid #BFDBFE;
+            background: #EFF6FF;
+            color: #1D4ED8;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .site-card-header .site-name {
+            order: 0;
+        }
+
+        .site-card-header .site-type-badge {
+            order: 1;
+        }
+
+        .site-card-header .site-no-badge {
+            order: 2;
         }
 
         #availableSitesList .available-site-row,
@@ -1986,7 +2047,8 @@
                             <div class="site-card-header">
                                 <div class="flex items-center gap-2">
                                     <span class="site-type-badge type-center">中心职能</span>
-                                    <span class="font-semibold text-gray-800 site-name">运营地址（中心职能）</span>
+                                    <span class="font-semibold text-gray-800 site-name">华信环境监测技术中心</span>
+                                    <span class="site-no-badge">场所编号:00</span>
                                 </div>
                             </div>
                             <div class="site-card-body">
@@ -2206,6 +2268,7 @@
                                 <div class="flex items-center gap-2">
                                     <span class="site-type-badge type-fixed">固定场所</span>
                                     <span class="font-semibold text-gray-800 site-name">生产现场一</span>
+                                    <span class="site-no-badge">场所编号:01</span>
                                 </div>
                                 <div class="flex items-center gap-3 site-actions">
                                     <button onclick="removeSite('site_1')" class="text-red-500 hover:text-red-700 delete-site-btn non-main-controls">
@@ -2495,7 +2558,8 @@
                             <div class="site-card-header">
                                 <div class="flex items-center gap-2">
                                     <span class="site-type-badge type-center">中心职能</span>
-                                    <span class="font-semibold text-gray-800 site-name">运营地址（中心职能）</span>
+                                    <span class="font-semibold text-gray-800 site-name">华信环境监测技术中心</span>
+                                    <span class="site-no-badge">场所编号:00</span>
                                 </div>
                             </div>
                             <div class="site-card-body">
@@ -2703,6 +2767,7 @@
                                 <div class="flex items-center gap-2">
                                     <span class="site-type-badge type-fixed">固定场所</span>
                                     <span class="font-semibold text-gray-800 site-name">生产现场一</span>
+                                    <span class="site-no-badge">场所编号:01</span>
                                 </div>
                                 <div class="flex items-center gap-3 site-actions">
                                     <button onclick="removeSite('site_surv1_1')" class="text-red-500 hover:text-red-700 delete-site-btn non-main-controls">
@@ -2980,7 +3045,8 @@
                             <div class="site-card-header">
                                 <div class="flex items-center gap-2">
                                     <span class="site-type-badge type-center">中心职能</span>
-                                    <span class="font-semibold text-gray-800 site-name">运营地址（中心职能）</span>
+                                    <span class="font-semibold text-gray-800 site-name">华信环境监测技术中心</span>
+                                    <span class="site-no-badge">场所编号:00</span>
                                 </div>
                             </div>
                             <div class="site-card-body">
@@ -3188,6 +3254,7 @@
                                 <div class="flex items-center gap-2">
                                     <span class="site-type-badge type-fixed">固定场所</span>
                                     <span class="font-semibold text-gray-800 site-name">生产现场一</span>
+                                    <span class="site-no-badge">场所编号:01</span>
                                 </div>
                                 <div class="flex items-center gap-3 site-actions">
                                     <button onclick="removeSite('site_surv2_1')" class="text-red-500 hover:text-red-700 delete-site-btn non-main-controls">
@@ -3469,7 +3536,8 @@
                             <div class="site-card-header">
                                 <div class="flex items-center gap-2">
                                     <span class="site-type-badge type-center">中心职能</span>
-                                    <span class="font-semibold text-gray-800 site-name">运营地址（中心职能）</span>
+                                    <span class="font-semibold text-gray-800 site-name">华信环境监测技术中心</span>
+                                    <span class="site-no-badge">场所编号:00</span>
                                 </div>
                             </div>
                             <div class="site-card-body">
@@ -3683,6 +3751,7 @@
                                 <div class="flex items-center gap-2">
                                     <span class="site-type-badge type-fixed">固定场所</span>
                                     <span class="font-semibold text-gray-800 site-name">生产现场一</span>
+                                    <span class="site-no-badge">场所编号:01</span>
                                 </div>
                                 <div class="flex items-center gap-3 site-actions">
                                     <button onclick="removeSite('site_recert_1')" class="text-red-500 hover:text-red-700 delete-site-btn non-main-controls">
@@ -4038,43 +4107,43 @@
                 <p class="text-sm text-gray-600 mb-4">请从客户管理中维护的场所中进行选择</p>
                 <div class="space-y-2" id="availableSitesList">
                     <div class="available-site-row p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="01" data-name="分公司现场" data-name-en="Branch Site" data-code="91310115XXXXXXXX01" data-address="上海市浦东新区办公区" data-address-en="Office Area, Pudong New Area, Shanghai" data-people="45" data-type="fixed" data-products="销售服务、客户支持" data-products-en="Sales services and customer support" data-sub-cert="no" data-remark="" onchange="toggleSiteSelection('分公司现场', this.checked)">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="02" data-name="分公司现场" data-name-en="Branch Site" data-code="91310115XXXXXXXX02" data-address="上海市浦东新区办公区" data-address-en="Office Area, Pudong New Area, Shanghai" data-people="45" data-type="fixed" data-products="销售服务、客户支持" data-products-en="Sales services and customer support" data-sub-cert="no" data-remark="" onchange="toggleSiteSelection('分公司现场', this.checked)">
                         <span class="site-type-badge type-fixed available-site-badge">固定场所</span>
                         <div class="available-site-text">
                             <div class="available-site-name">分公司现场</div>
-                            <div class="available-site-desc"><span class="available-site-no">场所编号：01</span> | 上海市浦东新区办公区 | 人数：45</div>
+                            <div class="available-site-desc"><span class="available-site-no">场所编号：02</span> | 上海市浦东新区办公区 | 人数：45</div>
                         </div>
                     </div>
                     <div class="available-site-row p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="02" data-name="研发中心" data-name-en="R&D Center" data-code="91440305XXXXXXXX02" data-address="深圳市南山区科技园" data-address-en="Science and Technology Park, Nanshan District, Shenzhen" data-people="120" data-type="fixed" data-products="软件研发、测试验证" data-products-en="Software research and development, testing and verification" data-sub-cert="yes" data-remark="颁发子证书" onchange="toggleSiteSelection('研发中心', this.checked)">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="03" data-name="研发中心" data-name-en="R&D Center" data-code="91440305XXXXXXXX03" data-address="深圳市南山区科技园" data-address-en="Science and Technology Park, Nanshan District, Shenzhen" data-people="120" data-type="fixed" data-products="软件研发、测试验证" data-products-en="Software research and development, testing and verification" data-sub-cert="yes" data-remark="颁发子证书" onchange="toggleSiteSelection('研发中心', this.checked)">
                         <span class="site-type-badge type-fixed available-site-badge">固定场所</span>
                         <div class="available-site-text">
                             <div class="available-site-name">研发中心</div>
-                            <div class="available-site-desc"><span class="available-site-no">场所编号：02</span> | 深圳市南山区科技园 | 人数：120</div>
+                            <div class="available-site-desc"><span class="available-site-no">场所编号：03</span> | 深圳市南山区科技园 | 人数：120</div>
                         </div>
                     </div>
                     <div class="available-site-row p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="03" data-name="生产基地" data-name-en="Production Base" data-code="91440113XXXXXXXX03" data-address="广州市番禺区工业园" data-address-en="Industrial Park, Panyu District, Guangzhou" data-people="200" data-type="fixed" data-products="硬件制造、设备组装" data-products-en="Hardware manufacturing and equipment assembly" data-sub-cert="yes" data-remark="颁发子证书" onchange="toggleSiteSelection('生产基地', this.checked)">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="04" data-name="生产基地" data-name-en="Production Base" data-code="91440113XXXXXXXX04" data-address="广州市番禺区工业园" data-address-en="Industrial Park, Panyu District, Guangzhou" data-people="200" data-type="fixed" data-products="硬件制造、设备组装" data-products-en="Hardware manufacturing and equipment assembly" data-sub-cert="yes" data-remark="颁发子证书" onchange="toggleSiteSelection('生产基地', this.checked)">
                         <span class="site-type-badge type-fixed available-site-badge">固定场所</span>
                         <div class="available-site-text">
                             <div class="available-site-name">生产基地</div>
-                            <div class="available-site-desc"><span class="available-site-no">场所编号：03</span> | 广州市番禺区工业园 | 人数：200</div>
+                            <div class="available-site-desc"><span class="available-site-no">场所编号：04</span> | 广州市番禺区工业园 | 人数：200</div>
                         </div>
                     </div>
                     <div class="available-site-row p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="04" data-name="客户服务点" data-name-en="Customer Service Point" data-code="91330106XXXXXXXX04" data-address="杭州市西湖区客户驻场服务点" data-address-en="Customer On-site Service Point, Xihu District, Hangzhou" data-people="18" data-type="service" data-products="系统运维、客户支持" data-products-en="System operation and maintenance, customer support" data-sub-cert="no" data-remark="" onchange="toggleSiteSelection('客户服务点', this.checked)">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="05" data-name="客户服务点" data-name-en="Customer Service Point" data-code="91330106XXXXXXXX05" data-address="杭州市西湖区客户驻场服务点" data-address-en="Customer On-site Service Point, Xihu District, Hangzhou" data-people="18" data-type="service" data-products="系统运维、客户支持" data-products-en="System operation and maintenance, customer support" data-sub-cert="no" data-remark="" onchange="toggleSiteSelection('客户服务点', this.checked)">
                         <span class="site-type-badge type-service available-site-badge">服务点</span>
                         <div class="available-site-text">
                             <div class="available-site-name">客户服务点</div>
-                            <div class="available-site-desc"><span class="available-site-no">场所编号：04</span> | 杭州市西湖区客户驻场服务点 | 人数：18</div>
+                            <div class="available-site-desc"><span class="available-site-no">场所编号：05</span> | 杭州市西湖区客户驻场服务点 | 人数：18</div>
                         </div>
                     </div>
                     <div class="available-site-row p-3 border border-gray-200 rounded hover:bg-gray-50 cursor-pointer">
-                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="05" data-name="项目实施现场" data-name-en="Project Implementation Site" data-code="91510100XXXXXXXX05" data-address="成都市高新区临时项目现场" data-address-en="Temporary Project Site, High-tech Zone, Chengdu" data-people="26" data-type="temporary" data-products="项目实施、现场调试" data-products-en="Project implementation and on-site commissioning" data-sub-cert="no" data-remark="临时场所" onchange="toggleSiteSelection('项目实施现场', this.checked)">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 rounded site-select-check" data-site-no="06" data-name="项目实施现场" data-name-en="Project Implementation Site" data-code="91510100XXXXXXXX06" data-address="成都市高新区临时项目现场" data-address-en="Temporary Project Site, High-tech Zone, Chengdu" data-people="26" data-type="temporary" data-products="项目实施、现场调试" data-products-en="Project implementation and on-site commissioning" data-sub-cert="no" data-remark="临时场所" onchange="toggleSiteSelection('项目实施现场', this.checked)">
                         <span class="site-type-badge type-temporary available-site-badge">临时场所</span>
                         <div class="available-site-text">
                             <div class="available-site-name">项目实施现场</div>
-                            <div class="available-site-desc"><span class="available-site-no">场所编号：05</span> | 成都市高新区临时项目现场 | 人数：26</div>
+                            <div class="available-site-desc"><span class="available-site-no">场所编号：06</span> | 成都市高新区临时项目现场 | 人数：26</div>
                         </div>
                     </div>
                 </div>
@@ -4820,13 +4889,30 @@
         ];
 
         document.addEventListener('DOMContentLoaded', function() {
+            updateStickyOffsets();
             addInitialSampleSites();
             initializeEditableShiftInfo();
             ensureSiteTypeBadges();
+            ensureSiteHeaderNamesAndNumbers();
             updateAllPhaseTotals();
             initAdjustmentReasons();
             initializeProfessionalCodeAccreditation();
         });
+        window.addEventListener('resize', updateStickyOffsets);
+
+        function updateStickyOffsets() {
+            const header = document.querySelector('.project-header');
+            const headerHeight = header ? Math.ceil(header.getBoundingClientRect().height) : 0;
+            const activePhase = document.querySelector('.phase-content.active');
+            const topRow = activePhase?.querySelector(':scope > .contract-signer-row');
+            const summary = activePhase?.querySelector(':scope > .summary-cards');
+            const firstStickyOffset = headerHeight;
+            const summaryOffset = firstStickyOffset + (topRow ? Math.ceil(topRow.getBoundingClientRect().height) : 56);
+            const cardHeaderOffset = summaryOffset + (summary ? Math.ceil(summary.getBoundingClientRect().height) : 118);
+            document.documentElement.style.setProperty('--project-header-sticky-offset', `${firstStickyOffset}px`);
+            document.documentElement.style.setProperty('--phase-summary-sticky-offset', `${summaryOffset}px`);
+            document.documentElement.style.setProperty('--phase-card-header-sticky-offset', `${cardHeaderOffset}px`);
+        }
 
         // ==================== 调整理由多选组件 ====================
         function getCurrentField() {
@@ -4853,8 +4939,11 @@
         }
 
         function getNextAvailableSiteNo() {
-            const maxNo = Array.from(document.querySelectorAll('#availableSitesList .site-select-check'))
-                .map(input => parseInt(input.dataset.siteNo || '', 10))
+            const availableNos = Array.from(document.querySelectorAll('#availableSitesList .site-select-check'))
+                .map(input => parseInt(input.dataset.siteNo || '', 10));
+            const cardNos = Array.from(document.querySelectorAll('.site-card[data-site-no]'))
+                .map(card => parseInt(card.dataset.siteNo || '', 10));
+            const maxNo = [...availableNos, ...cardNos]
                 .filter(num => Number.isFinite(num))
                 .reduce((max, num) => Math.max(max, num), 0);
             return formatSiteNo(maxNo + 1);
@@ -6020,10 +6109,13 @@
         }
 
         function getCertSelectableSites() {
-            const currentNames = new Set(getCertSitesFromTable().map(site => site.name));
+            const currentSites = getCertSitesFromTable();
+            const currentNames = new Set(currentSites.map(site => site.name));
+            const currentSiteNos = new Set(currentSites.map(site => site.siteNo).filter(Boolean));
             return Array.from(document.querySelectorAll('#availableSitesList .site-select-check'))
                 .filter(input => (input.dataset.type || 'fixed') !== 'temporary')
                 .filter(input => !currentNames.has(input.dataset.name || ''))
+                .filter(input => !currentSiteNos.has(input.dataset.siteNo || ''))
                 .map((input, index) => ({
                     name: input.dataset.name || '',
                     nameEn: input.dataset.nameEn || '',
@@ -6453,6 +6545,7 @@
             sites.push(newSiteId);
             initializeEditableShiftInfo(siteCard);
             ensureSiteTypeBadges();
+            ensureSiteHeaderNamesAndNumbers();
             updateAllPhaseTotals();
             initAdjustmentReasons();
             initializeProfessionalCodeAccreditation();
@@ -6640,13 +6733,50 @@
             });
         }
 
+        function ensureSiteHeaderNamesAndNumbers() {
+            const customerName = document.getElementById('headerCustomerName')?.textContent?.trim() || '华信环境监测技术中心';
+            document.querySelectorAll('.site-card').forEach(card => {
+                const headerTitle = card.querySelector('.site-card-header > div:first-child');
+                const siteName = card.querySelector('.site-card-header .site-name');
+                if (!headerTitle || !siteName) return;
+
+                const isMain = card.dataset.isMain === 'true';
+                const type = card.dataset.siteType || (isMain ? 'center' : 'fixed');
+                let siteNo = card.dataset.siteNo || (isMain ? '00' : '');
+                if (isMain) siteName.textContent = customerName;
+
+                let noBadge = headerTitle.querySelector('.site-no-badge');
+                if (type === 'temporary') {
+                    noBadge?.remove();
+                    return;
+                }
+
+                if (!siteNo) {
+                    siteNo = getNextAvailableSiteNo();
+                    card.dataset.siteNo = siteNo;
+                }
+
+                if (!noBadge) {
+                    noBadge = document.createElement('span');
+                    noBadge.className = 'site-no-badge';
+                }
+                const typeBadge = headerTitle.querySelector('.site-type-badge');
+                if (typeBadge) {
+                    typeBadge.insertAdjacentElement('afterend', noBadge);
+                } else {
+                    headerTitle.insertBefore(noBadge, siteName);
+                }
+                noBadge.textContent = `场所编号:${siteNo}`;
+            });
+        }
+
         function addInitialSampleSites() {
             const container = document.getElementById('siteCardsContainer_initial');
             if (!container || container.dataset.samplesAdded === 'true') return;
 
             const samples = [
-                { id: 'site_2', name: '上海研发中心', address: '上海市浦东新区张江高科技园区', people: 60, type: 'fixed', products: '软件研发、测试验证', prep: 0.8, stage1: 0.8, stage2: 3.2 },
-                { id: 'site_3', name: '客户驻场服务点', address: '杭州市西湖区客户数据中心', people: 18, type: 'service', products: '系统运维、客户支持', prep: 0.4, stage1: 0.5, stage2: 1.8 },
+                { id: 'site_2', name: '上海研发中心', address: '上海市浦东新区张江高科技园区', people: 60, type: 'fixed', siteNo: '07', products: '软件研发、测试验证', prep: 0.8, stage1: 0.8, stage2: 3.2 },
+                { id: 'site_3', name: '客户驻场服务点', address: '杭州市西湖区客户数据中心', people: 18, type: 'service', siteNo: '08', products: '系统运维、客户支持', prep: 0.4, stage1: 0.5, stage2: 1.8 },
                 { id: 'site_4', name: '成都项目实施现场', address: '成都市高新区临时项目现场', people: 26, type: 'temporary', products: '项目实施、现场调试', prep: 0.5, stage1: 0.6, stage2: 2.0 }
             ];
 
@@ -6666,6 +6796,7 @@
             });
 
             container.dataset.samplesAdded = 'true';
+            ensureSiteHeaderNamesAndNumbers();
         }
 
         function createSiteCard(siteId, siteName, address, people, phase, siteType = 'fixed', siteNo = '') {
@@ -6900,6 +7031,7 @@
             document.getElementById('phase_' + phase).classList.add('active');
             
             currentPhase = phase;
+            requestAnimationFrame(updateStickyOffsets);
         }
 
         function savePhase(phase) {
@@ -7264,6 +7396,7 @@
         function toggleCustomerRequirements() {
             const panel = document.getElementById('customerRequirementsPanel');
             if (panel) panel.classList.toggle('collapsed');
+            requestAnimationFrame(updateStickyOffsets);
         }
 
         function goBack() {
