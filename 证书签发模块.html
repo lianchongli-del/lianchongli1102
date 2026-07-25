@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>证书签发模块</title>
+    <title>证书签发</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -617,6 +618,95 @@
             background: #fff;
         }
 
+        .confirm-mask {
+            position: fixed;
+            inset: 0;
+            z-index: 1600;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(15, 23, 42, 0.42);
+            backdrop-filter: blur(2px);
+        }
+
+        .confirm-mask.show {
+            display: flex;
+        }
+
+        .confirm-dialog {
+            width: 420px;
+            max-width: 100%;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            background: #fff;
+            box-shadow: var(--shadow-floating);
+            animation: confirmIn 0.16s ease;
+        }
+
+        @keyframes confirmIn {
+            from { transform: translateY(8px); opacity: 0.7; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .confirm-body {
+            display: grid;
+            grid-template-columns: 40px 1fr;
+            gap: 12px;
+            padding: 20px;
+        }
+
+        .confirm-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius);
+            background: #eff6ff;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .confirm-icon.danger {
+            background: #fef2f2;
+            color: var(--danger);
+        }
+
+        .confirm-title {
+            color: #0f172a;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .confirm-message {
+            margin-top: 6px;
+            color: #475569;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .confirm-meta {
+            margin-top: 10px;
+            padding: 8px 10px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: #f8fafc;
+            color: var(--muted);
+            font-size: 12px;
+            word-break: break-all;
+        }
+
+        .confirm-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 12px 20px;
+            border-top: 1px solid var(--border);
+            background: #fff;
+        }
+
         .section {
             margin-bottom: 14px;
             border: 1px solid var(--border);
@@ -874,7 +964,7 @@
     <div class="page">
         <div class="page-header">
             <div class="title-wrap">
-                <div class="page-title"><i class="fa-solid fa-certificate"></i> 证书签发模块</div>
+                <div class="page-title"><i class="fa-solid fa-certificate"></i> 证书签发</div>
             </div>
         </div>
 
@@ -891,7 +981,8 @@
                         <option value="初次认证">初次认证</option>
                         <option value="再认证">再认证</option>
                         <option value="监督">监督</option>
-                        <option value="变更">变更</option>
+                        <option value="证书变更">证书变更</option>
+                        <option value="认证转换">认证转换</option>
                     </select>
                 </div>
                 <div class="filter-item">
@@ -909,19 +1000,20 @@
                     </select>
                 </div>
                 <div class="filter-item">
-                    <label>认证决定</label>
-                    <select id="decision">
-                        <option value="">全部</option>
-                        <option value="准予发证">准予发证</option>
-                        <option value="不予发证">不予发证</option>
-                    </select>
-                </div>
-                <div class="filter-item">
                     <label>发证方式</label>
                     <select id="issueMode">
                         <option value="">全部</option>
                         <option value="自动">自动</option>
                         <option value="手动">手动</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>原证书有效期到期日</label>
+                    <select id="expiryRange">
+                        <option value="">全部</option>
+                        <option value="7">近7天</option>
+                        <option value="1m">近1个月</option>
+                        <option value="3m">近3个月</option>
                     </select>
                 </div>
                 <div class="filter-item">
@@ -942,9 +1034,8 @@
         <div class="panel">
             <div class="toolbar">
                 <div class="tabs">
-                    <div class="tab" data-tab="all" onclick="setTab('all')"><i class="fa-solid fa-list"></i> 全部</div>
-                    <div class="tab active" data-tab="pending" onclick="setTab('pending')"><i class="fa-solid fa-list-check"></i> 待签发</div>
-                    <div class="tab" data-tab="director" onclick="setTab('director')"><i class="fa-solid fa-user-pen"></i> 待主任处理</div>
+                    <div class="tab active" data-tab="all" onclick="setTab('all')"><i class="fa-solid fa-list"></i> 全部</div>
+                    <div class="tab" data-tab="pending" onclick="setTab('pending')"><i class="fa-solid fa-list-check"></i> 待签发</div>
                     <div class="tab" data-tab="issued" onclick="setTab('issued')"><i class="fa-solid fa-circle-check"></i> 已签发</div>
                     <div class="tab" data-tab="rejected" onclick="setTab('rejected')"><i class="fa-solid fa-ban"></i> 拒绝签发</div>
                 </div>
@@ -962,14 +1053,13 @@
                             <th class="col-frozen-company" width="190">企业名称</th>
                             <th width="100">受理机构</th>
                             <th width="170">原证书编号</th>
+                            <th width="120">原证书有效期</th>
                             <th width="80">是否加急</th>
                             <th width="90">认证类型</th>
                             <th width="90">认证领域</th>
                             <th width="180">认证标准</th>
-                            <th width="100">认证决定</th>
                             <th width="150">认证决定提交时间</th>
                             <th width="90">发证方式</th>
-                            <th width="120">原证书有效期</th>
                             <th width="150">签发时间</th>
                             <th class="col-frozen-status" width="96">处理状态</th>
                             <th class="col-frozen-right" width="96">操作</th>
@@ -1019,7 +1109,6 @@
                             <div><div class="info-label">客户发证方式</div><div class="info-value" id="drawerMode">-</div></div>
                             <div><div class="info-label">原证书有效期</div><div class="info-value" id="drawerOldExpiry">-</div></div>
                             <div><div class="info-label">认证决定提交时间</div><div class="info-value" id="drawerDecisionSubmitTime">-</div></div>
-                            <div id="rejectReasonItem" style="display:none;"><div class="info-label">原因说明</div><div class="info-value" id="drawerRejectReason">-</div></div>
                         </div>
                         <div id="batchInfoTableWrap" style="display:none; overflow-x:auto;">
                             <table class="mini-table">
@@ -1032,7 +1121,6 @@
                                         <th>认证决定</th>
                                         <th>发证方式</th>
                                         <th>原证书有效期</th>
-                                        <th>原因说明</th>
                                     </tr>
                                 </thead>
                                 <tbody id="batchInfoTableBody"></tbody>
@@ -1100,6 +1188,23 @@
         </div>
     </div>
 
+    <div class="confirm-mask" id="confirmDialog" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+        <div class="confirm-dialog">
+            <div class="confirm-body">
+                <div class="confirm-icon" id="confirmIcon"><i class="fa-solid fa-circle-question"></i></div>
+                <div>
+                    <div class="confirm-title" id="confirmTitle">确认操作</div>
+                    <div class="confirm-message" id="confirmMessage">请确认是否继续。</div>
+                    <div class="confirm-meta" id="confirmMeta">-</div>
+                </div>
+            </div>
+            <div class="confirm-footer">
+                <button class="btn btn-default" onclick="closeConfirmDialog()">取消</button>
+                <button class="btn btn-primary" id="confirmActionBtn" onclick="confirmSubmitHandle()"><i class="fa-solid fa-check"></i> 确认</button>
+            </div>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <script>
@@ -1123,7 +1228,6 @@
                 newValidity: '2026-05-28 至 2029-05-27',
                 issueTime: '-',
                 status: '待签发',
-                directorRequired: '可处理',
                 state: 'pending'
             },
             {
@@ -1145,7 +1249,6 @@
                 newValidity: '2026-02-14 至 2029-02-13',
                 issueTime: '-',
                 status: '待签发',
-                directorRequired: '可处理',
                 state: 'pending'
             },
             {
@@ -1167,7 +1270,6 @@
                 newValidity: '2026-03-01 至 2029-02-28',
                 issueTime: '-',
                 status: '待签发',
-                directorRequired: '可处理',
                 state: 'pending'
             },
             {
@@ -1189,54 +1291,7 @@
                 newValidity: '手动签发日 至 签发日+3年-1天',
                 issueTime: '-',
                 status: '待签发',
-                directorRequired: '必须',
                 state: 'pending'
-            },
-            {
-                id: 'ISS-20260528-005',
-                company: '南京云扬信息技术有限公司',
-                business: '南京公司',
-                certNo: '00126ITS220077R2M',
-                field: 'ITSMS',
-                scope: 'ITSMS（信息技术服务管理体系）',
-                standard: 'ISO/IEC 20000-1:2018',
-                type: '再认证',
-                urgent: '否',
-                decision: '不予发证',
-                rejectReason: '关键审核证据不足，整改材料未在规定期限内补齐。',
-                decisionSubmitTime: '2026-05-28 11:18',
-                mode: '手动',
-                rule: 'C',
-                planTime: '待主任处理',
-                oldExpiry: '2026-06-02',
-                newValidity: '-',
-                issueTime: '-',
-                status: '待主任处理',
-                directorRequired: '必须',
-                state: 'director'
-            },
-            {
-                id: 'ISS-20260528-006',
-                company: '杭州百川医疗器械有限公司',
-                business: '杭州公司',
-                certNo: '00126MD110018R1M',
-                field: 'QMS',
-                scope: 'QMS（质量管理体系）',
-                standard: 'YY/T 0287-2017 / ISO 13485:2016',
-                type: '初次认证',
-                urgent: '是',
-                decision: '不予发证',
-                rejectReason: '审核结论存在重大不符合，认证决定建议不予发证。',
-                decisionSubmitTime: '2026-05-28 11:46',
-                mode: '手动',
-                rule: 'C',
-                planTime: '待主任处理',
-                oldExpiry: '2029-05-27',
-                newValidity: '-',
-                issueTime: '-',
-                status: '待主任处理',
-                directorRequired: '必须',
-                state: 'director'
             },
             {
                 id: 'ISS-20260528-007',
@@ -1257,7 +1312,6 @@
                 newValidity: '2026-05-28 至 2029-05-27',
                 issueTime: '-',
                 status: '待签发',
-                directorRequired: '可处理',
                 state: 'pending'
             },
             {
@@ -1268,7 +1322,7 @@
                 field: 'OHSMS',
                 scope: 'OHSMS（职业健康安全管理体系）',
                 standard: 'GB/T 45001-2020 / ISO 45001:2018',
-                type: '变更',
+                type: '证书变更',
                 urgent: '否',
                 decision: '准予发证',
                 decisionSubmitTime: '2026-05-28 13:27',
@@ -1279,7 +1333,6 @@
                 newValidity: '沿用原证书有效期',
                 issueTime: '2026-05-28 15:20',
                 status: '已签发',
-                directorRequired: '必须',
                 state: 'issued'
             },
             {
@@ -1290,7 +1343,7 @@
                 field: 'EMS',
                 scope: 'EMS（环境管理体系）',
                 standard: 'GB/T 24001-2016 / ISO 14001:2015',
-                type: '变更',
+                type: '证书变更',
                 urgent: '是',
                 decision: '准予发证',
                 decisionSubmitTime: '2026-05-28 14:05',
@@ -1301,39 +1354,80 @@
                 newValidity: '沿用原证书有效期',
                 issueTime: '2026-05-28 15:36',
                 status: '已签发',
-                directorRequired: '必须',
                 state: 'issued'
             },
             {
                 id: 'ISS-20260528-010',
-                company: '厦门海晟食品有限公司',
-                business: '厦门中心',
-                certNo: 'CQC26FS1507R2M/3500',
-                field: 'FSMS',
-                scope: 'FSMS（食品安全管理体系）',
-                standard: 'ISO 22000:2018',
-                type: '变更',
+                company: '成都科源包装材料有限公司',
+                business: '成都中心',
+                certNo: '00126Q510188R1M',
+                field: 'QMS',
+                scope: 'QMS（质量管理体系）',
+                standard: 'GB/T 19001-2016 / ISO 9001:2015',
+                type: '监督',
                 urgent: '否',
-                decision: '不予发证',
-                rejectReason: '变更后地址现场条件不满足认证范围保持要求。',
-                decisionSubmitTime: '2026-05-28 14:42',
+                decision: '准予发证',
+                decisionSubmitTime: '2026-05-28 14:38',
+                mode: '自动',
+                rule: 'A',
+                planTime: '2028-08-16 20:00-23:00',
+                oldExpiry: '2028-08-18',
+                newValidity: '2026-05-28 至 2029-05-27',
+                issueTime: '-',
+                status: '待签发',
+                state: 'pending'
+            },
+            {
+                id: 'ISS-20260528-011',
+                company: '青岛海诺装备制造有限公司',
+                business: '青岛公司',
+                certNo: '00126O370251R2M',
+                field: 'OHSMS',
+                scope: 'OHSMS（职业健康安全管理体系）',
+                standard: 'GB/T 45001-2020 / ISO 45001:2018',
+                type: '再认证',
+                urgent: '是',
+                decision: '准予发证',
+                decisionSubmitTime: '2026-05-28 15:02',
                 mode: '手动',
                 rule: 'C',
-                planTime: '待主任处理',
-                oldExpiry: '2028-09-11',
-                newValidity: '-',
+                planTime: '2026-05-28 当日',
+                oldExpiry: '2026-06-12',
+                newValidity: '手动签发日至签发日+3年-1天',
                 issueTime: '-',
-                status: '拒绝签发',
-                directorRequired: '必须',
-                state: 'rejected'
-            }
+                status: '待签发',
+                state: 'pending'
+            },
+            {
+                id: 'ISS-20260528-012',
+                company: '宁波智联物流服务有限公司',
+                business: '宁波公司',
+                certNo: '00126E330177R1M',
+                field: 'EMS',
+                scope: 'EMS（环境管理体系）',
+                standard: 'GB/T 24001-2016 / ISO 14001:2015',
+                type: '认证转换',
+                urgent: '否',
+                decision: '准予发证',
+                decisionSubmitTime: '2026-05-28 15:21',
+                mode: '手动',
+                rule: 'C',
+                planTime: '2026-05-28 当日',
+                oldExpiry: '2028-11-20',
+                newValidity: '沿用原证书有效期',
+                issueTime: '-',
+                status: '待签发',
+                state: 'pending'
+            },
         ];
 
-        let currentTab = 'pending';
+        let currentTab = 'all';
         let currentRow = null;
         let currentBatchIds = [];
         let currentPage = 1;
         let pageSize = 10;
+        let pendingConfirmResult = null;
+        let pendingConfirmIds = [];
         const selectedIds = new Set();
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -1358,15 +1452,14 @@
             const keyword = document.getElementById('keyword').value.trim().toLowerCase();
             const certType = document.getElementById('certType').value;
             const certField = document.getElementById('certField').value;
-            const decision = document.getElementById('decision').value;
             const issueMode = document.getElementById('issueMode').value;
+            const expiryRange = document.getElementById('expiryRange').value;
             const urgent = document.getElementById('urgent').value;
 
             return issueRows.filter(row => {
                 const tabMatched =
                     currentTab === 'all' ? true :
                     currentTab === 'pending' ? row.state === 'pending' :
-                    currentTab === 'director' ? row.state === 'director' :
                     currentTab === 'issued' ? row.state === 'issued' :
                     row.state === 'rejected';
                 const keywordMatched = !keyword || row.company.toLowerCase().includes(keyword) || row.certNo.toLowerCase().includes(keyword);
@@ -1374,14 +1467,37 @@
                     && keywordMatched
                     && (!certType || row.type === certType)
                     && (!certField || row.field === certField)
-                    && (!decision || row.decision === decision)
                     && (!issueMode || row.mode === issueMode)
+                    && isExpiryMatched(row.oldExpiry, expiryRange)
                     && (!urgent || row.urgent === urgent);
             }).sort((a, b) => {
                 const companyOrder = a.company.localeCompare(b.company, 'zh-CN');
                 if (companyOrder !== 0) return companyOrder;
                 return a.decisionSubmitTime.localeCompare(b.decisionSubmitTime);
             });
+        }
+
+        function parseDateOnly(dateText) {
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(dateText || '')) return null;
+            const date = new Date(`${dateText}T00:00:00`);
+            return Number.isNaN(date.getTime()) ? null : date;
+        }
+
+        function isExpiryMatched(dateText, range) {
+            if (!range) return true;
+            const expiry = parseDateOnly(dateText);
+            if (!expiry) return false;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const end = new Date(today);
+            if (range === '7') {
+                end.setDate(end.getDate() + 7);
+            } else if (range === '1m') {
+                end.setMonth(end.getMonth() + 1);
+            } else if (range === '3m') {
+                end.setMonth(end.getMonth() + 3);
+            }
+            return expiry >= today && expiry <= end;
         }
 
         function renderTable() {
@@ -1405,14 +1521,13 @@
                     </td>
                     <td>${row.business}</td>
                     <td><span class="cert-no">${row.certNo}</span></td>
+                    <td>${row.oldExpiry}</td>
                     <td>${tag(row.urgent, row.urgent === '是' ? 'b-red' : 'b-gray')}</td>
                     <td>${tag(row.type, row.type === '初次认证' ? 'b-cyan' : 'b-orange')}</td>
                     <td>${fieldText(row.field)}</td>
                     <td>${row.standard}</td>
-                    <td>${tag(row.decision, row.decision === '准予发证' ? 'b-green' : 'b-red')}</td>
                     <td>${row.decisionSubmitTime}</td>
                     <td>${tag(row.mode, row.mode === '自动' ? 'b-blue' : 'b-orange')}</td>
-                    <td>${row.oldExpiry}</td>
                     <td>${row.issueTime}</td>
                     <td class="col-frozen-status">${statusTag(row)}</td>
                     <td class="col-frozen-right">${actions(row)}</td>
@@ -1440,7 +1555,7 @@
         }
 
         function statusTag(row) {
-            const cls = row.state === 'issued' ? 'b-green' : row.state === 'rejected' ? 'b-red' : row.state === 'director' ? 'b-orange' : 'b-blue';
+            const cls = row.state === 'issued' ? 'b-green' : row.state === 'rejected' ? 'b-red' : 'b-blue';
             return tag(row.status, cls);
         }
 
@@ -1501,9 +1616,9 @@
                 showToast('请先选择需要处理的证书');
                 return;
             }
-            const processableRows = selectedRows.filter(row => row.state === 'pending' || row.state === 'director');
+            const processableRows = selectedRows.filter(row => row.state === 'pending');
             if (!processableRows.length) {
-                showToast('请选择待签发或待主任处理状态的证书进行批量处理');
+                showToast('请选择待签发状态的证书进行批量处理');
                 return;
             }
             const companies = new Set(processableRows.map(row => row.company));
@@ -1523,7 +1638,7 @@
         }
 
         function resetFilters() {
-            ['keyword', 'certType', 'certField', 'decision', 'issueMode', 'urgent'].forEach(id => {
+            ['keyword', 'certType', 'certField', 'issueMode', 'expiryRange', 'urgent'].forEach(id => {
                 document.getElementById(id).value = '';
             });
             currentPage = 1;
@@ -1557,11 +1672,9 @@
             document.getElementById('drawerMode').innerHTML = tag(currentRow.mode, currentRow.mode === '自动' ? 'b-blue' : 'b-orange');
             document.getElementById('drawerOldExpiry').textContent = currentRow.oldExpiry;
             document.getElementById('drawerDecisionSubmitTime').textContent = currentRow.decisionSubmitTime;
-            document.getElementById('rejectReasonItem').style.display = currentRow.decision === '不予发证' ? 'block' : 'none';
-            document.getElementById('drawerRejectReason').textContent = currentRow.rejectReason || '-';
             document.getElementById('drawerStatus').textContent = currentRow.status;
-            document.getElementById('drawerStatus').className = `badge ${currentRow.state === 'issued' ? 'b-green' : currentRow.state === 'rejected' ? 'b-red' : currentRow.state === 'director' ? 'b-orange' : 'b-blue'}`;
-            document.getElementById('handleResult').value = preset === 'reject' || currentRow.decision === '不予发证' ? '不予签发' : '签发';
+            document.getElementById('drawerStatus').className = `badge ${currentRow.state === 'issued' ? 'b-green' : currentRow.state === 'rejected' ? 'b-red' : 'b-blue'}`;
+            document.getElementById('handleResult').value = preset === 'reject' ? '不予签发' : '签发';
             document.getElementById('handleRemark').value = defaultRemark(currentRow);
             renderDrawerBasicInfo();
             renderRuleCards(currentRow);
@@ -1584,15 +1697,11 @@
                     <td>${row.decision}</td>
                     <td>${row.mode}</td>
                     <td>${row.oldExpiry}</td>
-                    <td>${row.decision === '不予发证' ? (row.rejectReason || '-') : '-'}</td>
                 </tr>
             `).join('');
         }
 
         function defaultRemark(row) {
-            if (row.decision === '不予发证') {
-                return '认证决定不通过，已进入待签发处理，请确认签发或不予签发。';
-            }
             if (row.mode === '自动') {
                 return '该证书已生成自动签发计划，可等待后台按计划签发，也可手动处理。';
             }
@@ -1610,9 +1719,6 @@
             if (row.type === '初次认证' && row.decision === '准予发证') {
                 notice.className = 'notice';
                 notice.innerHTML = '<i class="fa-solid fa-circle-info"></i><div>初次认证准予发证后，系统定时自动签发；工作人员也可以人工处理，签发后有效期按签发日期 + 3 年 - 1 天计算。</div>';
-            } else if (row.decision === '不予发证') {
-                notice.className = 'notice warn';
-                notice.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i><div>认证决定不通过的记录进入待签发后需手动处理，不再自动签发。</div>';
             } else {
                 notice.className = 'notice';
                 notice.innerHTML = `<i class="fa-solid fa-circle-info"></i><div>当前客户选择再认证方式 ${row.rule}。如手动处理，系统按方式 C 计算证书有效期。</div>`;
@@ -1624,8 +1730,43 @@
             currentBatchIds = [];
         }
 
+        function openConfirmDialog(result, targetRows) {
+            pendingConfirmResult = result;
+            pendingConfirmIds = targetRows.map(row => row.id);
+            const isReject = result === '不予签发';
+            const isBatch = targetRows.length > 1;
+            const certSummary = isBatch ? `${targetRows[0].company} 等 ${targetRows.length} 条证书` : `${targetRows[0].company} / ${targetRows[0].certNo}`;
+            document.getElementById('confirmTitle').textContent = isReject ? '确认不予签发' : '确认签发';
+            document.getElementById('confirmMessage').textContent = isReject
+                ? '提交后所选证书将进入拒绝签发状态，请确认处理结论与说明无误。'
+                : '提交后系统将执行证书签发并记录签发时间，请确认处理结论与说明无误。';
+            document.getElementById('confirmMeta').textContent = certSummary;
+            document.getElementById('confirmIcon').className = `confirm-icon${isReject ? ' danger' : ''}`;
+            document.getElementById('confirmIcon').innerHTML = `<i class="fa-solid ${isReject ? 'fa-triangle-exclamation' : 'fa-signature'}"></i>`;
+            const actionBtn = document.getElementById('confirmActionBtn');
+            actionBtn.className = `btn ${isReject ? 'btn-danger' : 'btn-primary'}`;
+            actionBtn.innerHTML = `<i class="fa-solid fa-check"></i> ${isReject ? '确认不予签发' : '确认签发'}`;
+            document.getElementById('confirmDialog').classList.add('show');
+        }
+
+        function closeConfirmDialog() {
+            document.getElementById('confirmDialog').classList.remove('show');
+            pendingConfirmResult = null;
+            pendingConfirmIds = [];
+        }
+
+        function confirmSubmitHandle() {
+            if (!pendingConfirmResult || !pendingConfirmIds.length) return;
+            const result = pendingConfirmResult;
+            const targetIds = [...pendingConfirmIds];
+            closeConfirmDialog();
+            executeHandle(result, targetIds);
+        }
+
         function syncFooterButtons() {
-            const isReadonly = currentRow && !['pending', 'director'].includes(currentRow.state);
+            const isReadonly = currentRow && currentRow.state !== 'pending';
+            document.getElementById('handleResult').disabled = isReadonly;
+            document.getElementById('handleRemark').readOnly = isReadonly;
             if (isReadonly) {
                 document.getElementById('issueBtn').style.display = 'none';
                 document.getElementById('rejectBtn').style.display = 'none';
@@ -1638,16 +1779,21 @@
 
         function submitHandle(result) {
             if (!currentRow) return;
-            if (!['pending', 'director'].includes(currentRow.state)) {
+            if (currentRow.state !== 'pending') {
                 showToast('该证书已处理，无需重复处理');
                 return;
             }
             const targetIds = currentBatchIds.length ? currentBatchIds : [currentRow.id];
-            const targetRows = issueRows.filter(row => targetIds.includes(row.id) && ['pending', 'director'].includes(row.state));
+            const targetRows = issueRows.filter(row => targetIds.includes(row.id) && row.state === 'pending');
+            if (!targetRows.length) return;
+            openConfirmDialog(result, targetRows);
+        }
+
+        function executeHandle(result, targetIds) {
+            const targetRows = issueRows.filter(row => targetIds.includes(row.id) && row.state === 'pending');
             targetRows.forEach(row => {
                 row.status = result === '签发' ? '已签发' : '拒绝签发';
                 row.state = result === '签发' ? 'issued' : 'rejected';
-                row.directorRequired = '已完成';
                 if (result === '签发') {
                     row.newValidity = calcManualValidity(document.getElementById('issueDate').value);
                     row.issueTime = `${document.getElementById('issueDate').value} 人工处理`;
