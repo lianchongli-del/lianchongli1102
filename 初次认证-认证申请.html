@@ -984,9 +984,6 @@
                     <button type="button" id="nextStepBtn" onclick="goStep(currentStep + 1)" class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md shadow-blue-200 transition-all">
                         下一步<i class="fas fa-arrow-right ml-1.5"></i>
                     </button>
-                    <button onclick="saveDraft()" class="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-all active:scale-95">
-                        <i class="fas fa-save mr-1.5"></i>保存
-                    </button>
                     <button onclick="submitForm()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md shadow-blue-200 transition-all active:scale-95">
                         <i class="fas fa-paper-plane mr-1.5"></i>提交
                     </button>
@@ -1843,7 +1840,6 @@
                             <p class="mb-2">将鼠标悬停在左侧表单模块上，此处将显示对应的填写说明和注意事项。</p>
                             <div class="mt-3 p-3 bg-slate-50 rounded-lg text-xs text-slate-500">
                                 <p><i class="fas fa-lightbulb text-amber-500 mr-1"></i> 带 <span class="text-red-500">*</span> 号的为必填项</p>
-                                <p class="mt-1"><i class="fas fa-save text-blue-500 mr-1"></i> 系统会自动保存您的填写进度</p>
                             </div>
                         </div>
                         <div class="hidden" id="sectionHelpContent">
@@ -2560,8 +2556,12 @@
         function getDefaultHeadquartersLocation() {
             return {
                 name: selectedCustomer && selectedCustomer.name ? selectedCustomer.name : '总部',
+                nameEn: selectedCustomer && selectedCustomer.nameEn ? selectedCustomer.nameEn : 'Headquarters',
+                region: selectedCustomer && selectedCustomer.region ? selectedCustomer.region : '北京市/北京市/朝阳区',
                 address: selectedCustomer && (selectedCustomer.opAddress || selectedCustomer.address) ? (selectedCustomer.opAddress || selectedCustomer.address) : '北京市朝阳区xxx路',
-                creditCode: selectedCustomer && selectedCustomer.code ? selectedCustomer.code : '91110105MA00XXXXXX'
+                addressEn: selectedCustomer && selectedCustomer.addressEn ? selectedCustomer.addressEn : 'Chaoyang District, Beijing',
+                creditCode: selectedCustomer && selectedCustomer.code ? selectedCustomer.code : '91110105MA00XXXXXX',
+                people: selectedCustomer && selectedCustomer.people ? selectedCustomer.people : ''
             };
         }
 
@@ -2569,12 +2569,23 @@
             const headquarters = getDefaultHeadquartersLocation();
             document.querySelectorAll('.location-card[data-loc-id="HQ"]').forEach(card => {
                 card.dataset.locName = headquarters.name;
+                card.dataset.locNameEn = headquarters.nameEn;
+                card.dataset.locRegion = headquarters.region;
                 card.dataset.locAddress = headquarters.address;
+                card.dataset.locAddressEn = headquarters.addressEn;
+                card.dataset.locCreditCode = headquarters.creditCode;
+                card.dataset.locPeople = headquarters.people;
                 const nameEl = card.querySelector('.location-name');
                 const addressEl = card.querySelector('.location-address');
+                const nameEnInput = card.querySelector('.location-name-en-input');
+                const addressEnInput = card.querySelector('.location-address-en-input');
                 const creditCodeInput = card.querySelector('.location-credit-code-input');
+                const peopleInput = card.querySelector('.location-people-input');
                 if (nameEl) nameEl.textContent = headquarters.name;
                 if (addressEl) addressEl.textContent = headquarters.address;
+                if (nameEnInput) nameEnInput.value = headquarters.nameEn;
+                if (addressEnInput) addressEnInput.value = headquarters.addressEn;
+                if (peopleInput) peopleInput.value = headquarters.people;
                 if (creditCodeInput) {
                     creditCodeInput.value = headquarters.creditCode;
                     updateLocationSubCertAvailability(creditCodeInput);
@@ -2594,15 +2605,6 @@
             body.id = body.id || `systemBody_${uniqueId}`;
             header.classList.add('cursor-pointer');
 
-            const saveBtn = document.createElement('button');
-            saveBtn.type = 'button';
-            saveBtn.className = 'text-xs text-blue-600 hover:bg-blue-50 px-2 py-1 rounded transition-colors';
-            saveBtn.innerHTML = '<i class="fas fa-save"></i> 保存';
-            saveBtn.onclick = (event) => {
-                event.stopPropagation();
-                saveSystemCard(uniqueId);
-            };
-
             const toggleBtn = document.createElement('button');
             toggleBtn.type = 'button';
             toggleBtn.className = 'text-xs text-slate-600 hover:bg-slate-100 px-2 py-1 rounded transition-colors';
@@ -2614,7 +2616,6 @@
             };
 
             actions.prepend(toggleBtn);
-            actions.prepend(saveBtn);
             header.addEventListener('click', (event) => {
                 if (event.target.closest('button,input,label,select,textarea,a')) return;
                 toggleSystemCardCollapse(uniqueId);
@@ -2632,10 +2633,6 @@
                     ? '<i class="fas fa-chevron-down"></i> 展开'
                     : '<i class="fas fa-chevron-up"></i> 收起';
             }
-        }
-
-        function saveSystemCard(uniqueId) {
-            showToast('认证领域已保存', 'success');
         }
 
         // 修改renderSystemCard，添加认证类型选择和转换证书信息
@@ -2702,37 +2699,44 @@
                             </div>
                         </div>
 
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700 mb-1">认可机构（多选）</label>
-                            <div class="flex gap-2 flex-wrap">
-                                ${['CNAS', 'DAKKS', 'UKAS'].map(acc => `
-                                    <label class="flex items-center gap-1 text-xs bg-slate-50 px-2 py-1 rounded border border-slate-200">
-                                        <input type="checkbox" class="rounded text-blue-600">
-                                        <span>${acc}</span>
-                                    </label>
-                                `).join('')}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1">认可机构（多选）</label>
+                                <div class="flex gap-2 flex-wrap">
+                                    ${['CNAS', 'DAKKS', 'UKAS'].map(acc => `
+                                        <label class="flex items-center gap-1 text-xs bg-slate-50 px-2 py-1 rounded border border-slate-200">
+                                            <input type="checkbox" class="rounded text-blue-600">
+                                            <span>${acc}</span>
+                                        </label>
+                                    `).join('')}
+                                </div>
+                                <p class="text-[10px] text-slate-500 mt-1">注：中心已通过多家认可机构多个认证领域的认可，详细认可范围可登录CQC官网查询</p>
                             </div>
-                            <p class="text-[10px] text-slate-500 mt-1">注：中心已通过多家认可机构多个认证领域的认可，详细认可范围可登录CQC官网查询</p>
+
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1">是否需要纸质证书</label>
+                                <div class="flex gap-4 mt-2">
+                                    <label class="flex items-center gap-1 text-xs cursor-pointer">
+                                        <input type="radio" name="paper_${uniqueId}" value="yes" class="text-blue-600">
+                                        <span>是</span>
+                                    </label>
+                                    <label class="flex items-center gap-1 text-xs cursor-pointer">
+                                        <input type="radio" name="paper_${uniqueId}" value="no" checked class="text-blue-600">
+                                        <span>否（电子证书）</span>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="md:col-span-2">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
                             <label class="block text-xs font-medium text-slate-700 mb-1 required">认证范围</label>
                             <textarea maxlength="500" rows="2" placeholder="请详细描述认证范围（产品/服务/活动）..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-700 mb-1">是否需要纸质证书</label>
-                            <div class="flex gap-4 mt-2">
-                                <label class="flex items-center gap-1 text-xs cursor-pointer">
-                                    <input type="radio" name="paper_${uniqueId}" value="yes" class="text-blue-600">
-                                    <span>是</span>
-                                </label>
-                                <label class="flex items-center gap-1 text-xs cursor-pointer">
-                                    <input type="radio" name="paper_${uniqueId}" value="no" checked class="text-blue-600">
-                                    <span>否（电子证书）</span>
-                                </label>
-                            </div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">认证范围（英）</label>
+                            <textarea maxlength="500" rows="2" placeholder="Please describe the certification scope..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
                         </div>
                     </div>
 
@@ -2828,7 +2832,14 @@
             cardsList.appendChild(card);
             enhanceSystemCard(card, uniqueId);
             const headquarters = getDefaultHeadquartersLocation();
-            addLocationCard(uniqueId, 'HQ', headquarters.name, headquarters.address, 'fixed', true, { locked: true, creditCode: headquarters.creditCode });
+            addLocationCard(uniqueId, 'HQ', headquarters.name, headquarters.address, 'fixed', true, {
+                locked: true,
+                nameEn: headquarters.nameEn,
+                region: headquarters.region,
+                addressEn: headquarters.addressEn,
+                creditCode: headquarters.creditCode,
+                people: headquarters.people
+            });
             applyDefaultInputPlaceholders(card);
 
             // 检查是否有认证转换类型，更新附件显示
@@ -3806,37 +3817,44 @@
                             </div>
                         </div>
 
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700 mb-1">认可机构（多选）</label>
-                            <div class="flex gap-2 flex-wrap">
-                                ${['CNAS', 'DAKKS', 'UKAS'].map(acc => `
-                                    <label class="flex items-center gap-1 text-xs bg-slate-50 px-2 py-1 rounded border border-slate-200">
-                                        <input type="checkbox" class="rounded text-blue-600">
-                                        <span>${acc}</span>
-                                    </label>
-                                `).join('')}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1">认可机构（多选）</label>
+                                <div class="flex gap-2 flex-wrap">
+                                    ${['CNAS', 'DAKKS', 'UKAS'].map(acc => `
+                                        <label class="flex items-center gap-1 text-xs bg-slate-50 px-2 py-1 rounded border border-slate-200">
+                                            <input type="checkbox" class="rounded text-blue-600">
+                                            <span>${acc}</span>
+                                        </label>
+                                    `).join('')}
+                                </div>
+                                <p class="text-[10px] text-slate-500 mt-1">注：中心已通过多家认可机构多个认证领域的认可，详细认可范围可登录CQC官网查询</p>
                             </div>
-                            <p class="text-[10px] text-slate-500 mt-1">注：中心已通过多家认可机构多个认证领域的认可，详细认可范围可登录CQC官网查询</p>
+
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1">是否需要纸质证书</label>
+                                <div class="flex gap-4 mt-2">
+                                    <label class="flex items-center gap-1 text-xs cursor-pointer">
+                                        <input type="radio" name="paper_${uniqueId}" value="yes" class="text-blue-600">
+                                        <span>是</span>
+                                    </label>
+                                    <label class="flex items-center gap-1 text-xs cursor-pointer">
+                                        <input type="radio" name="paper_${uniqueId}" value="no" checked class="text-blue-600">
+                                        <span>否（电子证书）</span>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="md:col-span-2">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
                             <label class="block text-xs font-medium text-slate-700 mb-1 required">认证范围</label>
                             <textarea maxlength="500" rows="2" placeholder="请详细描述认证范围（产品/服务/活动）..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-700 mb-1">是否需要纸质证书</label>
-                            <div class="flex gap-4 mt-2">
-                                <label class="flex items-center gap-1 text-xs cursor-pointer">
-                                    <input type="radio" name="paper_${uniqueId}" value="yes" class="text-blue-600">
-                                    <span>是</span>
-                                </label>
-                                <label class="flex items-center gap-1 text-xs cursor-pointer">
-                                    <input type="radio" name="paper_${uniqueId}" value="no" checked class="text-blue-600">
-                                    <span>否（电子证书）</span>
-                                </label>
-                            </div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">认证范围（英）</label>
+                            <textarea maxlength="500" rows="2" placeholder="Please describe the certification scope..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
                         </div>
                     </div>
 
@@ -3930,7 +3948,14 @@
             cardsList.appendChild(card);
             enhanceSystemCard(card, uniqueId);
             const headquarters = getDefaultHeadquartersLocation();
-            addLocationCard(uniqueId, 'HQ', headquarters.name, headquarters.address, 'fixed', true, { locked: true, creditCode: headquarters.creditCode });
+            addLocationCard(uniqueId, 'HQ', headquarters.name, headquarters.address, 'fixed', true, {
+                locked: true,
+                nameEn: headquarters.nameEn,
+                region: headquarters.region,
+                addressEn: headquarters.addressEn,
+                creditCode: headquarters.creditCode,
+                people: headquarters.people
+            });
             applyDefaultInputPlaceholders(card);
         }
 
@@ -5062,10 +5087,6 @@ function initAttachments() {
             sections.forEach(section => observer.observe(section));
         }
 
-        function saveDraft() {
-            showToast('草稿已保存');
-        }
-
         function submitForm() {
             if (selectedSystems.length === 0) {
                 alert('请至少添加一个认证领域');
@@ -5152,13 +5173,13 @@ function initAttachments() {
         }
 
         const availableLocations = [
-            { id: 'SH', name: '上海分公司', address: '上海市浦东新区xxx路', type: 'fixed', center: false, creditCode: '91310115MA1KXXXXXX' },
-            { id: 'GZ', name: '广州运营中心', address: '广州市天河区xxx路', type: 'fixed', center: false, creditCode: '91440101MA5XXXXXXX' },
-            { id: 'NJ', name: '南京研发中心', address: '南京市建邺区xxx路', type: 'fixed', center: false, creditCode: '' },
-            { id: 'CD', name: '成都交付中心', address: '成都市高新区xxx路', type: 'fixed', center: false, creditCode: '' },
-            { id: 'SP1', name: '客户服务点', address: '北京市海淀区xxx路', type: 'service', center: false, creditCode: '' },
-            { id: 'SP2', name: '华东服务点', address: '苏州市工业园区xxx路', type: 'service', center: false, creditCode: '' },
-            { id: 'SP3', name: '华南服务点', address: '深圳市南山区xxx路', type: 'service', center: false, creditCode: '' }
+            { id: 'SH', name: '上海分公司', nameEn: 'Shanghai Branch', region: '上海市/上海市/浦东新区', address: '上海市浦东新区xxx路', addressEn: 'Pudong New Area, Shanghai', type: 'fixed', center: false, creditCode: '91310115MA1KXXXXXX', people: 58 },
+            { id: 'GZ', name: '广州运营中心', nameEn: 'Guangzhou Operations Center', region: '广东省/广州市/天河区', address: '广州市天河区xxx路', addressEn: 'Tianhe District, Guangzhou', type: 'fixed', center: false, creditCode: '91440101MA5XXXXXXX', people: 42 },
+            { id: 'NJ', name: '南京研发中心', nameEn: 'Nanjing R&D Center', region: '江苏省/南京市/建邺区', address: '南京市建邺区xxx路', addressEn: 'Jianye District, Nanjing', type: 'fixed', center: false, creditCode: '', people: 35 },
+            { id: 'CD', name: '成都交付中心', nameEn: 'Chengdu Delivery Center', region: '四川省/成都市/高新区', address: '成都市高新区xxx路', addressEn: 'High-tech Zone, Chengdu', type: 'fixed', center: false, creditCode: '', people: 29 },
+            { id: 'SP1', name: '客户服务点', nameEn: 'Customer Service Site', region: '北京市/北京市/海淀区', address: '北京市海淀区xxx路', addressEn: 'Haidian District, Beijing', type: 'service', center: false, creditCode: '', people: 12 },
+            { id: 'SP2', name: '华东服务点', nameEn: 'East China Service Site', region: '江苏省/苏州市/工业园区', address: '苏州市工业园区xxx路', addressEn: 'Suzhou Industrial Park', type: 'service', center: false, creditCode: '', people: 10 },
+            { id: 'SP3', name: '华南服务点', nameEn: 'South China Service Site', region: '广东省/深圳市/南山区', address: '深圳市南山区xxx路', addressEn: 'Nanshan District, Shenzhen', type: 'service', center: false, creditCode: '', people: 9 }
         ];
 
         // 场所相关函数
@@ -5229,10 +5250,14 @@ function initAttachments() {
                             <input type="checkbox" class="location-option-checkbox rounded text-blue-600 shrink-0"
                                    data-loc-id="${loc.id}"
                                    data-loc-name="${loc.name}"
+                                   data-loc-name-en="${loc.nameEn || ''}"
+                                   data-loc-region="${loc.region || ''}"
                                    data-loc-address="${loc.address}"
+                                   data-loc-address-en="${loc.addressEn || ''}"
                                    data-loc-type="${loc.type}"
                                    data-loc-center="${loc.center}"
                                    data-loc-credit-code="${loc.creditCode || ''}"
+                                   data-loc-people="${loc.people || ''}"
                                    ${alreadyAdded ? 'checked disabled' : ''}>
                             <div class="w-10 h-10 rounded-lg ${loc.type === 'service' ? 'bg-violet-100 text-violet-600' : 'bg-emerald-100 text-emerald-600'} flex items-center justify-center shrink-0">
                                 <i class="fas ${typeIcon}"></i>
@@ -5266,7 +5291,13 @@ function initAttachments() {
                     input.dataset.locAddress,
                     input.dataset.locType,
                     input.dataset.locCenter === 'true',
-                    { creditCode: input.dataset.locCreditCode || '' }
+                    {
+                        nameEn: input.dataset.locNameEn || '',
+                        region: input.dataset.locRegion || '',
+                        addressEn: input.dataset.locAddressEn || '',
+                        creditCode: input.dataset.locCreditCode || '',
+                        people: input.dataset.locPeople || ''
+                    }
                 );
             });
 
@@ -5280,18 +5311,26 @@ function initAttachments() {
                 {
                     id: 'IMPORT_' + Date.now(),
                     name: '导入固定场所A',
+                    nameEn: 'Imported Fixed Site A',
+                    region: '上海市/上海市/浦东新区',
                     address: '导入文件回写地址A',
+                    addressEn: 'Imported address A',
                     type: 'fixed',
                     center: false,
-                    creditCode: ''
+                    creditCode: '',
+                    people: ''
                 },
                 {
                     id: 'IMPORT_' + (Date.now() + 1),
                     name: '导入服务点B',
+                    nameEn: 'Imported Service Site B',
+                    region: '广东省/广州市/天河区',
                     address: '导入文件回写地址B',
+                    addressEn: 'Imported address B',
                     type: 'service',
                     center: false,
-                    creditCode: ''
+                    creditCode: '',
+                    people: ''
                 }
             ];
             input.value = '';
@@ -5365,39 +5404,171 @@ function initAttachments() {
                         </button>
                     </div>
                     <div class="p-4 space-y-4">
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700 mb-1 required">场所名称</label>
-                            <input type="text" id="tempLocName_${uniqueId}" placeholder="如：南京研发中心" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700 mb-1 required">详细地址</label>
-                            <input type="text" id="tempLocAddress_${uniqueId}" placeholder="请输入详细地址" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <div class="flex gap-3 pt-2">
-                            <button onclick="this.closest('.modal').remove()" class="flex-1 px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-colors">取消</button>
-                            <button onclick="saveTempLocation('${uniqueId}')" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors">确定</button>
-                        </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1 required">场所名称</label>
+                                <input type="text" data-location-field="name" placeholder="如：南京研发中心" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1 required">详细地址</label>
+                                <input type="text" data-location-field="address" placeholder="请输入详细地址" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-white text-slate-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                    </div>
+                    <div class="p-4 border-t border-slate-100 bg-slate-50 rounded-b-2xl flex justify-end gap-3">
+                        <button onclick="this.closest('.modal').remove()" class="px-4 py-2 border border-slate-300 rounded-lg hover:bg-white text-sm font-medium text-slate-700 transition-colors">取消</button>
+                        <button onclick="saveTempLocation('${uniqueId}', this.closest('.modal'))" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors">确定</button>
                     </div>
                 </div>
             `;
             document.body.appendChild(modal);
         }
 
-        function saveTempLocation(uniqueId) {
-            const name = document.getElementById(`tempLocName_${uniqueId}`).value;
-            const address = document.getElementById(`tempLocAddress_${uniqueId}`).value;
+        function saveTempLocation(uniqueId, modal) {
+            const getValue = field => modal.querySelector(`[data-location-field="${field}"]`)?.value.trim() || '';
+            const name = getValue('name');
+            const address = getValue('address');
             if (!name || !address) {
-                showToast('请填写完整信息', 'error');
+                showToast('请填写场所名称和场所地址', 'error');
                 return;
             }
             const tempId = 'TEMP_' + Date.now();
-            addLocationCard(uniqueId, tempId, name, address, 'temp', false);
-            document.querySelector(`#tempLocationModal_${uniqueId}`).remove();
+            addLocationCard(uniqueId, tempId, name, address, 'temp', false, {
+                nameEn: '',
+                region: '',
+                addressEn: '',
+                creditCode: '',
+                people: ''
+            });
+            modal.remove();
             showToast('临时场所已添加，并已回写企业信息');
 
             // 标记为多场所
             isMultiLocation = true;
             checkAttachmentConditions();
+        }
+
+        function getLocationTypeLabel(type) {
+            if (type === 'temp') return '临时场所';
+            return type === 'service' ? '服务点' : '固定场所';
+        }
+
+        function syncLocationDataset(input, datasetKey) {
+            const card = input.closest('.location-card');
+            if (!card) return;
+            card.dataset[datasetKey] = input.value;
+        }
+
+        const regionCascaderData = {
+            '北京市': {
+                '北京市': ['东城区', '西城区', '朝阳区', '海淀区', '丰台区', '通州区']
+            },
+            '上海市': {
+                '上海市': ['黄浦区', '徐汇区', '浦东新区', '静安区', '闵行区', '嘉定区']
+            },
+            '广东省': {
+                '广州市': ['越秀区', '天河区', '海珠区', '白云区', '黄埔区', '番禺区'],
+                '深圳市': ['福田区', '罗湖区', '南山区', '宝安区', '龙岗区', '龙华区']
+            },
+            '江苏省': {
+                '南京市': ['玄武区', '秦淮区', '建邺区', '鼓楼区', '江宁区'],
+                '苏州市': ['姑苏区', '虎丘区', '吴中区', '相城区', '工业园区']
+            },
+            '四川省': {
+                '成都市': ['锦江区', '青羊区', '武侯区', '高新区', '天府新区']
+            },
+            '内蒙古自治区': {
+                '呼和浩特市': ['新城区', '回民区', '玉泉区', '赛罕区'],
+                '包头市': ['东河区', '昆都仑区', '青山区', '九原区'],
+                '乌海市': ['海勃湾区', '海南区', '乌达区'],
+                '赤峰市': ['红山区', '元宝山区', '松山区'],
+                '通辽市': ['科尔沁区', '科尔沁左翼中旗', '科尔沁左翼后旗', '开鲁县', '库伦旗', '奈曼旗']
+            }
+        };
+
+        function splitRegionPath(region = '') {
+            const parts = String(region).split('/').map(item => item.trim()).filter(Boolean);
+            return {
+                province: parts[0] || '',
+                city: parts[1] || '',
+                district: parts[2] || ''
+            };
+        }
+
+        function initRegionCascader(modal) {
+            const hiddenInput = modal.querySelector('[data-location-field="region"]');
+            const displayEl = modal.querySelector('[data-region-display]');
+            if (!hiddenInput || !displayEl) return;
+            const selected = splitRegionPath(hiddenInput.value);
+            const state = {
+                province: selected.province || Object.keys(regionCascaderData)[0],
+                city: selected.city || '',
+                district: selected.district || ''
+            };
+            modal._regionCascaderState = state;
+            updateRegionDisplay(modal, hiddenInput.value);
+            if (!state.city) state.city = Object.keys(regionCascaderData[state.province] || {})[0] || '';
+            renderRegionCascader(modal);
+        }
+
+        function updateRegionDisplay(modal, value) {
+            const displayEl = modal.querySelector('[data-region-display]');
+            if (!displayEl) return;
+            displayEl.textContent = value || '请选择省市区';
+            displayEl.classList.toggle('text-slate-400', !value);
+            displayEl.classList.toggle('text-slate-700', !!value);
+        }
+
+        function toggleRegionCascader(button) {
+            const modal = button.closest('.modal');
+            const panel = modal?.querySelector('[data-region-panel]');
+            if (!panel) return;
+            panel.classList.toggle('hidden');
+            renderRegionCascader(modal);
+        }
+
+        function selectRegionLevel(button, level, value) {
+            const modal = button.closest('.modal');
+            if (!modal) return;
+            const state = modal._regionCascaderState || {};
+            if (level === 'province') {
+                state.province = value;
+                state.city = Object.keys(regionCascaderData[value] || {})[0] || '';
+                state.district = '';
+            } else if (level === 'city') {
+                state.city = value;
+                state.district = '';
+            } else {
+                state.district = value;
+                const hiddenInput = modal.querySelector('[data-location-field="region"]');
+                const regionValue = [state.province, state.city, state.district].filter(Boolean).join('/');
+                if (hiddenInput) hiddenInput.value = regionValue;
+                updateRegionDisplay(modal, regionValue);
+                modal.querySelector('[data-region-panel]')?.classList.add('hidden');
+            }
+            modal._regionCascaderState = state;
+            renderRegionCascader(modal);
+        }
+
+        function renderRegionCascader(modal) {
+            const state = modal._regionCascaderState || {};
+            const provinceList = Object.keys(regionCascaderData);
+            const cityList = Object.keys(regionCascaderData[state.province] || {});
+            if (!state.city && cityList.length > 0) state.city = cityList[0];
+            const districtList = regionCascaderData[state.province]?.[state.city] || [];
+            const renderColumn = (items, level, activeValue) => items.map(item => `
+                <button type="button" onclick="selectRegionLevel(this, '${level}', '${escapeHtml(item)}')" class="w-full flex items-center justify-between px-3 py-2 text-left text-sm hover:bg-slate-50 ${item === activeValue ? 'text-blue-600 bg-blue-50 font-medium' : 'text-slate-700'}">
+                    <span>${item}</span>
+                    ${level === 'district' ? '' : '<i class="fas fa-chevron-right text-xs text-slate-400"></i>'}
+                </button>
+            `).join('');
+            const panel = modal.querySelector('[data-region-panel]');
+            if (!panel) return;
+            panel.innerHTML = `
+                <div class="grid grid-cols-3 h-64 overflow-hidden">
+                    <div class="overflow-y-auto border-r border-slate-200 py-1">${renderColumn(provinceList, 'province', state.province)}</div>
+                    <div class="overflow-y-auto border-r border-slate-200 py-1">${renderColumn(cityList, 'city', state.city)}</div>
+                    <div class="overflow-y-auto py-1">${renderColumn(districtList, 'district', state.district)}</div>
+                </div>
+            `;
         }
 
         function addLocationCard(uniqueId, locId, name, address, type, isKeyLocation, options = {}) {
@@ -5412,32 +5583,44 @@ function initAttachments() {
 
             const cardId = `loc_${uniqueId}_${Date.now()}`;
             const div = document.createElement('div');
+            const normalizedType = type === 'temp' ? 'temp' : (type === 'service' ? 'service' : 'fixed');
             div.id = cardId;
             div.dataset.locId = locId;
             div.dataset.locName = name;
+            div.dataset.locNameEn = options.nameEn || '';
+            div.dataset.locRegion = options.region || '';
             div.dataset.locAddress = address;
-            div.dataset.locType = type;
+            div.dataset.locAddressEn = options.addressEn || '';
+            div.dataset.locType = normalizedType;
             div.dataset.locCenter = isKeyLocation ? 'true' : 'false';
             div.dataset.locCreditCode = options.creditCode || '';
+            div.dataset.locPeople = options.people || '';
             div.className = 'location-card bg-white border border-slate-200 rounded-xl p-4 shadow-sm';
-            const typeLabel = type === 'service' ? '服务点' : (type === 'temp' ? '临时场所' : '固定场所');
-            const typeClass = type === 'service' ? 'bg-violet-100 text-violet-700' : (type === 'temp' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700');
-            const typeIcon = type === 'service' ? 'fa-headset' : (type === 'temp' ? 'fa-map-pin' : 'fa-building');
+            const typeLabel = getLocationTypeLabel(normalizedType);
+            const typeClass = normalizedType === 'temp' ? 'bg-amber-100 text-amber-700' : (normalizedType === 'service' ? 'bg-violet-100 text-violet-700' : 'bg-emerald-100 text-emerald-700');
+            const typeIcon = normalizedType === 'temp' ? 'fa-map-pin' : (normalizedType === 'service' ? 'fa-headset' : 'fa-building');
+            const typeIconClass = normalizedType === 'temp' ? 'bg-amber-100 text-amber-600' : (normalizedType === 'service' ? 'bg-violet-100 text-violet-600' : 'bg-emerald-100 text-emerald-600');
             const systemCard = container.closest('.system-card');
             const isEnMSLocation = systemCard?.dataset.system === 'EnMS';
             const energyScopeId = `${cardId}_energy`;
             const productionScopeId = cardId;
             const creditCode = options.creditCode || '';
             const escapedCreditCode = escapeHtml(creditCode);
+            const escapedPeople = escapeHtml(options.people || '');
             const canIssueSubCert = creditCode.trim().length > 0;
+            const isTempLocation = normalizedType === 'temp';
+            const infoFieldClass = isTempLocation
+                ? 'h-8 bg-white text-slate-700 focus:ring-1 focus:ring-blue-500'
+                : 'h-8 bg-white text-slate-700 cursor-default';
+            const infoFieldReadonly = isTempLocation ? '' : 'readonly';
             div.innerHTML = `
                 <div class="flex items-start justify-between mb-3">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg ${type === 'service' ? 'bg-violet-100 text-violet-600' : 'bg-emerald-100 text-emerald-600'} flex items-center justify-center">
-                            <i class="fas ${typeIcon}"></i>
+                        <div class="location-type-icon-wrap w-10 h-10 rounded-lg ${typeIconClass} flex items-center justify-center">
+                            <i class="location-type-icon fas ${typeIcon}"></i>
                         </div>
                         <div>
-                            <p class="font-semibold text-slate-900 text-sm"><span class="location-name">${name}</span> <span class="text-xs ${typeClass} px-2 py-0.5 rounded ml-1">${typeLabel}</span> <span class="location-center-badge text-xs bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded ml-1 ${isKeyLocation ? '' : 'hidden'}">中心职能</span></p>
+                            <p class="font-semibold text-slate-900 text-sm"><span class="location-name">${name}</span> <span class="location-type-badge text-xs ${typeClass} px-2 py-0.5 rounded ml-1">${typeLabel}</span> <span class="location-center-badge text-xs bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded ml-1 ${isKeyLocation ? '' : 'hidden'}">中心职能</span></p>
                             <p class="location-address text-xs text-slate-500">${address}</p>
                         </div>
                     </div>
@@ -5448,26 +5631,38 @@ function initAttachments() {
                     </div>
                 </div>
                 <div class="grid grid-cols-12 gap-3">
-                    <div class="col-span-12">
-                        <label class="block text-[10px] font-medium text-slate-500 mb-1 required">涉及的产品、过程、活动/工程项目进展情况</label>
-                        <input type="text" placeholder="500字以内" maxlength="500" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
+                    <div class="col-span-12 md:col-span-6">
+                        <label class="block text-[10px] font-medium text-slate-500 mb-1">场所名称（英）</label>
+                        <input type="text" value="${escapeHtml(options.nameEn || '')}" ${infoFieldReadonly} oninput="syncLocationDataset(this, 'locNameEn')" class="location-name-en-input w-full px-2 text-xs border border-slate-300 rounded ${infoFieldClass}" placeholder="Site name in English">
                     </div>
-                    <div class="col-span-1">
+                    <div class="col-span-12 md:col-span-6">
+                        <label class="block text-[10px] font-medium text-slate-500 mb-1">场所地址（英）</label>
+                        <input type="text" value="${escapeHtml(options.addressEn || '')}" ${infoFieldReadonly} oninput="syncLocationDataset(this, 'locAddressEn')" class="location-address-en-input w-full px-2 text-xs border border-slate-300 rounded ${infoFieldClass}" placeholder="Site address in English">
+                    </div>
+                    <div class="col-span-12 md:col-span-6">
+                        <label class="block text-[10px] font-medium text-slate-500 mb-1">统一社会信用代码</label>
+                        <input type="text" value="${escapedCreditCode}" ${infoFieldReadonly} oninput="updateLocationSubCertAvailability(this)" class="location-credit-code-input w-full px-2 text-xs border border-slate-300 rounded ${infoFieldClass}" placeholder="统一社会信用代码">
+                    </div>
+                    <div class="col-span-12 md:col-span-6">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">场所人数</label>
-                        <input type="number" placeholder="0" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
+                        <input type="number" value="${escapedPeople}" ${infoFieldReadonly} oninput="syncLocationDataset(this, 'locPeople')" class="location-people-input w-full px-2 text-xs border border-slate-300 rounded ${infoFieldClass}" placeholder="0">
                     </div>
-                    <div class="col-span-2">
+                    <div class="col-span-12 md:col-span-6">
+                        <label class="block text-[10px] font-medium text-slate-500 mb-1 required">认证范围</label>
+                        <textarea rows="3" placeholder="500字以内" maxlength="500" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white resize-none"></textarea>
+                    </div>
+                    <div class="col-span-12 md:col-span-6">
+                        <label class="block text-[10px] font-medium text-slate-500 mb-1">认证范围（英）</label>
+                        <textarea rows="3" placeholder="Certification scope in English" maxlength="500" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white resize-none"></textarea>
+                    </div>
+                    <div class="col-span-12 sm:col-span-6 md:col-span-3">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">中心职能</label>
                         <select class="location-center-select w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white" onchange="toggleLocationCenter(this)" ${options.locked ? 'disabled' : ''}>
                             <option value="no" ${isKeyLocation ? '' : 'selected'}>否</option>
                             <option value="yes" ${isKeyLocation ? 'selected' : ''}>是</option>
                         </select>
                     </div>
-                    <div class="col-span-3">
-                        <label class="block text-[10px] font-medium text-slate-500 mb-1">统一社会信用代码</label>
-                        <input type="text" value="${escapedCreditCode}" oninput="updateLocationSubCertAvailability(this)" class="location-credit-code-input w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white" placeholder="统一社会信用代码">
-                    </div>
-                    <div class="col-span-2">
+                    <div class="col-span-12 sm:col-span-6 md:col-span-3">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">联系人</label>
                         <div class="flex gap-1">
                             <select onchange="toggleManualLocationContact(this)" class="location-contact-select flex-1 min-w-0 px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
@@ -5479,11 +5674,11 @@ function initAttachments() {
                             <input type="text" placeholder="联系人姓名" class="manual-location-contact hidden flex-1 min-w-0 px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
                         </div>
                     </div>
-                    <div class="col-span-2">
+                    <div class="col-span-12 sm:col-span-6 md:col-span-3">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">电话</label>
                         <input type="tel" placeholder="电话" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white">
                     </div>
-                    <div class="col-span-2">
+                    <div class="col-span-12 sm:col-span-6 md:col-span-3">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">是否出子证</label>
                         <select class="location-sub-cert-select w-full px-1 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 ${canIssueSubCert ? 'bg-white' : 'bg-slate-100 cursor-not-allowed'}" title="是否出子证" ${canIssueSubCert ? '' : 'disabled'}>
                             <option value="no">否</option>
@@ -5571,3 +5766,4 @@ function initAttachments() {
     </script>
 </body>
 </html>
+
