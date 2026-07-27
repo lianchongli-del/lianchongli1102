@@ -585,7 +585,8 @@
             margin-bottom: 6px;
         }
 
-        .basic-field input {
+        .basic-field input,
+        .basic-field select {
             width: 100%;
         }
 
@@ -1468,7 +1469,11 @@
                         </div>
                         <div class="basic-field">
                             <label for="customerRepresentative">客户代表</label>
-                            <input id="customerRepresentative" type="text" value="张明华">
+                            <select id="customerRepresentative" onchange="syncCustomerContact()">
+                                <option value="张明华" data-phone="010-12345678" data-email="zhangmh@bjmetro.com" selected>张明华</option>
+                                <option value="李晓晨" data-phone="010-87654321" data-email="lixc@bjmetro.com">李晓晨</option>
+                                <option value="王海宁" data-phone="010-66558899" data-email="wanghn@bjmetro.com">王海宁</option>
+                            </select>
                         </div>
                         <div class="basic-field">
                             <label for="customerPhone">联系电话</label>
@@ -2884,8 +2889,17 @@
             updateNcrVisibility();
             updateRecommendationState();
             renderReportAttachments();
+            syncCustomerContact();
             document.querySelectorAll('[data-conclusion-card] input[value="valid"]:checked, [data-conclusion-card] input[value="invalid"]:checked').forEach(updateConclusionRecommendation);
         });
+
+        function syncCustomerContact() {
+            const representative = document.getElementById('customerRepresentative');
+            const selected = representative ? representative.options[representative.selectedIndex] : null;
+            if (!selected) return;
+            document.getElementById('customerPhone').value = selected.dataset.phone || '';
+            document.getElementById('customerEmail').value = selected.dataset.email || '';
+        }
 
         // 区块折叠展开
         function toggleSection(header) {
