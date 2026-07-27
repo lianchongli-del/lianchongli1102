@@ -979,8 +979,8 @@
                     <select id="certType">
                         <option value="">全部</option>
                         <option value="初次认证">初次认证</option>
-                        <option value="再认证">再认证</option>
                         <option value="监督">监督</option>
+                        <option value="再认证">再认证</option>
                         <option value="证书变更">证书变更</option>
                         <option value="认证转换">认证转换</option>
                     </select>
@@ -1034,8 +1034,8 @@
         <div class="panel">
             <div class="toolbar">
                 <div class="tabs">
-                    <div class="tab active" data-tab="all" onclick="setTab('all')"><i class="fa-solid fa-list"></i> 全部</div>
-                    <div class="tab" data-tab="pending" onclick="setTab('pending')"><i class="fa-solid fa-list-check"></i> 待签发</div>
+                    <div class="tab" data-tab="all" onclick="setTab('all')"><i class="fa-solid fa-list"></i> 全部</div>
+                    <div class="tab active" data-tab="pending" onclick="setTab('pending')"><i class="fa-solid fa-list-check"></i> 待签发</div>
                     <div class="tab" data-tab="issued" onclick="setTab('issued')"><i class="fa-solid fa-circle-check"></i> 已签发</div>
                     <div class="tab" data-tab="rejected" onclick="setTab('rejected')"><i class="fa-solid fa-ban"></i> 拒绝签发</div>
                 </div>
@@ -1089,7 +1089,7 @@
             <div class="drawer-header">
                 <div>
                     <div class="drawer-title">签发处理</div>
-                    <div class="drawer-subtitle" id="drawerSubtitle">-</div>
+                    <div class="drawer-subtitle" id="drawerSubtitle" style="display:none;"></div>
                 </div>
                 <button class="drawer-close" onclick="closeDrawer()" aria-label="关闭"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -1109,6 +1109,8 @@
                             <div><div class="info-label">客户发证方式</div><div class="info-value" id="drawerMode">-</div></div>
                             <div><div class="info-label">原证书有效期</div><div class="info-value" id="drawerOldExpiry">-</div></div>
                             <div><div class="info-label">认证决定提交时间</div><div class="info-value" id="drawerDecisionSubmitTime">-</div></div>
+                            <div><div class="info-label">最近一次现场审核开始时间</div><div class="info-value" id="drawerAuditStartTime">-</div></div>
+                            <div><div class="info-label">最近一次现场审核结束时间</div><div class="info-value" id="drawerAuditEndTime">-</div></div>
                         </div>
                         <div id="batchInfoTableWrap" style="display:none; overflow-x:auto;">
                             <table class="mini-table">
@@ -1121,6 +1123,8 @@
                                         <th>认证决定</th>
                                         <th>发证方式</th>
                                         <th>原证书有效期</th>
+                                        <th>最近一次现场审核开始时间</th>
+                                        <th>最近一次现场审核结束时间</th>
                                     </tr>
                                 </thead>
                                 <tbody id="batchInfoTableBody"></tbody>
@@ -1129,12 +1133,12 @@
                     </div>
                 </div>
 
-                <div class="section">
+                <div class="section" id="ruleSection">
                     <div class="section-header">
                         <div class="section-title"><i class="fa-solid fa-calendar-days"></i> 签发规则核验</div>
                     </div>
                     <div class="section-body">
-                        <div class="rule-cards">
+                        <div class="rule-cards" id="ruleCards">
                             <div class="rule-card" data-rule-card="A">
                                 <div class="rule-card-title">方式 A <span class="badge b-gray">失效前</span><span class="badge b-blue current-rule-mark" style="display:none;">当前选择</span></div>
                                 <div class="rule-card-desc">进入待签发后，原证书失效前 2 天 20:00-23:00 自动签发；新有效期 = 签发日期 + 3 年 - 1 天。</div>
@@ -1331,9 +1335,9 @@
                 planTime: '2026-05-28 当日',
                 oldExpiry: '2028-10-19',
                 newValidity: '沿用原证书有效期',
-                issueTime: '2026-05-28 15:20',
-                status: '已签发',
-                state: 'issued'
+                issueTime: '-',
+                status: '待签发',
+                state: 'pending'
             },
             {
                 id: 'ISS-20260528-009',
@@ -1352,9 +1356,9 @@
                 planTime: '2026-05-28 当日',
                 oldExpiry: '2028-12-03',
                 newValidity: '沿用原证书有效期',
-                issueTime: '2026-05-28 15:36',
-                status: '已签发',
-                state: 'issued'
+                issueTime: '-',
+                status: '待签发',
+                state: 'pending'
             },
             {
                 id: 'ISS-20260528-010',
@@ -1421,7 +1425,7 @@
             },
         ];
 
-        let currentTab = 'all';
+        let currentTab = 'pending';
         let currentRow = null;
         let currentBatchIds = [];
         let currentPage = 1;
@@ -1429,6 +1433,7 @@
         let pendingConfirmResult = null;
         let pendingConfirmIds = [];
         const selectedIds = new Set();
+        const typeOrder = ['初次认证', '监督', '再认证', '证书变更', '认证转换'];
 
         document.addEventListener('DOMContentLoaded', () => {
             const today = new Date().toISOString().slice(0, 10);
@@ -1471,8 +1476,8 @@
                     && isExpiryMatched(row.oldExpiry, expiryRange)
                     && (!urgent || row.urgent === urgent);
             }).sort((a, b) => {
-                const companyOrder = a.company.localeCompare(b.company, 'zh-CN');
-                if (companyOrder !== 0) return companyOrder;
+                const typeOrderValue = typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type);
+                if (typeOrderValue !== 0) return typeOrderValue;
                 return a.decisionSubmitTime.localeCompare(b.decisionSubmitTime);
             });
         }
@@ -1517,7 +1522,6 @@
                     </td>
                     <td class="col-frozen-company">
                         <div class="company-name">${row.company}</div>
-                        <span class="sub-text">${row.id}</span>
                     </td>
                     <td>${row.business}</td>
                     <td><span class="cert-no">${row.certNo}</span></td>
@@ -1574,6 +1578,20 @@
             return map[row.rule] || '-';
         }
 
+        function getLatestAuditStartTime(row) {
+            if (row.auditStartTime) return row.auditStartTime;
+            const decisionDate = new Date(`${row.decisionSubmitTime.slice(0, 10)}T00:00:00`);
+            decisionDate.setDate(decisionDate.getDate() - 10);
+            return `${formatDate(decisionDate)} 09:00`;
+        }
+
+        function getLatestAuditEndTime(row) {
+            if (row.auditEndTime) return row.auditEndTime;
+            const decisionDate = new Date(`${row.decisionSubmitTime.slice(0, 10)}T00:00:00`);
+            decisionDate.setDate(decisionDate.getDate() - 8);
+            return `${formatDate(decisionDate)} 17:30`;
+        }
+
         function actions(row) {
             if (row.state === 'issued' || row.state === 'rejected') {
                 return `<button class="btn btn-text" onclick="openDrawer('${row.id}')"><i class="fa-solid fa-eye"></i> 查看</button>`;
@@ -1621,14 +1639,10 @@
                 showToast('请选择待签发状态的证书进行批量处理');
                 return;
             }
-            const companies = new Set(processableRows.map(row => row.company));
-            if (companies.size > 1) {
-                showToast('批量签发仅支持同一客户，请重新选择');
-                return;
-            }
             currentBatchIds = processableRows.map(row => row.id);
             openDrawer(processableRows[0].id);
-            document.getElementById('handleRemark').value = `批量处理 ${processableRows.length} 条证书，提交后系统按所选记录批量执行。`;
+            const companyCount = new Set(processableRows.map(row => row.company)).size;
+            document.getElementById('handleRemark').value = `批量处理 ${processableRows.length} 条证书，涉及 ${companyCount} 家企业，提交后系统按所选记录批量执行。`;
         }
 
         function applyFilters() {
@@ -1663,7 +1677,7 @@
             if (!currentBatchIds.includes(id)) {
                 currentBatchIds = [id];
             }
-            document.getElementById('drawerSubtitle').textContent = `${currentRow.company} / ${currentRow.certNo}`;
+            document.getElementById('drawerSubtitle').textContent = '';
             document.getElementById('drawerCompany').textContent = currentRow.company;
             document.getElementById('drawerCertNo').textContent = currentRow.certNo;
             document.getElementById('drawerScope').textContent = currentRow.scope;
@@ -1672,6 +1686,8 @@
             document.getElementById('drawerMode').innerHTML = tag(currentRow.mode, currentRow.mode === '自动' ? 'b-blue' : 'b-orange');
             document.getElementById('drawerOldExpiry').textContent = currentRow.oldExpiry;
             document.getElementById('drawerDecisionSubmitTime').textContent = currentRow.decisionSubmitTime;
+            document.getElementById('drawerAuditStartTime').textContent = getLatestAuditStartTime(currentRow);
+            document.getElementById('drawerAuditEndTime').textContent = getLatestAuditEndTime(currentRow);
             document.getElementById('drawerStatus').textContent = currentRow.status;
             document.getElementById('drawerStatus').className = `badge ${currentRow.state === 'issued' ? 'b-green' : currentRow.state === 'rejected' ? 'b-red' : 'b-blue'}`;
             document.getElementById('handleResult').value = preset === 'reject' ? '不予签发' : '签发';
@@ -1697,6 +1713,8 @@
                     <td>${row.decision}</td>
                     <td>${row.mode}</td>
                     <td>${row.oldExpiry}</td>
+                    <td>${getLatestAuditStartTime(row)}</td>
+                    <td>${getLatestAuditEndTime(row)}</td>
                 </tr>
             `).join('');
         }
@@ -1709,6 +1727,10 @@
         }
 
         function renderRuleCards(row) {
+            const isRecert = row.type === '再认证';
+            document.getElementById('ruleSection').style.display = isRecert ? 'block' : 'none';
+            if (!isRecert) return;
+            document.getElementById('ruleCards').style.display = 'grid';
             document.querySelectorAll('[data-rule-card]').forEach(card => {
                 const isSelected = card.dataset.ruleCard === row.rule || (row.rule === '初次自动' && card.dataset.ruleCard === 'C');
                 card.classList.toggle('selected', isSelected);
@@ -1716,13 +1738,8 @@
                 if (mark) mark.style.display = isSelected ? 'inline-flex' : 'none';
             });
             const notice = document.getElementById('drawerRuleNotice');
-            if (row.type === '初次认证' && row.decision === '准予发证') {
-                notice.className = 'notice';
-                notice.innerHTML = '<i class="fa-solid fa-circle-info"></i><div>初次认证准予发证后，系统定时自动签发；工作人员也可以人工处理，签发后有效期按签发日期 + 3 年 - 1 天计算。</div>';
-            } else {
-                notice.className = 'notice';
-                notice.innerHTML = `<i class="fa-solid fa-circle-info"></i><div>当前客户选择再认证方式 ${row.rule}。如手动处理，系统按方式 C 计算证书有效期。</div>`;
-            }
+            notice.className = 'notice';
+            notice.innerHTML = `<i class="fa-solid fa-circle-info"></i><div>当前客户选择再认证方式 ${row.rule}。如手动处理，系统按方式 C 计算证书有效期。</div>`;
         }
 
         function closeDrawer() {
@@ -1735,7 +1752,8 @@
             pendingConfirmIds = targetRows.map(row => row.id);
             const isReject = result === '不予签发';
             const isBatch = targetRows.length > 1;
-            const certSummary = isBatch ? `${targetRows[0].company} 等 ${targetRows.length} 条证书` : `${targetRows[0].company} / ${targetRows[0].certNo}`;
+            const companyCount = new Set(targetRows.map(row => row.company)).size;
+            const certSummary = isBatch ? `${companyCount} 家企业 / ${targetRows.length} 条证书` : `${targetRows[0].company} / ${targetRows[0].certNo}`;
             document.getElementById('confirmTitle').textContent = isReject ? '确认不予签发' : '确认签发';
             document.getElementById('confirmMessage').textContent = isReject
                 ? '提交后所选证书将进入拒绝签发状态，请确认处理结论与说明无误。'
