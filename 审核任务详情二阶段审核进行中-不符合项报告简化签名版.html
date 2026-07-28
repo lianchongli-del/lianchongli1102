@@ -2,6 +2,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -387,6 +388,35 @@
         return !!(report && report.signRecords && report.signRecords.customerSign && report.signRecords.customerSign.fileName);
       }
 
+      function currentPreviewReport() {
+        var cur = window.__currentCustomerPdfPreview || {};
+        return typeof cur.idx === 'number' && Array.isArray(ncReports) ? ncReports[cur.idx] : null;
+      }
+
+      function ensureCustomerPdfDownloadButton() {
+        var head = document.querySelector('#pdfModal .pdf-modal-head');
+        if (!head) return;
+        var titleBtn = head.querySelector('.pdf-modal-title .customer-pdf-download-btn');
+        if (titleBtn) titleBtn.remove();
+        var actions = head.querySelector('.pdf-modal-actions');
+        if (!actions) {
+          actions = document.createElement('div');
+          actions.className = 'pdf-modal-actions';
+          var closeBtn = Array.from(head.querySelectorAll('button')).find(function (btn) {
+            return (btn.getAttribute('onclick') || '').indexOf('closePdfModal') >= 0 || btn.classList.contains('pdf-modal-close');
+          });
+          if (closeBtn) {
+            closeBtn.parentNode.insertBefore(actions, closeBtn);
+            actions.appendChild(closeBtn);
+          } else {
+            head.appendChild(actions);
+          }
+        }
+        if (!actions.querySelector('.customer-pdf-download-btn')) {
+          actions.insertAdjacentHTML('afterbegin', '<button type="button" class="btn customer-pdf-download-btn" onclick="downloadCustomerUploadedPdf()"><i class="fas fa-download"></i><span>下载</span></button>');
+        }
+      }
+
       function currentTargetStage() {
         return typeof signTarget !== 'undefined' && signTarget ? signTarget.stage : '';
       }
@@ -491,10 +521,12 @@
           alert('当前暂无可预览的客户上传 PDF 文件');
           return;
         }
+        window.__currentCustomerPdfPreview = { idx: reportIdx };
 
         var title = document.getElementById('pdfModalTitle');
         var viewer = document.getElementById('pdfViewer');
         if (title) title.innerHTML = '<i class="fas fa-file-signature"></i><span>客户上传签章 PDF</span>';
+        ensureCustomerPdfDownloadButton();
         if (viewer) {
           var file = report._customerOfflineSignedFile;
           if (file && typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function') {
@@ -510,6 +542,37 @@
         document.getElementById('pdfModal').classList.add('show');
       };
       previewPdf = window.previewPdf;
+
+      window.downloadCustomerUploadedPdf = function () {
+        var report = currentPreviewReport();
+        if (!reportHasCustomerPdf(report)) {
+          alert('当前暂无可下载的客户上传 PDF 文件');
+          return;
+        }
+        var file = report._customerOfflineSignedFile;
+        if (file && typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function') {
+          var url = URL.createObjectURL(file);
+          var link = document.createElement('a');
+          link.href = url;
+          link.download = file.name || report.signRecords.customerSign.fileName || (report.no + '_客户上传签章PDF.pdf');
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          setTimeout(function () { URL.revokeObjectURL(url); }, 500);
+          return;
+        }
+        var content = ['客户上传签章 PDF', '报告编号：' + report.no, '文件名称：' + report.signRecords.customerSign.fileName, '上传/确认时间：' + (report.signRecords.customerSign.time || '-')].join('\\n');
+        var blob = new Blob([content], { type: 'application/pdf;charset=utf-8' });
+        var fallbackUrl = URL.createObjectURL(blob);
+        var fallbackLink = document.createElement('a');
+        fallbackLink.href = fallbackUrl;
+        fallbackLink.download = report.signRecords.customerSign.fileName || (report.no + '_客户上传签章PDF.pdf');
+        document.body.appendChild(fallbackLink);
+        fallbackLink.click();
+        fallbackLink.remove();
+        setTimeout(function () { URL.revokeObjectURL(fallbackUrl); }, 500);
+      };
+      downloadCustomerUploadedPdf = window.downloadCustomerUploadedPdf;
 
       window.openPdfVersion = function (idx) { window.previewPdf(idx); };
       openPdfVersion = window.openPdfVersion;
@@ -528,6 +591,11 @@
         '#pdfModal{align-items:stretch!important;justify-content:stretch!important;padding:0!important;background:#dbe3ed!important;}',
         '#pdfModal .pdf-modal-card{width:100vw!important;height:100vh!important;max-width:none!important;max-height:none!important;border-radius:0!important;box-shadow:none!important;display:flex!important;flex-direction:column!important;}',
         '#pdfModal .pdf-modal-head{flex:0 0 68px!important;min-height:68px!important;padding:0 24px!important;background:#fff!important;border-bottom:1px solid #e2e8f0!important;}',
+        '#pdfModal .pdf-modal-actions{display:flex!important;align-items:center!important;gap:10px!important;margin-left:auto!important;}',
+        '#pdfModal .pdf-modal-title{display:flex!important;align-items:center!important;gap:12px!important;min-width:0!important;}',
+        '#pdfModal .pdf-modal-actions .btn{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;height:40px!important;padding:0 16px!important;}',
+        '#pdfModal .pdf-modal-actions .btn i{font-size:14px!important;width:14px!important;height:14px!important;line-height:14px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;}',
+        '.customer-pdf-download-btn{margin-left:0!important;}',
         '#pdfModal .pdf-viewer{flex:1 1 auto!important;min-height:0!important;height:auto!important;padding:22px 0!important;display:flex!important;justify-content:center!important;align-items:stretch!important;background:#dbe3ed!important;overflow:hidden!important;}',
         '#pdfPreviewFrame{display:block;width:min(1368px,calc(100vw - 64px))!important;height:100%!important;border:0!important;background:#2a2a2a!important;}'
       ].join('\\n');
