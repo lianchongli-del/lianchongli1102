@@ -1,6 +1,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -514,6 +515,7 @@
                     <option value="QMS">QMS</option>
                     <option value="EMS">EMS</option>
                     <option value="OHSMS">OHSMS</option>
+                    <option value="HACCP">HACCP</option>
                 </select>
             </div>
 
@@ -524,7 +526,9 @@
                     <option value="initial">初次认证</option>
                     <option value="supervise">监督</option>
                     <option value="rc">再认证</option>
-                    <option value="certChange">证书变更审核</option>
+                    <option value="certChange">证书变更</option>
+                    <option value="certChangeNoSite">证书变更（无现场）</option>
+                    <option value="certTransfer">认证转换</option>
                     <option value="temp">临时审核</option>
                 </select>
             </div>
@@ -540,6 +544,14 @@
         </div>
 
         <div id="expandFilterRow" class="hidden mt-4 pt-4 border-t border-gray-100 flex-wrap items-end gap-4">
+            <div class="flex flex-col gap-1.5">
+                <label class="text-sm text-gray-600 font-medium">不通知审核</label>
+                <select id="filterNoNotify" class="w-40 h-9 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all bg-white">
+                    <option value="">全部</option>
+                    <option value="是">是</option>
+                    <option value="否">否</option>
+                </select>
+            </div>
             <div class="flex flex-col gap-1.5">
                 <label class="text-sm text-gray-600 font-medium">所属区域</label>
                 <select id="filterRegion" class="w-40 h-9 px-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all bg-white">
@@ -596,6 +608,7 @@
                         <th class="px-4 border-b border-gray-200 text-left font-semibold whitespace-nowrap">待审核类型</th>
                         <th class="px-4 border-b border-gray-200 text-left font-semibold whitespace-nowrap">审核截止日期</th>
                         <th class="px-4 border-b border-gray-200 text-left font-semibold whitespace-nowrap">是否多场所</th>
+                        <th class="px-4 border-b border-gray-200 text-left font-semibold whitespace-nowrap">不通知审核</th>
                         <th class="px-4 border-b border-gray-200 text-left font-semibold whitespace-nowrap">申请日期</th>
                         <th class="px-4 border-b border-gray-200 text-left font-semibold whitespace-nowrap">受理日期</th>
                         <th class="px-4 border-b border-gray-200 text-left font-semibold whitespace-nowrap">策划日期</th>
@@ -666,7 +679,7 @@
                 </div>
                 
                 <!-- 联系人选择区域 -->
-                <div class="bg-blue-50/50 border border-blue-100 rounded-lg p-5">
+                <div id="contactSection" class="bg-blue-50/50 border border-blue-100 rounded-lg p-5">
                     <h4 class="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
                         <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                         客户通知联系人信息
@@ -696,7 +709,7 @@
                 </div>
                 
                 <!-- 通知书区域 -->
-                <div class="bg-blue-50/30 border border-blue-200 rounded-lg p-5">
+                <div id="noticeSection" class="bg-blue-50/30 border border-blue-200 rounded-lg p-5">
                     <h4 id="noticeTitle" class="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2 pb-3 border-b border-blue-200">
                         <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         监督审核通知书（MSF11-22）
@@ -711,7 +724,7 @@
                 <button onclick="closeModal()" class="px-5 h-10 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-100 transition-all">取消</button>
                 <button id="btnConfirmSubmit" class="px-5 h-10 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all shadow-sm flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                    确认发起
+                    <span id="confirmSubmitText">确认发起</span>
                 </button>
             </div>
         </div>
@@ -735,7 +748,7 @@
                 <h4 id="successTitle" class="text-xl font-semibold text-gray-900 mb-2">审核通知发送成功</h4>
                 <p id="successDesc" class="text-gray-600 mb-6">相关通知书已生成并准备发送</p>
                 
-                <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                <div id="successDownloadSection" class="bg-gray-50 rounded-lg p-4 mb-6">
                     <div class="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                         <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
                         附件下载
@@ -760,17 +773,22 @@
     <script>
         // 所有数据
         const allData = [
-            { no: 'PL202606040001', customer: '华信环境监测技术中心', service: '张客服', contact: '王主任', region: '南京市', domain: 'EMS', round: '第一轮', currentType: '监督一', nextType: '监督二', deadline: '2026-06-01（剩余85天）', multi: '否', status: '待通知审核', execStatus: '-' },
-            { no: 'PL202606040002', customer: '华信环境监测技术中心', service: '张客服', contact: '李经理', region: '南京市', domain: 'QMS', round: '第一轮', currentType: '监督一', nextType: '监督二', deadline: '2026-06-01（剩余85天）', multi: '是', status: '待通知审核', execStatus: '-' },
+            { no: 'PL202606040001', customer: '华信环境监测技术中心', service: '张客服', contact: '王主任', region: '南京市', domain: 'EMS', round: '第一轮', currentType: '监督', nextType: '监督一', deadline: '2026-06-01（剩余85天）', multi: '否', status: '待通知审核', execStatus: '-' },
+            { no: 'PL202606040002', customer: '华信环境监测技术中心', service: '张客服', contact: '李经理', region: '南京市', domain: 'QMS', round: '第一轮', currentType: '监督', nextType: '监督二', deadline: '2026-06-01（剩余85天）', multi: '是', status: '待通知审核', execStatus: '-' },
             { no: 'PL202606040003', customer: '华信环境监测技术中心', service: '李客服', contact: '陈经理', region: '苏州市', domain: 'EMS', round: '第二轮', currentType: '再认证', nextType: '-', deadline: '2026-07-07（剩余85天）', multi: '是', status: '待通知审核', execStatus: '-' },
-            { no: 'PL202606040004', customer: '华信环境监测技术中心', service: '王客服', contact: '周经理', region: '无锡市', domain: 'QMS', round: '第二轮', currentType: '监督二', nextType: '-', deadline: '2026-11-01', multi: '是', status: '已通知审核', execStatus: '-' },
-            { no: 'PL202606040005', customer: '新东方教育科技公司', service: '张客服', contact: '李经理', region: '南京市', domain: 'QMS', round: '第一轮', currentType: '初次认证', nextType: '监督一', deadline: '2026-12-15', multi: '是', status: '待策划', execStatus: '-' },
-            { no: 'PL202606040006', customer: '华信环境监测技术中心', service: '李客服', contact: '赵主管', region: '苏州市', domain: 'QMS', round: '第二轮', currentType: '监督一+变更', nextType: '监督二', deadline: '2026-11-02', multi: '是', status: '待策划', execStatus: '-' },
-            { no: 'PL202606040007', customer: '华信环境监测技术中心', service: '赵客服', contact: '吴主管', region: '常州市', domain: 'QMS', round: '第二轮', currentType: '再认证', nextType: '-', deadline: '2026-11-01', multi: '是', status: '已策划', execStatus: '审核进行中' },
-            { no: 'PL202606040008', customer: '华信环境监测技术中心', service: '赵客服', contact: '吴主管', region: '常州市', domain: 'QMS', round: '第二轮', currentType: '再认证', nextType: '-', deadline: '2026-11-01', multi: '是', status: '已策划', execStatus: '审核进行中' },
+            { no: 'PL202606040004', customer: '华信环境监测技术中心', service: '王客服', contact: '周经理', region: '无锡市', domain: 'HACCP', round: '第二轮', currentType: '证书变更', nextType: '-', deadline: '2026-11-01', multi: '是', status: '待策划', execStatus: '-' },
+            { no: 'PL202606040005', customer: '新东方教育科技公司', service: '张客服', contact: '李经理', region: '南京市', domain: 'QMS', round: '第一轮', currentType: '证书变更（无现场）', nextType: '监督一', deadline: '2026-12-15', multi: '是', status: '已策划', execStatus: '-' },
+            { no: 'PL202606040006', customer: '华信环境监测技术中心', service: '李客服', contact: '赵主管', region: '苏州市', domain: 'QMS', round: '第一轮', currentType: '认证转换', nextType: '监督二', deadline: '2026-11-02', multi: '是', status: '已策划', execStatus: '-' },
+            { no: 'PL202606040007', customer: '华信环境监测技术中心', service: '赵客服', contact: '吴主管', region: '常州市', domain: 'QMS', round: '第二轮', currentType: '临时审核', nextType: '-', deadline: '2026-11-01', multi: '是', status: '已策划', execStatus: '审核进行中' },
+            { no: 'PL202606040008', customer: '华信环境监测技术中心', service: '赵客服', contact: '吴主管', region: '常州市', domain: 'QMS', round: '第二轮', currentType: '初次认证', nextType: '-', deadline: '2026-11-01', multi: '是', status: '待策划', execStatus: '审核进行中' },
             { no: 'PL202606040009', customer: '北京地铁有限公司', service: '王客服', contact: '刘主任', region: '无锡市', domain: 'QMS', round: '第二轮', currentType: '再认证', nextType: '-', deadline: '2026-07-07', multi: '是', status: '已策划', execStatus: '审核已完成' },
             { no: 'PL202606040010', customer: '北京地铁有限公司', service: '王客服', contact: '刘主任', region: '无锡市', domain: 'QMS', round: '第二轮', currentType: '监督二', nextType: '-', deadline: '2026-10-09', multi: '是', status: '已策划', execStatus: '审核已完成' },
         ];
+
+        const noNotifyPlans = new Set(['PL202606040004']);
+        allData.forEach(item => {
+            item.noNotify = noNotifyPlans.has(item.no) ? '是' : '否';
+        });
 
         const contactDetails = {
             '王主任': { phone: '13800138001', email: 'wang@huaxin.com' },
@@ -973,7 +991,9 @@
                 else if (item.currentType === '监督二') { typeBgClass = 'bg-green-50'; typeTextClass = 'text-green-700'; }
                 else if (item.currentType === '监督一+变更') { typeBgClass = 'bg-amber-50'; typeTextClass = 'text-amber-700'; }
                 else if (item.currentType === '再认证') { typeBgClass = 'bg-purple-50'; typeTextClass = 'text-purple-700'; }
-                else if (item.currentType === '证书变更审核') { typeBgClass = 'bg-orange-50'; typeTextClass = 'text-orange-700'; }
+                else if (item.currentType === '证书变更') { typeBgClass = 'bg-orange-50'; typeTextClass = 'text-orange-700'; }
+                else if (item.currentType === '证书变更（无现场）') { typeBgClass = 'bg-yellow-50'; typeTextClass = 'text-yellow-700'; }
+                else if (item.currentType === '认证转换') { typeBgClass = 'bg-teal-50'; typeTextClass = 'text-teal-700'; }
                 else if (item.currentType === '临时审核') { typeBgClass = 'bg-cyan-50'; typeTextClass = 'text-cyan-700'; }
 
                 tr.innerHTML = `
@@ -994,6 +1014,9 @@
                     <td class="px-4 whitespace-nowrap ${item.deadline.includes('需尽快') || item.deadline.includes('剩余85天') || (item.currentType === '再认证' && item.status === '待通知审核') ? 'text-red-600 font-semibold' : 'text-gray-600'}">${item.deadline}</td>
                     <td class="px-4 whitespace-nowrap">
                         <span class="text-gray-700">${item.multi}</span>
+                    </td>
+                    <td class="px-4 whitespace-nowrap">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${item.noNotify === '是' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600'}">${item.noNotify}</span>
                     </td>
                     <td class="px-4 whitespace-nowrap text-gray-600">2026-03-23</td>
                     <td class="px-4 whitespace-nowrap text-gray-600">2026-03-30</td>
@@ -1100,6 +1123,7 @@
             const region = document.getElementById('filterRegion').value;
             const service = document.getElementById('filterService').value;
             const contact = document.getElementById('filterContact').value;
+            const noNotify = document.getElementById('filterNoNotify').value;
 
             filteredData = allData.filter(item => {
                 const customerMatch = !customer || item.customer.toLowerCase().includes(customer.toLowerCase());
@@ -1112,7 +1136,8 @@
                        (type === '' || (type === 'supervise' && (item.currentType.includes('监督'))) || item.currentType === getTypeText(type)) &&
                        (region === '' || item.region === region) &&
                        serviceMatch &&
-                       contactMatch;
+                       contactMatch &&
+                       (noNotify === '' || item.noNotify === noNotify);
             });
 
             selectedItems.clear();
@@ -1126,7 +1151,9 @@
                 'initial': '初次认证',
                 'supervise': '监督',
                 'rc': '再认证',
-                'certChange': '证书变更审核',
+                'certChange': '证书变更',
+                'certChangeNoSite': '证书变更（无现场）',
+                'certTransfer': '认证转换',
                 'temp': '临时审核'
             };
             return typeMap[typeValue] || typeValue;
@@ -1140,6 +1167,7 @@
             document.getElementById('filterRegion').value = '';
             document.getElementById('filterService').value = '';
             document.getElementById('filterContact').value = '';
+            document.getElementById('filterNoNotify').value = '';
 
             filteredData = [...allData];
             selectedItems.clear();
@@ -1207,8 +1235,24 @@
             const title = document.getElementById('modalTitle');
             const noticeTitle = document.getElementById('noticeTitle');
             const noticeContent = document.getElementById('noticeContent');
+            const contactSection = document.getElementById('contactSection');
+            const noticeSection = document.getElementById('noticeSection');
+            const confirmSubmitText = document.getElementById('confirmSubmitText');
+
+            contactSection.classList.remove('hidden');
+            noticeSection.classList.remove('hidden');
+            confirmSubmitText.textContent = '确认发起';
 
             const selectedData = allData.filter(item => selectedItems.has(item.no));
+            if (type === 'noNotify') {
+                const canCreateNoNotify = selectedData.every(item =>
+                    item.status === '待通知审核' && isSuperviseType(item.currentType)
+                );
+                if (!canCreateNoNotify) {
+                    showAlert('仅可选择待通知审核的监督类方案创建不通知审核');
+                    return;
+                }
+            }
             const modalTbody = document.getElementById('modalTableBody');
             modalTbody.innerHTML = '';
 
@@ -1220,7 +1264,7 @@
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-slate-50 border-b border-gray-100 last:border-b-0';
                 let auditType = item.nextType;
-                if (type === 'supervise') {
+                if (type === 'supervise' || type === 'noNotify') {
                     if (item.currentType && item.currentType.includes('监督一')) auditType = '监督二';
                     else if (item.currentType && item.currentType.includes('监督二')) auditType = '监督一';
                     else auditType = '监督一';
@@ -1234,6 +1278,9 @@
                 else if (auditType === '监督二') { typeBgClass = 'bg-green-50'; typeTextClass = 'text-green-700'; }
                 else if (auditType === '监督一+变更') { typeBgClass = 'bg-amber-50'; typeTextClass = 'text-amber-700'; }
                 else if (auditType === '再认证') { typeBgClass = 'bg-purple-50'; typeTextClass = 'text-purple-700'; }
+                else if (auditType === '证书变更') { typeBgClass = 'bg-orange-50'; typeTextClass = 'text-orange-700'; }
+                else if (auditType === '证书变更（无现场）') { typeBgClass = 'bg-yellow-50'; typeTextClass = 'text-yellow-700'; }
+                else if (auditType === '认证转换') { typeBgClass = 'bg-teal-50'; typeTextClass = 'text-teal-700'; }
                 else if (auditType === '临时审核') { typeBgClass = 'bg-cyan-50'; typeTextClass = 'text-cyan-700'; }
 
                 tr.innerHTML = `
@@ -1450,6 +1497,13 @@
             if (superviseServiceContact) superviseServiceContact.value = '';
             if (reauditServiceContact) reauditServiceContact.value = '';
 
+            if (type === 'noNotify') {
+                title.innerHTML = '<span class="text-xl mr-2">🔕</span> 创建不通知审核';
+                contactSection.classList.add('hidden');
+                noticeSection.classList.add('hidden');
+                confirmSubmitText.textContent = '确认创建';
+            }
+
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             document.body.style.overflow = 'hidden';
@@ -1467,23 +1521,29 @@
             const phoneInput = document.getElementById('contactPhone');
             const emailInput = document.getElementById('contactEmail');
             
-            if (!contactSelect.value) {
-                showAlert('请选择客户通知联系人');
-                return;
-            }
-            if (!phoneInput.value.trim()) {
-                showAlert('请输入客户联系电话');
-                return;
-            }
-            if (!emailInput.value.trim()) {
-                showAlert('请输入客户电子邮箱');
-                return;
+            if (currentModalType !== 'noNotify') {
+                if (!contactSelect.value) {
+                    showAlert('请选择客户通知联系人');
+                    return;
+                }
+                if (!phoneInput.value.trim()) {
+                    showAlert('请输入客户联系电话');
+                    return;
+                }
+                if (!emailInput.value.trim()) {
+                    showAlert('请输入客户电子邮箱');
+                    return;
+                }
             }
 
             selectedItems.forEach(itemNo => {
                 const item = allData.find(i => i.no === itemNo);
                 if (item && item.status === '待通知审核') {
-                    item.status = '已通知审核';
+                    if (currentModalType === 'noNotify') {
+                        item.status = '待策划';
+                    } else {
+                        item.status = '已通知审核';
+                    }
                 }
             });
 
@@ -1496,8 +1556,14 @@
             const successTitle = document.getElementById('successTitle');
             const successDesc = document.getElementById('successDesc');
             const downloadPackName = document.getElementById('downloadPackName');
+            const successDownloadSection = document.getElementById('successDownloadSection');
 
-            if (currentModalType === 'supervise') {
+            successDownloadSection.classList.remove('hidden');
+            if (currentModalType === 'noNotify') {
+                successTitle.textContent = '不通知审核创建成功';
+                successDesc.textContent = `已创建 ${selectedItems.size} 个不通知审核方案，未向客户发送通知`;
+                successDownloadSection.classList.add('hidden');
+            } else if (currentModalType === 'supervise') {
                 successTitle.textContent = '监督审核通知发送成功';
                 successDesc.textContent = `已向客户发送监督审核通知，共选择 ${selectedItems.size} 个方案`;
                 downloadPackName.textContent = '监督审核通知附件包';
