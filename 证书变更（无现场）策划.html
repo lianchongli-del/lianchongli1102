@@ -1,4 +1,5 @@
-﻿
+
+
 
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -1905,7 +1906,6 @@
         <div class="vertical-nav" id="verticalNav">
             
             <div class="vertical-nav-item" data-phase="initial" onclick="switchPhase('initial', this)">
-                <div class="nav-header-title-static">待审核类型</div>
                 <div class="vertical-nav-content">
                     <div class="nav-title-wrapper">
                         <span class="nav-title">初次认证</span>
@@ -1918,6 +1918,7 @@
             </div>
 
             <div class="vertical-nav-item active" data-phase="certChangeNoSite" onclick="switchPhase('certChangeNoSite', this)">
+                <div class="nav-header-title-static">待审核类型</div>
                 <div class="vertical-nav-content">
                     <div class="nav-title-wrapper">
                         <span class="nav-title">证书变更（无现场）</span>
@@ -2490,6 +2491,17 @@
             </div>
             <!-- 证书变更（无现场）内容 -->
             <div class="phase-content active" id="phase_certChangeNoSite">
+                <div class="contract-signer-row">
+                    <label class="form-label">合同签署方</label>
+                    <select class="form-select contract-signer-select" id="contractSigner_certChangeNoSite">
+                        <option value="" selected disabled>请选择合同签署方</option>
+                        <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
+                        <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
+                        <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
+                        <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
+                        <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
+                    </select>
+                </div>
                 <div class="cert-inline-panel">
                     <div class="flex justify-between items-center mb-3">
                         <h3 class="font-semibold text-gray-800 flex items-center gap-2">
