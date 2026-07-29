@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -572,6 +573,173 @@
             justify-content: flex-end;
             gap: 8px;
             background: #fafafa;
+        }
+
+        .audit-note-timeline {
+            position: relative;
+            padding-left: 56px;
+        }
+
+        .audit-note-layout {
+            display: grid;
+            grid-template-columns: 180px minmax(0, 1fr);
+            gap: 20px;
+            align-items: start;
+        }
+
+        .audit-type-nav {
+            position: sticky;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border-right: 1px solid var(--color-border);
+            padding-right: 14px;
+        }
+
+        .audit-type-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            background: #FFFFFF;
+            color: var(--color-text-body);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-align: left;
+        }
+
+        .audit-type-btn:hover {
+            border-color: var(--color-primary-hover);
+            background: var(--color-primary-light);
+            color: var(--color-primary);
+        }
+
+        .audit-type-btn.active {
+            border-color: var(--color-primary);
+            background: var(--color-primary-light);
+            color: var(--color-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .audit-note-panel {
+            display: none;
+        }
+
+        .audit-note-panel.active {
+            display: block;
+        }
+
+        .audit-note-timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 18px;
+            bottom: 18px;
+            width: 2px;
+            background: #CBD5E1;
+        }
+
+        .audit-note-item {
+            position: relative;
+            margin-bottom: 20px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            background: #FFFFFF;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .audit-note-item::before {
+            content: '';
+            position: absolute;
+            left: -45px;
+            top: 16px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            border: 4px solid #FFFFFF;
+            box-shadow: 0 0 0 2px var(--color-primary);
+        }
+
+        .audit-note-item.leader::before {
+            background: var(--color-success);
+            box-shadow: 0 0 0 2px var(--color-success);
+        }
+
+        .audit-note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--color-border);
+            background: #F8FAFC;
+        }
+
+        .audit-note-role {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+
+        .audit-note-time {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 8px;
+            border-radius: var(--radius-sm);
+            background: #EEF2FF;
+            color: #4338CA;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .audit-note-content {
+            padding: 14px;
+            color: var(--color-text-body);
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .audit-note-content ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .audit-note-content li + li {
+            margin-top: 6px;
+        }
+
+        .report-preview-modal .modal-content {
+            width: 1200px;
+            max-width: 94vw;
+            height: 86vh;
+            max-height: 86vh;
+        }
+
+        .report-preview-frame-wrap {
+            height: 100%;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: #FFFFFF;
+        }
+
+        .report-preview-frame {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            background: #FFFFFF;
         }
         
         .btn {
@@ -1498,6 +1666,15 @@
             color: var(--color-text-muted);
             font-weight: 500;
         }
+
+        .readonly-view-actions {
+            position: relative;
+            z-index: 51;
+        }
+
+        .readonly-view-actions .btn {
+            pointer-events: auto;
+        }
     </style>
 <base target="_blank">
 </head>
@@ -1514,6 +1691,10 @@
                 </div>
                 
                 <div class="flex items-center gap-2">
+                    <button class="btn btn-default btn-sm" onclick="openAuditImplementationNoteModal()">
+                        <i class="fas fa-clipboard-check text-xs"></i>
+                        审核实施情况说明
+                    </button>
                     <button class="btn btn-default btn-sm" onclick="openProcessListModal()">
                         <i class="fas fa-list-check text-xs"></i>
                         管理体系过程清单
@@ -1701,27 +1882,15 @@
                     <div class="flex justify-between items-center mb-4">
                         <div class="flex items-center gap-3">
                             <h3 class="font-semibold text-gray-800">场所抽样方案</h3>
-                            <div class="contract-signer-inline">
-                                <select class="form-select contract-signer-select">
-                                <option value="" selected disabled>请选择合同签署方</option>
-                                <option value="中国质量认证中心（CQC）">中国质量认证中心（CQC）</option>
-                                <option value="中国检验认证集团北京有限公司">中国检验认证集团北京有限公司</option>
-                                <option value="中国检验认证集团上海有限公司">中国检验认证集团上海有限公司</option>
-                                <option value="中国检验认证集团南京有限公司">中国检验认证集团南京有限公司</option>
-                                <option value="中国检验认证集团广州有限公司">中国检验认证集团广州有限公司</option>
-                                </select>
-                            </div>
-                            <span class="readonly-badge">
-                                <i class="fas fa-lock"></i> 已完成 - 只读
-                            </span>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <span class="text-sm text-amber-700 bg-amber-50 px-3 py-1 rounded border border-amber-200" id="samplingRuleHint_initial">
-                                根据抽样规则，本次策划需要选择全部场所
-                            </span>
-                            <button class="btn btn-default btn-sm" onclick="openCertContentDrawer()">
-                                <i class="fas fa-certificate text-xs"></i>
-                                证书内容确认件
+                        <div class="flex items-center gap-3 readonly-view-actions">
+                            <button class="btn btn-default btn-sm" onclick="openPlanningReferenceDoc('不符合项报告', '不符合项报告.html')">
+                                <i class="fas fa-clipboard-list text-xs"></i>
+                                不符合项报告
+                            </button>
+                            <button class="btn btn-default btn-sm" onclick="openPlanningReferenceDoc('管理体系审核报告', '二阶段审核报告.html')">
+                                <i class="fas fa-file-alt text-xs"></i>
+                                管理体系审核报告
                             </button>
                         </div>
                     </div>
@@ -1890,24 +2059,6 @@
                                 <div class="site-process-right">
                                     <div class="flex justify-between items-center mb-3">
                                         <h4 class="font-semibold text-gray-800">过程审核策划</h4>
-                                        <div class="flex items-center gap-2">
-                                            <button class="btn btn-default btn-sm" onclick="openProcessImportDrawer('site_0')">
-                                                <i class="fas fa-list-check"></i>
-                                                导入管理体系过程清单
-                                            </button>
-                                            <button class="btn btn-default btn-sm" onclick="openProcessTemplateDrawer('site_0')">
-                                                <i class="fas fa-list-alt"></i>
-                                                选择过程组模板
-                                            </button>
-                                            <button class="btn btn-default btn-sm" onclick="importProcessFromExcel('site_0')">
-                                                <i class="fas fa-file-excel"></i>
-                                                Excel导入
-                                            </button>
-                                            <button onclick="addProcessToSite('site_0')" class="btn btn-default btn-sm">
-                                                <i class="fas fa-plus"></i>
-                                                新增行
-                                            </button>
-                                        </div>
                                     </div>
                                     
                                     <table class="data-table">
@@ -1919,7 +2070,6 @@
                                                 <th>相关部门</th>
                                                 <th>涉及标准条款</th>
                                                 <th>绩效参数/文件</th>
-                                                <th class="w-10">操作</th>
                                             </tr>
                                         </thead>
                                         <tbody class="site-process-body" id="processBody_site_0">
@@ -1930,11 +2080,6 @@
                                                 <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">各部门</textarea></td>
                                                 <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">4.1,4.2,4.3,4.4</textarea></td>
                                                 <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">《组织环境分析表》</textarea></td>
-                                                <td>
-                                                    <button onclick="deleteProcessRow(this)" class="text-red-500 hover:text-red-700">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </td>
                                             </tr>
                                             <tr>
                                                 <td>2</td>
@@ -1943,11 +2088,6 @@
                                                 <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">管理层</textarea></td>
                                                 <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">5.1,5.2,5.3</textarea></td>
                                                 <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">质量方针、目标</textarea></td>
-                                                <td>
-                                                    <button onclick="deleteProcessRow(this)" class="text-red-500 hover:text-red-700">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -1960,11 +2100,6 @@
                             <div class="site-card-header">
                                 <div class="flex items-center gap-2">
                                     <span class="font-semibold text-gray-800 site-name">生产现场一</span>
-                                </div>
-                                <div class="flex items-center gap-3 site-actions hidden-section">
-                                    <button onclick="removeSite('site_1')" class="text-red-500 hover:text-red-700 delete-site-btn non-main-controls">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
                                 </div>
                             </div>
                             <div class="site-card-body">
@@ -2124,24 +2259,6 @@
                                 <div class="site-process-right">
                                     <div class="flex justify-between items-center mb-3">
                                         <h4 class="font-semibold text-gray-800">过程审核策划</h4>
-                                        <div class="flex items-center gap-2">
-                                            <button class="btn btn-default btn-sm" onclick="openProcessImportDrawer('site_1')">
-                                                <i class="fas fa-list-check"></i>
-                                                导入管理体系过程清单
-                                            </button>
-                                            <button class="btn btn-default btn-sm" onclick="openProcessTemplateDrawer('site_1')">
-                                                <i class="fas fa-list-alt"></i>
-                                                选择过程组模板
-                                            </button>
-                                            <button class="btn btn-default btn-sm" onclick="importProcessFromExcel('site_1')">
-                                                <i class="fas fa-file-excel"></i>
-                                                Excel导入
-                                            </button>
-                                            <button onclick="addProcessToSite('site_1')" class="btn btn-default btn-sm">
-                                                <i class="fas fa-plus"></i>
-                                                新增行
-                                            </button>
-                                        </div>
                                     </div>
                                     
                                     <table class="data-table">
@@ -2153,7 +2270,6 @@
                                                 <th>相关部门</th>
                                                 <th>涉及标准条款</th>
                                                 <th>绩效参数/文件</th>
-                                                <th class="w-10">操作</th>
                                             </tr>
                                         </thead>
                                         <tbody class="site-process-body" id="processBody_site_1">
@@ -2164,11 +2280,6 @@
                                                 <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">质量部</textarea></td>
                                                 <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">8.5</textarea></td>
                                                 <td><textarea class="form-input" rows="2" style="min-height: 36px; resize: vertical; line-height: 1.4; font-family: inherit;">生产计划</textarea></td>
-                                                <td>
-                                                    <button onclick="deleteProcessRow(this)" class="text-red-500 hover:text-red-700">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -4118,6 +4229,86 @@
         </div>
     </div>
 
+    <!-- 报告预览弹窗 -->
+    <div id="planningReportPreviewModal" class="modal-overlay hidden-section report-preview-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="card-title">
+                    <i class="fas fa-file-alt text-blue-500"></i>
+                    <span id="planningReportPreviewTitle">报告预览</span>
+                </div>
+                <button onclick="closePlanningReferenceDoc()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 16px;">
+                <div class="report-preview-frame-wrap">
+                    <iframe id="planningReportPreviewFrame" class="report-preview-frame" title="报告预览" onload="applyPlanningReportReadonly()"></iframe>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closePlanningReferenceDoc()" class="btn btn-primary">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 审核实施情况说明弹窗 -->
+    <div id="auditImplementationNoteModal" class="modal-overlay hidden-section">
+        <div class="modal-content" style="width: 980px; max-width: 94vw;">
+            <div class="modal-header">
+                <div class="card-title">
+                    <i class="fas fa-clipboard-check text-blue-500"></i>
+                    审核实施情况说明
+                </div>
+                <button onclick="closeAuditImplementationNoteModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="audit-note-timeline">
+                    <div class="audit-note-item">
+                        <div class="audit-note-header">
+                            <div class="audit-note-role">
+                                <i class="fas fa-user-tie text-blue-500"></i>
+                                项目管理人员
+                            </div>
+                        </div>
+                        <div class="audit-note-content">
+                            <ul>
+                                <li>结合初次认证已完成情况，本次监督审核重点覆盖总部中心职能与生产现场一，关注组织环境、领导作用、生产提供、目标监测、合规性评价和管理评审等过程。</li>
+                                <li>客户要求审核时间避开每月最后一周，策划排期需同步核对生产现场倒班安排，确保夜班、关键工序和现场运行证据能够被抽查到。</li>
+                                <li>审核组至少包含 1 名具备轨道交通行业经验的审核员，建议优先沿用熟悉项目背景的审核组长；如组员能力发生变化，需在审核通知前完成能力匹配确认。</li>
+                                <li>策划时需核验证书暂停、组织架构、关键外部供方、关键工序、政府通报、产品质量抽查、事故事件和客户投诉等信息。如存在新增不良信息，应调整审核重点和抽样范围。</li>
+                                <li>目前未发现必须偏离原策划实施的情况；如实际审核中因生产停线、人员缺席或场所不可达导致未按策划实施，需由审核组长在实施记录和审核报告中补充说明。</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="audit-note-item leader">
+                        <div class="audit-note-header">
+                            <div class="audit-note-role">
+                                <i class="fas fa-user-check text-green-600"></i>
+                                审核组长
+                            </div>
+                        </div>
+                        <div class="audit-note-content">
+                            <ul>
+                                <li>除各过程主责部门外，本次审核应关注管理层、质量管理部门、生产部门、环境安全相关人员及必要的外部供方管理接口，确认相关部门参与过程运行和绩效改进的证据。</li>
+                                <li>若本次审核发现不符合项，应记录对应过程、发现部门、整改责任和关闭状态，并作为下次监督审核的首要跟踪点；对重复性问题应提高抽样深度。</li>
+                                <li>下次审核建议继续关注风险和机遇应对、环境因素识别与合规评价、目标指标完成情况、内部审核和管理评审有效性，以及生产现场关键工序的过程控制。</li>
+                                <li>如客户发生场所、人员规模、生产班次、关键设备、产品或服务范围变化，应建议项目管理人员及时更新多场所抽样方案和审核人天测算。</li>
+                                <li>如涉及产品抽样检测项目或客户特殊要求，需在下次审核策划前明确检测项目、抽样区域、配合部门和报告语言要求，避免实施阶段临时调整。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeAuditImplementationNoteModal()" class="btn btn-default">关闭</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 其他原有弹窗保留 -->
     <div id="addSiteModal" class="modal-overlay hidden-section">
         <div class="modal-content">
@@ -5308,6 +5499,151 @@
 
             renderCertContentTable();
         }
+
+        let currentPlanningReportFile = '';
+
+        function openPlanningReferenceDoc(title, fileName) {
+            currentPlanningReportFile = fileName;
+            document.getElementById('planningReportPreviewTitle').textContent = title;
+            document.getElementById('planningReportPreviewFrame').src = encodeURI(fileName + '?readonly=1');
+            document.getElementById('planningReportPreviewModal').classList.remove('hidden-section');
+        }
+
+        function closePlanningReferenceDoc() {
+            document.getElementById('planningReportPreviewModal').classList.add('hidden-section');
+            document.getElementById('planningReportPreviewFrame').src = 'about:blank';
+        }
+
+        function openPlanningReferenceDocInNewWindow() {
+            if (currentPlanningReportFile) {
+                window.open(encodeURI(currentPlanningReportFile), '_blank');
+            }
+        }
+
+        function applyPlanningReportReadonly() {
+            const frame = document.getElementById('planningReportPreviewFrame');
+            if (!frame || !frame.contentDocument) return;
+
+            const doc = frame.contentDocument;
+            const hideActionTexts = [
+                '流程节点',
+                '预览PDF文件',
+                '签章确认',
+                '保存',
+                '提交',
+                '提交报告',
+                '返回',
+                '上传附件',
+                '选择文件',
+                '删除',
+                '新增',
+                '编辑',
+                '导入',
+                '确认'
+            ];
+
+            const applyReadonlyOnce = () => {
+                doc.querySelectorAll('input, textarea, select').forEach(el => {
+                    el.disabled = true;
+                    el.readOnly = true;
+                });
+
+                doc.querySelectorAll('[contenteditable="true"]').forEach(el => {
+                    el.setAttribute('contenteditable', 'false');
+                });
+
+                doc.querySelectorAll('button, a, label, [role="button"], input[type="button"], input[type="submit"], input[type="file"]').forEach(el => {
+                    const text = (el.textContent || el.value || el.getAttribute('title') || el.getAttribute('aria-label') || '').trim();
+                    const onclick = el.getAttribute('onclick') || '';
+                    const isAction = hideActionTexts.some(actionText => text.includes(actionText)) ||
+                        /delete|add|save|submit|upload|preview|sign|流程|签章|返回/i.test(onclick) ||
+                        el.matches('input[type="button"], input[type="submit"], input[type="file"]');
+
+                    if (isAction) {
+                        const uploadContainer = el.closest('.upload-area, .upload-box, .file-upload, .attachment-upload, .upload-card, .drop-zone, .attachment-item, .attachment-section');
+                        (uploadContainer || el).style.setProperty('display', 'none', 'important');
+                    }
+                });
+
+                doc.querySelectorAll('.modal-footer, .form-actions, .action-bar, .toolbar, .operation, .operations, .actions, .footer-actions, .header-actions, .page-actions, .top-actions, .button-group, .btn-group, .upload-area, .upload-box, .file-upload, .attachment-upload, .drop-zone').forEach(el => {
+                    const text = (el.textContent || '').trim();
+                    if (!text || hideActionTexts.some(actionText => text.includes(actionText))) {
+                        el.style.setProperty('display', 'none', 'important');
+                    }
+                });
+            };
+
+            applyReadonlyOnce();
+            setTimeout(applyReadonlyOnce, 100);
+            setTimeout(applyReadonlyOnce, 500);
+
+            doc.querySelectorAll('input, textarea, select').forEach(el => {
+                el.disabled = true;
+                el.readOnly = true;
+            });
+
+            doc.querySelectorAll('[contenteditable="true"]').forEach(el => {
+                el.setAttribute('contenteditable', 'false');
+            });
+
+            const style = doc.createElement('style');
+            style.textContent = `
+                input, textarea, select {
+                    pointer-events: none !important;
+                    background: #F3F4F6 !important;
+                    color: #374151 !important;
+                }
+                button,
+                .btn,
+                .button,
+                [role="button"],
+                input[type="button"],
+                input[type="submit"],
+                input[type="file"],
+                .modal-footer,
+                .form-actions,
+                .action-bar,
+                .toolbar,
+                .operation,
+                .operations,
+                .actions,
+                .delete-btn,
+                .add-btn,
+                .submit-btn,
+                .save-btn,
+                .upload-btn,
+                .preview-btn,
+                .sign-btn,
+                .header-actions,
+                .page-actions,
+                .top-actions,
+                .footer-actions,
+                .button-group,
+                .btn-group,
+                .upload-area,
+                .upload-box,
+                .file-upload,
+                .attachment-upload,
+                .drop-zone,
+                [onclick*="delete"],
+                [onclick*="Delete"],
+                [onclick*="add"],
+                [onclick*="Add"],
+                [onclick*="save"],
+                [onclick*="Save"],
+                [onclick*="submit"],
+                [onclick*="Submit"],
+                [onclick*="upload"],
+                [onclick*="Upload"],
+                [onclick*="preview"],
+                [onclick*="Preview"],
+                [onclick*="sign"],
+                [onclick*="Sign"] {
+                    display: none !important;
+                }
+            `;
+            doc.head.appendChild(style);
+        }
         
         function closeCertContentDrawer() {
             document.getElementById('certContentDrawer').classList.remove('open');
@@ -6031,6 +6367,118 @@
 
         function closeProcessListModal() {
             document.getElementById('processListModal').classList.add('hidden-section');
+        }
+
+        function openAuditImplementationNoteModal() {
+            renderAuditImplementationNotes('initial');
+            document.getElementById('auditImplementationNoteModal').classList.remove('hidden-section');
+        }
+
+        function closeAuditImplementationNoteModal() {
+            document.getElementById('auditImplementationNoteModal').classList.add('hidden-section');
+        }
+
+        const auditImplementationNoteData = {
+            initial: {
+                title: '初次认证',
+                managerTime: '2024年02月26日 09:30',
+                leaderTime: '2024年03月05日 17:20',
+                manager: [
+                    '初次认证覆盖总部中心职能与生产现场一，重点关注组织环境、领导作用、生产提供、目标监测、合规性评价和管理评审等过程。',
+                    '审核前已核对组织架构、认证范围、关键外部供方、关键工序、适用法规和客户特殊要求，未发现证书暂停及重大不良信息。',
+                    '客户要求审核时间避开每月最后一周，审核组需至少包含 1 名具备轨道交通行业经验的审核员，审核报告需同步提供英文版本。'
+                ],
+                leader: [
+                    '除主责部门外，审核覆盖管理层、质量管理部门、生产部门、环境安全相关人员及外部供方管理接口。',
+                    '初次认证实施与策划基本一致，需在后续监督审核中持续跟踪目标指标、合规评价、内部审核和管理评审有效性。',
+                    '下次审核建议继续关注生产现场关键工序、倒班运行证据和客户英文报告输出要求。'
+                ]
+            },
+            surv1: {
+                title: '监督一',
+                managerTime: '2026年06月04日 10:00',
+                leaderTime: '2026年06月18日 16:40',
+                manager: [
+                    '监督一为当前待策划节点，需结合初次认证实施情况和客户月末盘点安排，避开每月最后一周组织现场审核。',
+                    '本次监督审核应覆盖总部与生产现场，关注初次认证后的组织变化、关键供方变化、投诉处理、政府通报和产品质量抽查信息。',
+                    '如现场存在倒班，应在计划中明确抽查班次、关键工序和配合部门，避免实施阶段因人员或生产状态不匹配导致偏离策划。'
+                ],
+                leader: [
+                    '实施后需记录除过程主责部门外实际审核到的相关部门，特别是质量管理、生产、环境安全和供方管理接口。',
+                    '如发现不符合项，应明确发现部门、责任部门、整改关闭状态，并作为监督二审核的重点跟踪内容。',
+                    '对审核组能力、抽样深度、报告语言和客户特殊安排有调整建议时，应在本节点说明中完整记录。'
+                ]
+            },
+            surv2: {
+                title: '监督二',
+                managerTime: '2027年06月03日 09:20',
+                leaderTime: '2027年06月17日 16:30',
+                manager: [
+                    '监督二策划需承接监督一审核结论，重点核查不符合项整改有效性、重复问题风险和关键过程运行稳定性。',
+                    '需重新确认组织人员规模、场所、生产班次、关键设备、产品和服务范围是否发生变化，并据此调整抽样方案和人天测算。',
+                    '若涉及产品抽样检测项目，应提前明确检测项目、抽样区域、样品配合部门和报告输出要求。'
+                ],
+                leader: [
+                    '实施后需评价监督一关注点的关闭情况，并说明是否需要调整后续再认证审核方案。',
+                    '建议下次审核重点关注风险和机遇应对、环境因素识别、合规评价、目标指标达成、内部审核和管理评审有效性。',
+                    '如客户存在特殊生产周期、停线、搬迁或关键人员变化，应提醒项目管理人员在再认证策划前完成信息更新。'
+                ]
+            }
+        };
+
+        function renderAuditImplementationNotes(activeType) {
+            const modal = document.getElementById('auditImplementationNoteModal');
+            const body = modal.querySelector('.modal-body');
+            const typeEntries = Object.entries(auditImplementationNoteData);
+
+            body.innerHTML = `
+                <div class="audit-note-layout">
+                    <div class="audit-type-nav">
+                        ${typeEntries.map(([key, item]) => `
+                            <button class="audit-type-btn ${key === activeType ? 'active' : ''}" onclick="switchAuditNoteType('${key}')">
+                                <i class="fas fa-stream"></i>
+                                ${item.title}
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div>
+                        ${typeEntries.map(([key, item]) => `
+                            <div class="audit-note-panel ${key === activeType ? 'active' : ''}" data-audit-note-panel="${key}">
+                                <div class="audit-note-timeline">
+                                    <div class="audit-note-item">
+                                        <div class="audit-note-header">
+                                            <div class="audit-note-role">
+                                                <i class="fas fa-user-tie text-blue-500"></i>
+                                                项目管理人员
+                                            </div>
+                                            <div class="audit-note-time">${item.managerTime}</div>
+                                        </div>
+                                        <div class="audit-note-content">
+                                            <ul>${item.manager.map(text => `<li>${text}</li>`).join('')}</ul>
+                                        </div>
+                                    </div>
+                                    <div class="audit-note-item leader">
+                                        <div class="audit-note-header">
+                                            <div class="audit-note-role">
+                                                <i class="fas fa-user-check text-green-600"></i>
+                                                审核组长
+                                            </div>
+                                            <div class="audit-note-time">${item.leaderTime}</div>
+                                        </div>
+                                        <div class="audit-note-content">
+                                            <ul>${item.leader.map(text => `<li>${text}</li>`).join('')}</ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function switchAuditNoteType(type) {
+            renderAuditImplementationNotes(type);
         }
 
         function saveProcessList() {
@@ -6770,4 +7218,3 @@
 
 </body>
 </html>
-
