@@ -1,6 +1,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -2154,6 +2155,94 @@
             }
         ];
 
+        // 客户证书数据模拟：按客户 + 认证领域过滤，后续可替换为接口返回
+        const customerCertificateRecords = [
+            {
+                id: 'CERT_1_QMS_001',
+                customerId: 1,
+                systemKey: 'QMS',
+                certNo: '00124Q31234R2M',
+                certOrg: '原认证机构A',
+                certDomain: '质量管理体系',
+                certStandard: 'GB/T 19001-2016 / ISO 9001:2015',
+                firstIssueDate: '2019-05-18',
+                cycleIssueDate: '2025-05-18',
+                validUntil: '2028-05-17'
+            },
+            {
+                id: 'CERT_1_QMS_002',
+                customerId: 1,
+                systemKey: 'QMS',
+                certNo: '00124Q31235R1M',
+                certOrg: '原认证机构B',
+                certDomain: '质量管理体系',
+                certStandard: 'GB/T 50430-2017',
+                firstIssueDate: '2021-09-10',
+                cycleIssueDate: '2024-09-10',
+                validUntil: '2027-09-09'
+            },
+            {
+                id: 'CERT_1_EMS_001',
+                customerId: 1,
+                systemKey: 'EMS',
+                certNo: '00124E30566R2M',
+                certOrg: '原认证机构A',
+                certDomain: '环境管理体系',
+                certStandard: 'GB/T 24001-2016 / ISO 14001:2015',
+                firstIssueDate: '2020-03-22',
+                cycleIssueDate: '2026-03-22',
+                validUntil: '2029-03-21'
+            },
+            {
+                id: 'CERT_1_OHSMS_001',
+                customerId: 1,
+                systemKey: 'OHSMS',
+                certNo: '00124S30789R1M',
+                certOrg: '原认证机构C',
+                certDomain: '职业健康安全管理体系',
+                certStandard: 'GB/T 45001-2020 / ISO 45001:2018',
+                firstIssueDate: '2022-07-01',
+                cycleIssueDate: '2025-07-01',
+                validUntil: '2028-06-30'
+            },
+            {
+                id: 'CERT_2_QMS_001',
+                customerId: 2,
+                systemKey: 'QMS',
+                certNo: '01624QJ2188R3M',
+                certOrg: '原认证机构B',
+                certDomain: '质量管理体系',
+                certStandard: 'GB/T 19001-2016 / ISO 9001:2015、GB/T 50430-2017',
+                firstIssueDate: '2017-11-06',
+                cycleIssueDate: '2023-11-06',
+                validUntil: '2026-11-05'
+            },
+            {
+                id: 'CERT_3_FSMS_001',
+                customerId: 3,
+                systemKey: 'FSMS',
+                certNo: '02824F1120R2M',
+                certOrg: '原认证机构A',
+                certDomain: '食品安全管理体系',
+                certStandard: 'GB/T 22000 / ISO 22000:2018',
+                firstIssueDate: '2020-08-15',
+                cycleIssueDate: '2026-08-15',
+                validUntil: '2029-08-14'
+            },
+            {
+                id: 'CERT_3_HACCP_001',
+                customerId: 3,
+                systemKey: 'HACCP',
+                certNo: '02824H1188R1M',
+                certOrg: '原认证机构C',
+                certDomain: '危害分析与关键控制点',
+                certStandard: '危害分析与关键控制点（HACCP）体系认证要求（V1.0）',
+                firstIssueDate: '2023-01-12',
+                cycleIssueDate: '2026-01-12',
+                validUntil: '2029-01-11'
+            }
+        ];
+
         // 填写说明数据 - 补充所有模块
         const helpData = {
             'section-basic': {
@@ -2952,20 +3041,20 @@
                                 <i class="fas fa-certificate"></i>原认证证书信息
                             </h5>
                         </div>
-                        <button type="button" onclick="addTransferCertificateRow('${uniqueId}', '${systemKey}')" class="px-3 py-1.5 bg-amber-600 text-white rounded-lg text-xs font-medium hover:bg-amber-700 transition-colors shadow-sm flex items-center gap-1">
+                        <button type="button" onclick="openTransferCertificateModal('${uniqueId}', '${systemKey}')" class="px-3 py-1.5 bg-amber-600 text-white rounded-lg text-xs font-medium hover:bg-amber-700 transition-colors shadow-sm flex items-center gap-1">
                             <i class="fas fa-plus"></i>添加证书信息
                         </button>
                     </div>
                     <div id="transferCertificates_${uniqueId}" class="space-y-3"></div>
                     <div id="emptyTransferCertTip_${uniqueId}" class="text-center py-4 bg-amber-50 rounded-lg border border-dashed border-amber-200">
                         <i class="fas fa-search text-lg text-amber-300 mb-1"></i>
-                        <p class="text-xs text-slate-500">暂无证书信息，请添加证书编号并检索</p>
+                        <p class="text-xs text-slate-500">暂无证书信息，请点击添加证书信息选择带入</p>
                     </div>
                 </div>
             `;
         }
 
-        function addTransferCertificateRow(uniqueId, systemKey) {
+        function addTransferCertificateRow(uniqueId, systemKey, certificate = {}) {
             const container = document.getElementById(`transferCertificates_${uniqueId}`);
             const emptyTip = document.getElementById(`emptyTransferCertTip_${uniqueId}`);
             if (!container) return;
@@ -2985,48 +3074,48 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <div>
                         <label class="block text-[10px] font-medium text-slate-500 mb-1 required">证书编号</label>
-                        <div class="flex gap-2">
-                            <input type="text" id="certNo_${rowId}" placeholder="请输入证书编号" class="flex-1 min-w-0 px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white transition-all">
-                            <button type="button" id="certSearchBtn_${rowId}" onclick="searchTransferCertificate('${rowId}', '${systemKey}')" class="px-3 py-2 bg-amber-600 text-white rounded-lg text-xs font-medium hover:bg-amber-700 transition-colors whitespace-nowrap">
-                                <i class="fas fa-robot mr-1"></i>AI检索
-                            </button>
-                        </div>
+                        <input type="text" id="certNo_${rowId}" readonly placeholder="请输入证书编号" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-50 text-slate-600 cursor-not-allowed transition-all">
                     </div>
                     <div>
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">认证机构</label>
-                        <input type="text" id="certOrg_${rowId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white transition-all">
+                        <input type="text" id="certOrg_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-50 text-slate-600 cursor-not-allowed transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-medium text-slate-500 mb-1">认可机构</label>
+                        <input type="text" id="certAccreditation_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-50 text-slate-600 cursor-not-allowed transition-all">
                     </div>
                     <div>
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">认证领域</label>
-                        <input type="text" id="certDomain_${rowId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white transition-all">
+                        <input type="text" id="certDomain_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-50 text-slate-600 cursor-not-allowed transition-all">
                     </div>
                     <div>
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">认证标准</label>
-                        <input type="text" id="certStandard_${rowId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white transition-all">
+                        <input type="text" id="certStandard_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-50 text-slate-600 cursor-not-allowed transition-all">
                     </div>
                     <div>
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">首次发证日期</label>
-                        <input type="date" id="firstIssueDate_${rowId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white transition-all">
+                        <input type="date" id="firstIssueDate_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-50 text-slate-600 cursor-not-allowed transition-all">
                     </div>
                     <div>
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">本周期发证日期</label>
-                        <input type="date" id="cycleIssueDate_${rowId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white transition-all">
+                        <input type="date" id="cycleIssueDate_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-50 text-slate-600 cursor-not-allowed transition-all">
                     </div>
                     <div>
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">有效期至</label>
-                        <input type="date" id="validUntil_${rowId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white transition-all">
+                        <input type="date" id="validUntil_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-50 text-slate-600 cursor-not-allowed transition-all">
                     </div>
                     <div>
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">最近一次现场审核开始时间</label>
-                        <input type="date" id="lastAuditStart_${rowId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white transition-all">
+                        <input type="date" id="lastAuditStart_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-50 text-slate-600 cursor-not-allowed transition-all">
                     </div>
                     <div>
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">最近一次现场审核结束时间</label>
-                        <input type="date" id="lastAuditEnd_${rowId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 bg-white transition-all">
+                        <input type="date" id="lastAuditEnd_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-50 text-slate-600 cursor-not-allowed transition-all">
                     </div>
                 </div>
             `;
             container.appendChild(row);
+            fillTransferCertificateRow(rowId, certificate);
             applyDefaultInputPlaceholders(row);
         }
 
@@ -3040,37 +3129,12 @@
             }
         }
 
-        async function searchTransferCertificate(rowId, systemKey) {
-            const certNoInput = document.getElementById(`certNo_${rowId}`);
-            const button = document.getElementById(`certSearchBtn_${rowId}`);
-            const certNo = certNoInput ? certNoInput.value.trim() : '';
-            if (!certNo) {
-                showToast('请输入证书编号后再检索', 'warning');
-                return;
-            }
-
-            if (button) {
-                button.disabled = true;
-                button.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>检索中';
-            }
-
-            try {
-                const data = await fetchCertificateInfoFromAiBase(certNo, systemKey);
-                fillTransferCertificateRow(rowId, data);
-                showToast('已通过AI能力底座获取证书信息');
-            } catch (error) {
-                showToast(error.message || '证书信息检索失败', 'error');
-            } finally {
-                if (button) {
-                    button.disabled = false;
-                    button.innerHTML = '<i class="fas fa-robot mr-1"></i>AI检索';
-                }
-            }
-        }
-
         function fillTransferCertificateRow(rowId, data) {
+            if (!data || Object.keys(data).length === 0) return;
             const values = {
+                [`certNo_${rowId}`]: data.certNo,
                 [`certOrg_${rowId}`]: data.certOrg,
+                [`certAccreditation_${rowId}`]: data.accreditation,
                 [`certDomain_${rowId}`]: data.certDomain,
                 [`certStandard_${rowId}`]: data.certStandard,
                 [`firstIssueDate_${rowId}`]: data.firstIssueDate,
@@ -3085,31 +3149,206 @@
             });
         }
 
-        function fetchCertificateInfoFromAiBase(certNo, systemKey) {
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    const sys = systemConfig[systemKey] || {};
-                    const hash = Array.from(certNo).reduce((sum, char) => sum + char.charCodeAt(0), 0);
-                    const firstYear = 2018 + (hash % 4);
-                    const firstMonth = String((hash % 12) + 1).padStart(2, '0');
-                    const firstDay = String((hash % 20) + 1).padStart(2, '0');
-                    const cycleYear = 2024 + (hash % 2);
-                    const auditMonth = String(((hash + 3) % 12) + 1).padStart(2, '0');
-                    const auditStartDay = String((hash % 18) + 1).padStart(2, '0');
-                    const auditEndDay = String(Math.min(Number(auditStartDay) + 2, 28)).padStart(2, '0');
-                    resolve({
-                        certNo,
-                        certOrg: ['原认证机构A', '原认证机构B', '原认证机构C'][hash % 3],
-                        certDomain: sys.name || systemKey,
-                        certStandard: (sys.standards || [systemKey]).join('、'),
-                        firstIssueDate: `${firstYear}-${firstMonth}-${firstDay}`,
-                        cycleIssueDate: `${cycleYear}-${firstMonth}-${firstDay}`,
-                        validUntil: `${cycleYear + 3}-${firstMonth}-${firstDay}`,
-                        lastAuditStart: `${cycleYear}-${auditMonth}-${auditStartDay}`,
-                        lastAuditEnd: `${cycleYear}-${auditMonth}-${auditEndDay}`
-                    });
-                }, 600);
+        function getCustomerCertificatesBySystem(systemKey) {
+            if (!selectedCustomer) return [];
+            return customerCertificateRecords.filter(cert =>
+                cert.customerId === selectedCustomer.id && cert.systemKey === systemKey
+            );
+        }
+
+        function getTransferCertificateQueryResults(systemKey) {
+            const sys = systemConfig[systemKey] || {};
+            const certificates = getCustomerCertificatesBySystem(systemKey).slice(0, 2).map((cert, index) => ({
+                accreditation: index === 0 ? 'CNAS' : 'UKAS',
+                ...cert
+            }));
+            const seed = selectedCustomer ? `${selectedCustomer.id}_${systemKey}` : systemKey;
+            while (certificates.length < 2) {
+                const index = certificates.length + 1;
+                certificates.push({
+                    id: `QUERY_${seed}_${index}`,
+                    customerId: selectedCustomer ? selectedCustomer.id : '',
+                    systemKey,
+                    certNo: `${systemKey}${String(selectedCustomer ? selectedCustomer.id : 0).padStart(2, '0')}24${String(index).padStart(4, '0')}R${index}M`,
+                    certOrg: index === 1 ? '原认证机构A' : '原认证机构B',
+                    accreditation: index === 1 ? 'CNAS' : 'UKAS',
+                    certDomain: sys.name || systemKey,
+                    certStandard: (sys.standards || [systemKey]).join('、'),
+                    firstIssueDate: index === 1 ? '2020-06-18' : '2021-09-10',
+                    cycleIssueDate: index === 1 ? '2026-06-18' : '2025-09-10',
+                    validUntil: index === 1 ? '2029-06-17' : '2028-09-09'
+                });
+            }
+            return certificates;
+        }
+
+        function getAddedTransferCertificateNos(uniqueId) {
+            const container = document.getElementById(`transferCertificates_${uniqueId}`);
+            if (!container) return [];
+            return Array.from(container.querySelectorAll('[id^="certNo_"]'))
+                .map(input => input.value.trim())
+                .filter(Boolean);
+        }
+
+        function escapeHtml(value) {
+            return String(value || '').replace(/[&<>"']/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char]));
+        }
+
+        function openTransferCertificateModal(uniqueId, systemKey) {
+            if (!selectedCustomer) {
+                showToast('请先选择客户后再添加证书信息', 'warning');
+                return;
+            }
+
+            document.getElementById('transferCertificateSelectModal')?.remove();
+
+            const sys = systemConfig[systemKey] || {};
+            const modal = document.createElement('div');
+            modal.id = 'transferCertificateSelectModal';
+            modal.className = 'modal active fixed inset-0 bg-black/50 z-[60] flex items-center justify-center backdrop-blur-sm p-4';
+            modal.transferCertificates = [];
+            modal.innerHTML = `
+                <div class="modal-content bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[82vh] flex flex-col">
+                    <div class="p-6 border-b border-slate-100 flex justify-between items-start gap-4 bg-slate-50 rounded-t-2xl">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900">选择原认证证书</h3>
+                            <p class="text-xs text-slate-500 mt-1">${escapeHtml(selectedCustomer.name)} / ${escapeHtml(sys.name || systemKey)}</p>
+                        </div>
+                        <button onclick="this.closest('.modal').remove()" class="text-slate-400 hover:text-slate-600 transition-colors p-2 hover:bg-slate-100 rounded-full">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    <div class="p-6 flex-1 overflow-hidden flex flex-col">
+                        <div class="flex-1 overflow-auto custom-scrollbar border border-slate-200 rounded-lg">
+                            <table class="w-full min-w-[1120px] text-sm text-left">
+                                <thead class="text-xs text-slate-500 bg-slate-50 sticky top-0">
+                                    <tr>
+                                        <th class="px-4 py-3 w-12">
+                                            <input id="transferCertSelectAll" type="checkbox" disabled class="rounded text-amber-600 disabled:opacity-50" onchange="toggleTransferCertificateAll(this)">
+                                        </th>
+                                        <th class="px-4 py-3">证书编号</th>
+                                        <th class="px-4 py-3">认证机构</th>
+                                        <th class="px-4 py-3">认可机构</th>
+                                        <th class="px-4 py-3">认证领域</th>
+                                        <th class="px-4 py-3">认证标准</th>
+                                        <th class="px-4 py-3">首次发证日期</th>
+                                        <th class="px-4 py-3">本周期发证日期</th>
+                                        <th class="px-4 py-3">有效期至</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transferCertificateResultList" class="divide-y divide-slate-100">
+                                    <tr>
+                                        <td colspan="9" class="px-4 py-5">
+                                            <div class="flex items-center justify-center gap-3 text-center">
+                                                <i class="fas fa-spinner fa-spin text-lg text-amber-500"></i>
+                                                <div>
+                                                    <p class="text-sm font-medium text-slate-700">正在从认监委同步证书信息</p>
+                                                    <p class="text-xs text-slate-500">请稍候，查询结果将在列表中显示</p>
+                                                </div>
+                                            </div>
+                                            <div class="mt-4 space-y-2">
+                                                <div class="h-7 rounded bg-slate-100 animate-pulse"></div>
+                                                <div class="h-7 rounded bg-slate-100 animate-pulse"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <span class="text-xs text-slate-500">已选择 <span id="transferCertSelectedCount">0</span> 本证书</span>
+                            <div class="flex gap-2">
+                                <button onclick="this.closest('.modal').remove()" class="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-colors">取消</button>
+                                <button id="transferCertConfirmBtn" onclick="confirmTransferCertificateSelection('${uniqueId}', '${systemKey}')" disabled class="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-sm font-medium transition-colors">确认</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            updateTransferCertificateSelectCount();
+            setTimeout(() => renderTransferCertificateQueryResults(uniqueId, systemKey), 3000);
+        }
+
+        function renderTransferCertificateQueryResults(uniqueId, systemKey) {
+            const modal = document.getElementById('transferCertificateSelectModal');
+            const tbody = document.getElementById('transferCertificateResultList');
+            if (!modal || !tbody) return;
+
+            const addedNos = getAddedTransferCertificateNos(uniqueId);
+            const certificates = getTransferCertificateQueryResults(systemKey);
+            modal.transferCertificates = certificates;
+            tbody.innerHTML = certificates.map(cert => {
+                const disabled = addedNos.includes(cert.certNo);
+                return `
+                    <tr class="${disabled ? 'bg-slate-50 text-slate-400' : 'hover:bg-amber-50 cursor-pointer'} transition-colors" onclick="${disabled ? '' : `toggleTransferCertificateRow(event, '${cert.id}')`}">
+                        <td class="px-4 py-3">
+                            <input type="checkbox" value="${cert.id}" ${disabled ? 'disabled' : ''} class="transfer-cert-checkbox rounded text-amber-600 disabled:opacity-40 disabled:cursor-not-allowed" onchange="updateTransferCertificateSelectCount(); event.stopPropagation();">
+                        </td>
+                        <td class="px-4 py-3 font-medium ${disabled ? 'text-slate-400' : 'text-slate-900'}">${escapeHtml(cert.certNo)}</td>
+                        <td class="px-4 py-3">${escapeHtml(cert.certOrg)}</td>
+                        <td class="px-4 py-3">${escapeHtml(cert.accreditation)}</td>
+                        <td class="px-4 py-3">${escapeHtml(cert.certDomain)}</td>
+                        <td class="px-4 py-3">${escapeHtml(cert.certStandard)}</td>
+                        <td class="px-4 py-3 whitespace-nowrap">${escapeHtml(cert.firstIssueDate)}</td>
+                        <td class="px-4 py-3 whitespace-nowrap">${escapeHtml(cert.cycleIssueDate)}</td>
+                        <td class="px-4 py-3 whitespace-nowrap">${escapeHtml(cert.validUntil)}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            const selectAll = document.getElementById('transferCertSelectAll');
+            const confirmBtn = document.getElementById('transferCertConfirmBtn');
+            if (selectAll) {
+                selectAll.disabled = certificates.every(cert => addedNos.includes(cert.certNo));
+                selectAll.checked = false;
+            }
+            if (confirmBtn) confirmBtn.disabled = false;
+            updateTransferCertificateSelectCount();
+        }
+
+        function toggleTransferCertificateAll(checkbox) {
+            document.querySelectorAll('#transferCertificateSelectModal .transfer-cert-checkbox:not(:disabled)').forEach(item => {
+                item.checked = checkbox.checked;
             });
+            updateTransferCertificateSelectCount();
+        }
+
+        function toggleTransferCertificateRow(event, certId) {
+            if (event.target && event.target.matches('input[type="checkbox"]')) return;
+            const checkbox = document.querySelector(`#transferCertificateSelectModal .transfer-cert-checkbox[value="${certId}"]`);
+            if (!checkbox || checkbox.disabled) return;
+            checkbox.checked = !checkbox.checked;
+            updateTransferCertificateSelectCount();
+        }
+
+        function updateTransferCertificateSelectCount() {
+            const countEl = document.getElementById('transferCertSelectedCount');
+            if (!countEl) return;
+            const count = document.querySelectorAll('#transferCertificateSelectModal .transfer-cert-checkbox:checked').length;
+            countEl.textContent = count;
+        }
+
+        function confirmTransferCertificateSelection(uniqueId, systemKey) {
+            const checkedIds = Array.from(document.querySelectorAll('#transferCertificateSelectModal .transfer-cert-checkbox:checked'))
+                .map(item => item.value);
+            if (checkedIds.length === 0) {
+                showToast('请至少选择一本证书', 'warning');
+                return;
+            }
+
+            const modal = document.getElementById('transferCertificateSelectModal');
+            const certificates = (modal && modal.transferCertificates ? modal.transferCertificates : getTransferCertificateQueryResults(systemKey))
+                .filter(cert => checkedIds.includes(cert.id));
+            certificates.forEach(cert => addTransferCertificateRow(uniqueId, systemKey, cert));
+            modal?.remove();
+            showToast(`已带入 ${certificates.length} 本证书`);
         }
 
         function renderFoodSpecialFields(uniqueId) {
