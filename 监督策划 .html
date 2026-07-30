@@ -578,6 +578,7 @@
         .audit-note-timeline {
             position: relative;
             padding-left: 56px;
+            min-height: 500px;
         }
 
         .audit-note-layout {
@@ -585,6 +586,7 @@
             grid-template-columns: 180px minmax(0, 1fr);
             gap: 20px;
             align-items: start;
+            min-height: 500px;
         }
 
         .audit-type-nav {
@@ -633,6 +635,7 @@
 
         .audit-note-panel.active {
             display: block;
+            min-height: 500px;
         }
 
         .audit-note-timeline::before {
@@ -709,6 +712,7 @@
             color: var(--color-text-body);
             font-size: 13px;
             line-height: 1.8;
+            min-height: 164px;
         }
 
         .audit-note-content ul {
@@ -4254,7 +4258,7 @@
 
     <!-- 审核实施情况说明弹窗 -->
     <div id="auditImplementationNoteModal" class="modal-overlay hidden-section">
-        <div class="modal-content" style="width: 980px; max-width: 94vw;">
+        <div class="modal-content" style="width: 980px; max-width: 94vw; height: 680px; max-height: 86vh;">
             <div class="modal-header">
                 <div class="card-title">
                     <i class="fas fa-clipboard-check text-blue-500"></i>
@@ -6396,33 +6400,17 @@
             },
             surv1: {
                 title: '监督一',
-                managerTime: '2026年06月04日 10:00',
-                leaderTime: '2026年06月18日 16:40',
-                manager: [
-                    '监督一为当前待策划节点，需结合初次认证实施情况和客户月末盘点安排，避开每月最后一周组织现场审核。',
-                    '本次监督审核应覆盖总部与生产现场，关注初次认证后的组织变化、关键供方变化、投诉处理、政府通报和产品质量抽查信息。',
-                    '如现场存在倒班，应在计划中明确抽查班次、关键工序和配合部门，避免实施阶段因人员或生产状态不匹配导致偏离策划。'
-                ],
-                leader: [
-                    '实施后需记录除过程主责部门外实际审核到的相关部门，特别是质量管理、生产、环境安全和供方管理接口。',
-                    '如发现不符合项，应明确发现部门、责任部门、整改关闭状态，并作为监督二审核的重点跟踪内容。',
-                    '对审核组能力、抽样深度、报告语言和客户特殊安排有调整建议时，应在本节点说明中完整记录。'
-                ]
+                managerTime: '',
+                leaderTime: '',
+                manager: [],
+                leader: []
             },
             surv2: {
                 title: '监督二',
-                managerTime: '2027年06月03日 09:20',
-                leaderTime: '2027年06月17日 16:30',
-                manager: [
-                    '监督二策划需承接监督一审核结论，重点核查不符合项整改有效性、重复问题风险和关键过程运行稳定性。',
-                    '需重新确认组织人员规模、场所、生产班次、关键设备、产品和服务范围是否发生变化，并据此调整抽样方案和人天测算。',
-                    '若涉及产品抽样检测项目，应提前明确检测项目、抽样区域、样品配合部门和报告输出要求。'
-                ],
-                leader: [
-                    '实施后需评价监督一关注点的关闭情况，并说明是否需要调整后续再认证审核方案。',
-                    '建议下次审核重点关注风险和机遇应对、环境因素识别、合规评价、目标指标达成、内部审核和管理评审有效性。',
-                    '如客户存在特殊生产周期、停线、搬迁或关键人员变化，应提醒项目管理人员在再认证策划前完成信息更新。'
-                ]
+                managerTime: '',
+                leaderTime: '',
+                manager: [],
+                leader: []
             }
         };
 
@@ -6451,7 +6439,7 @@
                                                 <i class="fas fa-user-tie text-blue-500"></i>
                                                 项目管理人员
                                             </div>
-                                            <div class="audit-note-time">${item.managerTime}</div>
+                                            ${item.managerTime ? `<div class="audit-note-time">${item.managerTime}</div>` : ''}
                                         </div>
                                         <div class="audit-note-content">
                                             <ul>${item.manager.map(text => `<li>${text}</li>`).join('')}</ul>
@@ -6463,7 +6451,7 @@
                                                 <i class="fas fa-user-check text-green-600"></i>
                                                 审核组长
                                             </div>
-                                            <div class="audit-note-time">${item.leaderTime}</div>
+                                            ${item.leaderTime ? `<div class="audit-note-time">${item.leaderTime}</div>` : ''}
                                         </div>
                                         <div class="audit-note-content">
                                             <ul>${item.leader.map(text => `<li>${text}</li>`).join('')}</ul>
