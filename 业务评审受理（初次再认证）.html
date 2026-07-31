@@ -1,6 +1,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -1246,6 +1247,51 @@
                             <div class="rich-editor-content" contenteditable="true" data-placeholder="上述提示文字保留，可在此处填写其他评审说明..." onfocus="clearPlaceholder(this)" onblur="addPlaceholder(this)"></div>
                         </div>
                     </div>
+
+                    <div id="recertificationAuditMethodCard" class="recertification-only hidden mt-6 bg-white rounded-xl border border-slate-200 p-5">
+                        <h4 class="font-medium text-slate-900 mb-4 flex items-center gap-2"><i class="fas fa-route text-emerald-600"></i>审核方式选择</h4>
+                        <div class="space-y-5">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-3 required">是否有一阶段</label>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <label id="recertStageNoCard" class="flex items-start gap-3 p-4 border-2 border-blue-500 bg-blue-50 rounded-lg cursor-pointer transition-all">
+                                        <input type="radio" name="recertStage1Required" value="N" class="mt-1 text-blue-600" checked onchange="toggleRecertStage1(false)">
+                                        <div>
+                                            <div class="font-semibold text-slate-900">无一阶段</div>
+                                            <div class="text-sm text-slate-500 mt-1">直接进入再认证后续审核安排</div>
+                                        </div>
+                                    </label>
+                                    <label id="recertStageYesCard" class="flex items-start gap-3 p-4 border-2 border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-all">
+                                        <input type="radio" name="recertStage1Required" value="Y" class="mt-1 text-blue-600" onchange="toggleRecertStage1(true)">
+                                        <div>
+                                            <div class="font-semibold text-slate-900">有一阶段</div>
+                                            <div class="text-sm text-slate-500 mt-1">需要进一步选择一阶段实施类型</div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="recertStageTypeOptions" class="hidden border-t border-slate-100 pt-4">
+                                <label class="block text-sm font-medium text-slate-700 mb-3 required">一阶段类型选择</label>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <label id="recertDocReviewCard" class="flex items-start gap-3 p-4 border-2 border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-all">
+                                        <input type="radio" id="recertDocReview" name="recertStageAuditType" value="docReview" class="mt-1 text-blue-600" onchange="toggleRecertAuditType(this)">
+                                        <div>
+                                            <div class="font-semibold text-slate-900">文件评审</div>
+                                            <div class="text-sm text-slate-500 mt-1">仅进行文件审查，不安排现场一阶段</div>
+                                        </div>
+                                    </label>
+                                    <label id="recertStage1AuditCard" class="flex items-start gap-3 p-4 border-2 border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 transition-all">
+                                        <input type="radio" id="recertStage1Audit" name="recertStageAuditType" value="stage1Audit" class="mt-1 text-blue-600" onchange="toggleRecertAuditType(this)">
+                                        <div>
+                                            <div class="font-semibold text-slate-900">一阶段审核</div>
+                                            <div class="text-sm text-slate-500 mt-1">实施现场一阶段审核</div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1360,15 +1406,29 @@
                         <h4 class="font-medium text-slate-900 mb-3 flex items-center gap-2"><i class="fas fa-laptop-house text-blue-600"></i>第一阶段不实施现场审核申请（OHSMS初次认证）</h4>
                         <label class="flex items-center gap-2 mb-3"><input type="checkbox" id="applyStage1NoSite" onchange="toggleStage1Apply(this.checked)"><span class="text-sm font-medium text-slate-700">申请第一阶段不实施现场审核</span></label>
                         <div id="stage1ApplyContent" class="hidden space-y-3 pl-4 border-l-2 border-blue-300">
-                            <div><label class="block text-xs font-medium text-slate-700 mb-1 required">不实施现场审核的理由</label><textarea class="editable-field" rows="2" placeholder="说明理由..."></textarea></div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1 required">不实施现场审核的理由</label>
+                                <select id="stage1NoSiteReason" class="editable-field" onchange="handleStage1ReasonChange(this.value)">
+                                    <option value="">请选择</option>
+                                    <option value="cqc-valid">客户已获得CQC颁发的其他管理体系认证，且证书有效</option>
+                                    <option value="recognized-valid">客户已获得了该体系的有效认证证书，且证书是经认可机构认可的其他认证机构颁发的</option>
+                                </select>
+                            </div>
+                            <div id="stage1CertificatePanel" class="hidden bg-white rounded-lg border border-blue-200 p-3">
+                                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-3">
+                                    <div>
+                                        <div id="stage1CertificateTitle" class="text-sm font-semibold text-slate-900">客户当前有效的管理体系证书</div>
+                                        <div id="stage1CertificateHint" class="text-xs text-slate-500 mt-1">系统自动带入证书信息</div>
+                                    </div>
+                                    <button type="button" id="stage1SearchCertificateBtn" onclick="queryOriginalCertificatesInline()" class="hidden px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs font-medium transition-colors">
+                                        <i class="fas fa-search mr-1"></i>查询证书信息
+                                    </button>
+                                </div>
+                                <div id="stage1SelectedCertificates" class="space-y-2"></div>
+                            </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 mb-1 required">客户及拟派审核组的现状说明</label>
-                                <div class="p-2 bg-white rounded border border-blue-200 text-xs text-slate-600 mb-2">侧重描述人员能力，对此类组织的了解程度</div>
-                                <textarea class="editable-field" rows="2" placeholder="上述提示保留，补充具体说明..."></textarea>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <div><label class="block text-xs font-medium text-slate-700 mb-1">审核项目管理人员</label><div class="readonly-field">当前登录用户</div></div>
-                                <div><label class="block text-xs font-medium text-slate-700 mb-1">日期</label><div class="readonly-field">2026-03-25</div></div>
+                                <textarea class="editable-field" rows="2" placeholder="补充具体说明..."></textarea>
                             </div>
                         </div>
                     </div>
@@ -1904,6 +1964,62 @@
             {code: "19.12.00", category: "电池和蓄电池的制造", accreditation: ["CNAS", "UKAS"]}
         ];
 
+        const stage1CqcValidCertificates = [
+            {
+                id: 'cqc-qms-001',
+                certNo: '00124Q31234R2M',
+                certificationBody: '中国质量认证中心',
+                accreditationBody: 'CNAS',
+                field: '质量管理体系',
+                standard: 'GB/T 19001-2016 / ISO 9001:2015',
+                firstIssueDate: '2019-05-18',
+                cycleIssueDate: '2025-05-18',
+                validUntil: '2028-05-17',
+                status: '有效'
+            },
+            {
+                id: 'cqc-ems-001',
+                certNo: '00124E31234R1M',
+                certificationBody: '中国质量认证中心',
+                accreditationBody: 'CNAS',
+                field: '环境管理体系',
+                standard: 'GB/T 24001-2016 / ISO 14001:2015',
+                firstIssueDate: '2021-04-12',
+                cycleIssueDate: '2024-04-12',
+                validUntil: '2027-04-11',
+                status: '有效'
+            }
+        ];
+
+        const originalCertificateData = [
+            {
+                id: 'origin-qms-a',
+                certNo: '00124Q31234R2M',
+                certificationBody: '原认证机构A',
+                accreditationBody: 'CNAS',
+                field: '质量管理体系',
+                standard: 'GB/T 19001-2016 / ISO 9001:2015',
+                firstIssueDate: '2019-05-18',
+                cycleIssueDate: '2025-05-18',
+                validUntil: '2028-05-17',
+                status: '有效'
+            },
+            {
+                id: 'origin-qms-b',
+                certNo: '00124Q31235R1M',
+                certificationBody: '原认证机构B',
+                accreditationBody: 'UKAS',
+                field: '质量管理体系',
+                standard: 'GB/T 50430-2017',
+                firstIssueDate: '2021-09-10',
+                cycleIssueDate: '2024-09-10',
+                validUntil: '2027-09-09',
+                status: '暂停'
+            }
+        ];
+
+        let originalCertificateQueryTimer = null;
+
         // ==================== 初始化 ====================
         document.addEventListener('DOMContentLoaded', function() {
             updateReviewType('initial');
@@ -1958,6 +2074,7 @@
                 historyRefreshBtn.classList.remove('inline-flex');
             }
             document.querySelectorAll('.initial-only').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.recertification-only').forEach(el => el.classList.add('hidden'));
 
             switch(type) {
                 case 'initial':
@@ -1975,6 +2092,7 @@
                         historyRefreshBtn.querySelector('span').textContent = '查看历史证书';
                     }
                     runningTimeField.classList.add('hidden');
+                    document.querySelectorAll('.recertification-only').forEach(el => el.classList.remove('hidden'));
                     break;
             }
         }
@@ -1982,6 +2100,32 @@
         function updateApplicationPreviewByType(type) {
             document.querySelectorAll('[data-review-app-panel]').forEach(panel => {
                 panel.classList.toggle('hidden', panel.dataset.reviewAppPanel !== type);
+            });
+        }
+
+        function setChoiceCardSelected(card, selected) {
+            if (!card) return;
+            card.classList.toggle('border-blue-500', selected);
+            card.classList.toggle('bg-blue-50', selected);
+            card.classList.toggle('border-slate-200', !selected);
+        }
+
+        function toggleRecertStage1(hasStage1) {
+            setChoiceCardSelected(document.getElementById('recertStageYesCard'), hasStage1);
+            setChoiceCardSelected(document.getElementById('recertStageNoCard'), !hasStage1);
+            const typeOptions = document.getElementById('recertStageTypeOptions');
+            if (typeOptions) typeOptions.classList.toggle('hidden', !hasStage1);
+            if (!hasStage1) {
+                document.querySelectorAll('#recertStageTypeOptions input[name="recertStageAuditType"]').forEach(input => {
+                    input.checked = false;
+                    toggleRecertAuditType(input);
+                });
+            }
+        }
+
+        function toggleRecertAuditType(input) {
+            document.querySelectorAll('#recertStageTypeOptions input[name="recertStageAuditType"]').forEach(item => {
+                setChoiceCardSelected(item.closest('label'), item === input && item.checked);
             });
         }
 
@@ -2324,6 +2468,160 @@
 
         function toggleStage1Apply(checked) {
             document.getElementById('stage1ApplyContent').classList.toggle('hidden', !checked);
+            if (!checked) {
+                const reasonSelect = document.getElementById('stage1NoSiteReason');
+                if (reasonSelect) reasonSelect.value = '';
+                clearOriginalCertificateQueryTimer();
+                resetStage1CertificatePanel();
+            }
+        }
+
+        function handleStage1ReasonChange(value) {
+            const panel = document.getElementById('stage1CertificatePanel');
+            const title = document.getElementById('stage1CertificateTitle');
+            const hint = document.getElementById('stage1CertificateHint');
+            const searchBtn = document.getElementById('stage1SearchCertificateBtn');
+            if (!panel || !title || !hint || !searchBtn) return;
+
+            if (!value) {
+                resetStage1CertificatePanel();
+                return;
+            }
+
+            panel.classList.remove('hidden');
+            if (value === 'cqc-valid') {
+                title.textContent = '客户当前有效的管理体系证书';
+                hint.textContent = '系统自动带入客户当前有效的CQC管理体系证书';
+                searchBtn.classList.add('hidden');
+                searchBtn.disabled = false;
+                searchBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+                searchBtn.innerHTML = '<i class="fas fa-search mr-1"></i>查询证书信息';
+                clearOriginalCertificateQueryTimer();
+                renderStage1Certificates(stage1CqcValidCertificates);
+                showToast('已自动带入客户当前有效的管理体系证书');
+                return;
+            }
+
+            title.textContent = '客户该体系有效认证证书';
+            hint.textContent = '请点击查询证书信息，选择经认可机构认可的其他认证机构证书';
+            searchBtn.classList.remove('hidden');
+            searchBtn.disabled = false;
+            searchBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+            searchBtn.innerHTML = '<i class="fas fa-search mr-1"></i>查询证书信息';
+            clearOriginalCertificateQueryTimer();
+            renderStage1Certificates([], '请点击查询证书信息');
+        }
+
+        function resetStage1CertificatePanel() {
+            const panel = document.getElementById('stage1CertificatePanel');
+            const searchBtn = document.getElementById('stage1SearchCertificateBtn');
+            const container = document.getElementById('stage1SelectedCertificates');
+            clearOriginalCertificateQueryTimer();
+            if (panel) panel.classList.add('hidden');
+            if (searchBtn) {
+                searchBtn.classList.add('hidden');
+                searchBtn.disabled = false;
+                searchBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+                searchBtn.innerHTML = '<i class="fas fa-search mr-1"></i>查询证书信息';
+            }
+            if (container) container.innerHTML = '';
+        }
+
+        function clearOriginalCertificateQueryTimer() {
+            if (originalCertificateQueryTimer) {
+                clearTimeout(originalCertificateQueryTimer);
+                originalCertificateQueryTimer = null;
+            }
+        }
+
+        function getStatusClass(status) {
+            if (status === '有效') return 'cert-status-valid';
+            if (status === '暂停') return 'cert-status-suspended';
+            if (status === '撤销') return 'cert-status-revoked';
+            return 'cert-status-cancelled';
+        }
+
+        function getStatusIcon(status) {
+            if (status === '有效') return 'fa-check-circle';
+            if (status === '暂停') return 'fa-pause-circle';
+            if (status === '撤销') return 'fa-times-circle';
+            return 'fa-minus-circle';
+        }
+
+        function renderStage1Certificates(certs, emptyText = '暂无证书信息') {
+            const container = document.getElementById('stage1SelectedCertificates');
+            if (!container) return;
+            if (!certs.length) {
+                container.innerHTML = `<div class="text-sm text-slate-400 py-2">${emptyText}</div>`;
+                return;
+            }
+            container.innerHTML = certs.map(cert => `
+                <div class="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-2">
+                        <div>
+                            <div class="font-semibold text-slate-900">${cert.certNo}</div>
+                        </div>
+                        <span class="cert-status-pill ${getStatusClass(cert.status)}"><i class="fas ${getStatusIcon(cert.status)}"></i>${cert.status}</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">认证机构</label>
+                            <div class="readonly-field">${cert.certificationBody}</div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">认证领域</label>
+                            <div class="readonly-field">${cert.field}</div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">认可标志</label>
+                            <div class="readonly-field">${cert.accreditationBody}</div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">认证标准</label>
+                            <div class="readonly-field">${cert.standard}</div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">本周期发证日期</label>
+                            <div class="readonly-field">${cert.cycleIssueDate}</div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">有效期至</label>
+                            <div class="readonly-field">${cert.validUntil}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function queryOriginalCertificatesInline() {
+            const button = document.getElementById('stage1SearchCertificateBtn');
+            const container = document.getElementById('stage1SelectedCertificates');
+            if (!container) return;
+            clearOriginalCertificateQueryTimer();
+            container.innerHTML = `
+                <div class="rounded-lg border border-blue-200 bg-blue-50 p-6 flex flex-col items-center justify-center min-h-[180px]">
+                    <div class="w-10 h-10 rounded-full border-4 border-blue-100 border-t-blue-600 animate-spin"></div>
+                    <div class="mt-4 text-sm font-medium text-slate-900">正在查询证书信息...</div>
+                    <div class="mt-1 text-xs text-slate-500">系统正在核验证书编号、认可标志和当前状态</div>
+                </div>
+            `;
+            if (button) {
+                button.disabled = true;
+                button.classList.add('opacity-70', 'cursor-not-allowed');
+                button.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>查询中';
+            }
+            originalCertificateQueryTimer = setTimeout(() => {
+                renderStage1Certificates(originalCertificateData);
+                if (button) {
+                    button.disabled = false;
+                    button.classList.remove('opacity-70', 'cursor-not-allowed');
+                    button.innerHTML = '<i class="fas fa-search mr-1"></i>重新查询证书信息';
+                }
+                originalCertificateQueryTimer = null;
+                showToast('证书信息查询完成');
+            }, 3000);
         }
 
         // ==================== 提交评审（已简化） ====================
