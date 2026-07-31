@@ -1,6 +1,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -525,6 +526,32 @@
                         </label>
                         <div id="certificateProfCodeDisplay" class="space-y-4"></div>
                     </div>
+                    <div class="border-t border-slate-100 pt-5">
+                        <label class="block text-sm font-medium text-slate-700 mb-3">风险等级选择<span class="text-red-500">*</span></label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <label class="radio-card" id="riskLevel1Card" onclick="selectRiskLevel('1')">
+                                <input type="radio" name="riskLevel" value="1" class="text-blue-600 mt-1" onchange="selectRiskLevel(this.value)">
+                                <div class="flex-1">
+                                    <div class="font-medium text-slate-900">一级（高风险）</div>
+                                    <div class="text-xs text-slate-500 mt-1">需重点关注变更影响和审核资源</div>
+                                </div>
+                            </label>
+                            <label class="radio-card selected" id="riskLevel2Card" onclick="selectRiskLevel('2')">
+                                <input type="radio" name="riskLevel" value="2" class="text-blue-600 mt-1" checked onchange="selectRiskLevel(this.value)">
+                                <div class="flex-1">
+                                    <div class="font-medium text-slate-900">二级（中风险）</div>
+                                    <div class="text-xs text-slate-500 mt-1">按常规变更评审要求控制</div>
+                                </div>
+                            </label>
+                            <label class="radio-card" id="riskLevel3Card" onclick="selectRiskLevel('3')">
+                                <input type="radio" name="riskLevel" value="3" class="text-blue-600 mt-1" onchange="selectRiskLevel(this.value)">
+                                <div class="flex-1">
+                                    <div class="font-medium text-slate-900">三级（低风险）</div>
+                                    <div class="text-xs text-slate-500 mt-1">变更影响较小，可简化关注</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -564,6 +591,20 @@
                                 <p class="text-xs text-amber-700 mt-1">如勾选，审核方案将包含一阶段审核内容</p>
                             </div>
                         </label>
+                    </div>
+
+                    <div id="stage1NoSiteApply" class="conditional-block hidden bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h4 class="font-medium text-slate-900 mb-3 flex items-center gap-2"><i class="fas fa-laptop-house text-blue-600"></i>第一阶段不实施现场审核申请</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1 required">不实施现场审核的理由</label>
+                                <textarea class="editable-field w-full" rows="3" placeholder="请输入不实施现场审核的理由..."></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1 required">客户及拟派审核组的现状说明</label>
+                                <textarea class="editable-field w-full" rows="2" placeholder="补充具体说明..."></textarea>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -1175,10 +1216,15 @@
             selectedAuditMode = value;
             const hasStage1Section = document.getElementById('hasStage1Section');
             const hasStage1Check = document.getElementById('hasStage1Check');
+            const stage1NoSiteApply = document.getElementById('stage1NoSiteApply');
             
             // 先全部隐藏并重置
             hasStage1Section.classList.add('hidden');
             hasStage1Section.classList.remove('show');
+            if (stage1NoSiteApply && !hasStage1Check?.checked) {
+                stage1NoSiteApply.classList.add('hidden');
+                stage1NoSiteApply.classList.remove('show');
+            }
             
             if (value === 'combine') {
                 // 切换到结合监督：显示"是否有审核一阶段"
@@ -1202,6 +1248,23 @@
 
         function handleHasStage1Change(checked) {
             hasStage1 = checked;
+            const stage1NoSiteApply = document.getElementById('stage1NoSiteApply');
+            if (stage1NoSiteApply) {
+                stage1NoSiteApply.classList.toggle('hidden', !checked);
+                stage1NoSiteApply.classList.toggle('show', checked);
+            }
+        }
+
+        function selectRiskLevel(level) {
+            document.querySelectorAll('input[name="riskLevel"]').forEach(radio => {
+                radio.closest('.radio-card').classList.remove('selected');
+                radio.checked = false;
+            });
+            const selected = document.querySelector(`input[name="riskLevel"][value="${level}"]`);
+            if (selected) {
+                selected.checked = true;
+                selected.closest('.radio-card').classList.add('selected');
+            }
         }
 
         function selectSiteType(type) {
