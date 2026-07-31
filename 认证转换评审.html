@@ -411,9 +411,9 @@
         .file-action-btn.download { color: #047857; background: #ecfdf5; border: 1px solid #a7f3d0; }
         .file-action-btn.download:hover { background: #d1fae5; }
         .person-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid transparent; }
-        .person-tag.fulltime { background: #dbeafe; color: #1d4ed8; border-color: #bfdbfe; }
-        .person-tag.parttime { background: #f3e8ff; color: #7e22ce; border-color: #e9d5ff; }
-        .person-tag.days { background: #fff7ed; color: #c2410c; border-color: #fed7aa; }
+        .person-tag.project-management { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+        .person-tag.auditor { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+        .person-tag.senior-auditor { background: #fef3c7; color: #b45309; border-color: #fde68a; }
         .person-card { border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; transition: all .2s; cursor: pointer; background: #fff; }
         .person-card:hover { border-color: #93c5fd; background: #eff6ff; }
         .person-card.selected { border-color: #2563eb; background: #eff6ff; box-shadow: 0 0 0 2px rgba(37,99,235,.12); }
@@ -1326,15 +1326,27 @@
                                         </select>
                                         <span>的证书</span>
                                     </div>
-                                    <div class="flex items-center gap-2 flex-wrap">
-                                        <span>转换后将对该客户实施</span>
-                                        <select class="editable-field w-40 py-1">
-                                            <option value="surveillance2" selected>第2次监督审核</option>
-                                            <option value="surveillance1">第1次监督审核</option>
-                                            <option value="recertification">再认证审核</option>
-                                        </select>
-                                        <span>预计审核时间：</span>
-                                        <input type="month" class="editable-field w-32 py-1" value="2026-06">
+                                    <div class="space-y-2">
+                                        <div class="text-sm font-medium text-slate-700">转换后将对该客户实施：</div>
+                                        <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+                                            <table class="w-full text-sm">
+                                                <thead class="bg-slate-50 text-slate-600">
+                                                    <tr><th class="text-left px-3 py-2">认证领域</th><th class="text-left px-3 py-2">下一个审核节点</th><th class="text-left px-3 py-2">预计审核时间</th></tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr class="border-t border-slate-200">
+                                                        <td class="px-3 py-2 font-medium text-slate-800">OHSMS</td>
+                                                        <td class="px-3 py-2"><select class="editable-field py-1 w-40" data-domain="OHSMS" aria-label="OHSMS下一个审核节点"><option value="surveillance2" selected>第2次监督审核</option><option value="surveillance1">第1次监督审核</option><option value="recertification">再认证审核</option></select></td>
+                                                        <td class="px-3 py-2"><input type="month" class="editable-field py-1 w-36" value="2026-06" data-domain="OHSMS" aria-label="OHSMS预计审核时间"></td>
+                                                    </tr>
+                                                    <tr class="border-t border-slate-200">
+                                                        <td class="px-3 py-2 font-medium text-slate-800">QMS</td>
+                                                        <td class="px-3 py-2"><select class="editable-field py-1 w-40" data-domain="QMS" aria-label="QMS下一个审核节点"><option value="surveillance2" selected>第2次监督审核</option><option value="surveillance1">第1次监督审核</option><option value="recertification">再认证审核</option></select></td>
+                                                        <td class="px-3 py-2"><input type="month" class="editable-field py-1 w-36" value="2026-06" data-domain="QMS" aria-label="QMS预计审核时间"></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                     <div class="p-2 bg-amber-50 rounded border border-amber-200 text-xs text-amber-800 mt-2">
                                         <i class="fas fa-info-circle mr-1"></i>
@@ -1390,25 +1402,7 @@
             <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 space-y-3">
                 <div class="relative">
                     <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" id="personSearchInput" oninput="renderPersonOptions()" class="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="搜索姓名、CQC编号、专业代码...">
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <select id="personCompanyFilter" onchange="renderPersonOptions()" class="editable-field bg-white">
-                        <option value="">全部公司</option>
-                        <option value="东北区域">东北区域</option>
-                        <option value="华北区域">华北区域</option>
-                        <option value="华东区域">华东区域</option>
-                    </select>
-                    <select id="personTypeFilter" onchange="renderPersonOptions()" class="editable-field bg-white">
-                        <option value="">全部类型</option>
-                        <option value="专职">专职</option>
-                        <option value="兼职">兼职</option>
-                    </select>
-                    <select id="personDaysFilter" onchange="renderPersonOptions()" class="editable-field bg-white">
-                        <option value="">180天状态</option>
-                        <option value="ok">180天内可用</option>
-                        <option value="warning">接近180天</option>
-                    </select>
+                    <input type="text" id="personSearchInput" oninput="renderPersonOptions()" class="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="搜索姓名或CQC编号">
                 </div>
             </div>
             <div id="personOptionsList" class="flex-1 overflow-y-auto p-6 space-y-3"></div>
@@ -1526,8 +1520,6 @@
                 conclusionSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
                 document.querySelector('a[href="#section-conclusion"]').classList.add('active');
-            } else {
-                showToast('需要现场访问时无需填写转换评审结论');
             }
         }
 
@@ -1604,12 +1596,12 @@
         }
 
         const visitPersonOptions = [
-            { id: 'p1', name: '张爱兵', code: 'CQC11045', company: '东北区域', type: '兼职', days: 155, role: '组员', qualifications: 'OHSMS-4012345', tags: ['OHSMS'] },
-            { id: 'p2', name: '黄起超', code: 'CQC10634', company: '东北区域', type: '专职', days: 134, role: '组员', qualifications: 'OHSMS-6015922', tags: ['OHSMS'] },
-            { id: 'p3', name: '娄杰', code: 'CQC10601', company: '东北区域', type: '专职', days: 167, role: '组员', qualifications: 'OHSMS-4014327', tags: ['OHSMS'] },
-            { id: 'p4', name: '沈书华', code: 'CQC10228', company: '华北区域', type: '兼职', days: 78, role: '组员', qualifications: 'OHSMS-4011889', tags: ['OHSMS'] },
-            { id: 'p5', name: '周明', code: 'CQC10888', company: '华东区域', type: '专职', days: 42, role: '组长', qualifications: 'OHSMS-4012001 / QMS-1901', tags: ['OHSMS', 'QMS'] },
-            { id: 'p6', name: '李晓华', code: 'CQC10962', company: '华东区域', type: '专职', days: 61, role: '专业人员', qualifications: 'QMS-1902 / QMS-1701', tags: ['QMS'] }
+            { id: 'p1', name: '张爱兵', code: 'CQC11045', company: '东北区域/黑龙江公司', type: '兼职', days: 155, role: '组员', auditTitle: '审核员', qualifications: 'QMS正式， EMS正式', tags: ['QMS', 'EMS'] },
+            { id: 'p2', name: '黄起超', code: 'CQC10634', company: '东北区域/黑龙江公司', type: '专职', days: 134, role: '组员', auditTitle: '审核员', qualifications: 'QMS正式， EMS正式', tags: ['QMS', 'EMS'] },
+            { id: 'p3', name: '娄杰', code: 'CQC10601', company: '东北区域/黑龙江公司', type: '专职', days: 167, role: '组员', auditTitle: '审核员', qualifications: 'QMS正式， EMS正式', tags: ['QMS', 'EMS'] },
+            { id: 'p4', name: '沈书华', code: 'CQC10228', company: '东北区域/黑龙江公司', type: '兼职', days: 78, role: '组员', auditTitle: '审核员', qualifications: 'QMS正式， EMS正式', tags: ['QMS', 'EMS'] },
+            { id: 'p5', name: '周明', code: 'CQC10888', company: '东北区域/黑龙江公司', type: '专职', days: 42, role: '组长', auditTitle: '高级审核员', qualifications: 'QMS正式， EMS正式', tags: ['QMS', 'EMS'] },
+            { id: 'p6', name: '李晓华', code: 'CQC10962', company: '东北区域/黑龙江公司', type: '专职', days: 61, role: '专业人员', auditTitle: '高级审核员', qualifications: 'QMS正式， EMS正式', tags: ['QMS', 'EMS'] }
         ];
         const personModalConfig = {
             visit: {
@@ -1662,36 +1654,37 @@
             document.getElementById('personSelectModal').classList.add('hidden');
         }
 
+        function getPersonTagHtml(person, mode = currentPersonMode) {
+            if (mode === 'reviewer') {
+                return '<span class="person-tag project-management">项目管理</span>';
+            }
+            const label = person.auditTitle || '审核员';
+            const className = label === '高级审核员' ? 'senior-auditor' : 'auditor';
+            return `<span class="person-tag ${className}">${label}</span>`;
+        }
+
         function renderPersonOptions() {
             const keyword = (document.getElementById('personSearchInput')?.value || '').trim().toLowerCase();
-            const company = document.getElementById('personCompanyFilter')?.value || '';
-            const type = document.getElementById('personTypeFilter')?.value || '';
-            const daysFilter = document.getElementById('personDaysFilter')?.value || '';
             const list = document.getElementById('personOptionsList');
             const filtered = visitPersonOptions.filter(person => {
-                const text = `${person.name} ${person.code} ${person.qualifications} ${person.tags.join(' ')}`.toLowerCase();
+                const text = `${person.name} ${person.code}`.toLowerCase();
                 const matchKeyword = !keyword || text.includes(keyword);
-                const matchCompany = !company || person.company === company;
-                const matchType = !type || person.type === type;
-                const matchDays = !daysFilter || (daysFilter === 'ok' ? person.days < 150 : person.days >= 150);
-                return matchKeyword && matchCompany && matchType && matchDays;
+                return matchKeyword;
             });
 
             list.innerHTML = filtered.map(person => {
                 const selected = pendingVisitPersonIds.includes(person.id);
-                const typeClass = person.type === '专职' ? 'fulltime' : 'parttime';
                 return `
                     <div class="person-card ${selected ? 'selected' : ''}" onclick="togglePendingPerson('${person.id}')">
                         <div class="flex items-start justify-between gap-4">
                             <div>
                                 <div class="flex flex-wrap items-center gap-2">
                                     <span class="font-semibold text-slate-900">${person.name}</span>
-                                    <span class="person-tag days">${person.days}天/180天</span>
-                                    <span class="person-tag ${typeClass}">${person.type}</span>
+                                    ${getPersonTagHtml(person)}
                                 </div>
                                 <div class="text-xs text-slate-500 mt-2">CQC编号：${person.code}</div>
-                                <div class="text-xs text-slate-500 mt-1">资格：${person.qualifications}</div>
-                                <div class="text-xs text-slate-500 mt-1">工作单位：${person.company}</div>
+                                <div class="text-xs text-slate-500 mt-1">资格： ${person.qualifications}</div>
+                                <div class="text-xs text-slate-500 mt-1">工作单位： ${person.company}</div>
                             </div>
                             <div class="w-5 h-5 rounded-full border-2 ${selected ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-300'} flex items-center justify-center shrink-0 mt-1">
                                 ${selected ? '<i class="fas fa-check text-[10px]"></i>' : ''}
@@ -1733,16 +1726,16 @@
                 return;
             }
             container.innerHTML = selected.map(person => {
-                const typeClass = person.type === '专职' ? 'fulltime' : 'parttime';
                 return `
                     <div class="bg-white border border-blue-100 rounded-lg p-3 flex items-start justify-between gap-3">
                         <div>
                             <div class="flex flex-wrap items-center gap-2">
                                 <span class="font-medium text-slate-900">${person.name}</span>
-                                <span class="person-tag days">${person.days}天/180天</span>
-                                <span class="person-tag ${typeClass}">${person.type}</span>
+                                ${getPersonTagHtml(person, 'professional')}
                             </div>
-                            <div class="text-xs text-slate-500 mt-1">CQC编号：${person.code} · 专业代码：${person.qualifications}</div>
+                            <div class="text-xs text-slate-500 mt-1">CQC编号：${person.code}</div>
+                            <div class="text-xs text-slate-500 mt-1">资格： ${person.qualifications}</div>
+                            <div class="text-xs text-slate-500 mt-1">工作单位： ${person.company}</div>
                         </div>
                         <button type="button" onclick="removeSelectedProfessional('${person.id}')" class="text-slate-400 hover:text-red-600"><i class="fas fa-times"></i></button>
                     </div>`;
@@ -1762,16 +1755,16 @@
                 return;
             }
             container.innerHTML = selected.map(person => {
-                const typeClass = person.type === '专职' ? 'fulltime' : 'parttime';
                 return `
                     <div class="bg-white border border-blue-100 rounded-lg p-3 flex items-start justify-between gap-3">
                         <div>
                             <div class="flex flex-wrap items-center gap-2">
                                 <span class="font-medium text-slate-900">${person.name}</span>
-                                <span class="person-tag days">${person.days}天/180天</span>
-                                <span class="person-tag ${typeClass}">${person.type}</span>
+                                ${getPersonTagHtml(person, 'visit')}
                             </div>
-                            <div class="text-xs text-slate-500 mt-1">CQC编号：${person.code} · 资格：${person.qualifications} · 默认角色：${person.role}</div>
+                            <div class="text-xs text-slate-500 mt-1">CQC编号：${person.code}</div>
+                            <div class="text-xs text-slate-500 mt-1">资格： ${person.qualifications}</div>
+                            <div class="text-xs text-slate-500 mt-1">工作单位： ${person.company}</div>
                         </div>
                         <button type="button" onclick="removeSelectedVisitPerson('${person.id}')" class="text-slate-400 hover:text-red-600"><i class="fas fa-times"></i></button>
                     </div>`;
@@ -2057,14 +2050,10 @@
             
             if (value === 'Y') {
                 reason.classList.remove('hidden');
-                conclusionSection?.classList.add('hidden');
-                conclusionNav?.classList.remove('block');
-                conclusionNav?.classList.add('hidden');
-                conclusionFloatingBtn?.classList.add('hidden');
-                if (conclusionNav?.classList.contains('active')) {
-                    conclusionNav.classList.remove('active');
-                    nav?.classList.add('active');
-                }
+                conclusionSection?.classList.remove('hidden');
+                conclusionNav?.classList.remove('hidden');
+                conclusionNav?.classList.add('block');
+                conclusionFloatingBtn?.classList.remove('hidden');
                 setTimeout(() => {
                     section.classList.remove('hidden');
                     nav.classList.remove('hidden');
