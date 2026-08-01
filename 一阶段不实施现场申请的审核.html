@@ -1,6 +1,7 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -282,6 +283,9 @@
         .readonly-audit-page textarea {
             pointer-events: none;
         }
+        .readonly-audit-page #auditDecisionModal textarea {
+            pointer-events: auto;
+        }
         .readonly-audit-page .rich-editor-content {
             background: #f8fafc;
             color: #1e293b;
@@ -312,10 +316,10 @@
                     <button id="holderChangeTopBtn" type="button" class="hidden inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md shadow-blue-100 transition-all" onclick="openCertificateHolderChangeModal()">
                         <i class="fas fa-file-alt"></i>获证方情况调查表
                     </button>
-                    <button onclick="openAuditDecisionModal('approve')" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-medium shadow-md shadow-emerald-100 transition-all">
+                    <button id="auditApproveBtn" onclick="openAuditDecisionModal('approve')" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-medium shadow-md shadow-emerald-100 transition-all">
                         <i class="fas fa-check-circle mr-2"></i>审核通过
                     </button>
-                    <button onclick="openAuditDecisionModal('reject')" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium shadow-md shadow-red-100 transition-all">
+                    <button id="auditRejectBtn" onclick="openAuditDecisionModal('reject')" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium shadow-md shadow-red-100 transition-all">
                         <i class="fas fa-times-circle mr-2"></i>审核驳回
                     </button>
                 </div>
@@ -411,7 +415,7 @@
             <div id="section-stage1-apply" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
                     <div class="flex items-center gap-2"><i class="fas fa-laptop-house text-blue-600"></i><h3 class="font-semibold text-slate-900">第一阶段不实施现场审核申请</h3></div>
-                    <span class="text-xs text-slate-500 bg-blue-50 text-blue-700 border border-blue-200 px-2 py-1 rounded">已申请</span>
+                    <span id="stage1AuditResultBadge" class="text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-full shadow-sm">已申请</span>
                 </div>
                 <div class="p-6 space-y-4">
                     <label class="flex items-center gap-2">
@@ -454,6 +458,13 @@
                             <label class="block text-xs font-medium text-slate-700 mb-1 required">客户及拟派审核组的现状说明</label>
                             <textarea class="editable-field" rows="2">客户已有其他有效管理体系认证，组织管理体系运行稳定，拟派审核组具备相应专业能力和同类组织审核经验。</textarea>
                         </div>
+                    </div>
+                    <div id="stage1AuditReasonPanel" class="hidden rounded-xl border p-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i id="stage1AuditReasonIcon" class="fas fa-check-circle text-sm"></i>
+                            <h4 id="stage1AuditReasonTitle" class="text-sm font-semibold text-slate-900">审核原因</h4>
+                        </div>
+                        <div id="stage1AuditReasonText" class="text-sm leading-relaxed text-slate-700 whitespace-pre-wrap"></div>
                     </div>
                 </div>
             </div>
@@ -1467,6 +1478,15 @@
                         <p class="text-sm text-slate-600 leading-relaxed mt-2" id="auditDecisionMessage"></p>
                     </div>
                 </div>
+                <div class="mt-5">
+                    <div id="auditOpinionWrap" class="rounded-lg border border-slate-200 bg-white p-4">
+                        <label for="auditOpinion" class="flex items-center gap-2 text-sm font-semibold text-slate-800 mb-2">
+                            <i id="auditOpinionIcon" class="fas fa-comment-dots text-slate-400"></i>审核意见
+                            <span id="auditOpinionRequiredMark" class="hidden text-red-500">*</span>
+                        </label>
+                        <textarea id="auditOpinion" rows="4" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:border-slate-500 resize-none" placeholder="请输入审核意见..."></textarea>
+                    </div>
+                </div>
                 <div class="flex justify-end gap-3 pt-6 mt-6 border-t border-slate-100">
                     <button onclick="closeAuditDecisionModal()" class="px-5 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-colors">关闭</button>
                     <button onclick="confirmAuditDecision()" id="auditDecisionConfirmBtn" class="px-5 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 text-sm font-medium transition-colors">确认</button>
@@ -1961,6 +1981,10 @@
             const title = document.getElementById('auditDecisionTitle');
             const message = document.getElementById('auditDecisionMessage');
             const confirmBtn = document.getElementById('auditDecisionConfirmBtn');
+            const opinionWrap = document.getElementById('auditOpinionWrap');
+            const opinionIcon = document.getElementById('auditOpinionIcon');
+            const opinionRequiredMark = document.getElementById('auditOpinionRequiredMark');
+            const auditOpinion = document.getElementById('auditOpinion');
             const approved = type === 'approve';
 
             icon.className = `w-11 h-11 rounded-full flex items-center justify-center shrink-0 ${approved ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`;
@@ -1968,7 +1992,18 @@
             title.textContent = approved ? '审核通过确认' : '审核驳回确认';
             message.textContent = approved ? '若审核通过，则同意一阶段不做现场审核' : '若审核驳回，则一阶段需要做现场审核';
             confirmBtn.className = `px-5 py-2 text-white rounded-lg text-sm font-medium transition-colors ${approved ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-red-600 hover:bg-red-700'}`;
+            if (opinionWrap) opinionWrap.className = 'rounded-lg border border-slate-200 bg-white p-4';
+            if (opinionIcon) opinionIcon.className = 'fas fa-comment-dots text-slate-400';
+            if (opinionRequiredMark) opinionRequiredMark.classList.toggle('hidden', approved);
+            if (auditOpinion) {
+                auditOpinion.value = '';
+                auditOpinion.placeholder = approved ? '请输入审核意见...' : '请输入审核意见...';
+                auditOpinion.classList.remove('border-red-400');
+            }
             modal.classList.remove('hidden');
+            setTimeout(() => {
+                if (auditOpinion) auditOpinion.focus();
+            }, 0);
         }
 
         function closeAuditDecisionModal() {
@@ -1977,15 +2012,49 @@
 
         function confirmAuditDecision() {
             const status = document.getElementById('reviewStatus');
-            if (currentAuditDecision === 'approve') {
-                status.textContent = '审核通过';
+            const approveBtn = document.getElementById('auditApproveBtn');
+            const rejectBtn = document.getElementById('auditRejectBtn');
+            const stage1Badge = document.getElementById('stage1AuditResultBadge');
+            const reasonPanel = document.getElementById('stage1AuditReasonPanel');
+            const reasonIcon = document.getElementById('stage1AuditReasonIcon');
+            const reasonTitle = document.getElementById('stage1AuditReasonTitle');
+            const reasonText = document.getElementById('stage1AuditReasonText');
+            const auditOpinion = document.getElementById('auditOpinion');
+            const isApprove = currentAuditDecision === 'approve';
+            if (!isApprove && auditOpinion && !auditOpinion.value.trim()) {
+                auditOpinion.classList.add('border-red-400');
+                auditOpinion.focus();
+                showToast('审核驳回时，请填写审核意见');
+                return;
+            }
+            const submittedReason = auditOpinion?.value?.trim() || (isApprove ? '审核通过，确认同意一阶段不做现场审核。' : '审核驳回，一阶段需要做现场审核。');
+            if (isApprove) {
+                status.textContent = '已受理';
                 status.className = 'px-2 py-1 rounded text-xs font-medium bg-emerald-100 text-emerald-700 border border-emerald-200';
+                if (stage1Badge) {
+                    stage1Badge.textContent = '审核通过';
+                    stage1Badge.className = 'text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-300 px-3 py-1.5 rounded-full shadow-sm ring-2 ring-emerald-50';
+                }
                 showToast('审核通过：同意一阶段不做现场审核');
             } else {
-                status.textContent = '审核驳回';
-                status.className = 'px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-700 border border-red-200';
+                status.textContent = '已受理';
+                status.className = 'px-2 py-1 rounded text-xs font-medium bg-emerald-100 text-emerald-700 border border-emerald-200';
+                if (stage1Badge) {
+                    stage1Badge.textContent = '审核驳回';
+                    stage1Badge.className = 'text-xs font-bold bg-red-100 text-red-700 border border-red-300 px-3 py-1.5 rounded-full shadow-sm ring-2 ring-red-50';
+                }
                 showToast('审核驳回：一阶段需要做现场审核');
             }
+            if (reasonPanel && reasonIcon && reasonTitle && reasonText) {
+                reasonPanel.className = `rounded-xl border p-4 ${isApprove ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'}`;
+                reasonIcon.className = `fas ${isApprove ? 'fa-check-circle text-emerald-600' : 'fa-times-circle text-red-600'} text-sm`;
+                reasonTitle.textContent = '审核意见';
+                reasonTitle.className = `text-sm font-semibold ${isApprove ? 'text-emerald-900' : 'text-red-900'}`;
+                reasonText.textContent = submittedReason;
+                reasonPanel.classList.remove('hidden');
+            }
+            if (approveBtn) approveBtn.remove();
+            if (rejectBtn) rejectBtn.remove();
             closeAuditDecisionModal();
         }
 
