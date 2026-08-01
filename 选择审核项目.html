@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -19,7 +20,7 @@
             --muted-border: #edf2f7;
             --text: #0f172a;
             --muted: #64748b;
-            --modal-width: 760px;
+            --modal-width: 860px;
             --modal-height: 420px;
         }
 
@@ -185,7 +186,8 @@
             background: #f8fbff;
         }
 
-        .audit-tag {
+        .audit-tag,
+        .method-tag {
             display: inline-flex;
             align-items: center;
             height: 22px;
@@ -194,6 +196,17 @@
             border-radius: 4px;
             font-size: 12px;
             line-height: 20px;
+        }
+
+        .notice-bar {
+            padding: 2px 0;
+            border: 0;
+            background: transparent;
+            color: #be185d;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.55;
+            box-shadow: none;
         }
 
         .project-no {
@@ -217,6 +230,18 @@
             background: #ffedd5;
             border-color: #fed7aa;
             color: #ea580c;
+        }
+
+        .method-site {
+            background: #dcfce7;
+            border-color: #bbf7d0;
+            color: #16a34a;
+        }
+
+        .method-remote {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            color: #475569;
         }
 
         .btn {
@@ -276,18 +301,21 @@
                 </div>
                 <div class="info-item">
                     <span class="info-label">审核阶段：</span>
-                    <span class="stage-tag">二阶段</span>
+                    <span class="stage-tag">一阶段</span>
                 </div>
             </div>
+
+            <div class="notice-bar">当前项目存在一阶段现场审核和非现场审核，若创建任务后，则均需要现场审核</div>
 
             <div class="table-container">
                 <table id="dataTable">
                     <thead>
                         <tr>
-                            <th style="width: 34%;">项目编号</th>
-                            <th style="width: 20%;">认证领域</th>
-                            <th style="width: 24%;">审核类型</th>
-                            <th style="width: 22%;">审核人天数</th>
+                            <th style="width: 28%;">项目编号</th>
+                            <th style="width: 16%;">认证领域</th>
+                            <th style="width: 20%;">审核类型</th>
+                            <th style="width: 20%;">一阶段审核方式</th>
+                            <th style="width: 16%;">审核人天数</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody"></tbody>
@@ -303,17 +331,21 @@
 
     <script>
         const mockData = [
-            { projectNo: '1100-Q1-2026-0001', certField: 'QMS', auditType: '监督一', auditDays: '5' },
-            { projectNo: '1100-Q1-2026-0002', certField: 'EMS', auditType: '监督一', auditDays: '4' },
-            { projectNo: '1100-Q1-2026-0003', certField: 'ISMS', auditType: '监督二', auditDays: '3' },
-            { projectNo: '1100-Q1-2026-0004', certField: 'QMS', auditType: '监督二', auditDays: '4' },
-            { projectNo: '1100-Q1-2026-0005', certField: 'OHSMS', auditType: '再认证', auditDays: '6' }
+            { projectNo: '1100-Q1-2026-0001', certField: 'QMS', auditType: '监督一', stage1Method: '有现场', auditDays: '5' },
+            { projectNo: '1100-Q1-2026-0002', certField: 'EMS', auditType: '监督一', stage1Method: '无现场', auditDays: '4' },
+            { projectNo: '1100-Q1-2026-0003', certField: 'ISMS', auditType: '监督二', stage1Method: '有现场', auditDays: '3' },
+            { projectNo: '1100-Q1-2026-0004', certField: 'QMS', auditType: '监督二', stage1Method: '无现场', auditDays: '4' },
+            { projectNo: '1100-Q1-2026-0005', certField: 'OHSMS', auditType: '再认证', stage1Method: '有现场', auditDays: '6' }
         ];
 
         function getAuditTypeClass(auditType) {
             if (auditType === '监督一') return 'tag-blue';
             if (auditType === '监督二') return 'tag-orange';
             return 'tag-green';
+        }
+
+        function getStage1MethodClass(method) {
+            return method === '有现场' ? 'method-site' : 'method-remote';
         }
 
         function renderTable() {
@@ -325,6 +357,9 @@
                     <td>${row.certField}</td>
                     <td>
                         <span class="audit-tag ${getAuditTypeClass(row.auditType)}">${row.auditType}</span>
+                    </td>
+                    <td>
+                        <span class="method-tag ${getStage1MethodClass(row.stage1Method)}">${row.stage1Method}</span>
                     </td>
                     <td>${row.auditDays}</td>
                 </tr>
