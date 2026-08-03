@@ -2165,6 +2165,8 @@
                 certOrg: '原认证机构A',
                 certDomain: '质量管理体系',
                 certStandard: 'GB/T 19001-2016 / ISO 9001:2015',
+                iafMla: '是',
+                certScope: '机械加工、装配及相关质量管理活动',
                 firstIssueDate: '2019-05-18',
                 cycleIssueDate: '2025-05-18',
                 validUntil: '2028-05-17'
@@ -2177,6 +2179,8 @@
                 certOrg: '原认证机构B',
                 certDomain: '质量管理体系',
                 certStandard: 'GB/T 50430-2017',
+                iafMla: '是',
+                certScope: '建筑工程施工及相关质量管理活动',
                 firstIssueDate: '2021-09-10',
                 cycleIssueDate: '2024-09-10',
                 validUntil: '2027-09-09'
@@ -2189,6 +2193,8 @@
                 certOrg: '原认证机构A',
                 certDomain: '环境管理体系',
                 certStandard: 'GB/T 24001-2016 / ISO 14001:2015',
+                iafMla: '是',
+                certScope: '机械加工、装配及相关环境管理活动',
                 firstIssueDate: '2020-03-22',
                 cycleIssueDate: '2026-03-22',
                 validUntil: '2029-03-21'
@@ -2201,6 +2207,8 @@
                 certOrg: '原认证机构C',
                 certDomain: '职业健康安全管理体系',
                 certStandard: 'GB/T 45001-2020 / ISO 45001:2018',
+                iafMla: '是',
+                certScope: '机械加工、装配及相关职业健康安全管理活动',
                 firstIssueDate: '2022-07-01',
                 cycleIssueDate: '2025-07-01',
                 validUntil: '2028-06-30'
@@ -2213,6 +2221,8 @@
                 certOrg: '原认证机构B',
                 certDomain: '质量管理体系',
                 certStandard: 'GB/T 19001-2016 / ISO 9001:2015、GB/T 50430-2017',
+                iafMla: '是',
+                certScope: '产品设计开发、生产和工程施工相关质量管理活动',
                 firstIssueDate: '2017-11-06',
                 cycleIssueDate: '2023-11-06',
                 validUntil: '2026-11-05'
@@ -2225,6 +2235,8 @@
                 certOrg: '原认证机构A',
                 certDomain: '食品安全管理体系',
                 certStandard: 'GB/T 22000 / ISO 22000:2018',
+                iafMla: '是',
+                certScope: '预包装食品生产及相关食品安全管理活动',
                 firstIssueDate: '2020-08-15',
                 cycleIssueDate: '2026-08-15',
                 validUntil: '2029-08-14'
@@ -2237,6 +2249,8 @@
                 certOrg: '原认证机构C',
                 certDomain: '危害分析与关键控制点',
                 certStandard: '危害分析与关键控制点（HACCP）体系认证要求（V1.0）',
+                iafMla: '是',
+                certScope: '食品加工过程的危害分析与关键控制点管理活动',
                 firstIssueDate: '2023-01-12',
                 cycleIssueDate: '2026-01-12',
                 validUntil: '2029-01-11'
@@ -3093,6 +3107,10 @@
                         <input type="text" id="certStandard_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-50 text-slate-600 cursor-not-allowed transition-all">
                     </div>
                     <div>
+                        <label class="block text-[10px] font-medium text-slate-500 mb-1">是否IAF/MLA签约机构</label>
+                        <input type="text" id="iafMla_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-50 text-slate-600 cursor-not-allowed transition-all">
+                    </div>
+                    <div>
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">首次发证日期</label>
                         <input type="date" id="firstIssueDate_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-50 text-slate-600 cursor-not-allowed transition-all">
                     </div>
@@ -3111,6 +3129,10 @@
                     <div>
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">最近一次现场审核结束时间</label>
                         <input type="date" id="lastAuditEnd_${rowId}" readonly class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-50 text-slate-600 cursor-not-allowed transition-all">
+                    </div>
+                    <div class="md:col-span-3">
+                        <label class="block text-[10px] font-medium text-slate-500 mb-1">认证证书的范围</label>
+                        <textarea id="certScope_${rowId}" readonly rows="2" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-50 text-slate-600 cursor-not-allowed transition-all resize-none"></textarea>
                     </div>
                 </div>
             `;
@@ -3137,11 +3159,13 @@
                 [`certAccreditation_${rowId}`]: data.accreditation,
                 [`certDomain_${rowId}`]: data.certDomain,
                 [`certStandard_${rowId}`]: data.certStandard,
+                [`iafMla_${rowId}`]: data.iafMla,
                 [`firstIssueDate_${rowId}`]: data.firstIssueDate,
                 [`cycleIssueDate_${rowId}`]: data.cycleIssueDate,
                 [`validUntil_${rowId}`]: data.validUntil,
                 [`lastAuditStart_${rowId}`]: data.lastAuditStart,
-                [`lastAuditEnd_${rowId}`]: data.lastAuditEnd
+                [`lastAuditEnd_${rowId}`]: data.lastAuditEnd,
+                [`certScope_${rowId}`]: data.certScope
             };
             Object.entries(values).forEach(([id, value]) => {
                 const input = document.getElementById(id);
@@ -3174,6 +3198,8 @@
                     accreditation: index === 1 ? 'CNAS' : 'UKAS',
                     certDomain: sys.name || systemKey,
                     certStandard: (sys.standards || [systemKey]).join('、'),
+                    iafMla: '是',
+                    certScope: `${sys.name || systemKey}相关产品、服务及管理活动`,
                     firstIssueDate: index === 1 ? '2020-06-18' : '2021-09-10',
                     cycleIssueDate: index === 1 ? '2026-06-18' : '2025-09-10',
                     validUntil: index === 1 ? '2029-06-17' : '2028-09-09'
@@ -3226,7 +3252,7 @@
                     </div>
                     <div class="p-6 flex-1 overflow-hidden flex flex-col">
                         <div class="flex-1 overflow-auto custom-scrollbar border border-slate-200 rounded-lg">
-                            <table class="w-full min-w-[1120px] text-sm text-left">
+                            <table class="w-full min-w-[1440px] text-sm text-left">
                                 <thead class="text-xs text-slate-500 bg-slate-50 sticky top-0">
                                     <tr>
                                         <th class="px-4 py-3 w-12">
@@ -3237,6 +3263,8 @@
                                         <th class="px-4 py-3">认可机构</th>
                                         <th class="px-4 py-3">认证领域</th>
                                         <th class="px-4 py-3">认证标准</th>
+                                        <th class="px-4 py-3">是否IAF/MLA签约机构</th>
+                                        <th class="px-4 py-3">认证证书的范围</th>
                                         <th class="px-4 py-3">首次发证日期</th>
                                         <th class="px-4 py-3">本周期发证日期</th>
                                         <th class="px-4 py-3">有效期至</th>
@@ -3244,7 +3272,7 @@
                                 </thead>
                                 <tbody id="transferCertificateResultList" class="divide-y divide-slate-100">
                                     <tr>
-                                        <td colspan="9" class="px-4 py-5">
+                                        <td colspan="11" class="px-4 py-5">
                                             <div class="flex items-center justify-center gap-3 text-center">
                                                 <i class="fas fa-spinner fa-spin text-lg text-amber-500"></i>
                                                 <div>
@@ -3296,6 +3324,8 @@
                         <td class="px-4 py-3">${escapeHtml(cert.accreditation)}</td>
                         <td class="px-4 py-3">${escapeHtml(cert.certDomain)}</td>
                         <td class="px-4 py-3">${escapeHtml(cert.certStandard)}</td>
+                        <td class="px-4 py-3 whitespace-nowrap">${escapeHtml(cert.iafMla)}</td>
+                        <td class="px-4 py-3 min-w-[260px]">${escapeHtml(cert.certScope)}</td>
                         <td class="px-4 py-3 whitespace-nowrap">${escapeHtml(cert.firstIssueDate)}</td>
                         <td class="px-4 py-3 whitespace-nowrap">${escapeHtml(cert.cycleIssueDate)}</td>
                         <td class="px-4 py-3 whitespace-nowrap">${escapeHtml(cert.validUntil)}</td>
