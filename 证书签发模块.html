@@ -358,14 +358,15 @@
         }
 
         .tbl {
-            width: max-content;
-            min-width: 1580px;
+            width: 100%;
+            min-width: 1368px;
             border-collapse: collapse;
             table-layout: fixed;
             font-size: 12px;
         }
 
         .tbl th {
+            box-sizing: border-box;
             padding: 10px 12px;
             border-bottom: 1px solid var(--border);
             background: #f9fafb;
@@ -376,6 +377,7 @@
         }
 
         .tbl td {
+            box-sizing: border-box;
             padding: 10px 12px;
             border-bottom: 1px solid #f3f4f6;
             color: #374151;
@@ -397,6 +399,9 @@
         .col-frozen-company {
             position: sticky;
             left: 36px;
+            width: 200px;
+            min-width: 200px;
+            max-width: 200px;
             z-index: 2;
             background: #fff;
         }
@@ -414,6 +419,9 @@
         .col-frozen-status {
             position: sticky;
             right: 96px;
+            width: 96px;
+            min-width: 96px;
+            max-width: 96px;
             z-index: 2;
             background: #fff;
             text-align: center;
@@ -427,6 +435,9 @@
         .col-frozen-right {
             position: sticky;
             right: 0;
+            width: 96px;
+            min-width: 96px;
+            max-width: 96px;
             z-index: 2;
             background: #fff;
             text-align: center;
@@ -443,6 +454,11 @@
             font-weight: 600;
         }
 
+        .field-cell {
+            white-space: normal;
+            line-height: 1.5;
+        }
+
         .sub-text {
             display: block;
             color: var(--weak);
@@ -456,14 +472,24 @@
         }
 
         .check-cell {
+            width: 36px;
+            min-width: 36px;
+            max-width: 36px;
             text-align: center;
-            padding-left: 6px !important;
-            padding-right: 6px !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
         }
 
         .check-cell input {
+            display: block;
+            margin: 0 auto;
             width: 15px;
             height: 15px;
+        }
+
+        .col-frozen-right .btn {
+            justify-content: center;
+            margin: 0 auto;
         }
 
         .badge {
@@ -645,6 +671,77 @@
             animation: confirmIn 0.16s ease;
         }
 
+        .cert-detail-dialog {
+            display: flex;
+            flex-direction: column;
+            width: 960px;
+            max-width: calc(100vw - 48px);
+            max-height: calc(100vh - 48px);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            background: #fff;
+            box-shadow: var(--shadow-floating);
+            animation: confirmIn 0.16s ease;
+        }
+
+        .cert-detail-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 16px 18px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cert-detail-title {
+            color: #0f172a;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .cert-detail-body {
+            overflow-y: auto;
+            padding: 16px;
+            background: #f8fafc;
+        }
+
+        .cert-detail-footer {
+            display: flex;
+            justify-content: flex-end;
+            padding: 12px 18px;
+            border-top: 1px solid var(--border);
+            background: #fff;
+        }
+
+        .readonly-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px 12px;
+        }
+
+        .readonly-item.full {
+            grid-column: 1 / -1;
+        }
+
+        .readonly-label {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .readonly-value {
+            margin-top: 4px;
+            min-height: 34px;
+            padding: 8px 10px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: #fff;
+            color: #0f172a;
+            font-size: 13px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
         @keyframes confirmIn {
             from { transform: translateY(8px); opacity: 0.7; }
             to { transform: translateY(0); opacity: 1; }
@@ -696,6 +793,38 @@
             color: var(--muted);
             font-size: 12px;
             word-break: break-all;
+        }
+
+        .confirm-reject-reason {
+            display: none;
+            margin-top: 12px;
+        }
+
+        .confirm-reject-reason label {
+            display: block;
+            margin-bottom: 6px;
+            color: #475569;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .confirm-reject-reason textarea {
+            width: 100%;
+            min-height: 86px;
+            padding: 9px 10px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            resize: vertical;
+            color: var(--text);
+            font: inherit;
+            font-size: 13px;
+            line-height: 1.5;
+            outline: none;
+        }
+
+        .confirm-reject-reason textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
         }
 
         .confirm-footer {
@@ -1005,8 +1134,8 @@
         <div class="panel filter-panel">
             <div class="filter-grid">
                 <div class="filter-item">
-                    <label>企业名称 / 原证书编号</label>
-                    <input id="keyword" type="text" placeholder="支持企业名称、原证书编号模糊搜索">
+                    <label>企业名称</label>
+                    <input id="keyword" type="text" placeholder="支持企业名称模糊搜索">
                 </div>
                 <div class="filter-item">
                     <label>认证类型</label>
@@ -1037,25 +1166,18 @@
                     <label>发证方式</label>
                     <select id="issueMode">
                         <option value="">全部</option>
-                        <option value="自动">自动</option>
-                        <option value="手动">手动</option>
-                    </select>
-                </div>
-                <div class="filter-item">
-                    <label>原证书有效期到期日</label>
-                    <select id="expiryRange">
-                        <option value="">全部</option>
-                        <option value="7">近7天</option>
-                        <option value="1m">近1个月</option>
-                        <option value="3m">近3个月</option>
+                        <option value="auto">自动</option>
+                        <option value="A">a</option>
+                        <option value="B">b</option>
+                        <option value="C">c</option>
                     </select>
                 </div>
                 <div class="filter-item">
                     <label>是否加急</label>
                     <select id="urgent">
                         <option value="">全部</option>
-                        <option value="是">是</option>
-                        <option value="否">否</option>
+                        <option value="是">加急</option>
+                        <option value="否">不加急</option>
                     </select>
                 </div>
                 <div class="filter-actions">
@@ -1084,15 +1206,12 @@
                     <thead>
                         <tr>
                             <th class="check-cell col-frozen-left" width="36"><input type="checkbox" id="checkAll" onchange="toggleCheckAll(this)"></th>
-                            <th class="col-frozen-company" width="190">企业名称</th>
+                            <th class="col-frozen-company" width="200">企业名称</th>
                             <th width="100">受理机构</th>
-                            <th width="170">原证书编号</th>
-                            <th width="120">原证书有效期</th>
                             <th width="80">是否加急</th>
                             <th width="90">认证类型</th>
-                            <th width="90">认证领域</th>
-                            <th width="180">认证标准</th>
-                            <th width="150">认证决定提交时间</th>
+                            <th width="260">认证领域</th>
+                            <th width="170">认证决定提交时间</th>
                             <th width="90">发证方式</th>
                             <th width="150">签发时间</th>
                             <th class="col-frozen-status" width="96">处理状态</th>
@@ -1128,6 +1247,19 @@
                 <button class="drawer-close" onclick="closeDrawer()" aria-label="关闭"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="drawer-body">
+                <div class="section" id="rejectReasonSection" style="display:none;">
+                    <div class="section-header">
+                        <div class="section-title"><i class="fa-solid fa-circle-exclamation"></i> 拒绝签发处理信息</div>
+                    </div>
+                    <div class="section-body">
+                        <div class="info-grid">
+                            <div><div class="info-label">处理人</div><div class="info-value" id="drawerRejectProcessor">-</div></div>
+                            <div><div class="info-label">处理时间</div><div class="info-value" id="drawerRejectProcessTime">-</div></div>
+                            <div style="grid-column:1 / -1;"><div class="info-label">处理说明</div><div class="readonly-value" id="drawerRejectReason">-</div></div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="section">
                     <div class="section-header">
                         <div class="section-title"><i class="fa-solid fa-building"></i> 基本信息</div>
@@ -1136,12 +1268,9 @@
                     <div class="section-body">
                         <div class="info-grid" id="singleInfoGrid">
                             <div><div class="info-label">企业名称</div><div class="info-value" id="drawerCompany">-</div></div>
-                            <div><div class="info-label">原证书编号</div><div class="info-value cert-no" id="drawerCertNo">-</div></div>
                             <div><div class="info-label">认证领域</div><div class="info-value" id="drawerScope">-</div></div>
                             <div><div class="info-label">认证类型</div><div class="info-value" id="drawerType">-</div></div>
                             <div><div class="info-label">认证决定</div><div class="info-value" id="drawerDecision">-</div></div>
-                            <div><div class="info-label">客户发证方式</div><div class="info-value" id="drawerMode">-</div></div>
-                            <div><div class="info-label">原证书有效期</div><div class="info-value" id="drawerOldExpiry">-</div></div>
                             <div><div class="info-label">认证决定提交时间</div><div class="info-value" id="drawerDecisionSubmitTime">-</div></div>
                             <div><div class="info-label">最近一次现场审核开始时间</div><div class="info-value" id="drawerAuditStartTime">-</div></div>
                             <div><div class="info-label">最近一次现场审核结束时间</div><div class="info-value" id="drawerAuditEndTime">-</div></div>
@@ -1151,12 +1280,9 @@
                                 <thead>
                                     <tr>
                                         <th>企业名称</th>
-                                        <th>原证书编号</th>
                                         <th>认证类型</th>
                                         <th>认证领域</th>
                                         <th>认证决定</th>
-                                        <th>发证方式</th>
-                                        <th>原证书有效期</th>
                                         <th>最近一次现场审核开始时间</th>
                                         <th>最近一次现场审核结束时间</th>
                                     </tr>
@@ -1164,6 +1290,27 @@
                                 <tbody id="batchInfoTableBody"></tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title"><i class="fa-solid fa-id-card"></i> 证书信息</div>
+                    </div>
+                    <div class="section-body" style="overflow-x:auto;">
+                        <table class="mini-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 60px;">序号</th>
+                                    <th>认证范围</th>
+                                    <th style="width: 180px;">认证标准</th>
+                                    <th style="width: 120px;">认证证书标志</th>
+                                    <th style="width: 100px;">是否有子证</th>
+                                    <th style="width: 90px;">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="certInfoTableBody"></tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -1192,40 +1339,9 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="section">
-                    <div class="section-header">
-                        <div class="section-title"><i class="fa-solid fa-user-shield"></i> 签发处理</div>
-                    </div>
-                    <div class="section-body">
-                        <div class="form-grid">
-                            <div class="form-item">
-                                <label>处理结论 <span class="required">*</span></label>
-                                <input type="hidden" id="handleResult" value="签发">
-                                <div class="result-choice-group" role="radiogroup" aria-label="处理结论">
-                                    <label class="result-choice">
-                                        <input type="radio" id="handleIssueChoice" name="handleResultChoice" value="签发" checked onchange="setHandleResult(this.value)">
-                                        <span>签发</span>
-                                    </label>
-                                    <label class="result-choice">
-                                        <input type="radio" id="handleRejectChoice" name="handleResultChoice" value="不予签发" onchange="setHandleResult(this.value)">
-                                        <span>不予签发</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-item" id="issueDateItem">
-                                <label>签发日期</label>
-                                <input id="issueDate" type="date" disabled>
-                            </div>
-                            <div class="form-item full">
-                                <label>处理说明</label>
-                                <textarea id="handleRemark" placeholder="请输入签发或不予签发说明，系统将记录操作人、操作时间与规则计算结果。"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
             <div class="drawer-footer">
+                <input id="issueDate" type="hidden">
                 <button class="btn btn-default" onclick="closeDrawer()">取消</button>
                 <button class="btn btn-danger" id="rejectBtn" onclick="submitHandle('不予签发')"><i class="fa-solid fa-ban"></i> 不予签发</button>
                 <button class="btn btn-primary" id="issueBtn" onclick="submitHandle('签发')"><i class="fa-solid fa-signature"></i> 签发</button>
@@ -1240,12 +1356,29 @@
                 <div>
                     <div class="confirm-title" id="confirmTitle">确认操作</div>
                     <div class="confirm-message" id="confirmMessage">请确认是否继续。</div>
-                    <div class="confirm-meta" id="confirmMeta">-</div>
+                    <div class="confirm-meta" id="confirmMeta" style="display:none;"></div>
+                    <div class="confirm-reject-reason" id="confirmRejectReasonWrap">
+                        <label>处理说明 <span class="required">*</span></label>
+                        <textarea id="confirmRejectReason" placeholder="请输入不予签发说明"></textarea>
+                    </div>
                 </div>
             </div>
             <div class="confirm-footer">
                 <button class="btn btn-default" onclick="closeConfirmDialog()">取消</button>
                 <button class="btn btn-primary" id="confirmActionBtn" onclick="confirmSubmitHandle()"><i class="fa-solid fa-check"></i> 确认</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="confirm-mask" id="certDetailDialog" role="dialog" aria-modal="true" aria-labelledby="certDetailTitle">
+        <div class="cert-detail-dialog">
+            <div class="cert-detail-header">
+                <div class="cert-detail-title" id="certDetailTitle">证书内容确认件</div>
+                <button class="drawer-close" onclick="closeCertDetailDialog()" aria-label="关闭"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="cert-detail-body" id="certDetailBody"></div>
+            <div class="cert-detail-footer">
+                <button class="btn btn-default" onclick="closeCertDetailDialog()">关闭</button>
             </div>
         </div>
     </div>
@@ -1473,8 +1606,10 @@
         let pageSize = 10;
         let pendingConfirmResult = null;
         let pendingConfirmIds = [];
+        let pendingRejectReason = '';
         const selectedIds = new Set();
         const typeOrder = ['初次认证', '监督', '再认证', '证书变更', '认证转换'];
+        const currentOperator = '当前用户';
 
         document.addEventListener('DOMContentLoaded', () => {
             const today = new Date().toISOString().slice(0, 10);
@@ -1499,7 +1634,6 @@
             const certType = document.getElementById('certType').value;
             const certField = document.getElementById('certField').value;
             const issueMode = document.getElementById('issueMode').value;
-            const expiryRange = document.getElementById('expiryRange').value;
             const urgent = document.getElementById('urgent').value;
 
             return issueRows.filter(row => {
@@ -1508,42 +1642,30 @@
                     currentTab === 'pending' ? row.state === 'pending' :
                     currentTab === 'issued' ? row.state === 'issued' :
                     row.state === 'rejected';
-                const keywordMatched = !keyword || row.company.toLowerCase().includes(keyword) || row.certNo.toLowerCase().includes(keyword);
+                const keywordMatched = !keyword || row.company.toLowerCase().includes(keyword);
                 return tabMatched
                     && keywordMatched
                     && (!certType || row.type === certType)
                     && (!certField || row.field === certField)
-                    && (!issueMode || row.mode === issueMode)
-                    && isExpiryMatched(row.oldExpiry, expiryRange)
+                    && (!issueMode || getIssueRule(row) === issueMode)
                     && (!urgent || row.urgent === urgent);
             }).sort((a, b) => {
+                const urgentOrderValue = (b.urgent === '是') - (a.urgent === '是');
+                if (urgentOrderValue !== 0) return urgentOrderValue;
                 const typeOrderValue = typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type);
                 if (typeOrderValue !== 0) return typeOrderValue;
                 return a.decisionSubmitTime.localeCompare(b.decisionSubmitTime);
             });
         }
 
-        function parseDateOnly(dateText) {
-            if (!/^\d{4}-\d{2}-\d{2}$/.test(dateText || '')) return null;
-            const date = new Date(`${dateText}T00:00:00`);
-            return Number.isNaN(date.getTime()) ? null : date;
+        function getIssueRule(row) {
+            return row.type === '再认证' ? row.rule : 'auto';
         }
 
-        function isExpiryMatched(dateText, range) {
-            if (!range) return true;
-            const expiry = parseDateOnly(dateText);
-            if (!expiry) return false;
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const end = new Date(today);
-            if (range === '7') {
-                end.setDate(end.getDate() + 7);
-            } else if (range === '1m') {
-                end.setMonth(end.getMonth() + 1);
-            } else if (range === '3m') {
-                end.setMonth(end.getMonth() + 3);
-            }
-            return expiry >= today && expiry <= end;
+        function issueRuleTag(row) {
+            const rule = getIssueRule(row);
+            const cls = rule === 'auto' ? 'b-blue' : rule === 'A' ? 'b-blue' : rule === 'B' ? 'b-orange' : 'b-green';
+            return tag(rule === 'auto' ? '自动' : rule.toLowerCase(), cls);
         }
 
         function renderTable() {
@@ -1565,14 +1687,11 @@
                         <div class="company-name">${row.company}</div>
                     </td>
                     <td>${row.business}</td>
-                    <td><span class="cert-no">${row.certNo}</span></td>
-                    <td>${row.oldExpiry}</td>
-                    <td>${tag(row.urgent, row.urgent === '是' ? 'b-red' : 'b-gray')}</td>
+                    <td>${urgentText(row)}</td>
                     <td>${tag(row.type, row.type === '初次认证' ? 'b-cyan' : 'b-orange')}</td>
-                    <td>${fieldText(row.field)}</td>
-                    <td>${row.standard}</td>
+                    <td class="field-cell">${fieldText(row.field)}</td>
                     <td>${row.decisionSubmitTime}</td>
-                    <td>${tag(row.mode, row.mode === '自动' ? 'b-blue' : 'b-orange')}</td>
+                    <td>${issueRuleTag(row)}</td>
                     <td>${row.issueTime}</td>
                     <td class="col-frozen-status">${statusTag(row)}</td>
                     <td class="col-frozen-right">${actions(row)}</td>
@@ -1583,6 +1702,19 @@
 
         function tag(text, cls) {
             return `<span class="badge ${cls}">${text}</span>`;
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '-')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function urgentText(row) {
+            return row.urgent === '是' ? tag('加急', 'b-red') : '不加急';
         }
 
         function fieldText(field) {
@@ -1597,6 +1729,73 @@
                 EnMS: 'EnMS（能源管理体系）'
             };
             return map[field] || field;
+        }
+
+        function certRangeText(row) {
+            return row.certRange || row.scope || fieldText(row.field);
+        }
+
+        function accreditationText(row) {
+            return row.accreditation || 'CNAS';
+        }
+
+        function getCertInfoRows(row) {
+            if (Array.isArray(row.certInfos) && row.certInfos.length) return row.certInfos;
+            const baseRange = certRangeText(row);
+            const agencies = row.accreditations || ['CNAS', 'UKAS', 'DAKKS'];
+            const count = row.type === '再认证' ? 3 : 2;
+            const buildDetail = (scope, certMark, hasSubCert, index) => ({
+                customerName: row.company,
+                customerNameEn: `${row.company} Co., Ltd.`,
+                regAddress: '北京市朝阳区建国路88号',
+                regAddressEn: 'No.88 Jianguo Road, Chaoyang District, Beijing',
+                certAddress: row.business,
+                certAddressEn: `${row.business} Operation Site`,
+                legalRep: '张先生',
+                creditCode: `91110000${row.id.slice(-3)}XXXXXX`,
+                scope,
+                scopeEn: `${row.field} management activities and related services`,
+                soaVersion: row.field === 'ISMS' ? 'SoA V1.0' : '-',
+                soaDate: row.field === 'ISMS' ? '2026-05-01' : '-',
+                standard: row.standard,
+                certMark,
+                issueEnglishCert: '是',
+                hasAttachment: '是',
+                hasSubCert,
+                sites: [
+                    { code: '01', name: row.company, nameEn: `${row.company} Co., Ltd.`, creditCode: `91110000${row.id.slice(-3)}XXXXXX`, address: '北京市朝阳区建国路88号', addressEn: 'No.88 Jianguo Road, Chaoyang District, Beijing', products: scope, productsEn: 'Certified products and services', subCert: hasSubCert, remark: index === 0 ? '中心职能' : '证书附件场所' },
+                    { code: '02', name: `${row.company}生产现场`, nameEn: 'Production Site', creditCode: `91110000${row.id.slice(-3)}000001`, address: '江苏省苏州市工业园区', addressEn: 'Suzhou Industrial Park, Jiangsu', products: `${scope}相关活动`, productsEn: 'Related certified activities', subCert: index % 2 === 0 ? '是' : '否', remark: '-' }
+                ],
+                products: [
+                    { category: row.field, categoryEn: row.field, name: scope, nameEn: 'Certified products/services', remark: '-' }
+                ]
+            });
+            const rows = [
+                {
+                    scope: baseRange,
+                    standard: row.standard,
+                    certMark: agencies[0],
+                    hasSubCert: '是',
+                    detail: buildDetail(baseRange, agencies[0], '是', 0)
+                },
+                {
+                    scope: `${baseRange}（多场所）`,
+                    standard: row.standard,
+                    certMark: agencies[1] || agencies[0],
+                    hasSubCert: '否',
+                    detail: buildDetail(`${baseRange}（多场所）`, agencies[1] || agencies[0], '否', 1)
+                }
+            ];
+            if (count === 3) {
+                rows.push({
+                    scope: `${baseRange}（扩展范围）`,
+                    standard: row.standard,
+                    certMark: agencies[2] || agencies[0],
+                    hasSubCert: '是',
+                    detail: buildDetail(`${baseRange}（扩展范围）`, agencies[2] || agencies[0], '是', 2)
+                });
+            }
+            return rows;
         }
 
         function statusTag(row) {
@@ -1680,10 +1879,14 @@
                 showToast('请选择待签发状态的证书进行批量处理');
                 return;
             }
+            const hasRecert = processableRows.some(row => row.type === '再认证');
+            const hasOtherType = processableRows.some(row => row.type !== '再认证');
+            if (hasRecert && hasOtherType) {
+                showToast('再认证与其他认证类型需分开批量发起');
+                return;
+            }
             currentBatchIds = processableRows.map(row => row.id);
             openDrawer(processableRows[0].id);
-            const companyCount = new Set(processableRows.map(row => row.company)).size;
-            document.getElementById('handleRemark').value = `批量处理 ${processableRows.length} 条证书，涉及 ${companyCount} 家企业，提交后系统按所选记录批量执行。`;
         }
 
         function applyFilters() {
@@ -1693,7 +1896,7 @@
         }
 
         function resetFilters() {
-            ['keyword', 'certType', 'certField', 'issueMode', 'expiryRange', 'urgent'].forEach(id => {
+            ['keyword', 'certType', 'certField', 'issueMode', 'urgent'].forEach(id => {
                 document.getElementById(id).value = '';
             });
             currentPage = 1;
@@ -1720,20 +1923,21 @@
             }
             document.getElementById('drawerSubtitle').textContent = '';
             document.getElementById('drawerCompany').textContent = currentRow.company;
-            document.getElementById('drawerCertNo').textContent = currentRow.certNo;
             document.getElementById('drawerScope').textContent = currentRow.scope;
             document.getElementById('drawerType').textContent = currentRow.type;
             document.getElementById('drawerDecision').innerHTML = tag(currentRow.decision, currentRow.decision === '准予发证' ? 'b-green' : 'b-red');
-            document.getElementById('drawerMode').innerHTML = tag(currentRow.mode, currentRow.mode === '自动' ? 'b-blue' : 'b-orange');
-            document.getElementById('drawerOldExpiry').textContent = currentRow.oldExpiry;
             document.getElementById('drawerDecisionSubmitTime').textContent = currentRow.decisionSubmitTime;
             document.getElementById('drawerAuditStartTime').textContent = getLatestAuditStartTime(currentRow);
             document.getElementById('drawerAuditEndTime').textContent = getLatestAuditEndTime(currentRow);
             document.getElementById('drawerStatus').textContent = currentRow.status;
             document.getElementById('drawerStatus').className = `badge ${currentRow.state === 'issued' ? 'b-green' : currentRow.state === 'rejected' ? 'b-red' : 'b-blue'}`;
-            document.getElementById('handleResult').value = preset === 'reject' ? '不予签发' : '签发';
-            document.getElementById('handleRemark').value = defaultRemark(currentRow);
+            const rejectSection = document.getElementById('rejectReasonSection');
+            rejectSection.style.display = currentRow.state === 'rejected' ? 'block' : 'none';
+            document.getElementById('drawerRejectProcessor').textContent = currentRow.rejectProcessor || '-';
+            document.getElementById('drawerRejectProcessTime').textContent = currentRow.rejectProcessTime || '-';
+            document.getElementById('drawerRejectReason').textContent = currentRow.rejectReason || '-';
             renderDrawerBasicInfo();
+            renderCertInfoTable();
             renderRuleCards(currentRow);
             syncFooterButtons();
             document.getElementById('issueDrawer').classList.add('show');
@@ -1748,45 +1952,156 @@
             document.getElementById('batchInfoTableBody').innerHTML = rows.map(row => `
                 <tr>
                     <td>${row.company}</td>
-                    <td><span class="cert-no">${row.certNo}</span></td>
                     <td>${row.type}</td>
                     <td>${fieldText(row.field)}</td>
                     <td>${row.decision}</td>
-                    <td>${row.mode}</td>
-                    <td>${row.oldExpiry}</td>
                     <td>${getLatestAuditStartTime(row)}</td>
                     <td>${getLatestAuditEndTime(row)}</td>
                 </tr>
             `).join('');
         }
 
-        function defaultRemark(row) {
-            if (row.mode === '自动') {
-                return '该证书已生成自动签发计划，可等待后台按计划签发，也可手动处理。';
-            }
-            return '客户选择手动发证，确认后执行签发或不予签发。';
+        function renderCertInfoTable() {
+            const rows = issueRows.filter(row => currentBatchIds.includes(row.id));
+            const certRows = rows.flatMap(row => getCertInfoRows(row).map((cert, certIndex) => ({ ...cert, rowId: row.id, certIndex })));
+            document.getElementById('certInfoTableBody').innerHTML = certRows.map((cert, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${escapeHtml(cert.scope || '-')}</td>
+                    <td>${escapeHtml(cert.standard || '-')}</td>
+                    <td>${escapeHtml(cert.certMark || 'CNAS')}</td>
+                    <td>${escapeHtml(cert.hasSubCert || '-')}</td>
+                    <td><button class="btn btn-text" onclick="openCertDetailDialog('${cert.rowId}', ${cert.certIndex})"><i class="fa-solid fa-eye"></i> 查看详情</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function readonlyItem(label, value, full = false) {
+            return `
+                <div class="readonly-item${full ? ' full' : ''}">
+                    <div class="readonly-label">${escapeHtml(label)}</div>
+                    <div class="readonly-value">${escapeHtml(value || '-')}</div>
+                </div>
+            `;
+        }
+
+        function readonlySection(title, index, content) {
+            return `
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title"><span class="badge b-blue">${index}</span>${escapeHtml(title)}</div>
+                    </div>
+                    <div class="section-body">${content}</div>
+                </div>
+            `;
+        }
+
+        function readonlyTable(headers, rows) {
+            return `
+                <div style="overflow-x:auto;">
+                    <table class="mini-table">
+                        <thead><tr>${headers.map(header => `<th>${escapeHtml(header)}</th>`).join('')}</tr></thead>
+                        <tbody>${rows.map(row => `<tr>${row.map(cell => `<td>${escapeHtml(cell || '-')}</td>`).join('')}</tr>`).join('')}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function openCertDetailDialog(rowId, certIndex) {
+            const row = issueRows.find(item => item.id === rowId);
+            if (!row) return;
+            const cert = getCertInfoRows(row)[certIndex];
+            if (!cert) return;
+            const detail = cert.detail || {
+                customerName: row.company,
+                customerNameEn: `${row.company} Co., Ltd.`,
+                regAddress: '-',
+                regAddressEn: '-',
+                certAddress: row.business,
+                certAddressEn: '-',
+                legalRep: '-',
+                creditCode: '-',
+                scope: cert.scope,
+                scopeEn: '-',
+                soaVersion: '-',
+                soaDate: '-',
+                standard: cert.standard,
+                certMark: cert.certMark,
+                issueEnglishCert: '是',
+                hasAttachment: '是',
+                hasSubCert: cert.hasSubCert,
+                sites: [],
+                products: []
+            };
+            document.getElementById('certDetailTitle').textContent = `证书内容确认件 - ${row.company}`;
+            document.getElementById('certDetailBody').innerHTML =
+                readonlySection('客户基本信息', 1, `
+                    <div class="readonly-grid">
+                        ${readonlyItem('客户名称', detail.customerName)}
+                        ${readonlyItem('客户名称（英文）', detail.customerNameEn)}
+                        ${readonlyItem('注册地址', detail.regAddress)}
+                        ${readonlyItem('注册地址（英文）', detail.regAddressEn)}
+                        ${readonlyItem('运营地址', detail.certAddress)}
+                        ${readonlyItem('运营地址（英文）', detail.certAddressEn)}
+                        ${readonlyItem('法人代表或负责人', detail.legalRep)}
+                        ${readonlyItem('统一社会信用代码或注册编号(境外组织)', detail.creditCode)}
+                    </div>
+                `) +
+                readonlySection('认证范围', 2, `
+                    <div class="readonly-grid">
+                        ${readonlyItem('认证范围（中文）', detail.scope, true)}
+                        ${readonlyItem('认证范围（英文）', detail.scopeEn, true)}
+                        ${readonlyItem('SoA版本（ISMS适用）', detail.soaVersion)}
+                        ${readonlyItem('SoA发布日期（ISMS适用）', detail.soaDate)}
+                    </div>
+                `) +
+                readonlySection('认证标准与证书标志选择', 3, `
+                    <div class="readonly-grid">
+                        ${readonlyItem('认证标准', detail.standard, true)}
+                        ${readonlyItem('认证证书标志', `${detail.certMark}标志`)}
+                        ${readonlyItem('是否出具英文证书', detail.issueEnglishCert)}
+                    </div>
+                `) +
+                readonlySection('证书附件与子证书', 4, `
+                    <div class="readonly-grid">
+                        ${readonlyItem('是否有证书附件', detail.hasAttachment)}
+                        ${readonlyItem('是否有子证书', detail.hasSubCert)}
+                    </div>
+                `) +
+                readonlySection('证书附件【多场所】', 5, readonlyTable(
+                    ['场所编号', '（组织/场所）名称', '（组织/场所）名称（英）', '统一信用代码', '运营地址', '运营地址（英）', '覆盖的产品和服务', '覆盖的产品和服务（英）', '客户需要子证/是否出子证', '备注'],
+                    (detail.sites || []).map(site => [site.code, site.name, site.nameEn, site.creditCode, site.address, site.addressEn, site.products, site.productsEn, site.subCert, site.remark])
+                )) +
+                readonlySection('证书附件【产品信息】（如适用）', 6, readonlyTable(
+                    ['序号', '产品类别', '产品类别（英）', '产品名称', '产品名称（英）', '备注'],
+                    (detail.products || []).map((product, index) => [index + 1, product.category, product.categoryEn, product.name, product.nameEn, product.remark])
+                ));
+            document.getElementById('certDetailDialog').classList.add('show');
+        }
+
+        function closeCertDetailDialog() {
+            document.getElementById('certDetailDialog').classList.remove('show');
         }
 
         function renderRuleCards(row) {
             const isRecert = row.type === '再认证';
-            const showRuleSection = isRecert && row.mode !== '手动';
+            const showRuleSection = isRecert;
             document.getElementById('ruleSection').style.display = showRuleSection ? 'block' : 'none';
             if (!showRuleSection) return;
             document.getElementById('ruleCards').style.display = 'grid';
             document.querySelectorAll('[data-rule-card]').forEach(card => {
-                const isSelected = card.dataset.ruleCard === row.rule || (row.rule === '初次自动' && card.dataset.ruleCard === 'C');
+                const isSelected = card.dataset.ruleCard === getIssueRule(row);
                 card.classList.toggle('selected', isSelected);
                 const mark = card.querySelector('.current-rule-mark');
                 if (mark) mark.style.display = isSelected ? 'inline-flex' : 'none';
             });
             const notice = document.getElementById('drawerRuleNotice');
             notice.className = 'notice';
-            notice.innerHTML = `<i class="fa-solid fa-circle-info"></i><div>当前客户选择再认证方式 ${row.rule}。如手动处理，系统按方式 C 计算证书有效期。</div>`;
+            notice.innerHTML = `<i class="fa-solid fa-circle-info"></i><div>当前再认证发证方式为 ${getIssueRule(row).toLowerCase()}。如手动处理，系统按方式 c 计算证书有效期。</div>`;
         }
 
         function setHandleResult(result) {
             if (currentRow && currentRow.state !== 'pending') return;
-            document.getElementById('handleResult').value = result;
             syncFooterButtons();
         }
 
@@ -1798,58 +2113,62 @@
         function openConfirmDialog(result, targetRows) {
             pendingConfirmResult = result;
             pendingConfirmIds = targetRows.map(row => row.id);
+            pendingRejectReason = '';
             const isReject = result === '不予签发';
-            const isBatch = targetRows.length > 1;
-            const companyCount = new Set(targetRows.map(row => row.company)).size;
-            const certSummary = isBatch ? `${companyCount} 家企业 / ${targetRows.length} 条证书` : `${targetRows[0].company} / ${targetRows[0].certNo}`;
             document.getElementById('confirmTitle').textContent = isReject ? '确认不予签发' : '确认签发';
             document.getElementById('confirmMessage').textContent = isReject
-                ? '提交后所选证书将进入拒绝签发状态，请确认处理结论与说明无误。'
-                : '提交后系统将执行证书签发并记录签发时间，请确认处理结论与说明无误。';
-            document.getElementById('confirmMeta').textContent = certSummary;
+                ? '提交后所选证书将进入拒绝签发状态，请填写处理说明并确认。'
+                : '提交后系统将执行证书签发并记录签发时间，请确认无误。';
+            document.getElementById('confirmMeta').style.display = 'none';
+            document.getElementById('confirmMeta').textContent = '';
+            const reasonWrap = document.getElementById('confirmRejectReasonWrap');
+            const reasonInput = document.getElementById('confirmRejectReason');
+            reasonWrap.style.display = isReject ? 'block' : 'none';
+            reasonInput.value = '';
             document.getElementById('confirmIcon').className = `confirm-icon${isReject ? ' danger' : ''}`;
             document.getElementById('confirmIcon').innerHTML = `<i class="fa-solid ${isReject ? 'fa-triangle-exclamation' : 'fa-signature'}"></i>`;
             const actionBtn = document.getElementById('confirmActionBtn');
             actionBtn.className = `btn ${isReject ? 'btn-danger' : 'btn-primary'}`;
             actionBtn.innerHTML = `<i class="fa-solid fa-check"></i> ${isReject ? '确认不予签发' : '确认签发'}`;
             document.getElementById('confirmDialog').classList.add('show');
+            if (isReject) {
+                window.setTimeout(() => reasonInput.focus(), 0);
+            }
         }
 
         function closeConfirmDialog() {
             document.getElementById('confirmDialog').classList.remove('show');
             pendingConfirmResult = null;
             pendingConfirmIds = [];
+            pendingRejectReason = '';
         }
 
         function confirmSubmitHandle() {
             if (!pendingConfirmResult || !pendingConfirmIds.length) return;
             const result = pendingConfirmResult;
             const targetIds = [...pendingConfirmIds];
+            let rejectReason = '';
+            if (result === '不予签发') {
+                rejectReason = document.getElementById('confirmRejectReason').value.trim();
+                if (!rejectReason) {
+                    showToast('请填写不予签发处理说明');
+                    document.getElementById('confirmRejectReason').focus();
+                    return;
+                }
+            }
             closeConfirmDialog();
-            executeHandle(result, targetIds);
+            executeHandle(result, targetIds, rejectReason);
         }
 
         function syncFooterButtons() {
             const isReadonly = currentRow && currentRow.state !== 'pending';
-            const result = document.getElementById('handleResult').value;
-            const issueChoice = document.getElementById('handleIssueChoice');
-            const rejectChoice = document.getElementById('handleRejectChoice');
-            const issueDateItem = document.getElementById('issueDateItem');
-
-            issueChoice.checked = result === '签发';
-            issueChoice.disabled = isReadonly;
-            rejectChoice.checked = result === '不予签发';
-            rejectChoice.disabled = isReadonly;
-            issueDateItem.style.display = result === '签发' ? 'flex' : 'none';
-
-            document.getElementById('handleRemark').readOnly = isReadonly;
             if (isReadonly) {
                 document.getElementById('issueBtn').style.display = 'none';
                 document.getElementById('rejectBtn').style.display = 'none';
                 return;
             }
-            document.getElementById('issueBtn').style.display = result === '签发' ? 'inline-flex' : 'none';
-            document.getElementById('rejectBtn').style.display = result === '不予签发' ? 'inline-flex' : 'none';
+            document.getElementById('issueBtn').style.display = 'inline-flex';
+            document.getElementById('rejectBtn').style.display = 'inline-flex';
         }
 
         function submitHandle(result) {
@@ -1864,8 +2183,9 @@
             openConfirmDialog(result, targetRows);
         }
 
-        function executeHandle(result, targetIds) {
+        function executeHandle(result, targetIds, rejectReason = '') {
             const targetRows = issueRows.filter(row => targetIds.includes(row.id) && row.state === 'pending');
+            const processTime = formatDateTime(new Date());
             targetRows.forEach(row => {
                 row.status = result === '签发' ? '已签发' : '拒绝签发';
                 row.state = result === '签发' ? 'issued' : 'rejected';
@@ -1874,6 +2194,9 @@
                     row.issueTime = `${document.getElementById('issueDate').value} 人工处理`;
                 } else {
                     row.issueTime = '不予签发';
+                    row.rejectProcessor = currentOperator;
+                    row.rejectProcessTime = processTime;
+                    row.rejectReason = rejectReason;
                 }
                 selectedIds.delete(row.id);
             });
@@ -1897,6 +2220,12 @@
             const m = String(date.getMonth() + 1).padStart(2, '0');
             const d = String(date.getDate()).padStart(2, '0');
             return `${y}-${m}-${d}`;
+        }
+
+        function formatDateTime(date) {
+            const h = String(date.getHours()).padStart(2, '0');
+            const min = String(date.getMinutes()).padStart(2, '0');
+            return `${formatDate(date)} ${h}:${min}`;
         }
 
         function showToast(message) {
