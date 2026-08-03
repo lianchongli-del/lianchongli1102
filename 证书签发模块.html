@@ -854,6 +854,40 @@
             font-weight: 600;
         }
 
+        .result-choice-group {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            min-height: 34px;
+        }
+
+        .result-choice {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #475569;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .result-choice input {
+            width: 14px;
+            height: 14px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .result-choice:has(input:disabled) {
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .result-choice input:disabled {
+            cursor: not-allowed;
+        }
+
         .required {
             color: var(--danger);
         }
@@ -1167,12 +1201,19 @@
                         <div class="form-grid">
                             <div class="form-item">
                                 <label>处理结论 <span class="required">*</span></label>
-                                <select id="handleResult" onchange="syncFooterButtons()">
-                                    <option value="签发">签发</option>
-                                    <option value="不予签发">不予签发</option>
-                                </select>
+                                <input type="hidden" id="handleResult" value="签发">
+                                <div class="result-choice-group" role="radiogroup" aria-label="处理结论">
+                                    <label class="result-choice">
+                                        <input type="radio" id="handleIssueChoice" name="handleResultChoice" value="签发" checked onchange="setHandleResult(this.value)">
+                                        <span>签发</span>
+                                    </label>
+                                    <label class="result-choice">
+                                        <input type="radio" id="handleRejectChoice" name="handleResultChoice" value="不予签发" onchange="setHandleResult(this.value)">
+                                        <span>不予签发</span>
+                                    </label>
+                                </div>
                             </div>
-                            <div class="form-item">
+                            <div class="form-item" id="issueDateItem">
                                 <label>签发日期</label>
                                 <input id="issueDate" type="date" disabled>
                             </div>
@@ -1728,8 +1769,9 @@
 
         function renderRuleCards(row) {
             const isRecert = row.type === '再认证';
-            document.getElementById('ruleSection').style.display = isRecert ? 'block' : 'none';
-            if (!isRecert) return;
+            const showRuleSection = isRecert && row.mode !== '手动';
+            document.getElementById('ruleSection').style.display = showRuleSection ? 'block' : 'none';
+            if (!showRuleSection) return;
             document.getElementById('ruleCards').style.display = 'grid';
             document.querySelectorAll('[data-rule-card]').forEach(card => {
                 const isSelected = card.dataset.ruleCard === row.rule || (row.rule === '初次自动' && card.dataset.ruleCard === 'C');
@@ -1740,6 +1782,12 @@
             const notice = document.getElementById('drawerRuleNotice');
             notice.className = 'notice';
             notice.innerHTML = `<i class="fa-solid fa-circle-info"></i><div>当前客户选择再认证方式 ${row.rule}。如手动处理，系统按方式 C 计算证书有效期。</div>`;
+        }
+
+        function setHandleResult(result) {
+            if (currentRow && currentRow.state !== 'pending') return;
+            document.getElementById('handleResult').value = result;
+            syncFooterButtons();
         }
 
         function closeDrawer() {
@@ -1783,14 +1831,23 @@
 
         function syncFooterButtons() {
             const isReadonly = currentRow && currentRow.state !== 'pending';
-            document.getElementById('handleResult').disabled = isReadonly;
+            const result = document.getElementById('handleResult').value;
+            const issueChoice = document.getElementById('handleIssueChoice');
+            const rejectChoice = document.getElementById('handleRejectChoice');
+            const issueDateItem = document.getElementById('issueDateItem');
+
+            issueChoice.checked = result === '签发';
+            issueChoice.disabled = isReadonly;
+            rejectChoice.checked = result === '不予签发';
+            rejectChoice.disabled = isReadonly;
+            issueDateItem.style.display = result === '签发' ? 'flex' : 'none';
+
             document.getElementById('handleRemark').readOnly = isReadonly;
             if (isReadonly) {
                 document.getElementById('issueBtn').style.display = 'none';
                 document.getElementById('rejectBtn').style.display = 'none';
                 return;
             }
-            const result = document.getElementById('handleResult').value;
             document.getElementById('issueBtn').style.display = result === '签发' ? 'inline-flex' : 'none';
             document.getElementById('rejectBtn').style.display = result === '不予签发' ? 'inline-flex' : 'none';
         }
@@ -1816,7 +1873,7 @@
                     row.newValidity = calcManualValidity(document.getElementById('issueDate').value);
                     row.issueTime = `${document.getElementById('issueDate').value} 人工处理`;
                 } else {
-                    row.issueTime = `${document.getElementById('issueDate').value} 拒绝签发`;
+                    row.issueTime = '不予签发';
                 }
                 selectedIds.delete(row.id);
             });
