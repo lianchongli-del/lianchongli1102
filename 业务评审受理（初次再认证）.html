@@ -2128,7 +2128,10 @@
             setChoiceCardSelected(document.getElementById('recertStageNoCard'), !hasStage1);
             const typeOptions = document.getElementById('recertStageTypeOptions');
             if (typeOptions) typeOptions.classList.toggle('hidden', !hasStage1);
-            if (!hasStage1) {
+            const noSiteApply = document.getElementById('recertStage1NoSiteApply');
+            if (hasStage1) {
+                if (noSiteApply) noSiteApply.classList.remove('hidden');
+            } else {
                 resetRecertStage1NoSiteApply();
             }
         }
