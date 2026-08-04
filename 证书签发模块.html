@@ -359,7 +359,7 @@
 
         .tbl {
             width: 100%;
-            min-width: 1368px;
+            min-width: 1432px;
             border-collapse: collapse;
             table-layout: fixed;
             font-size: 12px;
@@ -418,35 +418,42 @@
 
         .col-frozen-status {
             position: sticky;
-            right: 96px;
+            right: 310px;
             width: 96px;
             min-width: 96px;
             max-width: 96px;
             z-index: 2;
             background: #fff;
             text-align: center;
+        }
+
+        .col-frozen-status .badge {
+            min-width: 64px;
+            justify-content: center;
         }
 
         thead .col-frozen-status {
             z-index: 3;
             background: #f9fafb;
+            text-align: center;
         }
 
         .col-frozen-right {
             position: sticky;
             right: 0;
-            width: 96px;
-            min-width: 96px;
-            max-width: 96px;
+            width: 160px;
+            min-width: 160px;
+            max-width: 160px;
             z-index: 2;
             background: #fff;
-            text-align: center;
+            text-align: left;
+            white-space: nowrap;
         }
 
         thead .col-frozen-right {
             z-index: 3;
             background: #f9fafb;
-            text-align: center;
+            text-align: left;
         }
 
         .company-name {
@@ -488,8 +495,8 @@
         }
 
         .col-frozen-right .btn {
-            justify-content: center;
-            margin: 0 auto;
+            justify-content: flex-start;
+            margin: 0;
         }
 
         .badge {
@@ -1142,7 +1149,6 @@
                     <select id="certType">
                         <option value="">全部</option>
                         <option value="初次认证">初次认证</option>
-                        <option value="监督">监督</option>
                         <option value="再认证">再认证</option>
                         <option value="证书变更">证书变更</option>
                         <option value="认证转换">认证转换</option>
@@ -1190,9 +1196,11 @@
         <div class="panel">
             <div class="toolbar">
                 <div class="tabs">
-                    <div class="tab" data-tab="all" onclick="setTab('all')"><i class="fa-solid fa-list"></i> 全部</div>
-                    <div class="tab active" data-tab="pending" onclick="setTab('pending')"><i class="fa-solid fa-list-check"></i> 待签发</div>
+                    <div class="tab active" data-tab="all" onclick="setTab('all')"><i class="fa-solid fa-list"></i> 全部</div>
+                    <div class="tab" data-tab="pending" onclick="setTab('pending')"><i class="fa-solid fa-list-check"></i> 待签发</div>
+                    <div class="tab" data-tab="issuing" onclick="setTab('issuing')"><i class="fa-solid fa-paper-plane"></i> 签发中</div>
                     <div class="tab" data-tab="issued" onclick="setTab('issued')"><i class="fa-solid fa-circle-check"></i> 已签发</div>
+                    <div class="tab" data-tab="failed" onclick="setTab('failed')"><i class="fa-solid fa-triangle-exclamation"></i> 签发失败</div>
                     <div class="tab" data-tab="rejected" onclick="setTab('rejected')"><i class="fa-solid fa-ban"></i> 拒绝签发</div>
                 </div>
                 <div class="toolbar-right">
@@ -1213,9 +1221,9 @@
                             <th width="260">认证领域</th>
                             <th width="170">认证决定提交时间</th>
                             <th width="90">发证方式</th>
+                            <th class="col-frozen-status" width="96">状态</th>
                             <th width="150">签发时间</th>
-                            <th class="col-frozen-status" width="96">处理状态</th>
-                            <th class="col-frozen-right" width="96">操作</th>
+                            <th class="col-frozen-right" width="160">操作</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody"></tbody>
@@ -1383,6 +1391,22 @@
         </div>
     </div>
 
+    <div class="confirm-mask" id="caLogDialog" role="dialog" aria-modal="true" aria-labelledby="caLogTitle">
+        <div class="confirm-dialog">
+            <div class="confirm-body">
+                <div class="confirm-icon danger"><i class="fa-solid fa-file-lines"></i></div>
+                <div>
+                    <div class="confirm-title" id="caLogTitle">返回失败日志</div>
+                    <div class="confirm-message" id="caLogMessage">-</div>
+                    <div class="confirm-meta" id="caLogPayload" style="display:block; white-space:pre-wrap;"></div>
+                </div>
+            </div>
+            <div class="confirm-footer">
+                <button class="btn btn-default" onclick="closeCALogDialog()">关闭</button>
+            </div>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <script>
@@ -1405,8 +1429,10 @@
                 oldExpiry: '2029-05-27',
                 newValidity: '2026-05-28 至 2029-05-27',
                 issueTime: '-',
-                status: '待签发',
-                state: 'pending'
+                status: '签发中',
+                state: 'issuing',
+                caStatus: '已推送',
+                caPushTime: '2026-05-28 13:15'
             },
             {
                 id: 'ISS-20260528-002',
@@ -1426,8 +1452,12 @@
                 oldExpiry: '2026-02-16',
                 newValidity: '2026-02-14 至 2029-02-13',
                 issueTime: '-',
-                status: '待签发',
-                state: 'pending'
+                status: '签发中',
+                state: 'issuing',
+                caStatus: '返回失败',
+                caPushTime: '2026-05-28 14:45',
+                caFailMessage: 'CA平台返回失败：证书申请报文校验未通过，证书附件字段 certAttachment 缺失。',
+                caFailPayload: '{ "code": "CA_422", "message": "certAttachment is required", "requestId": "CA2026052814450098" }'
             },
             {
                 id: 'ISS-20260528-003',
@@ -1446,9 +1476,9 @@
                 planTime: '2026-03-01 01:00-03:00',
                 oldExpiry: '2026-02-28',
                 newValidity: '2026-03-01 至 2029-02-28',
-                issueTime: '-',
-                status: '待签发',
-                state: 'pending'
+                issueTime: '2026-05-28 15:10',
+                status: '已签发',
+                state: 'issued'
             },
             {
                 id: 'ISS-20260528-004',
@@ -1479,7 +1509,7 @@
                 field: 'EMS',
                 scope: 'EMS（环境管理体系）',
                 standard: 'GB/T 24001-2016 / ISO 14001:2015',
-                type: '监督',
+                type: '证书变更',
                 urgent: '否',
                 decision: '准予发证',
                 decisionSubmitTime: '2026-05-28 13:08',
@@ -1489,8 +1519,10 @@
                 oldExpiry: '2029-03-31',
                 newValidity: '2026-05-28 至 2029-05-27',
                 issueTime: '-',
-                status: '待签发',
-                state: 'pending'
+                status: '签发中',
+                state: 'issuing',
+                caStatus: '已推送',
+                caPushTime: '2026-05-28 13:15'
             },
             {
                 id: 'ISS-20260528-008',
@@ -1542,7 +1574,7 @@
                 field: 'QMS',
                 scope: 'QMS（质量管理体系）',
                 standard: 'GB/T 19001-2016 / ISO 9001:2015',
-                type: '监督',
+                type: '证书变更',
                 urgent: '否',
                 decision: '准予发证',
                 decisionSubmitTime: '2026-05-28 14:38',
@@ -1552,8 +1584,10 @@
                 oldExpiry: '2028-08-18',
                 newValidity: '2026-05-28 至 2029-05-27',
                 issueTime: '-',
-                status: '待签发',
-                state: 'pending'
+                status: '签发中',
+                state: 'issuing',
+                caStatus: '返回失败',
+                caPushTime: '2026-05-28 14:45'
             },
             {
                 id: 'ISS-20260528-011',
@@ -1599,7 +1633,7 @@
             },
         ];
 
-        let currentTab = 'pending';
+        let currentTab = 'all';
         let currentRow = null;
         let currentBatchIds = [];
         let currentPage = 1;
@@ -1640,7 +1674,9 @@
                 const tabMatched =
                     currentTab === 'all' ? true :
                     currentTab === 'pending' ? row.state === 'pending' :
+                    currentTab === 'issuing' ? displayStatus(row) === '签发中' :
                     currentTab === 'issued' ? row.state === 'issued' :
+                    currentTab === 'failed' ? displayStatus(row) === '签发失败' :
                     row.state === 'rejected';
                 const keywordMatched = !keyword || row.company.toLowerCase().includes(keyword);
                 return tabMatched
@@ -1650,6 +1686,8 @@
                     && (!issueMode || getIssueRule(row) === issueMode)
                     && (!urgent || row.urgent === urgent);
             }).sort((a, b) => {
+                const statusOrderValue = displayStatusOrder(a) - displayStatusOrder(b);
+                if (statusOrderValue !== 0) return statusOrderValue;
                 const urgentOrderValue = (b.urgent === '是') - (a.urgent === '是');
                 if (urgentOrderValue !== 0) return urgentOrderValue;
                 const typeOrderValue = typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type);
@@ -1692,8 +1730,8 @@
                     <td class="field-cell">${fieldText(row.field)}</td>
                     <td>${row.decisionSubmitTime}</td>
                     <td>${issueRuleTag(row)}</td>
-                    <td>${row.issueTime}</td>
                     <td class="col-frozen-status">${statusTag(row)}</td>
+                    <td>${row.issueTime}</td>
                     <td class="col-frozen-right">${actions(row)}</td>
                 </tr>
             `).join('');
@@ -1799,8 +1837,19 @@
         }
 
         function statusTag(row) {
-            const cls = row.state === 'issued' ? 'b-green' : row.state === 'rejected' ? 'b-red' : 'b-blue';
-            return tag(row.status, cls);
+            const status = displayStatus(row);
+            const cls = status === '已签发' ? 'b-green' : status === '签发失败' || status === '拒绝签发' ? 'b-red' : status === '签发中' ? 'b-orange' : 'b-blue';
+            return tag(status, cls);
+        }
+
+        function displayStatus(row) {
+            if (row.state === 'issuing' && row.caStatus === '返回失败') return '签发失败';
+            return row.status;
+        }
+
+        function displayStatusOrder(row) {
+            const order = { '待签发': 1, '签发中': 2, '已签发': 3, '签发失败': 4, '拒绝签发': 5 };
+            return order[displayStatus(row)] || 99;
         }
 
         function ruleTitle(row) {
@@ -1833,7 +1882,13 @@
         }
 
         function actions(row) {
-            if (row.state === 'issued' || row.state === 'rejected') {
+            if (row.state === 'issuing' && row.caStatus === '返回失败') {
+                return `
+                    <button class="btn btn-text" onclick="openCALogDialog('${row.id}')"><i class="fa-solid fa-file-lines"></i> 查看日志</button>
+                    <button class="btn btn-text" onclick="retryPushCA('${row.id}')"><i class="fa-solid fa-rotate"></i> 重新签发</button>
+                `;
+            }
+            if (row.state === 'issuing' || row.state === 'issued' || row.state === 'rejected') {
                 return `<button class="btn btn-text" onclick="openDrawer('${row.id}')"><i class="fa-solid fa-eye"></i> 查看</button>`;
             }
             return `<button class="btn btn-text" onclick="openDrawer('${row.id}')"><i class="fa-solid fa-pen-to-square"></i> 处理</button>`;
@@ -2085,7 +2140,7 @@
 
         function renderRuleCards(row) {
             const isRecert = row.type === '再认证';
-            const showRuleSection = isRecert;
+            const showRuleSection = isRecert && row.state !== 'issued';
             document.getElementById('ruleSection').style.display = showRuleSection ? 'block' : 'none';
             if (!showRuleSection) return;
             document.getElementById('ruleCards').style.display = 'grid';
@@ -2115,8 +2170,11 @@
             pendingConfirmIds = targetRows.map(row => row.id);
             pendingRejectReason = '';
             const isReject = result === '不予签发';
-            document.getElementById('confirmTitle').textContent = isReject ? '确认不予签发' : '确认签发';
-            document.getElementById('confirmMessage').textContent = isReject
+            const isRetryPush = result === '重新签发';
+            document.getElementById('confirmTitle').textContent = isRetryPush ? '确认重新签发' : isReject ? '确认不予签发' : '确认签发';
+            document.getElementById('confirmMessage').textContent = isRetryPush
+                ? '确认后将重新发起签发，状态更新为签发中。'
+                : isReject
                 ? '提交后所选证书将进入拒绝签发状态，请填写处理说明并确认。'
                 : '提交后系统将执行证书签发并记录签发时间，请确认无误。';
             document.getElementById('confirmMeta').style.display = 'none';
@@ -2126,10 +2184,10 @@
             reasonWrap.style.display = isReject ? 'block' : 'none';
             reasonInput.value = '';
             document.getElementById('confirmIcon').className = `confirm-icon${isReject ? ' danger' : ''}`;
-            document.getElementById('confirmIcon').innerHTML = `<i class="fa-solid ${isReject ? 'fa-triangle-exclamation' : 'fa-signature'}"></i>`;
+            document.getElementById('confirmIcon').innerHTML = `<i class="fa-solid ${isReject ? 'fa-triangle-exclamation' : isRetryPush ? 'fa-paper-plane' : 'fa-signature'}"></i>`;
             const actionBtn = document.getElementById('confirmActionBtn');
             actionBtn.className = `btn ${isReject ? 'btn-danger' : 'btn-primary'}`;
-            actionBtn.innerHTML = `<i class="fa-solid fa-check"></i> ${isReject ? '确认不予签发' : '确认签发'}`;
+            actionBtn.innerHTML = `<i class="fa-solid fa-check"></i> ${isRetryPush ? '确认重新签发' : isReject ? '确认不予签发' : '确认签发'}`;
             document.getElementById('confirmDialog').classList.add('show');
             if (isReject) {
                 window.setTimeout(() => reasonInput.focus(), 0);
@@ -2148,6 +2206,11 @@
             const result = pendingConfirmResult;
             const targetIds = [...pendingConfirmIds];
             let rejectReason = '';
+            if (result === '重新签发') {
+                closeConfirmDialog();
+                executeRetryPushCA(targetIds);
+                return;
+            }
             if (result === '不予签发') {
                 rejectReason = document.getElementById('confirmRejectReason').value.trim();
                 if (!rejectReason) {
@@ -2183,15 +2246,49 @@
             openConfirmDialog(result, targetRows);
         }
 
+        function retryPushCA(id) {
+            const targetRows = issueRows.filter(row => row.id === id && row.state === 'issuing' && row.caStatus === '返回失败');
+            if (!targetRows.length) return;
+            openConfirmDialog('重新签发', targetRows);
+        }
+
+        function openCALogDialog(id) {
+            const row = issueRows.find(item => item.id === id);
+            if (!row) return;
+            document.getElementById('caLogMessage').textContent = row.caFailMessage || 'CA返回失败，请查看返回报文。';
+            document.getElementById('caLogPayload').textContent = row.caFailPayload || '{ "code": "CA_FAIL", "message": "返回失败报文示例" }';
+            document.getElementById('caLogDialog').classList.add('show');
+        }
+
+        function closeCALogDialog() {
+            document.getElementById('caLogDialog').classList.remove('show');
+        }
+
+        function executeRetryPushCA(targetIds) {
+            const targetRows = issueRows.filter(row => targetIds.includes(row.id));
+            targetRows.forEach(row => {
+                row.state = 'issuing';
+                row.status = '签发中';
+                row.caStatus = '已推送';
+                row.caPushTime = formatDateTime(new Date());
+                row.caFailMessage = '';
+                row.caFailPayload = '';
+            });
+            renderTable();
+            showToast('已重新发起签发，状态更新为签发中');
+        }
+
         function executeHandle(result, targetIds, rejectReason = '') {
             const targetRows = issueRows.filter(row => targetIds.includes(row.id) && row.state === 'pending');
             const processTime = formatDateTime(new Date());
             targetRows.forEach(row => {
-                row.status = result === '签发' ? '已签发' : '拒绝签发';
-                row.state = result === '签发' ? 'issued' : 'rejected';
+                row.status = result === '签发' ? '签发中' : '拒绝签发';
+                row.state = result === '签发' ? 'issuing' : 'rejected';
                 if (result === '签发') {
                     row.newValidity = calcManualValidity(document.getElementById('issueDate').value);
-                    row.issueTime = `${document.getElementById('issueDate').value} 人工处理`;
+                    row.issueTime = '-';
+                    row.caStatus = '已推送';
+                    row.caPushTime = processTime;
                 } else {
                     row.issueTime = '不予签发';
                     row.rejectProcessor = currentOperator;
