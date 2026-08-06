@@ -589,16 +589,25 @@
                     </div>
 
                     <!-- 结合审核时显示：是否有审核一阶段 -->
-                    <div id="hasStage1Section" class="conditional-block hidden bg-amber-50 border border-amber-200 rounded-lg p-4">
-                        <label class="flex items-start gap-3 cursor-pointer">
-                            <div class="flex items-center h-5 mt-0.5">
-                                <input type="checkbox" id="hasStage1Check" class="rounded text-amber-600 focus:ring-amber-500 w-4 h-4" onchange="handleHasStage1Change(this.checked)">
-                            </div>
-                            <div class="flex-1">
-                                <span class="text-sm font-medium text-amber-900 block">是否有审核一阶段？</span>
-                                <p class="text-xs text-amber-700 mt-1">如勾选，审核方案将包含一阶段审核内容</p>
-                            </div>
-                        </label>
+                    <div id="hasStage1Section" class="conditional-block hidden">
+                        <label class="block text-sm font-medium text-slate-700 mb-3">是否有审核一阶段？<span class="text-red-500">*</span></label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <label class="radio-card" id="hasStage1Card" onclick="selectHasStage1(true)">
+                                <input type="radio" name="hasStage1Option" value="Y" class="text-blue-600 mt-1" onchange="handleHasStage1Change(true)">
+                                <div class="flex-1">
+                                    <div class="font-medium text-slate-900">有一阶段</div>
+                                    <div class="text-xs text-slate-500 mt-1">审核方案包含一阶段审核内容</div>
+                                </div>
+                            </label>
+
+                            <label class="radio-card" id="noStage1Card" onclick="selectHasStage1(false)">
+                                <input type="radio" name="hasStage1Option" value="N" class="text-blue-600 mt-1" onchange="handleHasStage1Change(false)">
+                                <div class="flex-1">
+                                    <div class="font-medium text-slate-900">无一阶段</div>
+                                    <div class="text-xs text-slate-500 mt-1">不安排一阶段审核内容</div>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
                     <!-- 单独审核时显示：现场审核类型 -->
@@ -647,7 +656,11 @@
 
                     <div id="stage1NoSiteApply" class="conditional-block hidden bg-blue-50 border border-blue-200 rounded-lg p-4">
                         <h4 class="font-medium text-slate-900 mb-3 flex items-center gap-2"><i class="fas fa-laptop-house text-blue-600"></i>第一阶段不实施现场审核申请</h4>
-                        <div class="space-y-3">
+                        <label class="flex items-center gap-2 mb-3">
+                            <input type="checkbox" id="applyStage1NoSite" class="rounded text-blue-600 focus:ring-blue-500 w-4 h-4" onchange="toggleStage1NoSiteApply(this.checked)">
+                            <span class="text-sm font-medium text-slate-700">申请第一阶段不实施现场审核</span>
+                        </label>
+                        <div id="stage1NoSiteApplyContent" class="hidden space-y-3 pl-4 border-l-2 border-blue-300">
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 mb-1 required">不实施现场审核的理由</label>
                                 <textarea class="editable-field w-full" rows="3" placeholder="请输入不实施现场审核的理由..."></textarea>
@@ -1262,7 +1275,6 @@
             const hasStage1Section = document.getElementById('hasStage1Section');
             const siteAuditTypeSection = document.getElementById('siteAuditTypeSection');
             const auditStageSection = document.getElementById('auditStageSection');
-            const hasStage1Check = document.getElementById('hasStage1Check');
             const stage1NoSiteApply = document.getElementById('stage1NoSiteApply');
             
             // 先全部隐藏并重置
@@ -1301,13 +1313,32 @@
                 
                 // 清理结合监督的选择
                 hasStage1 = false;
-                if (hasStage1Check) hasStage1Check.checked = false;
+                document.querySelectorAll('input[name="hasStage1Option"]').forEach(radio => {
+                    radio.closest('.radio-card').classList.remove('selected');
+                    radio.checked = false;
+                });
                 if (stage1NoSiteApply) {
                     stage1NoSiteApply.classList.add('hidden');
                     stage1NoSiteApply.classList.remove('show');
                 }
+                resetStage1NoSiteApply();
             }
             updateStage1NoSiteApplyVisibility();
+        }
+
+        function selectHasStage1(enabled) {
+            document.querySelectorAll('input[name="hasStage1Option"]').forEach(radio => {
+                radio.closest('.radio-card').classList.remove('selected');
+                radio.checked = false;
+            });
+
+            const selectedCard = document.getElementById(enabled ? 'hasStage1Card' : 'noStage1Card');
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+                selectedCard.querySelector('input').checked = true;
+            }
+
+            handleHasStage1Change(enabled);
         }
 
         function handleHasStage1Change(checked) {
@@ -1318,10 +1349,22 @@
         function updateStage1NoSiteApplyVisibility() {
             const stage1NoSiteApply = document.getElementById('stage1NoSiteApply');
             if (!stage1NoSiteApply) return;
-            const shouldShow = (selectedAuditMode === 'combine' && hasStage1) ||
-                (selectedAuditMode === 'separate' && selectedSiteType === 'hasSite' && selectedAuditStage === 'stage1');
+            const shouldShow = selectedAuditMode === 'combine' && hasStage1;
             stage1NoSiteApply.classList.toggle('hidden', !shouldShow);
             stage1NoSiteApply.classList.toggle('show', shouldShow);
+            if (!shouldShow) resetStage1NoSiteApply();
+        }
+
+        function toggleStage1NoSiteApply(checked) {
+            const content = document.getElementById('stage1NoSiteApplyContent');
+            if (content) content.classList.toggle('hidden', !checked);
+        }
+
+        function resetStage1NoSiteApply() {
+            const checkbox = document.getElementById('applyStage1NoSite');
+            const content = document.getElementById('stage1NoSiteApplyContent');
+            if (checkbox) checkbox.checked = false;
+            if (content) content.classList.add('hidden');
         }
 
         function selectRiskLevel(level) {
@@ -1356,23 +1399,15 @@
         function handleSiteTypeChange(value) {
             selectedSiteType = value;
             const auditStageSection = document.getElementById('auditStageSection');
-            
-            if (selectedAuditMode === 'separate' && value === 'hasSite') {
-                // 单独审核 + 有现场：显示审核阶段选择
-                auditStageSection.classList.remove('hidden');
-                auditStageSection.classList.add('show');
-            } else {
-                // 其他情况：隐藏审核阶段选择
-                auditStageSection.classList.add('hidden');
-                auditStageSection.classList.remove('show');
-                
-                // 清理审核阶段选择
-                selectedAuditStage = null;
-                document.querySelectorAll('input[name="auditStage"]').forEach(radio => {
-                    radio.closest('.radio-card').classList.remove('selected');
-                    radio.checked = false;
-                });
-            }
+
+            // 单独安排审核仅选择现场审核类型，不再继续选择审核阶段。
+            auditStageSection.classList.add('hidden');
+            auditStageSection.classList.remove('show');
+            selectedAuditStage = null;
+            document.querySelectorAll('input[name="auditStage"]').forEach(radio => {
+                radio.closest('.radio-card').classList.remove('selected');
+                radio.checked = false;
+            });
             updateStage1NoSiteApplyVisibility();
         }
 
@@ -1843,12 +1878,6 @@
             
             if (selectedAuditMode === 'separate' && !selectedSiteType) {
                 showToast('请选择现场审核类型', 'error');
-                document.getElementById('section-audit').scrollIntoView({ behavior: 'smooth' });
-                return;
-            }
-            
-            if (selectedAuditMode === 'separate' && selectedSiteType === 'hasSite' && !selectedAuditStage) {
-                showToast('请选择审核阶段', 'error');
                 document.getElementById('section-audit').scrollIntoView({ behavior: 'smooth' });
                 return;
             }
