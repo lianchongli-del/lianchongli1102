@@ -1310,11 +1310,7 @@
                                     <div id="recertStage1ApplyContent" class="hidden space-y-3 pl-4 border-l-2 border-blue-300">
                                         <div>
                                             <label class="block text-xs font-medium text-slate-700 mb-1 required">不实施现场审核的理由</label>
-                                            <select id="recertStage1NoSiteReason" class="editable-field" onchange="handleRecertStage1ReasonChange(this.value)">
-                                                <option value="">请选择</option>
-                                                <option value="cqc-valid">客户已获得CQC颁发的其他管理体系认证，且证书有效</option>
-                                                <option value="recognized-valid">客户已获得了该体系的有效认证证书，且证书是经认可机构认可的其他认证机构颁发的</option>
-                                            </select>
+                                            <textarea id="recertStage1NoSiteReason" class="editable-field" rows="4" placeholder="请输入不实施现场审核的理由..."></textarea>
                                         </div>
                                         <div id="recertStage1CertificatePanel" class="hidden bg-white rounded-lg border border-blue-200 p-3">
                                             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-3">
@@ -2643,11 +2639,11 @@
             const apply = document.getElementById('recertStage1NoSiteApply');
             const checkbox = document.getElementById('recertApplyStage1NoSite');
             const content = document.getElementById('recertStage1ApplyContent');
-            const reasonSelect = document.getElementById('recertStage1NoSiteReason');
+            const reasonField = document.getElementById('recertStage1NoSiteReason');
             if (apply) apply.classList.add('hidden');
             if (checkbox) checkbox.checked = false;
             if (content) content.classList.add('hidden');
-            if (reasonSelect) reasonSelect.value = '';
+            if (reasonField) reasonField.value = '';
             resetRecertStage1CertificatePanel();
         }
 
@@ -2655,8 +2651,8 @@
             const content = document.getElementById('recertStage1ApplyContent');
             if (content) content.classList.toggle('hidden', !checked);
             if (!checked) {
-                const reasonSelect = document.getElementById('recertStage1NoSiteReason');
-                if (reasonSelect) reasonSelect.value = '';
+                const reasonField = document.getElementById('recertStage1NoSiteReason');
+                if (reasonField) reasonField.value = '';
                 resetRecertStage1CertificatePanel();
             }
         }
