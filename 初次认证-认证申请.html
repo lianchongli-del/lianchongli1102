@@ -2615,6 +2615,16 @@
                 toggleSystemCardCollapse(uniqueId);
             };
 
+            const copyBtn = document.createElement('button');
+            copyBtn.type = 'button';
+            copyBtn.className = 'text-xs text-blue-600 hover:bg-blue-50 px-2 py-1 rounded transition-colors';
+            copyBtn.innerHTML = '<i class="fas fa-copy"></i> 复制到其他领域';
+            copyBtn.onclick = (event) => {
+                event.stopPropagation();
+                copySystemCustomerInfoToOtherSystems(uniqueId);
+            };
+
+            actions.prepend(copyBtn);
             actions.prepend(toggleBtn);
             header.addEventListener('click', (event) => {
                 if (event.target.closest('button,input,label,select,textarea,a')) return;
@@ -3141,9 +3151,6 @@
                         <h5 class="font-medium text-slate-800 text-xs flex items-center gap-2">
                             <i class="fas fa-clock text-blue-500"></i>生产（服务）班次情况
                         </h5>
-                        <button type="button" onclick="copyLocationProductionInfoToSameName('${scopeId}')" class="px-2 py-1 text-xs text-blue-600 border border-blue-200 rounded hover:bg-blue-50 transition-colors">
-                            <i class="fas fa-copy mr-1"></i>复制到同名场所
-                        </button>
                     </div>
                     <div id="productionInfoFields_${scopeId}" class="space-y-3">
                         <div class="flex flex-wrap items-end gap-3">
@@ -3207,6 +3214,210 @@
                     </div>
                 </div>
             `;
+        }
+
+        function isExcludedSystemCopyControl(control) {
+            const systemCard = control.closest('.system-card');
+            if (!systemCard) return true;
+            if (systemCard.firstElementChild?.contains(control)) return true;
+            if (control.closest('.location-card')) return true;
+            const labels = ['认证标准', '认可机构'];
+            let node = control;
+            while (node && node !== systemCard) {
+                if (node.querySelector) {
+                    const labelText = Array.from(node.children)
+                        .filter(child => child.tagName === 'LABEL')
+                        .map(label => label.textContent.trim())
+                        .join('');
+                    if (labels.some(text => labelText.includes(text))) return true;
+                }
+                node = node.parentElement;
+            }
+            return false;
+        }
+
+        function isExcludedLocationCopyControl(control) {
+            if (control.matches('.location-name-en-input, .location-address-en-input, .location-credit-code-input, .location-people-input')) return true;
+            if (control.closest('.location-production-section')) return true;
+            return control.readOnly || control.disabled;
+        }
+
+        function setCopyControlValue(target, source) {
+            if (!target || !source || target.disabled || target.readOnly) return;
+            if (source.type === 'radio') {
+                target.checked = source.checked;
+            } else if (source.type === 'checkbox') {
+                target.checked = source.checked;
+            } else {
+                target.value = source.value;
+            }
+            target.dispatchEvent(new Event('input', { bubbles: true }));
+            target.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        function getCopyableControls(container, excludedPredicate) {
+            return Array.from(container.querySelectorAll('input, select, textarea'))
+                .filter(control => !excludedPredicate(control));
+        }
+
+        function copyControlValuesByPosition(sourceContainer, targetContainer, excludedPredicate) {
+            const sourceControls = getCopyableControls(sourceContainer, excludedPredicate);
+            const targetControls = getCopyableControls(targetContainer, excludedPredicate);
+            sourceControls.forEach((sourceControl, index) => {
+                setCopyControlValue(targetControls[index], sourceControl);
+            });
+        }
+
+        function copyProductionInfoBetweenLocations(source, target) {
+            const sourceScopeId = source.id;
+            const targetScopeId = target.id;
+            const shiftCount = source.querySelector('[data-prod-field="shiftCount"]')?.value || '1';
+            const targetShiftCount = target.querySelector('[data-prod-field="shiftCount"]');
+            if (targetShiftCount) targetShiftCount.value = shiftCount;
+            updateShiftTimeInputs(shiftCount, `shiftTimes_${targetScopeId}`);
+
+            const sourceShiftSelects = Array.from(source.querySelectorAll(`#shiftTimes_${sourceScopeId} select`)).map(select => select.value);
+            const targetShiftSelects = Array.from(target.querySelectorAll(`#shiftTimes_${targetScopeId} select`));
+            sourceShiftSelects.forEach((value, index) => {
+                if (targetShiftSelects[index]) targetShiftSelects[index].value = value;
+            });
+
+            const shiftSame = source.querySelector(`input[name="shiftSame_${sourceScopeId}"]:checked`)?.value || '';
+            target.querySelectorAll(`input[name="shiftSame_${targetScopeId}"]`).forEach(radio => {
+                radio.checked = radio.value === shiftSame;
+            });
+            const targetDesc = target.querySelector('[data-prod-field="shiftDifferentDesc"]');
+            const sourceDesc = source.querySelector('[data-prod-field="shiftDifferentDesc"]');
+            if (targetDesc && sourceDesc) targetDesc.value = sourceDesc.value;
+            toggleLocationShiftSame(targetScopeId, shiftSame === 'no');
+
+            ['shiftRotation', 'shiftRotationPeople'].forEach(field => {
+                const sourceInput = source.querySelector(`[data-prod-field="${field}"]`);
+                const targetInput = target.querySelector(`[data-prod-field="${field}"]`);
+                if (sourceInput && targetInput) targetInput.value = sourceInput.value;
+            });
+
+            const productionLineEnabled = !!source.querySelector('[data-prod-field="productionLineEnabled"]')?.checked;
+            const targetLineSwitch = target.querySelector('[data-prod-field="productionLineEnabled"]');
+            if (targetLineSwitch) targetLineSwitch.checked = productionLineEnabled;
+            toggleLocationProductionLine(targetScopeId, productionLineEnabled);
+            ['lineTotal', 'sameLineCount', 'linePeople'].forEach(field => {
+                const sourceInput = source.querySelector(`[data-prod-field="${field}"]`);
+                const targetInput = target.querySelector(`[data-prod-field="${field}"]`);
+                if (sourceInput && targetInput) targetInput.value = sourceInput.value;
+            });
+        }
+
+        function ensureMatchingLocationInSystem(sourceLocation, targetSystemId) {
+            const targetContainer = document.getElementById(`locations_${targetSystemId}`);
+            if (!targetContainer) return null;
+            const locId = sourceLocation.dataset.locId;
+            const locName = sourceLocation.dataset.locName;
+            let target = Array.from(targetContainer.querySelectorAll('.location-card'))
+                .find(card => card.dataset.locId === locId);
+            if (!target) {
+                target = Array.from(targetContainer.querySelectorAll('.location-card'))
+                    .find(card => card.dataset.locName === locName);
+            }
+            if (target) return target;
+
+            addLocationCard(
+                targetSystemId,
+                locId,
+                sourceLocation.dataset.locName || '未命名场所',
+                sourceLocation.dataset.locAddress || '',
+                sourceLocation.dataset.locType || 'fixed',
+                sourceLocation.dataset.locCenter === 'true',
+                {
+                    locked: locId === 'HQ',
+                    nameEn: sourceLocation.dataset.locNameEn || '',
+                    region: sourceLocation.dataset.locRegion || '',
+                    addressEn: sourceLocation.dataset.locAddressEn || '',
+                    creditCode: sourceLocation.dataset.locCreditCode || '',
+                    people: sourceLocation.dataset.locPeople || ''
+                }
+            );
+            return Array.from(targetContainer.querySelectorAll('.location-card'))
+                .find(card => card.dataset.locId === locId || card.dataset.locName === locName);
+        }
+
+        function showSystemCopyConfirm(onConfirm) {
+            const existingModal = document.getElementById('systemCopyConfirmModal');
+            if (existingModal) existingModal.remove();
+
+            const modal = document.createElement('div');
+            modal.id = 'systemCopyConfirmModal';
+            modal.className = 'modal fixed inset-0 bg-black/50 z-[70] flex items-center justify-center backdrop-blur-sm p-4';
+            modal.innerHTML = `
+                <div class="modal-content bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+                    <div class="p-5 border-b border-slate-100 flex items-start gap-3 bg-slate-50">
+                        <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 border border-blue-100">
+                            <i class="fas fa-copy"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <h3 class="text-base font-bold text-slate-900">复制客户信息</h3>
+                            <p class="text-xs text-slate-500 mt-1">将当前领域内容同步到其他认证领域。</p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <p class="text-sm text-slate-700 leading-6">是否将该领域下的客户信息均复制到其他领域？</p>
+                    </div>
+                    <div class="px-5 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-2">
+                        <button type="button" id="systemCopyCancelBtn" class="px-4 py-2 border border-slate-300 rounded-lg hover:bg-white text-sm font-medium text-slate-700 transition-colors">取消</button>
+                        <button type="button" id="systemCopyConfirmBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors">
+                            <i class="fas fa-check mr-1"></i>确定
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+
+            const closeModal = () => {
+                modal.classList.remove('active');
+                setTimeout(() => modal.remove(), 300);
+            };
+
+            modal.querySelector('#systemCopyCancelBtn').addEventListener('click', closeModal);
+            modal.querySelector('#systemCopyConfirmBtn').addEventListener('click', () => {
+                closeModal();
+                onConfirm();
+            });
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) closeModal();
+            });
+
+            setTimeout(() => modal.classList.add('active'), 10);
+        }
+
+        function executeSystemCustomerInfoCopy(sourceCard, targetCards) {
+            targetCards.forEach(targetCard => {
+                copyControlValuesByPosition(sourceCard, targetCard, isExcludedSystemCopyControl);
+
+                const targetSystemId = targetCard.dataset.systemId;
+                Array.from(sourceCard.querySelectorAll('.location-card')).forEach(sourceLocation => {
+                    const targetLocation = ensureMatchingLocationInSystem(sourceLocation, targetSystemId);
+                    if (!targetLocation) return;
+                    copyControlValuesByPosition(sourceLocation, targetLocation, isExcludedLocationCopyControl);
+                    copyProductionInfoBetweenLocations(sourceLocation, targetLocation);
+                });
+            });
+
+            updateQuickNav();
+            checkAttachmentConditions();
+            showToast(`已复制到 ${targetCards.length} 个其他认证领域`);
+        }
+
+        function copySystemCustomerInfoToOtherSystems(sourceUniqueId) {
+            const sourceCard = document.getElementById(`system-card-${sourceUniqueId}`);
+            if (!sourceCard) return;
+            const targetCards = Array.from(document.querySelectorAll('.system-card'))
+                .filter(card => card.dataset.systemId !== sourceUniqueId);
+            if (targetCards.length === 0) {
+                showToast('暂无其他认证领域可复制', 'info');
+                return;
+            }
+            showSystemCopyConfirm(() => executeSystemCustomerInfoCopy(sourceCard, targetCards));
         }
 
         function toggleLocationProductionInfo(scopeId, show) {
