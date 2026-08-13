@@ -909,6 +909,208 @@
             background: #f8fafc;
         }
 
+        .energy-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px 24px;
+        }
+
+        .energy-form-grid.energy-summary-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .energy-form-field {
+            min-width: 0;
+        }
+
+        .energy-form-field label {
+            display: block;
+            color: #475569;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .energy-form-field input,
+        .energy-form-field select {
+            width: 100%;
+        }
+
+        .energy-input-group {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .energy-unit {
+            color: #64748b;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .energy-card {
+            border: 1px solid #dbeafe;
+            border-radius: 8px;
+            background: #fff;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+        }
+
+        .energy-card + .energy-card {
+            margin-top: 16px;
+        }
+
+        .energy-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            min-height: 48px;
+            padding: 12px 16px;
+            border-bottom: 1px solid #dbeafe;
+            background: #eff6ff;
+        }
+
+        .energy-card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1e3a8a;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .energy-card-title i {
+            color: #2563eb;
+            font-size: 13px;
+        }
+
+        .energy-card-body {
+            padding: 16px;
+        }
+
+        .energy-subtitle {
+            color: #1e293b;
+            font-size: 14px;
+            font-weight: 700;
+            margin: 22px 0 12px;
+        }
+
+        .energy-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin: 22px 0 12px;
+        }
+
+        .energy-title-row .energy-subtitle {
+            margin: 0;
+        }
+
+        .energy-add-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 12px;
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .energy-add-btn:hover {
+            background: #dbeafe;
+            border-color: #60a5fa;
+        }
+
+        .energy-delete-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            background: #fff;
+            color: #dc2626;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .energy-delete-btn:hover {
+            background: #fee2e2;
+        }
+
+        .energy-unit-cell {
+            display: grid;
+            grid-template-columns: minmax(120px, 1fr) minmax(110px, 1fr);
+            gap: 8px;
+        }
+
+        .energy-unit-other.hidden {
+            display: none !important;
+        }
+
+        .energy-improvement-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #f8fafc;
+            padding: 16px;
+            margin-top: 12px;
+        }
+
+        .energy-improvement-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .energy-improvement-title {
+            color: #1e293b;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .energy-improvement-parameter {
+            margin-bottom: 14px;
+        }
+
+        .energy-improvement-metric-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(240px, 1fr);
+            gap: 16px 24px;
+            margin-top: 12px;
+        }
+
+        .energy-date-range {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+            align-items: center;
+            gap: 8px;
+        }
+
+        .energy-date-range span {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        #section-basic.basic-readonly input,
+        #section-basic.basic-readonly select,
+        #section-basic.basic-readonly textarea {
+            pointer-events: none !important;
+            background: #f3f4f6 !important;
+            color: #374151 !important;
+        }
+
         .personnel-tag {
             display: inline-flex;
             align-items: center;
@@ -1408,7 +1610,6 @@
             <div class="flex items-center justify-between h-14">
                 <div class="flex items-center gap-4 overflow-x-auto custom-scrollbar">
                     <h1 class="text-lg font-bold text-slate-900">管理体系审核报告</h1>
-                    <span class="status-badge badge-warning" id="headerStatusBadge">待提交</span>
                 </div>
 
                 <div class="flex items-center gap-2 shrink-0">
@@ -1435,6 +1636,7 @@
                 <a href="#section-others" class="nav-item py-2" data-section="section-others">其他事项</a>
                 <a href="#section-conclusion" class="nav-item py-2" data-section="section-conclusion">审核结论</a>
                 <a href="#section-followup" class="nav-item py-2" data-section="section-followup">后续行动</a>
+                <a href="#section-energy-performance" class="nav-item py-2" data-section="section-energy-performance">能源绩效信息</a>
                 <a href="#section-attachment" class="nav-item py-2" data-section="section-attachment">附件</a>
             </nav>
         </div>
@@ -2772,11 +2974,184 @@
                 </div>
             </div>
 
-            <!-- 7. 审核报告附件 -->
-            <div id="section-attachment" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <!-- 7. 能源绩效信息 -->
+            <div id="section-energy-performance" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleSection(this)">
                     <div class="flex items-center gap-2">
                         <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">7</div>
+                        <h3 class="font-semibold text-slate-900">能源绩效信息</h3>
+                    </div>
+                    <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 text-xs"></i>
+                </div>
+                <div class="p-6 transition-all duration-300" style="max-height: 5000px; overflow: visible;">
+                    <div class="energy-card">
+                        <div class="energy-card-header">
+                            <div class="energy-card-title">
+                                <i class="fas fa-bolt"></i>
+                                能源绩效通用信息
+                            </div>
+                        </div>
+                        <div class="energy-card-body">
+                            <div class="energy-form-grid energy-summary-grid">
+                                <div class="energy-form-field">
+                                    <label for="energyPeriodStart">统计开始期</label>
+                                    <input id="energyPeriodStart" type="date">
+                                </div>
+                                <div class="energy-form-field">
+                                    <label for="energyPeriodEnd">统计截止期</label>
+                                    <input id="energyPeriodEnd" type="date">
+                                </div>
+                                <div class="energy-form-field">
+                                    <label for="energyOutputValue">工业总产值/主营业务收入</label>
+                                    <div class="energy-input-group">
+                                        <input id="energyOutputValue" type="number" placeholder="数字录入">
+                                        <span class="energy-unit">万元</span>
+                                    </div>
+                                </div>
+                                <div class="energy-form-field">
+                                    <label for="energyTotalConsumption">综合能耗</label>
+                                    <div class="energy-input-group">
+                                        <input id="energyTotalConsumption" type="number" placeholder="自动计算" readonly>
+                                        <span class="energy-unit">吨标煤</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="energy-card">
+                        <div class="energy-card-header">
+                            <div class="energy-card-title">
+                                <i class="fas fa-chart-line"></i>
+                                单位产品/服务综合能耗
+                            </div>
+                            <button type="button" class="energy-add-btn" onclick="addEnergyProductRow()">
+                                <i class="fas fa-plus text-xs"></i>
+                                增加
+                            </button>
+                        </div>
+                        <div class="energy-card-body">
+                            <table class="data-table border border-slate-200 rounded-lg overflow-hidden">
+                                <thead>
+                                    <tr>
+                                        <th>产品（服务）名称</th>
+                                        <th>产量（服务量）</th>
+                                        <th>产量（服务量）单位</th>
+                                        <th>产品综合能耗</th>
+                                        <th>产品综合能耗单位</th>
+                                        <th>单位产品/服务综合能耗</th>
+                                        <th style="width: 70px;">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="energyProductTableBody">
+                                    <tr>
+                                        <td><input type="text" class="w-full" placeholder="文本录入"></td>
+                                        <td><input type="number" class="w-full energy-output-quantity" placeholder="数字录入" oninput="calculateEnergyProductRow(this)"></td>
+                                        <td>
+                                            <div class="energy-unit-cell">
+                                                <select class="w-full energy-product-unit" onchange="toggleEnergyUnitOther(this)">
+                                                <option value="吨">吨</option>
+                                                <option value="千米">千米</option>
+                                                <option value="千瓦时">千瓦时</option>
+                                                <option value="平方米">平方米</option>
+                                                <option value="台/套/件">台/套/件</option>
+                                                <option value="焦耳">焦耳</option>
+                                                <option value="其他">其他</option>
+                                            </select>
+                                                <input type="text" class="w-full energy-unit-other hidden" placeholder="手动录入单位">
+                                            </div>
+                                        </td>
+                                        <td><input type="number" class="w-full energy-product-consumption" placeholder="数字录入" oninput="calculateEnergyProductRow(this)"></td>
+                                        <td>
+                                            <select class="w-full energy-consumption-unit" onchange="calculateEnergyProductRow(this)">
+                                                <option value="吨标煤">吨标煤</option>
+                                                <option value="千克标煤">千克标煤</option>
+                                            </select>
+                                        </td>
+                                        <td><input type="text" class="w-full energy-product-result" placeholder="自动计算" readonly></td>
+                                        <td>
+                                            <button type="button" class="energy-delete-btn" title="删除" onclick="deleteEnergyProductRow(this)">
+                                                <i class="fas fa-trash-alt text-xs"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="energy-card">
+                        <div class="energy-card-header">
+                            <div class="energy-card-title">
+                                <i class="fas fa-seedling"></i>
+                                能源绩效改进信息
+                            </div>
+                            <button type="button" class="energy-add-btn" onclick="addEnergyImprovementCard()">
+                                <i class="fas fa-plus text-xs"></i>
+                                增加
+                            </button>
+                        </div>
+                        <div class="energy-card-body">
+                            <div id="energyImprovementList">
+                                <div class="energy-improvement-card">
+                                    <div class="energy-improvement-header">
+                                        <div class="energy-improvement-title">改进1</div>
+                                        <button type="button" class="energy-delete-btn" title="删除" onclick="deleteEnergyImprovementCard(this)">
+                                            <i class="fas fa-trash-alt text-xs"></i>
+                                        </button>
+                                    </div>
+                                    <div class="energy-form-field energy-improvement-parameter">
+                                        <label>能源绩效参数</label>
+                                        <input type="text" placeholder="文本录入">
+                                    </div>
+                                    <div class="energy-improvement-metric-row">
+                                        <div class="energy-form-field">
+                                            <label>能源基准</label>
+                                            <input type="number" placeholder="数字录入">
+                                        </div>
+                                        <div class="energy-form-field">
+                                            <label>能源基准单位</label>
+                                            <input type="text" placeholder="单位（手动录入）">
+                                        </div>
+                                        <div class="energy-form-field">
+                                            <label>基准期</label>
+                                            <div class="energy-date-range">
+                                                <input type="date" aria-label="基准期开始">
+                                                <span>至</span>
+                                                <input type="date" aria-label="基准期结束">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="energy-improvement-metric-row">
+                                        <div class="energy-form-field">
+                                            <label>实际能源绩效</label>
+                                            <input type="number" placeholder="数字录入">
+                                        </div>
+                                        <div class="energy-form-field">
+                                            <label>实际能源绩效单位</label>
+                                            <input type="text" placeholder="单位（手动录入）">
+                                        </div>
+                                        <div class="energy-form-field">
+                                            <label>统计期</label>
+                                            <div class="energy-date-range">
+                                                <input type="date" aria-label="统计期开始">
+                                                <span>至</span>
+                                                <input type="date" aria-label="统计期结束">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. 审核报告附件 -->
+            <div id="section-attachment" class="form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors" onclick="toggleSection(this)">
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">8</div>
                         <h3 class="font-semibold text-slate-900">审核报告附件</h3>
                     </div>
                     <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300 text-xs"></i>
@@ -2885,6 +3260,7 @@
     <script>
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
+            applyBasicInfoReadonly();
             initScrollSpy();
             updateNcrVisibility();
             updateRecommendationState();
@@ -2892,6 +3268,196 @@
             syncCustomerContact();
             document.querySelectorAll('[data-conclusion-card] input[value="valid"]:checked, [data-conclusion-card] input[value="invalid"]:checked').forEach(updateConclusionRecommendation);
         });
+
+        function applyBasicInfoReadonly() {
+            const section = document.getElementById('section-basic');
+            if (!section) return;
+            section.classList.add('basic-readonly');
+            section.querySelectorAll('input, textarea, select').forEach(el => {
+                el.setAttribute('aria-readonly', 'true');
+                if (el.tagName === 'SELECT' || el.type === 'checkbox' || el.type === 'radio') {
+                    el.disabled = true;
+                } else {
+                    el.readOnly = true;
+                }
+            });
+        }
+
+        function getEnergyProductRowTemplate() {
+            return `
+                <tr>
+                    <td><input type="text" class="w-full" placeholder="文本录入"></td>
+                    <td><input type="number" class="w-full energy-output-quantity" placeholder="数字录入" oninput="calculateEnergyProductRow(this)"></td>
+                    <td>
+                        <div class="energy-unit-cell">
+                            <select class="w-full energy-product-unit" onchange="toggleEnergyUnitOther(this)">
+                                <option value="吨">吨</option>
+                                <option value="千米">千米</option>
+                                <option value="千瓦时">千瓦时</option>
+                                <option value="平方米">平方米</option>
+                                <option value="台/套/件">台/套/件</option>
+                                <option value="焦耳">焦耳</option>
+                                <option value="其他">其他</option>
+                            </select>
+                            <input type="text" class="w-full energy-unit-other hidden" placeholder="手动录入单位">
+                        </div>
+                    </td>
+                    <td><input type="number" class="w-full energy-product-consumption" placeholder="数字录入" oninput="calculateEnergyProductRow(this)"></td>
+                    <td>
+                        <select class="w-full energy-consumption-unit" onchange="calculateEnergyProductRow(this)">
+                            <option value="吨标煤">吨标煤</option>
+                            <option value="千克标煤">千克标煤</option>
+                        </select>
+                    </td>
+                    <td><input type="text" class="w-full energy-product-result" placeholder="自动计算" readonly></td>
+                    <td>
+                        <button type="button" class="energy-delete-btn" title="删除" onclick="deleteEnergyProductRow(this)">
+                            <i class="fas fa-trash-alt text-xs"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function addEnergyProductRow() {
+            const tbody = document.getElementById('energyProductTableBody');
+            if (!tbody) return;
+            tbody.insertAdjacentHTML('beforeend', getEnergyProductRowTemplate());
+        }
+
+        function deleteEnergyProductRow(btn) {
+            const tbody = document.getElementById('energyProductTableBody');
+            const row = btn.closest('tr');
+            if (!tbody || !row) return;
+            if (tbody.rows.length <= 1) {
+                showToast('至少保留一条单位产品/服务综合能耗信息', 'warning');
+                return;
+            }
+            row.remove();
+            updateEnergyTotalConsumption();
+        }
+
+        function toggleEnergyUnitOther(select) {
+            const wrapper = select.closest('.energy-unit-cell');
+            const other = wrapper ? wrapper.querySelector('.energy-unit-other') : null;
+            if (!other) return;
+            const isOther = select.value === '其他';
+            other.classList.toggle('hidden', !isOther);
+            other.disabled = !isOther;
+            if (!isOther) other.value = '';
+            if (isOther) other.focus();
+        }
+
+        function calculateEnergyProductRow(input) {
+            const row = input.closest('tr');
+            if (!row) return;
+            const quantity = parseFloat(row.querySelector('.energy-output-quantity')?.value);
+            const consumption = parseFloat(row.querySelector('.energy-product-consumption')?.value);
+            const result = row.querySelector('.energy-product-result');
+            if (!result) return;
+            if (!quantity || Number.isNaN(quantity) || Number.isNaN(consumption)) {
+                result.value = '';
+                updateEnergyTotalConsumption();
+                return;
+            }
+            result.value = (consumption / quantity).toFixed(4).replace(/\.?0+$/, '');
+            updateEnergyTotalConsumption();
+        }
+
+        function convertConsumptionToTonStandardCoal(value, unit) {
+            if (Number.isNaN(value)) return 0;
+            return unit === '千克标煤' ? value / 1000 : value;
+        }
+
+        function updateEnergyTotalConsumption() {
+            const totalInput = document.getElementById('energyTotalConsumption');
+            if (!totalInput) return;
+            let total = 0;
+            document.querySelectorAll('#energyProductTableBody tr').forEach(row => {
+                const consumption = parseFloat(row.querySelector('.energy-product-consumption')?.value);
+                const unit = row.querySelector('.energy-consumption-unit')?.value || '吨标煤';
+                total += convertConsumptionToTonStandardCoal(consumption, unit);
+            });
+            totalInput.value = total ? total.toFixed(4).replace(/\.?0+$/, '') : '';
+        }
+
+        function getEnergyImprovementCardTemplate() {
+            return `
+                <div class="energy-improvement-card">
+                    <div class="energy-improvement-header">
+                        <div class="energy-improvement-title"></div>
+                        <button type="button" class="energy-delete-btn" title="删除" onclick="deleteEnergyImprovementCard(this)">
+                            <i class="fas fa-trash-alt text-xs"></i>
+                        </button>
+                    </div>
+                    <div class="energy-form-field energy-improvement-parameter">
+                        <label>能源绩效参数</label>
+                        <input type="text" placeholder="文本录入">
+                    </div>
+                    <div class="energy-improvement-metric-row">
+                        <div class="energy-form-field">
+                            <label>能源基准</label>
+                            <input type="number" placeholder="数字录入">
+                        </div>
+                        <div class="energy-form-field">
+                            <label>能源基准单位</label>
+                            <input type="text" placeholder="单位（手动录入）">
+                        </div>
+                        <div class="energy-form-field">
+                            <label>基准期</label>
+                            <div class="energy-date-range">
+                                <input type="date" aria-label="基准期开始">
+                                <span>至</span>
+                                <input type="date" aria-label="基准期结束">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="energy-improvement-metric-row">
+                        <div class="energy-form-field">
+                            <label>实际能源绩效</label>
+                            <input type="number" placeholder="数字录入">
+                        </div>
+                        <div class="energy-form-field">
+                            <label>实际能源绩效单位</label>
+                            <input type="text" placeholder="单位（手动录入）">
+                        </div>
+                        <div class="energy-form-field">
+                            <label>统计期</label>
+                            <div class="energy-date-range">
+                                <input type="date" aria-label="统计期开始">
+                                <span>至</span>
+                                <input type="date" aria-label="统计期结束">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function addEnergyImprovementCard() {
+            const list = document.getElementById('energyImprovementList');
+            if (!list) return;
+            list.insertAdjacentHTML('beforeend', getEnergyImprovementCardTemplate());
+            refreshEnergyImprovementTitles();
+        }
+
+        function deleteEnergyImprovementCard(btn) {
+            const list = document.getElementById('energyImprovementList');
+            const card = btn.closest('.energy-improvement-card');
+            if (!list || !card) return;
+            if (list.querySelectorAll('.energy-improvement-card').length <= 1) {
+                showToast('至少保留一条能源绩效改进信息', 'warning');
+                return;
+            }
+            card.remove();
+            refreshEnergyImprovementTitles();
+        }
+
+        function refreshEnergyImprovementTitles() {
+            document.querySelectorAll('#energyImprovementList .energy-improvement-title').forEach((title, index) => {
+                title.textContent = `改进${index + 1}`;
+            });
+        }
 
         function syncCustomerContact() {
             const representative = document.getElementById('customerRepresentative');
@@ -3268,6 +3834,63 @@
                 console.log('返回列表页');
             }
         }
+    </script>
+    <script id="PLANNING_READONLY_MODE">
+        (function () {
+            if (!/[?&]readonly=1\b/.test(window.location.search)) return;
+
+            const actionTexts = ['保存', '提交报告', '提交', '返回', '选择文件', '继续上传', '删除', '新增', '编辑', '上传'];
+            const actionSelector = [
+                'button',
+                '[role="button"]',
+                'input[type="button"]',
+                'input[type="submit"]',
+                'input[type="file"]',
+                '#saveBtn',
+                '#submitBtn',
+                '#attachmentUploadBtn',
+                '#attachmentContinueBtn',
+                '.upload-btn',
+                '.file-action-btn',
+                '.header-actions',
+                '.page-actions'
+            ].join(',');
+
+            function hideActionElement(el) {
+                const container = el.closest('.upload-zone, .upload-area, .file-upload, .attachment-upload, .header-actions, .page-actions');
+                (container || el).style.setProperty('display', 'none', 'important');
+            }
+
+            function applyReadonly() {
+                document.querySelectorAll('input, textarea, select').forEach(el => {
+                    el.disabled = true;
+                    el.readOnly = true;
+                });
+                document.querySelectorAll('[contenteditable="true"]').forEach(el => {
+                    el.setAttribute('contenteditable', 'false');
+                });
+                document.querySelectorAll(actionSelector).forEach(el => {
+                    const text = (el.textContent || el.value || el.getAttribute('title') || el.getAttribute('aria-label') || '').trim();
+                    const onclick = el.getAttribute('onclick') || '';
+                    if (actionTexts.some(item => text.includes(item)) || /save|submit|upload|delete|add|edit|goBack/i.test(onclick) || el.matches('input[type="file"], input[type="button"], input[type="submit"]')) {
+                        hideActionElement(el);
+                    }
+                });
+            }
+
+            const style = document.createElement('style');
+            style.textContent = 'input,textarea,select{pointer-events:none!important;background:#f3f4f6!important;color:#374151!important}#saveBtn,#submitBtn,#attachmentUploadBtn,#attachmentContinueBtn,.upload-btn,.file-action-btn,input[type=file]{display:none!important}';
+            document.head.appendChild(style);
+
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', applyReadonly);
+            else applyReadonly();
+            let count = 0;
+            const timer = setInterval(() => {
+                applyReadonly();
+                count += 1;
+                if (count > 20) clearInterval(timer);
+            }, 200);
+        })();
     </script>
 </body>
 </html>
