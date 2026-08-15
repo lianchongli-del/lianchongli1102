@@ -5060,8 +5060,8 @@
             ISMS: {
                 label: 'ISMS信息安全管理体系',
                 source: 'ISMS审核人天规则.docx',
-                summary: '按企业有效人数查基础审核人日，再结合业务复杂性与 IT 复杂系数确定各阶段审核人天；结果按场所分别输出。',
-                fields: ['场所', '有效人数', '业务复杂性', 'IT复杂系数', '审核准备', '一阶段', '二阶段']
+                summary: '按企业有效人数查基础审核人日，并确定各阶段审核人天；结果按场所分别输出。',
+                fields: ['场所', '有效人数', '审核准备', '一阶段', '二阶段']
             },
             ITSMS: {
                 label: 'ITSMS信息技术服务管理体系',
@@ -5235,8 +5235,6 @@
                     siteId: card.id,
                     siteName: card.querySelector('.site-name')?.textContent?.trim() || card.id,
                     effectivePeople,
-                    businessComplexity: '中',
-                    itComplexityFactor: '1.0',
                     prep: existing.prep,
                     stage1: existing.stage1,
                     stage2: existing.stage2
@@ -5275,7 +5273,7 @@
                 return `我已切换到${rule.label}规则，先读取当前${phaseLabel}阶段的场所、有效人数和已填写的人天数据。根据《${rule.source}》，该领域计算结果表需要按场所输出：${rule.fields.join('、')}。实际计算时会用有效人数、认证领域、风险等级和审核类型查对应人天表；当前弹窗先按文档列出应输出字段，并把页面中已有的审核准备、第一阶段和第二阶段人天带入结果表，方便你核对字段结构。`;
             }
             if (domain === 'ISMS') {
-                return `我已切换到${rule.label}规则，先读取当前${phaseLabel}阶段的场所、有效人数和已填写的人天数据。根据《${rule.source}》，ISMS 计算结果表除三段人天外，还需要输出业务复杂性和 IT 复杂系数，因此结果表字段为：${rule.fields.join('、')}。`;
+                return `我已切换到${rule.label}规则，先读取当前${phaseLabel}阶段的场所、有效人数和已填写的人天数据。根据《${rule.source}》，ISMS 计算结果表按场所输出：${rule.fields.join('、')}。`;
             }
             if (domain === 'ITSMS') {
                 return `我已切换到${rule.label}规则，先读取当前${phaseLabel}阶段的场所、有效人数和已填写的人天数据。根据《${rule.source}》，ITSMS 最终结果表按场所输出：${rule.fields.join('、')}；SLA、供应商、服务风险等中间因子用于计算最终三段人天，但不进入结果表字段。`;
@@ -5368,8 +5366,6 @@
                 head.innerHTML = `<tr>
                     <th>场所</th>
                     <th style="width: 90px">有效人数</th>
-                    <th style="width: 110px">业务复杂性</th>
-                    <th style="width: 110px">IT复杂系数</th>
                     <th style="width: 90px">审核准备</th>
                     <th style="width: 90px">一阶段</th>
                     <th style="width: 90px">二阶段</th>
@@ -5378,8 +5374,6 @@
                     <tr>
                         <td>${escapeHtml(item.siteName)}</td>
                         <td>${item.effectivePeople}</td>
-                        <td>${escapeHtml(item.businessComplexity)}</td>
-                        <td>${escapeHtml(item.itComplexityFactor)}</td>
                         <td>${item.prep.toFixed(1)}</td>
                         <td>${item.stage1.toFixed(1)}</td>
                         <td>${item.stage2.toFixed(1)}</td>
