@@ -412,59 +412,84 @@
             </div>
 
             <!-- 1. 第一阶段不实施现场审核申请 -->
-            <div id="section-stage1-apply" class="review-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-                    <div class="flex items-center gap-2"><i class="fas fa-laptop-house text-blue-600"></i><h3 class="font-semibold text-slate-900">第一阶段不实施现场审核申请</h3></div>
-                    <span id="stage1AuditResultBadge" class="text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-full shadow-sm">已申请</span>
-                </div>
-                <div class="p-6 space-y-4">
-                    <label class="flex items-center gap-2">
-                        <input type="checkbox" id="applyStage1NoSite" checked class="text-blue-600">
-                        <span class="text-sm font-medium text-slate-700">申请第一阶段不实施现场审核</span>
-                    </label>
-                    <div id="stage1ApplyContent" class="space-y-4 pl-4 border-l-2 border-blue-300">
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700 mb-1 required">不实施现场审核的理由</label>
-                            <select id="stage1NoSiteReason" class="editable-field">
-                                <option value="cqc-valid" selected>客户已获得CQC颁发的其他管理体系认证，且证书有效</option>
-                                <option value="recognized-valid">客户已获得了该体系的有效认证证书，且证书是经认可机构认可的其他认证机构颁发的</option>
-                            </select>
-                        </div>
-                        <div id="stage1CertificatePanel" class="bg-white rounded-lg border border-blue-200 p-3">
-                            <div class="mb-3">
-                                <div id="stage1CertificateTitle" class="text-sm font-semibold text-slate-900">客户当前有效的管理体系证书</div>
-                                <div id="stage1CertificateHint" class="text-xs text-slate-500 mt-1">系统自动带入客户当前有效的CQC管理体系证书</div>
+            <div id="section-stage1-apply" class="review-section space-y-0">
+                <div class="initial-only bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                        <div class="flex items-center gap-2"><i class="fas fa-laptop-house text-blue-600"></i><h3 class="font-semibold text-slate-900">第一阶段不实施现场审核申请</h3></div>
+                        <span id="stage1AuditResultBadge" class="text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-full shadow-sm">已申请</span>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="applyStage1NoSite" checked class="text-blue-600">
+                            <span class="text-sm font-medium text-slate-700">申请第一阶段不实施现场审核</span>
+                        </label>
+                        <div id="stage1ApplyContent" class="space-y-4 pl-4 border-l-2 border-blue-300">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1 required">不实施现场审核的理由</label>
+                                <select id="stage1NoSiteReason" class="editable-field">
+                                    <option value="cqc-valid" selected>客户已获得CQC颁发的其他管理体系认证，且证书有效</option>
+                                    <option value="recognized-valid">客户已获得了该体系的有效认证证书，且证书是经认可机构认可的其他认证机构颁发的</option>
+                                </select>
                             </div>
-                            <div id="stage1SelectedCertificates" class="space-y-2">
-                                <div class="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                                    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-2">
-                                        <div><div class="font-semibold text-slate-900">00124Q31234R2M</div></div>
-                                        <span class="cert-status-pill cert-status-valid"><i class="fas fa-check-circle"></i>有效</span>
-                                    </div>
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
-                                        <div><label class="block text-xs font-medium text-slate-700 mb-1">认证机构</label><div class="readonly-field">中国质量认证中心</div></div>
-                                        <div><label class="block text-xs font-medium text-slate-700 mb-1">认证领域</label><div class="readonly-field">质量管理体系</div></div>
-                                        <div><label class="block text-xs font-medium text-slate-700 mb-1">认可标志</label><div class="readonly-field">CNAS</div></div>
-                                    </div>
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
-                                        <div><label class="block text-xs font-medium text-slate-700 mb-1">认证标准</label><div class="readonly-field">GB/T 19001-2016 / ISO 9001:2015</div></div>
-                                        <div><label class="block text-xs font-medium text-slate-700 mb-1">本周期发证日期</label><div class="readonly-field">2025-05-18</div></div>
-                                        <div><label class="block text-xs font-medium text-slate-700 mb-1">有效期至</label><div class="readonly-field">2028-05-17</div></div>
+                            <div id="stage1CertificatePanel" class="bg-white rounded-lg border border-blue-200 p-3">
+                                <div class="mb-3">
+                                    <div id="stage1CertificateTitle" class="text-sm font-semibold text-slate-900">客户当前有效的管理体系证书</div>
+                                    <div id="stage1CertificateHint" class="text-xs text-slate-500 mt-1">系统自动带入客户当前有效的CQC管理体系证书</div>
+                                </div>
+                                <div id="stage1SelectedCertificates" class="space-y-2">
+                                    <div class="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                                        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-2">
+                                            <div><div class="font-semibold text-slate-900">00124Q31234R2M</div></div>
+                                            <span class="cert-status-pill cert-status-valid"><i class="fas fa-check-circle"></i>有效</span>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">认证机构</label><div class="readonly-field">中国质量认证中心</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">认证领域</label><div class="readonly-field">质量管理体系</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">认可标志</label><div class="readonly-field">CNAS</div></div>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">认证标准</label><div class="readonly-field">GB/T 19001-2016 / ISO 9001:2015</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">本周期发证日期</label><div class="readonly-field">2025-05-18</div></div>
+                                            <div><label class="block text-xs font-medium text-slate-700 mb-1">有效期至</label><div class="readonly-field">2028-05-17</div></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1 required">客户及拟派审核组的现状说明</label>
+                                <textarea class="editable-field" rows="2">客户已有其他有效管理体系认证，组织管理体系运行稳定，拟派审核组具备相应专业能力和同类组织审核经验。</textarea>
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700 mb-1 required">客户及拟派审核组的现状说明</label>
-                            <textarea class="editable-field" rows="2">客户已有其他有效管理体系认证，组织管理体系运行稳定，拟派审核组具备相应专业能力和同类组织审核经验。</textarea>
+                        <div id="stage1AuditReasonPanel" class="hidden rounded-xl border p-4">
+                            <div class="flex items-center gap-2 mb-2">
+                                <i id="stage1AuditReasonIcon" class="fas fa-check-circle text-sm"></i>
+                                <h4 id="stage1AuditReasonTitle" class="text-sm font-semibold text-slate-900">审核原因</h4>
+                            </div>
+                            <div id="stage1AuditReasonText" class="text-sm leading-relaxed text-slate-700 whitespace-pre-wrap"></div>
                         </div>
                     </div>
-                    <div id="stage1AuditReasonPanel" class="hidden rounded-xl border p-4">
-                        <div class="flex items-center gap-2 mb-2">
-                            <i id="stage1AuditReasonIcon" class="fas fa-check-circle text-sm"></i>
-                            <h4 id="stage1AuditReasonTitle" class="text-sm font-semibold text-slate-900">审核原因</h4>
+                </div>
+
+                <div class="recertification-only hidden bg-blue-50 rounded-xl shadow-sm border border-blue-200 overflow-hidden">
+                    <div class="px-6 pt-5 pb-3 flex items-center justify-between">
+                        <div class="flex items-center gap-2"><i class="fas fa-laptop-house text-blue-600"></i><h3 class="font-semibold text-slate-900">第一阶段不实施现场审核申请</h3></div>
+                        <span class="text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-full shadow-sm">已申请</span>
+                    </div>
+                    <div class="px-6 pb-6 space-y-4">
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" checked disabled readonly class="text-blue-600 cursor-not-allowed">
+                            <span class="text-sm font-medium text-slate-700">申请第一阶段不实施现场审核</span>
+                        </label>
+                        <div class="space-y-5 pl-4 border-l-2 border-blue-300">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-2">不实施现场审核的理由</label>
+                                <textarea class="editable-field bg-white text-slate-700 cursor-not-allowed" rows="5" readonly disabled>客户为再认证项目，上一认证周期内已接受中国质量认证中心实施的现场审核，认证范围、生产/服务场所、组织架构及关键过程未发生重大变化；客户管理体系持续运行有效，已按计划完成内审、管理评审及纠正措施闭环，相关资料能够满足第一阶段文件评审要求。经综合评估，本次第一阶段可不实施现场审核。</textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-2">客户及拟派审核组的现状说明</label>
+                                <textarea class="editable-field bg-white text-slate-700 cursor-not-allowed" rows="3" readonly disabled>客户现有认证范围保持稳定，主要管理人员及运行过程无重大调整，体系运行记录完整。拟派审核组已熟悉客户行业特点和既往审核情况，具备相应专业能力，可通过文件资料核查、远程沟通和二阶段现场审核安排完成必要确认。</textarea>
+                            </div>
                         </div>
-                        <div id="stage1AuditReasonText" class="text-sm leading-relaxed text-slate-700 whitespace-pre-wrap"></div>
                     </div>
                 </div>
             </div>
