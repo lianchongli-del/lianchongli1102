@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -297,22 +298,127 @@
             color: #0f172a;
             font-size: 17px;
         }
+        .sign-certificate-panel {
+            margin-bottom: 20px;
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #fff;
+        }
+        .sign-certificate-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .sign-certificate-title {
+            color: #0f172a;
+            font-size: 13px;
+            font-weight: 800;
+        }
+        .uk-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            height: 24px;
+            padding: 0 9px;
+            border-radius: 999px;
+            border: 1px solid #a7f3d0;
+            background: #ecfdf5;
+            color: #047857;
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+        .uk-status.offline {
+            border-color: #fecaca;
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+        .certificate-recognition-box {
+            width: 100%;
+            min-width: 0;
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #f8fafc;
+            color: #0f172a;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+        .certificate-recognition-box i { color: #2563eb; }
+        .certificate-refresh-btn {
+            height: 30px;
+            padding: 0 11px;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .certificate-refresh-btn:hover { background: #dbeafe; }
+        .certificate-refresh-btn:disabled {
+            border-color: #e2e8f0;
+            background: #f8fafc;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+        .certificate-warning {
+            display: none;
+            margin-top: 10px;
+            padding: 10px 12px;
+            border: 1px solid #fde68a;
+            border-radius: 8px;
+            background: #fffbeb;
+            color: #92400e;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.6;
+        }
+        .certificate-warning.show { display: block; }
+        .certificate-warning.matched {
+            border-color: #bbf7d0;
+            background: #f0fdf4;
+            color: #166534;
+        }
+        .certificate-warning i { margin-right: 6px; }
         .sign-process-list {
             display: grid;
-            gap: 12px;
+            gap: 8px;
             margin-top: 20px;
         }
         .sign-process-line {
             display: flex;
             align-items: center;
             gap: 12px;
-            min-height: 50px;
-            padding: 13px 16px;
+            height: 58px;
+            padding: 0 16px;
             border: 1px solid #e2e8f0;
             border-radius: 8px;
             background: #fff;
             color: #475569;
             font-size: 13px;
+            font-weight: 600;
+        }
+        .sign-process-line span {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 3px;
+            min-height: 34px;
+        }
+        .sign-process-line small {
+            color: #94a3b8;
+            font-size: 12px;
             font-weight: 600;
         }
         .sign-process-line.running {
@@ -596,7 +702,7 @@
                 </div>
             </div>
             <div class="actions">
-                <button type="button" id="topSignBtn" class="action-btn primary" onclick="openSignModal()"><i class="fas fa-stamp"></i><span id="topSignBtnText">签章</span></button>
+                <button type="button" id="topSignBtn" class="action-btn primary" onclick="openSignModal()"><i class="fas fa-stamp"></i><span id="topSignBtnText">开始签章</span></button>
             </div>
         </header>
         <main class="frame-stage">
@@ -647,20 +753,34 @@
                         </div>
                         <div style="text-align:right;">
                             <small>签章人</small>
-                            <strong id="modalSigner">武荣刚</strong>
+                            <strong id="modalSigner">张三</strong>
                         </div>
                     </div>
-                    <div style="color:#475569;font-size:13px;line-height:1.65;">当前文件将以审核计划 PDF 样式提交线上签章，完成后在 PDF 预览中展示个人签章印。</div>
+                    <div class="sign-certificate-panel">
+                        <div class="sign-certificate-head">
+                            <div class="sign-certificate-title">签名证书识别</div>
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <span class="uk-status offline" id="ukConnectStatus"><i class="fas fa-circle-xmark"></i>UK 未连接</span>
+                                <button type="button" class="certificate-refresh-btn" onclick="refreshSignatureCertificates()"><i class="fas fa-rotate"></i> 刷新</button>
+                            </div>
+                        </div>
+                        <div class="certificate-recognition-box" id="signatureCertInfo">
+                        </div>
+                        <div class="certificate-warning" id="certificateMismatchWarning"><i class="fas fa-triangle-exclamation"></i><span id="certificateMismatchText"></span></div>
+                    </div>
                     <div class="sign-process-list" id="platformProgress">
-                        <div class="sign-process-line" data-progress="0"><i class="fas fa-stamp"></i><span>线上签章平台执行盖章</span></div>
-                        <div class="sign-process-line" data-progress="1"><i class="fas fa-route"></i><span>更新签章进度并流转下一节点</span></div>
+                        <div class="sign-process-line" data-progress="0"><i class="fas fa-file-lines"></i><span>生成摘要</span></div>
+                        <div class="sign-process-line" data-progress="1"><i class="fas fa-key"></i><span>UK 摘要签名</span></div>
+                        <div class="sign-process-line" data-progress="2"><i class="fas fa-file-circle-check"></i><span>合并文档</span></div>
+                        <div class="sign-process-line" data-progress="3"><i class="fas fa-eye"></i><span>签章文件预览</span></div>
+                        <div class="sign-process-line" data-progress="4"><i class="fas fa-route"></i><span>更新签章进度并流转下一节点</span></div>
                     </div>
                     <div class="sign-error-box" id="modalErrorBox"><i class="fas fa-triangle-exclamation"></i><span id="modalErrorText"></span></div>
                 </div>
             </div>
             <div class="sign-modal-footer">
-                <button type="button" class="action-btn" onclick="openPdfPreview()"><i class="fas fa-eye"></i>预览当前文件</button>
-                <button type="button" class="action-btn primary" id="confirmSignBtn" onclick="simulatePlatformSign()"><i class="fas fa-paper-plane"></i>签章</button>
+                <button type="button" class="action-btn" onclick="openPdfPreview()"><i class="fas fa-eye"></i>文件预览</button>
+                <button type="button" class="action-btn primary" id="confirmSignBtn" onclick="simulatePlatformSign()"><i class="fas fa-paper-plane"></i>开始签章</button>
             </div>
         </div>
     </div>
@@ -687,8 +807,16 @@
     <div class="sign-toast" id="signToast"><i class="fas fa-check-circle"></i><span id="signToastText"></span></div>
 
     <script>
+        const signatureCertificates = [
+            { id: 'cert-liushuzhen', name: '刘淑桢', serial: 'D5E89AED-6579-491D-B7CB-A5...', ukConnected: false },
+            { id: 'cert-zhangsan', name: '张三', serial: 'D5E89AED-6579-491D-B7CB-A5...', ukConnected: true }
+        ];
+        let selectedCertificateId = signatureCertificates[0].id;
+        let signModalPhase = 'ready';
+        let certificateRefreshCount = 0;
+
         const signNodes = [
-            { key: 'leader', title: '组长', role: '审核组长', signer: '武荣刚', status: 'pending', signedAt: '', attempts: 0, failOnFirstTry: true, error: '' },
+            { key: 'leader', title: '组长', role: '审核组长', signer: '张三', status: 'pending', signedAt: '', attempts: 0, error: '' },
             { key: 'pm', title: '项目管理', role: '项目管理', signer: '周静', status: 'waiting', signedAt: '', attempts: 0, error: '' },
             { key: 'customer', title: '客户', role: '客户代表', signer: '刘海峰', status: 'waiting', signedAt: '', attempts: 0, error: '' }
         ];
@@ -712,27 +840,154 @@
             return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
         }
 
+        function currentCertificate() {
+            return signatureCertificates.find(function (cert) { return cert.id === selectedCertificateId; }) || signatureCertificates[0];
+        }
+
+        function isCertificateMatched(node) {
+            const cert = currentCertificate();
+            return !!(node && cert && cert.name === node.signer);
+        }
+
+        function renderSignatureCertificates() {
+            const cert = currentCertificate();
+            const info = document.getElementById('signatureCertInfo');
+            if (info) {
+                info.innerHTML = cert.ukConnected ? '<i class="fas fa-id-card"></i><span>' + cert.name + '(' + cert.serial + ')</span>' : '';
+            }
+            syncSelectedCertificate();
+        }
+
+        function syncSelectedCertificate() {
+            const cert = currentCertificate();
+            const leader = signNodes[0];
+            const signer = document.getElementById('modalSigner');
+            if (signer && leader) signer.textContent = leader.signer;
+            updateCertificateMismatchWarning(cert, leader);
+            updateUkConnectionStatus(cert);
+            updateStartButtonEligibility(leader);
+            renderAllSignatureUI();
+        }
+
+        function updateCertificateMismatchWarning(cert, node) {
+            const warning = document.getElementById('certificateMismatchWarning');
+            const text = document.getElementById('certificateMismatchText');
+            if (!warning || !text || !node) return;
+            const icon = warning.querySelector('i');
+            if (!cert.ukConnected) {
+                text.textContent = '';
+                warning.classList.remove('show', 'matched');
+                return;
+            }
+            if (cert.name !== node.signer) {
+                text.textContent = '当前登录人/签章人为' + node.signer + '，识别到的签名证书为' + cert.name + '，不能进行签章操作。';
+                warning.classList.remove('matched');
+                if (icon) icon.className = 'fas fa-triangle-exclamation';
+                warning.classList.add('show');
+            } else {
+                text.textContent = '签名证书与当前签章人匹配：' + cert.name;
+                warning.classList.add('matched', 'show');
+                if (icon) icon.className = 'fas fa-circle-check';
+            }
+        }
+
+        function refreshSignatureCertificates() {
+            if (signModalPhase !== 'ready') {
+                showSignToast('签章流程已开始，不能再刷新签名证书');
+                return;
+            }
+            certificateRefreshCount += 1;
+            if (certificateRefreshCount === 1) {
+                selectedCertificateId = 'cert-liushuzhen';
+                signatureCertificates[0].ukConnected = true;
+            } else {
+                selectedCertificateId = 'cert-zhangsan';
+            }
+            renderSignatureCertificates();
+            showSignToast(certificateRefreshCount === 1 ? '已连接 UK，识别到刘淑桢证书' : '签名证书已刷新，识别到张三证书');
+        }
+
+        function updateStartButtonEligibility(node) {
+            if (!node || signModalPhase !== 'ready' || node.status === 'signing' || node.status === 'signed') return;
+            const cert = currentCertificate();
+            if (!cert.ukConnected) {
+                setConfirmSignButton('fa-paper-plane', '开始签章', false);
+                return;
+            }
+            if (!isCertificateMatched(node)) {
+                setConfirmSignButton('fa-paper-plane', '开始签章', false);
+                return;
+            }
+            setConfirmSignButton('fa-paper-plane', '开始签章', false);
+        }
+
+        function updateUkConnectionStatus(cert) {
+            const status = document.getElementById('ukConnectStatus');
+            const btn = document.getElementById('confirmSignBtn');
+            if (!status) return;
+            if (cert.ukConnected) {
+                status.classList.remove('offline');
+                status.innerHTML = '<i class="fas fa-circle-check"></i>UK 已连接';
+                if (btn && signingIndex >= 0 && signNodes[signingIndex].status !== 'signing' && isCertificateMatched(signNodes[signingIndex])) btn.disabled = false;
+                setModalError('');
+            } else {
+                status.classList.add('offline');
+                status.innerHTML = '<i class="fas fa-circle-xmark"></i>UK 未连接';
+                if (btn && signModalPhase === 'ready') btn.disabled = false;
+                setModalError('');
+            }
+        }
 
         function getSignProcessSteps(node) {
-            const isLeader = node && node.key === 'leader';
-            const steps = [];
-            if (isLeader) {
-                steps.push({ icon: 'fa-file-circle-check', text: '校验审核计划表单完整性校验' });
-            }
-            steps.push({ icon: 'fa-stamp', text: '线上签章平台执行盖章' });
-            steps.push({ icon: 'fa-route', text: '更新签章进度并流转下一节点' });
-            return steps;
+            return [
+                { icon: 'fa-file-lines', text: '生成摘要', desc: '摘要已生成' },
+                { icon: 'fa-key', text: 'UK 摘要签名', desc: 'P1 签名完成' },
+                { icon: 'fa-file-circle-check', text: '合并文档', desc: '签章 PDF 已生成' },
+                { icon: 'fa-eye', text: '签章文件预览', desc: '查看已签章 PDF 文件' },
+                { icon: 'fa-route', text: '更新签章进度并流转下一节点' }
+            ];
         }
 
         function renderPlatformProgress(node) {
             const container = document.getElementById('platformProgress');
             if (!container) return;
             const steps = getSignProcessSteps(node);
+            const showDesc = signModalPhase !== 'ready' || (node && (node.status === 'signing' || node.status === 'signed'));
             container.innerHTML = steps.map(function(step, index) {
-                return '<div class="sign-process-line" data-progress="' + index + '"><i class="fas ' + step.icon + '"></i><span>' + step.text + '</span></div>';
+                const desc = showDesc && step.desc ? '<small>' + step.desc + '</small>' : '';
+                return '<div class="sign-process-line" data-progress="' + index + '"><i class="fas ' + step.icon + '"></i><span>' + step.text + desc + '</span></div>';
             }).join('');
         }
 
+        function setConfirmSignButton(icon, text, disabled) {
+            const btn = document.getElementById('confirmSignBtn');
+            if (!btn) return;
+            btn.disabled = !!disabled;
+            btn.innerHTML = '<i class="fas ' + icon + '"></i>' + text;
+        }
+
+        function setProcessLineState(doneCount, runningIndex) {
+            const lines = Array.from(document.querySelectorAll('.sign-process-line'));
+            lines.forEach(function (line, index) {
+                line.classList.remove('running', 'done', 'failed');
+                if (index < doneCount) line.classList.add('done');
+                if (index === runningIndex) line.classList.add('running');
+            });
+        }
+
+        function resetModalActionState(node) {
+            const isPaused = node && node.status === 'signing' && signModalPhase === 'preview';
+            if (node && node.status === 'signed') {
+                setConfirmSignButton('fa-xmark', '关闭', false);
+            } else if (isPaused) {
+                setConfirmSignButton('fa-circle-check', '完成签章', false);
+                setProcessLineState(3, 3);
+            } else if (node && node.status === 'error') {
+                setConfirmSignButton('fa-rotate-right', '重新发起签章', false);
+            } else {
+                setConfirmSignButton('fa-paper-plane', '开始签章', false);
+            }
+        }
 
         function setModalError(message) {
             const box = document.getElementById('modalErrorBox');
@@ -773,16 +1028,14 @@
             }
             signingIndex = idx;
             document.getElementById('modalNodeName').textContent = node.title;
-            document.getElementById('modalSigner').textContent = node.signer;
+            renderSignatureCertificates();
             renderPlatformProgress(node);
             setModalError(node.error || '');
+            updateUkConnectionStatus(currentCertificate());
             setModalStatus(node.status);
-            const btn = document.getElementById('confirmSignBtn');
-            btn.disabled = false;
-            btn.innerHTML = node.status === 'error'
-                ? '<i class="fas fa-rotate-right"></i>重新发起签章'
-                : '<i class="fas fa-paper-plane"></i>签章';
             document.querySelectorAll('.sign-process-line').forEach(function (line) { line.classList.remove('running', 'done', 'failed'); });
+            resetModalActionState(node);
+            updateStartButtonEligibility(node);
             openSignModalById('onlineSignModal');
         }
 
@@ -809,23 +1062,48 @@
         }
 
         function simulatePlatformSign() {
+            if (signModalPhase === 'done') {
+                closeSignModalById('onlineSignModal');
+                return;
+            }
             if (signingIndex < 0) return;
             const node = signNodes[signingIndex];
             if (!isLeaderSignStage(node)) {
                 showSignToast('当前节点不支持在本页面签章');
                 return;
             }
+            if (signModalPhase === 'preview') {
+                continueSignatureFlow();
+                return;
+            }
+            const cert = currentCertificate();
+            if (!cert.ukConnected) {
+                setModalError('未检测到 UK，请连接后刷新证书列表。');
+                showSignToast('未检测到 UK，请连接后刷新证书列表');
+                setConfirmSignButton('fa-paper-plane', '开始签章', false);
+                return;
+            }
+            if (!isCertificateMatched(node)) {
+                setModalError('识别到的签名证书与当前签章人不一致，请刷新并识别到匹配证书后再开始签章。');
+                showSignToast('签名证书与当前签章人不匹配，不能开始签章');
+                setConfirmSignButton('fa-paper-plane', '开始签章', false);
+                return;
+            }
+            startSignaturePreviewFlow(node, cert);
+        }
+
+        function startSignaturePreviewFlow(node, cert) {
             node.status = 'signing';
             node.error = '';
+            signModalPhase = 'running';
             setModalError('');
             setModalStatus('signing');
+            renderPlatformProgress(node);
             renderAllSignatureUI();
-            const btn = document.getElementById('confirmSignBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>处理中';
+            setConfirmSignButton('fa-spinner fa-spin', '处理中', true);
             const lines = Array.from(document.querySelectorAll('.sign-process-line'));
             lines.forEach(function (line) { line.classList.remove('running', 'done', 'failed'); });
-            lines.forEach(function (line, index) {
+            lines.slice(0, 4).forEach(function (line, index) {
                 setTimeout(function () {
                     if (index > 0) {
                         lines[index - 1].classList.remove('running');
@@ -835,21 +1113,41 @@
                 }, index * 520);
             });
             setTimeout(function () {
-                lines[lines.length - 1].classList.remove('running');
-                lines[lines.length - 1].classList.add('done');
+                if (lines[2]) lines[2].classList.add('done');
+                if (lines[3]) lines[3].classList.add('running');
                 node.attempts = (node.attempts || 0) + 1;
-                if (node.key === 'leader' && node.failOnFirstTry && node.attempts === 1) {
-                    failCurrentSign('签章平台返回：证书授权校验失败，请重新发起签章。');
-                } else {
-                    finishCurrentSign();
+                if (!node.signedAt) node.signedAt = nowText();
+                signModalPhase = 'preview';
+                setConfirmSignButton('fa-circle-check', '完成签章', false);
+                showSignToast('已生成签章 PDF，可点击文件预览查看已签章文件');
+            }, 4 * 520 + 360);
+        }
+
+        function continueSignatureFlow() {
+            const node = signNodes[signingIndex];
+            if (!node) return;
+            signModalPhase = 'routing';
+            setConfirmSignButton('fa-spinner fa-spin', '处理中', true);
+            const lines = Array.from(document.querySelectorAll('.sign-process-line'));
+            if (lines[3]) {
+                lines[3].classList.remove('running');
+                lines[3].classList.add('done');
+            }
+            if (lines[4]) lines[4].classList.add('running');
+            setTimeout(function () {
+                if (lines[4]) {
+                    lines[4].classList.remove('running');
+                    lines[4].classList.add('done');
                 }
-            }, lines.length * 520 + 360);
+                finishCurrentSign();
+            }, 680);
         }
 
         function failCurrentSign(message) {
             const node = signNodes[signingIndex];
             node.status = 'error';
             node.error = message;
+            signModalPhase = 'ready';
             setModalStatus('error');
             setModalError(message);
             renderAllSignatureUI();
@@ -870,19 +1168,15 @@
             const node = signNodes[signedIndex];
             node.status = 'signed';
             node.error = '';
-            node.signedAt = nowText();
+            node.signedAt = node.signedAt || nowText();
+            signModalPhase = 'done';
             const next = signNodes[signedIndex + 1];
             if (next && next.status === 'waiting') next.status = 'pending';
             renderAllSignatureUI();
             setModalStatus('signed');
             setModalError('');
-            const btn = document.getElementById('confirmSignBtn');
-            btn.innerHTML = '<i class="fas fa-circle-check"></i>签章完成';
+            setConfirmSignButton('fa-xmark', '关闭', false);
             showSignToast(node.title + '节点已完成签章，已流转至' + (next ? next.title : '完成状态'));
-            setTimeout(function () {
-                closeSignModalById('onlineSignModal');
-                openPdfPreview(signedIndex);
-            }, 520);
         }
 
         function confirmReturnReason() {
@@ -932,7 +1226,7 @@
             btn.style.display = 'inline-flex';
             btn.disabled = node.status === 'signing';
             btn.style.opacity = btn.disabled ? '.65' : '1';
-            btnText.textContent = node.status === 'signing' ? '签章中' : (node.status === 'error' ? '重新签章' : '签章');
+            btnText.textContent = node.status === 'signing' ? (signModalPhase === 'preview' ? '完成签章' : '签章中') : (node.status === 'error' ? '重新签章' : '开始签章');
         }
 
         function frameStatusClass(status) {
@@ -1173,7 +1467,7 @@
                     <div>
                         <div class="frame-sign-progress-title"><i class="fas fa-route"></i><span>签章进度</span></div>
                     </div>
-                    <button type="button" class="frame-preview-btn" id="framePreviewBtn"><i class="fas fa-file-pdf"></i>预览当前文件</button>
+                    <button type="button" class="frame-preview-btn" id="framePreviewBtn"><i class="fas fa-file-pdf"></i>文件预览</button>
                 </div>
                 <div class="frame-sign-progress-body">
                     <div class="frame-sign-flow">
@@ -1205,10 +1499,13 @@
 
         function buildSignaturePageHtml() {
             const rows = signNodes.map(function (item, index) {
-                const meta = statusMeta(item.status);
+                const previewSigned = index === signingIndex && item.status === 'signing' && (signModalPhase === 'preview' || signModalPhase === 'routing');
+                const meta = previewSigned ? statusMeta('signed') : statusMeta(item.status);
                 return '<tr><td>' + (index + 1) + '</td><td>' + escapeHtml(item.title) + '</td><td>' + escapeHtml(item.signer) + '</td><td>' + escapeHtml(item.role) + '</td><td>' + escapeHtml(item.signedAt || '-') + '</td><td>' + escapeHtml(meta.text) + '</td></tr>';
             }).join('');
-            const sealBlocks = signNodes.filter(function (item) { return item.status === 'signed'; }).map(function (item) {
+            const sealBlocks = signNodes.filter(function (item, index) {
+                return item.status === 'signed' || (index === signingIndex && item.status === 'signing' && (signModalPhase === 'preview' || signModalPhase === 'routing'));
+            }).map(function (item) {
                 return '<div class="pdf-personal-seal-wrap"><div class="pdf-personal-seal"><div class="seal-role">' + escapeHtml(item.role) + '</div><div class="seal-name">' + escapeHtml(item.signer) + '</div><div class="seal-mark">电子签章</div></div><div class="pdf-personal-seal-time">' + escapeHtml(item.signedAt) + '</div></div>';
             }).join('');
             const current = currentSignIndex();
