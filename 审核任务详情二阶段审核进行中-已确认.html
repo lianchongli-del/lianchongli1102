@@ -2,12 +2,13 @@
 
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>审核任务详情整合</title>
+    <title>审核任务二阶段-不符合项报告签字</title>
     <style>
         * {
             box-sizing: border-box;
@@ -364,6 +365,340 @@
 
   frame.addEventListener('load', function () { setTimeout(installPatch, 0); });
   setTimeout(installPatch, 300);
+})();
+</script>
+
+
+<script id="AUDITOR_LEADER_UK_SIGN_PATCH">
+(function () {
+  var frame = document.getElementById('frame-rectify');
+  if (!frame) return;
+
+  function installPatch() {
+    var doc = frame.contentDocument;
+    if (!doc || doc.getElementById('auditorLeaderUkSignPatch')) return;
+    var script = doc.createElement('script');
+    script.id = 'auditorLeaderUkSignPatch';
+    script.textContent = '(' + function () {
+      var enhancedStages = { auditorSign: true, leaderSign: true };
+      var nativeOpenSignModal = window.openSignModal;
+      var nativeStartSignConfirm = window.startSignConfirm;
+      var modal = document.getElementById('onlineSignModal');
+      if (!modal || typeof nativeOpenSignModal !== 'function') return;
+
+      var legacyModalHtml = modal.innerHTML;
+      var signPhase = 'ready';
+      var certRefreshCount = 0;
+      var recognizedCert = { name: '', serial: '', ukConnected: false };
+
+      function isEnhancedTarget() {
+        return !!(signTarget && enhancedStages[signTarget.stage]);
+      }
+
+      function currentReport() {
+        return signTarget ? ncReports[signTarget.idx] : null;
+      }
+
+      function currentSigner() {
+        var report = currentReport();
+        if (!report || !signTarget || typeof getSignerInfo !== 'function') return '';
+        return getSignerInfo(report, signTarget.stage).signer;
+      }
+
+      function setModalError(message) {
+        var box = document.getElementById('modalErrorBox');
+        var text = document.getElementById('modalErrorText');
+        if (!box || !text) return;
+        text.textContent = message || '';
+        box.classList.toggle('show', !!message);
+      }
+
+      function setConfirmButton(icon, text, disabled) {
+        var btn = document.getElementById('confirmSignBtn');
+        if (!btn) return;
+        btn.disabled = !!disabled;
+        btn.innerHTML = '<i class="fas ' + icon + '"></i>' + text;
+      }
+
+      function setStatus(status) {
+        var el = document.getElementById('modalSignStatus');
+        if (!el) return;
+        var meta = {
+          pending: ['sign-status-pending', 'fa-clock', '待签章'],
+          signing: ['sign-status-signing', 'fa-spinner fa-spin', '签章中'],
+          signed: ['sign-status-signed', 'fa-check-circle', '签章完成']
+        }[status] || ['sign-status-pending', 'fa-clock', '待签章'];
+        el.className = 'sign-status-pill ' + meta[0];
+        el.innerHTML = '<i class="fas ' + meta[1] + '"></i>' + meta[2];
+      }
+
+      function signSteps() {
+        return [
+          { icon: 'fa-file-lines', text: '生成摘要', desc: '摘要已生成' },
+          { icon: 'fa-key', text: 'UK 摘要签名', desc: 'P1 签名完成' },
+          { icon: 'fa-file-circle-check', text: '合并文档', desc: '签章 PDF 已生成' },
+          { icon: 'fa-eye', text: '签章文件预览', desc: '查看已签章 PDF 文件' },
+          { icon: 'fa-route', text: '更新签章进度并流转下一节点' }
+        ];
+      }
+
+      function renderProgress(showDesc) {
+        var list = document.getElementById('platformProgress');
+        if (!list) return;
+        list.innerHTML = signSteps().map(function (step, index) {
+          var desc = showDesc && step.desc ? '<small>' + step.desc + '</small>' : '';
+          return '<div class="sign-process-line" data-progress="' + index + '"><i class="fas ' + step.icon + '"></i><span>' + step.text + desc + '</span></div>';
+        }).join('');
+      }
+
+      function setProcessState(doneCount, runningIndex) {
+        Array.from(document.querySelectorAll('#platformProgress .sign-process-line')).forEach(function (line, index) {
+          line.classList.remove('running', 'done', 'failed');
+          if (index < doneCount) line.classList.add('done');
+          if (index === runningIndex) line.classList.add('running');
+        });
+      }
+
+      function updateUkStatus() {
+        var status = document.getElementById('ukConnectStatus');
+        if (!status) return;
+        if (recognizedCert.ukConnected) {
+          status.classList.remove('offline');
+          status.innerHTML = '<i class="fas fa-circle-check"></i>UK 已连接';
+        } else {
+          status.classList.add('offline');
+          status.innerHTML = '<i class="fas fa-circle-xmark"></i>UK 未连接';
+        }
+      }
+
+      function updateCertInfo() {
+        var info = document.getElementById('signatureCertInfo');
+        var warning = document.getElementById('certificateMismatchWarning');
+        var text = document.getElementById('certificateMismatchText');
+        var icon = warning ? warning.querySelector('i') : null;
+        var signer = currentSigner();
+        if (info) {
+          info.innerHTML = recognizedCert.ukConnected ? '<i class="fas fa-id-card"></i><span>' + recognizedCert.name + '(' + recognizedCert.serial + ')</span>' : '';
+        }
+        if (!warning || !text) return;
+        if (!recognizedCert.ukConnected) {
+          text.textContent = '';
+          warning.classList.remove('show', 'matched');
+          return;
+        }
+        if (recognizedCert.name !== signer) {
+          text.textContent = '当前登录人/签章人为' + signer + '，识别到的签名证书为' + recognizedCert.name + '，不能进行签章操作。';
+          warning.classList.remove('matched');
+          if (icon) icon.className = 'fas fa-triangle-exclamation';
+          warning.classList.add('show');
+        } else {
+          text.textContent = '签名证书与当前签章人匹配：' + signer;
+          warning.classList.add('matched', 'show');
+          if (icon) icon.className = 'fas fa-circle-check';
+        }
+      }
+
+      function refreshSignatureCertificates() {
+        if (signPhase !== 'ready') return;
+        certRefreshCount += 1;
+        if (certRefreshCount === 1) {
+          recognizedCert = { name: '刘淑桢', serial: 'D5E89AED-6579-491D-B7CB-A5...', ukConnected: true };
+        } else {
+          recognizedCert = { name: currentSigner(), serial: 'D5E89AED-6579-491D-B7CB-A5...', ukConnected: true };
+        }
+        updateUkStatus();
+        updateCertInfo();
+        setModalError('');
+      }
+
+      function isCertMatched() {
+        return recognizedCert.ukConnected && recognizedCert.name === currentSigner();
+      }
+
+      function renderEnhancedModal() {
+        modal.innerHTML =
+          '<div class="sign-modal-card" onclick="event.stopPropagation()">' +
+            '<div class="sign-modal-header">' +
+              '<div><div class="sign-modal-title" id="onlineSignTitle"><i class="fas fa-stamp" style="color:#2563eb;"></i>线上签章确认</div></div>' +
+              '<div style="display:flex;align-items:center;gap:10px;"><span class="sign-status-pill sign-status-pending" id="modalSignStatus"><i class="fas fa-clock"></i>待签章</span></div>' +
+            '</div>' +
+            '<div class="sign-modal-body"><div class="sign-platform-card">' +
+              '<div class="sign-platform-info">' +
+                '<div><small>当前不符合项报告</small><strong id="modalReportNo"></strong></div>' +
+                '<div><small>当前签章节点</small><strong id="modalNodeName"></strong></div>' +
+                '<div style="text-align:right;"><small>签章人</small><strong id="modalSigner"></strong></div>' +
+              '</div>' +
+              '<div class="sign-certificate-panel">' +
+                '<div class="sign-certificate-head"><div class="sign-certificate-title">签名证书识别</div><div style="display:flex;align-items:center;gap:8px;"><span class="uk-status offline" id="ukConnectStatus"><i class="fas fa-circle-xmark"></i>UK 未连接</span><button type="button" class="certificate-refresh-btn" onclick="refreshSignatureCertificates()"><i class="fas fa-rotate"></i> 刷新</button></div></div>' +
+                '<div class="certificate-recognition-box" id="signatureCertInfo"></div>' +
+                '<div class="certificate-warning" id="certificateMismatchWarning"><i class="fas fa-triangle-exclamation"></i><span id="certificateMismatchText"></span></div>' +
+              '</div>' +
+              '<div class="sign-process-list" id="platformProgress"></div>' +
+              '<div class="sign-error-box" id="modalErrorBox"><i class="fas fa-triangle-exclamation"></i><span id="modalErrorText"></span></div>' +
+            '</div></div>' +
+            '<div class="sign-modal-footer">' +
+              '<button type="button" class="btn" onclick="previewPdf(signTarget ? signTarget.idx : 0)"><i class="fas fa-eye"></i>文件预览</button>' +
+              '<button type="button" class="btn btn-primary" id="confirmSignBtn" onclick="startSignConfirm()"><i class="fas fa-paper-plane"></i>开始签章</button>' +
+            '</div>' +
+          '</div>';
+      }
+
+      function openEnhancedSignModal(idx) {
+        var report = ncReports[idx];
+        var stage = reportStage(report);
+        signTarget = { idx: idx, stage: stage };
+        signPhase = 'ready';
+        certRefreshCount = 0;
+        recognizedCert = { name: '', serial: '', ukConnected: false };
+        renderEnhancedModal();
+        document.getElementById('modalReportNo').textContent = report.no;
+        document.getElementById('modalNodeName').textContent = getStageMeta(stage).name;
+        document.getElementById('modalSigner').textContent = currentSigner();
+        renderProgress(false);
+        updateUkStatus();
+        updateCertInfo();
+        setModalError('');
+        setStatus('pending');
+        setConfirmButton('fa-paper-plane', '开始签章', false);
+        modal.classList.add('show');
+      }
+
+      function addProvisionalSignRecord() {
+        var target = signTarget;
+        var report = currentReport();
+        if (!target || !report) return;
+        var meta = getSignerInfo(report, target.stage);
+        if (!report.signRecords) report.signRecords = {};
+        report.signRecords[target.stage] = {
+          role: meta.role,
+          signer: meta.signer,
+          time: new Date().toLocaleString('zh-CN')
+        };
+      }
+
+      function finishEnhancedSign() {
+        var target = signTarget;
+        var report = currentReport();
+        if (!target || !report) return;
+        var meta = getSignerInfo(report, target.stage);
+        if (!report.signRecords) report.signRecords = {};
+        report.stageStatus[target.stage] = 'completed';
+        report.signRecords[target.stage] = report.signRecords[target.stage] || {
+          role: meta.role,
+          signer: meta.signer,
+          time: new Date().toLocaleString('zh-CN')
+        };
+        if (typeof advanceToNextStage === 'function') advanceToNextStage(report);
+        if (typeof render === 'function') render();
+        setStatus('signed');
+        setModalError('');
+        setConfirmButton('fa-xmark', '关闭', false);
+        signPhase = 'done';
+      }
+
+      function runInitialFlow() {
+        signPhase = 'running';
+        renderProgress(true);
+        setStatus('signing');
+        setModalError('');
+        setConfirmButton('fa-spinner fa-spin', '处理中', true);
+        setProcessState(0, 0);
+        setTimeout(function () { setProcessState(1, 1); }, 420);
+        setTimeout(function () { setProcessState(2, 2); }, 840);
+        setTimeout(function () { setProcessState(3, 3); }, 1260);
+        setTimeout(function () {
+          addProvisionalSignRecord();
+          signPhase = 'preview';
+          setProcessState(3, 3);
+          setConfirmButton('fa-circle-check', '完成签章', false);
+        }, 1780);
+      }
+
+      function continueFlow() {
+        signPhase = 'routing';
+        setConfirmButton('fa-spinner fa-spin', '处理中', true);
+        var lines = Array.from(document.querySelectorAll('#platformProgress .sign-process-line'));
+        if (lines[3]) {
+          lines[3].classList.remove('running');
+          lines[3].classList.add('done');
+        }
+        if (lines[4]) lines[4].classList.add('running');
+        setTimeout(function () {
+          if (lines[4]) {
+            lines[4].classList.remove('running');
+            lines[4].classList.add('done');
+          }
+          finishEnhancedSign();
+        }, 560);
+      }
+
+      window.refreshSignatureCertificates = refreshSignatureCertificates;
+      try { refreshSignatureCertificates = refreshSignatureCertificates; } catch (e) {}
+
+      var enhancedOpenSignModal = function (idx) {
+        var report = ncReports[idx];
+        var stage = report && reportStage(report);
+        if (enhancedStages[stage]) return openEnhancedSignModal(idx);
+        modal.innerHTML = legacyModalHtml;
+        signPhase = 'ready';
+        return nativeOpenSignModal(idx);
+      };
+      window.openSignModal = enhancedOpenSignModal;
+      try { openSignModal = enhancedOpenSignModal; } catch (e) {}
+
+      var enhancedStartSignConfirm = function () {
+        if (!isEnhancedTarget()) {
+          return typeof nativeStartSignConfirm === 'function' ? nativeStartSignConfirm() : undefined;
+        }
+        if (signPhase === 'done') {
+          if (typeof closeSignModal === 'function') closeSignModal();
+          return;
+        }
+        if (signPhase === 'preview') return continueFlow();
+        if (!recognizedCert.ukConnected) {
+          setModalError('未检测到 UK，请连接后刷新证书列表。');
+          return;
+        }
+        if (!isCertMatched()) {
+          setModalError('识别到的签名证书与当前签章人不一致，请刷新并识别到匹配证书后再开始签章。');
+          return;
+        }
+        runInitialFlow();
+      };
+      window.startSignConfirm = enhancedStartSignConfirm;
+      try { startSignConfirm = enhancedStartSignConfirm; } catch (e) {}
+
+      var style = document.createElement('style');
+      style.textContent = [
+        '#onlineSignModal .sign-modal-card{width:min(680px,calc(100vw - 32px));}',
+        '#onlineSignModal .sign-certificate-panel{margin-bottom:20px;padding:16px;border:1px solid #e2e8f0;border-radius:10px;background:#fff;}',
+        '#onlineSignModal .sign-certificate-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;}',
+        '#onlineSignModal .sign-certificate-title{color:#0f172a;font-size:13px;font-weight:900;}',
+        '#onlineSignModal .uk-status{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border-radius:999px;border:1px solid #a7f3d0;background:#ecfdf5;color:#047857;font-size:12px;font-weight:900;white-space:nowrap;}',
+        '#onlineSignModal .uk-status.offline{border-color:#fecaca;background:#fef2f2;color:#b91c1c;}',
+        '#onlineSignModal .certificate-refresh-btn{height:30px;padding:0 11px;border:1px solid #bfdbfe;border-radius:8px;background:#eff6ff;color:#1d4ed8;font:inherit;font-size:12px;font-weight:900;cursor:pointer;}',
+        '#onlineSignModal .certificate-recognition-box{width:100%;min-height:38px;display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;color:#0f172a;font-size:13px;font-weight:700;line-height:1.5;}',
+        '#onlineSignModal .certificate-recognition-box i{color:#2563eb;}',
+        '#onlineSignModal .certificate-warning{display:none;margin-top:10px;padding:10px 12px;border:1px solid #fde68a;border-radius:8px;background:#fffbeb;color:#92400e;font-size:12px;font-weight:700;line-height:1.6;}',
+        '#onlineSignModal .certificate-warning.show{display:block;}',
+        '#onlineSignModal .certificate-warning.matched{border-color:#bbf7d0;background:#f0fdf4;color:#166534;}',
+        '#onlineSignModal .sign-process-list{display:grid;gap:8px;margin-top:20px;}',
+        '#onlineSignModal .sign-process-line{display:flex;align-items:center;gap:12px;height:58px;padding:0 16px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;color:#475569;font-size:13px;font-weight:700;}',
+        '#onlineSignModal .sign-process-line span{display:flex;flex-direction:column;justify-content:center;gap:3px;min-height:34px;}',
+        '#onlineSignModal .sign-process-line small{color:#94a3b8;font-size:12px;font-weight:600;}',
+        '#onlineSignModal .sign-process-line.running{background:#eff6ff!important;border-color:#bfdbfe!important;color:#1d4ed8!important;box-shadow:inset 3px 0 0 #2563eb;}',
+        '#onlineSignModal .sign-process-line.done{background:#f0fdf4!important;border-color:#bbf7d0!important;color:#166534!important;}',
+        '#onlineSignModal .sign-process-line.failed{background:#fef2f2!important;border-color:#fecaca!important;color:#b91c1c!important;}',
+        '#onlineSignModal .sign-error-box{display:none;margin-top:16px;padding:13px 15px;border:1px solid #fecaca;border-radius:10px;background:#fef2f2;color:#b91c1c;font-size:13px;font-weight:700;line-height:1.6;}',
+        '#onlineSignModal .sign-error-box.show{display:flex;align-items:flex-start;gap:8px;}'
+      ].join('\n');
+      document.head.appendChild(style);
+    }.toString() + ')();';
+    doc.body.appendChild(script);
+  }
+
+  frame.addEventListener('load', function () { setTimeout(installPatch, 50); });
+  setTimeout(installPatch, 500);
 })();
 </script>
 </body>
