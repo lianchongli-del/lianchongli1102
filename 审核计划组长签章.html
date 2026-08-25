@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -391,6 +392,50 @@
             color: #166534;
         }
         .certificate-warning i { margin-right: 6px; }
+        .sign-mode-tabs {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin-bottom: 16px;
+            padding: 4px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+        .sign-mode-tab {
+            height: 36px;
+            border: 0;
+            border-radius: 8px;
+            background: transparent;
+            color: #64748b;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all .18s;
+        }
+        .sign-mode-tab.active {
+            background: #2563eb;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(37,99,235,.18);
+        }
+        .sign-mode-tab:disabled {
+            cursor: not-allowed;
+            opacity: .72;
+        }
+        .sign-mode-panel.hidden { display: none; }
+        .mobile-sign-panel {
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            background: #f8fafc;
+            padding: 24px;
+        }
+        .uk-combined-step span {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         .sign-process-list {
             display: grid;
             gap: 8px;
@@ -745,6 +790,18 @@
                 </div>
             </div>
             <div class="sign-modal-body">
+                <div class="sign-mode-tabs" role="tablist" aria-label="签章方式">
+                    <button type="button" class="sign-mode-tab active" id="mobileSignModeTab" onclick="selectSignMode('mobile')">移动端签章</button>
+                    <button type="button" class="sign-mode-tab" id="ukSignModeTab" onclick="selectSignMode('uk')">UK签章</button>
+                </div>
+                <div class="sign-mode-panel mobile-sign-panel" id="mobileSignPanel">
+                    <div class="sign-process-list" id="mobileSignProgress">
+                        <div class="sign-process-line" data-mobile-progress="0"><i class="fas fa-file-pdf"></i><span>发送PDF文件</span></div>
+                        <div class="sign-process-line" data-mobile-progress="1"><i class="fas fa-mobile-screen-button"></i><span>移动端签署中</span></div>
+                        <div class="sign-process-line" data-mobile-progress="2"><i class="fas fa-circle-check"></i><span>签署完成</span></div>
+                    </div>
+                </div>
+                <div class="sign-mode-panel hidden" id="ukSignPanel">
                 <div class="sign-platform-card">
                     <div class="sign-platform-info">
                         <div>
@@ -769,13 +826,12 @@
                         <div class="certificate-warning" id="certificateMismatchWarning"><i class="fas fa-triangle-exclamation"></i><span id="certificateMismatchText"></span></div>
                     </div>
                     <div class="sign-process-list" id="platformProgress">
-                        <div class="sign-process-line" data-progress="0"><i class="fas fa-file-lines"></i><span>生成摘要</span></div>
-                        <div class="sign-process-line" data-progress="1"><i class="fas fa-key"></i><span>UK 摘要签名</span></div>
-                        <div class="sign-process-line" data-progress="2"><i class="fas fa-file-circle-check"></i><span>合并文档</span></div>
-                        <div class="sign-process-line" data-progress="3"><i class="fas fa-eye"></i><span>签章文件预览</span></div>
-                        <div class="sign-process-line" data-progress="4"><i class="fas fa-route"></i><span>更新签章进度并流转下一节点</span></div>
+                        <div class="sign-process-line uk-combined-step" data-progress="0"><i class="fas fa-file-circle-check"></i><span>生成摘要 / UK 摘要签名 / 合并文档</span></div>
+                        <div class="sign-process-line" data-progress="1"><i class="fas fa-eye"></i><span>签章文件预览</span></div>
+                        <div class="sign-process-line" data-progress="2"><i class="fas fa-route"></i><span>更新签章进度并流转下一节点</span></div>
                     </div>
                     <div class="sign-error-box" id="modalErrorBox"><i class="fas fa-triangle-exclamation"></i><span id="modalErrorText"></span></div>
+                </div>
                 </div>
             </div>
             <div class="sign-modal-footer">
@@ -814,6 +870,10 @@
         let selectedCertificateId = signatureCertificates[0].id;
         let signModalPhase = 'ready';
         let certificateRefreshCount = 0;
+        let selectedSignMode = 'mobile';
+        let signModeLocked = false;
+        let mobileProcessDoneCount = 0;
+        let mobileProcessRunningIndex = -1;
 
         const signNodes = [
             { key: 'leader', title: '组长', role: '审核组长', signer: '张三', status: 'pending', signedAt: '', attempts: 0, error: '' },
@@ -940,9 +1000,7 @@
 
         function getSignProcessSteps(node) {
             return [
-                { icon: 'fa-file-lines', text: '生成摘要', desc: '摘要已生成' },
-                { icon: 'fa-key', text: 'UK 摘要签名', desc: 'P1 签名完成' },
-                { icon: 'fa-file-circle-check', text: '合并文档', desc: '签章 PDF 已生成' },
+                { icon: 'fa-file-circle-check', text: '生成摘要 / UK 摘要签名 / 合并文档', desc: '签章 PDF 已生成', combined: true },
                 { icon: 'fa-eye', text: '签章文件预览', desc: '查看已签章 PDF 文件' },
                 { icon: 'fa-route', text: '更新签章进度并流转下一节点' }
             ];
@@ -955,7 +1013,8 @@
             const showDesc = signModalPhase !== 'ready' || (node && (node.status === 'signing' || node.status === 'signed'));
             container.innerHTML = steps.map(function(step, index) {
                 const desc = showDesc && step.desc ? '<small>' + step.desc + '</small>' : '';
-                return '<div class="sign-process-line" data-progress="' + index + '"><i class="fas ' + step.icon + '"></i><span>' + step.text + desc + '</span></div>';
+                const combinedClass = step.combined ? ' uk-combined-step' : '';
+                return '<div class="sign-process-line' + combinedClass + '" data-progress="' + index + '"><i class="fas ' + step.icon + '"></i><span>' + step.text + desc + '</span></div>';
             }).join('');
         }
 
@@ -964,10 +1023,54 @@
             if (!btn) return;
             btn.disabled = !!disabled;
             btn.innerHTML = '<i class="fas ' + icon + '"></i>' + text;
+            syncSignModePanels();
         }
 
-        function setProcessLineState(doneCount, runningIndex) {
-            const lines = Array.from(document.querySelectorAll('.sign-process-line'));
+        function selectSignMode(mode) {
+            const nextMode = mode === 'uk' ? 'uk' : 'mobile';
+            if (signModeLocked && nextMode !== selectedSignMode) {
+                showSignToast('签章流程已开始，不能切换签章方式');
+                syncSignModePanels();
+                return;
+            }
+            selectedSignMode = nextMode;
+            syncSignModePanels();
+            if (selectedSignMode === 'mobile') {
+                if (signModalPhase === 'mobileDone') {
+                    setConfirmSignButton('fa-circle-check', '确定', false);
+                } else if (signModalPhase === 'mobileRunning') {
+                    setConfirmSignButton('fa-spinner fa-spin', '处理中', true);
+                } else {
+                    setConfirmSignButton('fa-paper-plane', '开始签章', false);
+                }
+                return;
+            }
+            resetModalActionState(signNodes[signingIndex] || signNodes[0]);
+            updateStartButtonEligibility(signNodes[signingIndex] || signNodes[0]);
+        }
+
+        function syncSignModePanels() {
+            const mobileTab = document.getElementById('mobileSignModeTab');
+            const ukTab = document.getElementById('ukSignModeTab');
+            const mobilePanel = document.getElementById('mobileSignPanel');
+            const ukPanel = document.getElementById('ukSignPanel');
+            const confirmBtn = document.getElementById('confirmSignBtn');
+            const isUk = selectedSignMode === 'uk';
+            if (mobileTab) {
+                mobileTab.classList.toggle('active', !isUk);
+                mobileTab.disabled = signModeLocked;
+            }
+            if (ukTab) {
+                ukTab.classList.toggle('active', isUk);
+                ukTab.disabled = signModeLocked;
+            }
+            if (mobilePanel) mobilePanel.classList.toggle('hidden', isUk);
+            if (ukPanel) ukPanel.classList.toggle('hidden', !isUk);
+            if (confirmBtn) confirmBtn.style.display = 'inline-flex';
+        }
+
+        function setProcessLineState(doneCount, runningIndex, selector) {
+            const lines = Array.from(document.querySelectorAll(selector || '#platformProgress .sign-process-line'));
             lines.forEach(function (line, index) {
                 line.classList.remove('running', 'done', 'failed');
                 if (index < doneCount) line.classList.add('done');
@@ -975,13 +1078,26 @@
             });
         }
 
+        function setMobileProcessLineState(doneCount, runningIndex) {
+            setProcessLineState(doneCount, runningIndex, '#mobileSignProgress .sign-process-line');
+        }
+
+        function updateMobileProcessState(doneCount, runningIndex) {
+            mobileProcessDoneCount = doneCount;
+            mobileProcessRunningIndex = runningIndex;
+            setMobileProcessLineState(doneCount, runningIndex);
+        }
+
         function resetModalActionState(node) {
             const isPaused = node && node.status === 'signing' && signModalPhase === 'preview';
-            if (node && node.status === 'signed') {
-                setConfirmSignButton('fa-xmark', '关闭', false);
+            if (selectedSignMode === 'mobile' && signModalPhase === 'mobileRunning') {
+                setConfirmSignButton('fa-spinner fa-spin', '处理中', true);
+                setMobileProcessLineState(mobileProcessDoneCount, mobileProcessRunningIndex);
+            } else if (node && node.status === 'signed') {
+                setConfirmSignButton('fa-circle-check', '确定', false);
             } else if (isPaused) {
                 setConfirmSignButton('fa-circle-check', '完成签章', false);
-                setProcessLineState(3, 3);
+                setProcessLineState(1, 1, '#platformProgress .sign-process-line');
             } else if (node && node.status === 'error') {
                 setConfirmSignButton('fa-rotate-right', '重新发起签章', false);
             } else {
@@ -1026,6 +1142,9 @@
                 showSignToast('当前节点为' + node.title + '，本页面不提供项目管理和客户签章按钮');
                 return;
             }
+            selectedCertificateId = signatureCertificates[0].id;
+            certificateRefreshCount = 0;
+            if (!signModeLocked) selectedSignMode = 'mobile';
             signingIndex = idx;
             document.getElementById('modalNodeName').textContent = node.title;
             renderSignatureCertificates();
@@ -1034,8 +1153,14 @@
             updateUkConnectionStatus(currentCertificate());
             setModalStatus(node.status);
             document.querySelectorAll('.sign-process-line').forEach(function (line) { line.classList.remove('running', 'done', 'failed'); });
+            if (signModalPhase === 'mobileRunning' || signModalPhase === 'mobileDone') {
+                setMobileProcessLineState(mobileProcessDoneCount, mobileProcessRunningIndex);
+            } else {
+                updateMobileProcessState(0, -1);
+            }
             resetModalActionState(node);
             updateStartButtonEligibility(node);
+            syncSignModePanels();
             openSignModalById('onlineSignModal');
         }
 
@@ -1062,6 +1187,15 @@
         }
 
         function simulatePlatformSign() {
+            if (selectedSignMode === 'mobile') {
+                if (signModalPhase === 'mobileRunning') return;
+                if (signModalPhase === 'mobileDone') {
+                    closeSignModalById('onlineSignModal');
+                    return;
+                }
+                startMobileSignFlow();
+                return;
+            }
             if (signModalPhase === 'done') {
                 closeSignModalById('onlineSignModal');
                 return;
@@ -1092,35 +1226,63 @@
             startSignaturePreviewFlow(node, cert);
         }
 
+        function startMobileSignFlow() {
+            const node = signNodes[signingIndex];
+            if (!node) return;
+            node.status = 'signing';
+            node.error = '';
+            signModeLocked = true;
+            signModalPhase = 'mobileRunning';
+            setModalError('');
+            setModalStatus('signing');
+            renderAllSignatureUI();
+            setConfirmSignButton('fa-spinner fa-spin', '处理中', true);
+            updateMobileProcessState(0, 0);
+            setTimeout(function () {
+                updateMobileProcessState(1, 1);
+            }, 520);
+            setTimeout(function () {
+                updateMobileProcessState(3, -1);
+                finishMobileCurrentSign();
+                signModalPhase = 'mobileDone';
+                setConfirmSignButton('fa-circle-check', '确定', false);
+                showSignToast('移动端签署完成');
+            }, 15520);
+        }
+
+        function finishMobileCurrentSign() {
+            const signedIndex = signingIndex;
+            const node = signNodes[signedIndex];
+            if (!node) return;
+            node.status = 'signed';
+            node.error = '';
+            node.signedAt = node.signedAt || nowText();
+            const next = signNodes[signedIndex + 1];
+            if (next && next.status === 'waiting') next.status = 'pending';
+            setModalStatus('signed');
+            setModalError('');
+            renderAllSignatureUI();
+        }
+
         function startSignaturePreviewFlow(node, cert) {
             node.status = 'signing';
             node.error = '';
+            signModeLocked = true;
             signModalPhase = 'running';
             setModalError('');
             setModalStatus('signing');
             renderPlatformProgress(node);
             renderAllSignatureUI();
             setConfirmSignButton('fa-spinner fa-spin', '处理中', true);
-            const lines = Array.from(document.querySelectorAll('.sign-process-line'));
-            lines.forEach(function (line) { line.classList.remove('running', 'done', 'failed'); });
-            lines.slice(0, 4).forEach(function (line, index) {
-                setTimeout(function () {
-                    if (index > 0) {
-                        lines[index - 1].classList.remove('running');
-                        lines[index - 1].classList.add('done');
-                    }
-                    line.classList.add('running');
-                }, index * 520);
-            });
+            setProcessLineState(0, 0, '#platformProgress .sign-process-line');
             setTimeout(function () {
-                if (lines[2]) lines[2].classList.add('done');
-                if (lines[3]) lines[3].classList.add('running');
+                setProcessLineState(1, 1, '#platformProgress .sign-process-line');
                 node.attempts = (node.attempts || 0) + 1;
                 if (!node.signedAt) node.signedAt = nowText();
                 signModalPhase = 'preview';
                 setConfirmSignButton('fa-circle-check', '完成签章', false);
                 showSignToast('已生成签章 PDF，可点击文件预览查看已签章文件');
-            }, 4 * 520 + 360);
+            }, 720);
         }
 
         function continueSignatureFlow() {
@@ -1128,16 +1290,16 @@
             if (!node) return;
             signModalPhase = 'routing';
             setConfirmSignButton('fa-spinner fa-spin', '处理中', true);
-            const lines = Array.from(document.querySelectorAll('.sign-process-line'));
-            if (lines[3]) {
-                lines[3].classList.remove('running');
-                lines[3].classList.add('done');
+            const lines = Array.from(document.querySelectorAll('#platformProgress .sign-process-line'));
+            if (lines[1]) {
+                lines[1].classList.remove('running');
+                lines[1].classList.add('done');
             }
-            if (lines[4]) lines[4].classList.add('running');
+            if (lines[2]) lines[2].classList.add('running');
             setTimeout(function () {
-                if (lines[4]) {
-                    lines[4].classList.remove('running');
-                    lines[4].classList.add('done');
+                if (lines[2]) {
+                    lines[2].classList.remove('running');
+                    lines[2].classList.add('done');
                 }
                 finishCurrentSign();
             }, 680);
@@ -1151,7 +1313,7 @@
             setModalStatus('error');
             setModalError(message);
             renderAllSignatureUI();
-            const lines = Array.from(document.querySelectorAll('.sign-process-line'));
+            const lines = Array.from(document.querySelectorAll('#platformProgress .sign-process-line'));
             if (lines.length) {
                 const last = lines[lines.length - 1];
                 last.classList.remove('running', 'done');
@@ -1175,7 +1337,7 @@
             renderAllSignatureUI();
             setModalStatus('signed');
             setModalError('');
-            setConfirmSignButton('fa-xmark', '关闭', false);
+            setConfirmSignButton('fa-circle-check', '确定', false);
             showSignToast(node.title + '节点已完成签章，已流转至' + (next ? next.title : '完成状态'));
         }
 
@@ -1224,9 +1386,10 @@
             }
 
             btn.style.display = 'inline-flex';
-            btn.disabled = node.status === 'signing';
+            const isMobileSigning = node.status === 'signing' && signModalPhase === 'mobileRunning';
+            btn.disabled = node.status === 'signing' && !isMobileSigning;
             btn.style.opacity = btn.disabled ? '.65' : '1';
-            btnText.textContent = node.status === 'signing' ? (signModalPhase === 'preview' ? '完成签章' : '签章中') : (node.status === 'error' ? '重新签章' : '开始签章');
+            btnText.textContent = isMobileSigning ? '开始签章' : (node.status === 'signing' ? (signModalPhase === 'preview' ? '完成签章' : '签章中') : (node.status === 'error' ? '重新签章' : '开始签章'));
         }
 
         function frameStatusClass(status) {
