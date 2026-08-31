@@ -2733,7 +2733,7 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 ${isEnMS ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4">
                         <div>
                             <label class="block text-xs font-medium text-slate-700 mb-1 required">认证范围</label>
                             <textarea maxlength="500" rows="2" data-cert-info-field="scope" placeholder="请详细描述认证范围（产品/服务/活动）..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
@@ -2742,6 +2742,12 @@
                             <label class="block text-xs font-medium text-slate-700 mb-1">认证范围（英）</label>
                             <textarea maxlength="500" rows="2" data-cert-info-field="scopeEn" placeholder="Please describe the certification scope..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
                         </div>
+                        ${isEnMS ? `
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1 required">边界</label>
+                            <textarea maxlength="500" rows="2" required data-cert-info-field="energyBoundary" placeholder="请描述能源管理体系边界..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 bg-white transition-all resize-none"></textarea>
+                        </div>
+                        ` : ''}
                     </div>
 
                     <div>
@@ -2864,10 +2870,8 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 mb-1">能耗单位</label>
-                                <select name="energyConsumptionUnit_${scopeId}" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 bg-white transition-all">
-                                    <option value="tce/year">吨标煤/年</option>
-                                    <option value="TJ/year">TJ/年</option>
-                                </select>
+                                <div class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg bg-slate-50 text-slate-700">吨标煤/年</div>
+                                <input type="hidden" name="energyConsumptionUnit_${scopeId}" value="吨标煤/年">
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 mb-1">主要能源使用的数量</label>
@@ -2975,11 +2979,20 @@
 
             const rowId = `${uniqueId}_${Date.now()}_${container.children.length + 1}`;
             const row = document.createElement('div');
-            row.className = 'grid grid-cols-1 md:grid-cols-[1.4fr_1fr_1fr_auto] gap-2 items-start';
+            row.className = 'grid grid-cols-1 md:grid-cols-[1.3fr_0.9fr_0.9fr_1fr_auto] gap-2 items-start';
             row.dataset.energyTypeRow = 'true';
             row.innerHTML = `
                 <input type="text" name="energyType_${rowId}" placeholder="如：电、天然气、蒸汽" class="px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 bg-white transition-all">
                 <input type="number" min="0" step="0.01" name="energyAmount_${rowId}" placeholder="请输入该能源数量" class="px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 bg-white transition-all">
+                <input type="text" list="energyUnitOptions_${rowId}" name="energyUnit_${rowId}" placeholder="单位" class="px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 bg-white transition-all">
+                <datalist id="energyUnitOptions_${rowId}">
+                    <option value="kWh">
+                    <option value="m³">
+                    <option value="吨">
+                    <option value="吨标煤">
+                    <option value="GJ">
+                    <option value="Nm³">
+                </datalist>
                 <div class="flex">
                     <input type="number" min="0" max="100" step="0.01" name="energyRatio_${rowId}" placeholder="请输入综合能耗占比" class="w-full px-2 py-2 text-xs border border-slate-300 rounded-l-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 bg-white transition-all" oninput="validateEnergyRatioTotal('${uniqueId}')">
                     <span class="inline-flex items-center px-2 text-xs text-slate-500 bg-slate-50 border border-l-0 border-slate-300 rounded-r-lg">%</span>
@@ -4134,7 +4147,7 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 ${isEnMS ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4">
                         <div>
                             <label class="block text-xs font-medium text-slate-700 mb-1 required">认证范围</label>
                             <textarea maxlength="500" rows="2" data-cert-info-field="scope" placeholder="请详细描述认证范围（产品/服务/活动）..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
@@ -4143,6 +4156,12 @@
                             <label class="block text-xs font-medium text-slate-700 mb-1">认证范围（英）</label>
                             <textarea maxlength="500" rows="2" data-cert-info-field="scopeEn" placeholder="Please describe the certification scope..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all resize-none"></textarea>
                         </div>
+                        ${isEnMS ? `
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1 required">边界</label>
+                            <textarea maxlength="500" rows="2" required data-cert-info-field="energyBoundary" placeholder="请描述能源管理体系边界..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 bg-white transition-all resize-none"></textarea>
+                        </div>
+                        ` : ''}
                     </div>
 
                     <div>
@@ -5494,9 +5513,41 @@ function initAttachments() {
             sections.forEach(section => observer.observe(section));
         }
 
+        function validateEnMSBoundaries(showMessage = false) {
+            const enmsCards = Array.from(document.querySelectorAll('.system-card[data-system="EnMS"]'));
+            let firstInvalid = null;
+
+            enmsCards.forEach(card => {
+                const fields = [
+                    card.querySelector('[data-cert-info-field="energyBoundary"]'),
+                    ...Array.from(card.querySelectorAll('[data-location-cert-info-field="energyBoundary"]'))
+                ].filter(Boolean);
+
+                fields.forEach(field => {
+                    const isInvalid = !field.value.trim();
+                    field.classList.toggle('border-red-400', isInvalid);
+                    field.classList.toggle('focus:ring-red-500', isInvalid);
+                    if (isInvalid && !firstInvalid) firstInvalid = field;
+                });
+            });
+
+            if (firstInvalid) {
+                if (showMessage) showToast('请填写能源管理体系的边界信息', 'error');
+                firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstInvalid.focus();
+                return false;
+            }
+
+            return true;
+        }
+
         function submitForm() {
             if (selectedSystems.length === 0) {
                 alert('请至少添加一个认证领域');
+                return;
+            }
+
+            if (!validateEnMSBoundaries(true)) {
                 return;
             }
 
@@ -6020,6 +6071,7 @@ function initAttachments() {
                 ? 'h-8 bg-white text-slate-700 focus:ring-1 focus:ring-blue-500'
                 : 'h-8 bg-white text-slate-700 cursor-default';
             const infoFieldReadonly = isTempLocation ? '' : 'readonly';
+            const editableInfoFieldClass = 'h-8 bg-white text-slate-700 focus:ring-1 focus:ring-blue-500';
             div.innerHTML = `
                 <div class="flex items-start justify-between mb-3">
                     <div class="flex items-center gap-3">
@@ -6044,7 +6096,7 @@ function initAttachments() {
                     </div>
                     <div class="col-span-12 md:col-span-6">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">场所地址（英）</label>
-                        <input type="text" value="${escapeHtml(options.addressEn || '')}" ${infoFieldReadonly} oninput="syncLocationDataset(this, 'locAddressEn')" class="location-address-en-input w-full px-2 text-xs border border-slate-300 rounded ${infoFieldClass}" placeholder="Site address in English">
+                        <input type="text" value="${escapeHtml(options.addressEn || '')}" oninput="syncLocationDataset(this, 'locAddressEn')" class="location-address-en-input w-full px-2 text-xs border border-slate-300 rounded ${editableInfoFieldClass}" placeholder="Site address in English">
                     </div>
                     <div class="col-span-12 md:col-span-6">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">统一社会信用代码</label>
@@ -6052,16 +6104,22 @@ function initAttachments() {
                     </div>
                     <div class="col-span-12 md:col-span-6">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">场所人数</label>
-                        <input type="number" value="${escapedPeople}" ${infoFieldReadonly} oninput="syncLocationDataset(this, 'locPeople')" class="location-people-input w-full px-2 text-xs border border-slate-300 rounded ${infoFieldClass}" placeholder="0">
+                        <input type="number" value="${escapedPeople}" oninput="syncLocationDataset(this, 'locPeople')" class="location-people-input w-full px-2 text-xs border border-slate-300 rounded ${editableInfoFieldClass}" placeholder="0">
                     </div>
-                    <div class="col-span-12 md:col-span-6">
+                    <div class="col-span-12 ${isEnMSLocation ? 'md:col-span-4' : 'md:col-span-6'}">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1 required">认证范围</label>
                         <textarea rows="3" data-location-cert-info-field="scope" placeholder="500字以内" maxlength="500" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white resize-none"></textarea>
                     </div>
-                    <div class="col-span-12 md:col-span-6">
+                    <div class="col-span-12 ${isEnMSLocation ? 'md:col-span-4' : 'md:col-span-6'}">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">认证范围（英）</label>
                         <textarea rows="3" data-location-cert-info-field="scopeEn" placeholder="Certification scope in English" maxlength="500" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white resize-none"></textarea>
                     </div>
+                    ${isEnMSLocation ? `
+                    <div class="col-span-12 md:col-span-4">
+                        <label class="block text-[10px] font-medium text-slate-500 mb-1 required">边界</label>
+                        <textarea rows="3" required data-location-cert-info-field="energyBoundary" placeholder="请描述该场所能源管理体系边界" maxlength="500" class="w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-lime-500 bg-white resize-none"></textarea>
+                    </div>
+                    ` : ''}
                     <div class="col-span-12 sm:col-span-6 md:col-span-3">
                         <label class="block text-[10px] font-medium text-slate-500 mb-1">中心职能</label>
                         <select class="location-center-select w-full px-2 py-1.5 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 bg-white" onchange="toggleLocationCenter(this)" ${options.locked ? 'disabled' : ''}>
