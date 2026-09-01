@@ -523,6 +523,12 @@
             background: #f8fafc;
         }
 
+        .activity-row textarea.form-input {
+            min-height: 64px;
+            line-height: 1.5;
+            resize: vertical;
+        }
+
         .activity-row:last-child {
             border-bottom: none;
         }
@@ -908,6 +914,33 @@
             font-size: 13px;
             color: #64748b;
             text-align: center;
+        }
+
+        .plan-validation-message {
+            margin-top: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .plan-validation-message.success {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+
+        .plan-validation-message.error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .past-plan-list {
@@ -1527,7 +1560,7 @@
                         <div class="flex justify-between items-center mb-4">
                             <h4 class="text-sm font-semibold text-slate-700">审核活动明细</h4>
                             <div class="flex gap-2">
-                                <input type="file" id="excelUpload-hq" accept=".doc,.html,.xlsx,.xls" class="hidden-file-input" onchange="handleSiteExcelUpload(event, 'hq')">
+                                <input type="file" id="excelUpload-hq" accept=".doc,application/msword" class="hidden-file-input" onchange="handleSiteExcelUpload(event, 'hq')">
                                 <button class="btn btn-default btn-sm" onclick="openPlanImportModal('hq')">
                                     <i class="fas fa-file-import"></i>导入
                                 </button>
@@ -1599,7 +1632,7 @@
                         <div class="flex justify-between items-center mb-4">
                             <h4 class="text-sm font-semibold text-slate-700">审核活动明细</h4>
                             <div class="flex gap-2">
-                                <input type="file" id="excelUpload-site1" accept=".doc,.html,.xlsx,.xls" class="hidden-file-input" onchange="handleSiteExcelUpload(event, 'site1')">
+                                <input type="file" id="excelUpload-site1" accept=".doc,application/msword" class="hidden-file-input" onchange="handleSiteExcelUpload(event, 'site1')">
                                 <button class="btn btn-default btn-sm" onclick="openPlanImportModal('site1')">
                                     <i class="fas fa-file-import"></i>导入
                                 </button>
@@ -1672,7 +1705,7 @@
                         <div class="flex justify-between items-center mb-4">
                             <h4 class="text-sm font-semibold text-slate-700">审核活动明细</h4>
                             <div class="flex gap-2">
-                                <input type="file" id="excelUpload-site2" accept=".doc,.html,.xlsx,.xls" class="hidden-file-input" onchange="handleSiteExcelUpload(event, 'site2')">
+                                <input type="file" id="excelUpload-site2" accept=".doc,application/msword" class="hidden-file-input" onchange="handleSiteExcelUpload(event, 'site2')">
                                 <button class="btn btn-default btn-sm" onclick="openPlanImportModal('site2')">
                                     <i class="fas fa-file-import"></i>导入
                                 </button>
@@ -1773,12 +1806,18 @@
                 <button type="button" class="plan-upload-dropzone" id="planUploadDropzone" onclick="triggerPlanUpload()" ondragover="handlePlanUploadDragOver(event)" ondragleave="handlePlanUploadDragLeave(event)" ondrop="handlePlanUploadDrop(event)">
                     <i class="fas fa-cloud-arrow-up"></i>
                     <span class="plan-upload-title">上传计划</span>
-                    <span class="plan-upload-hint">点击选择文件，或将 Word / Excel 模板拖动到此处</span>
+                    <span class="plan-upload-hint">点击选择文件，或将 Word 模板拖动到此处</span>
                 </button>
             </div>
             <div class="past-plan-modal-body">
                 <div class="text-sm font-semibold text-slate-700 mb-2">已上传附件</div>
                 <div id="uploadedPlanFile"></div>
+            </div>
+            <div class="past-plan-confirm-actions">
+                <button type="button" class="btn btn-default btn-sm" onclick="closePlanImportModal()">取消</button>
+                <button type="button" class="btn btn-primary btn-sm" id="confirmPlanImportBtn" onclick="confirmPlanImport()" disabled>
+                    <i class="fas fa-check"></i>确定导入
+                </button>
             </div>
         </div>
     </div>
@@ -1938,6 +1977,7 @@
         let pendingPastPlanId = '';
         let currentImportSiteId = '';
         const uploadedPlanFiles = {};
+        const pendingPlanImports = {};
 
         function getAuditTeamCode(index) {
             let code = '';
@@ -2158,10 +2198,10 @@
                     </div>
                 </div>
                 <div>
-                    <input type="text" class="form-input" value="${process}" placeholder="如：组织环境 4.1-4.4" style="width: 100%;">
+                    <textarea class="form-input" rows="2" placeholder="如：组织环境 4.1-4.4" style="width: 100%;">${escapeHtmlText(process)}</textarea>
                 </div>
                 <div>
-                    <input type="text" class="form-input" value="${dept}" placeholder="如：管理层/中心职能" style="width: 100%;">
+                    <textarea class="form-input" rows="2" placeholder="如：管理层/中心职能" style="width: 100%;">${escapeHtmlText(dept)}</textarea>
                 </div>
                 <div>
                     <button type="button" class="btn btn-danger btn-xs" onclick="removeActivityRow('${rowId}', '${siteId}')">
@@ -2304,7 +2344,9 @@
 
         function getAuditorIdsByGroup(groupValue) {
             return String(groupValue || '').split(/[，,、\s]+/).map(code => {
-                const index = code.trim().toUpperCase().split('').reduce((total, char) => {
+                const normalizedCode = code.trim().toUpperCase();
+                if (!/^[A-Z]+$/.test(normalizedCode)) return '';
+                const index = normalizedCode.split('').reduce((total, char) => {
                     return total * 26 + char.charCodeAt(0) - 64;
                 }, 0) - 1;
                 return auditTeam[index]?.id || '';
@@ -2356,6 +2398,63 @@
             }).filter(row => Object.values(row).some(Boolean));
         }
 
+        function isWordTemplateFile(file) {
+            return Boolean(file?.name && file.name.toLowerCase().endsWith('.doc'));
+        }
+
+        function isLegacyWordDoc(buffer) {
+            const bytes = new Uint8Array(buffer).slice(0, 8);
+            const signature = [0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1];
+            return signature.every((byte, index) => bytes[index] === byte);
+        }
+
+        function readTextFromBuffer(buffer) {
+            try {
+                return new TextDecoder('utf-8').decode(buffer);
+            } catch (err) {
+                return '';
+            }
+        }
+
+        function validateImportedRows(siteId, rows) {
+            const requiredHeaders = ['日期', '开始时间', '结束时间', '组别', '拟审核的过程或活动及相关的标准条款', '涉及的部门/场所'];
+            const headers = Object.keys(rows[0] || {});
+            const missingHeaders = requiredHeaders.filter(header => !headers.includes(header));
+            const errors = [];
+
+            if (missingHeaders.length) {
+                errors.push(`缺少字段：${missingHeaders.join('、')}`);
+            }
+
+            if (!rows.length) {
+                errors.push('模板中没有可导入的数据行');
+            }
+
+            const allowedAuditorIds = siteAuditorAssignments[siteId] || auditTeam.map(t => t.id);
+            rows.forEach((row, index) => {
+                const rowNo = index + 2;
+                if (!row['日期']) errors.push(`第${rowNo}行缺少日期`);
+                if (!row['开始时间']) errors.push(`第${rowNo}行缺少开始时间`);
+                if (!row['结束时间']) errors.push(`第${rowNo}行缺少结束时间`);
+                if (!row['组别']) errors.push(`第${rowNo}行缺少组别`);
+                if (!row['拟审核的过程或活动及相关的标准条款']) errors.push(`第${rowNo}行缺少拟审核的过程或活动及相关的标准条款`);
+                if (!row['涉及的部门/场所']) errors.push(`第${rowNo}行缺少涉及的部门/场所`);
+
+                const auditorIds = getAuditorIdsByGroup(row['组别']);
+                if (row['组别'] && !auditorIds.length) {
+                    errors.push(`第${rowNo}行组别未匹配到审核人员`);
+                }
+
+                const invalidAuditorIds = auditorIds.filter(id => !allowedAuditorIds.includes(id));
+                if (invalidAuditorIds.length) {
+                    const invalidNames = invalidAuditorIds.map(id => auditTeam.find(a => a.id === id)?.name || id).join('、');
+                    errors.push(`第${rowNo}行组别对应人员不属于当前场所可安排人员：${invalidNames}`);
+                }
+            });
+
+            return { valid: errors.length === 0, errors };
+        }
+
         function formatFileSize(size) {
             if (!size) return '0 KB';
             if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
@@ -2374,14 +2473,21 @@
 
         function renderUploadedPlanFile() {
             const holder = document.getElementById('uploadedPlanFile');
+            const confirmBtn = document.getElementById('confirmPlanImportBtn');
             if (!holder) return;
             const fileInfo = uploadedPlanFiles[currentImportSiteId];
             const fileName = fileInfo ? escapeHtmlText(fileInfo.name) : '';
+            const validation = pendingPlanImports[currentImportSiteId]?.validation;
+            if (confirmBtn) confirmBtn.disabled = !validation?.valid;
 
             if (!fileInfo) {
                 holder.innerHTML = '<div class="uploaded-plan-empty">暂无上传附件</div>';
                 return;
             }
+
+            const validationHtml = validation?.valid
+                ? `<div class="plan-validation-message success"><i class="fas fa-circle-check"></i> ${validation.fileOnly ? 'Word模板文件校验通过，可导入附件。' : '校验通过，可导入。'}</div>`
+                : `<div class="plan-validation-message error"><i class="fas fa-circle-exclamation"></i> 校验失败：${(validation?.errors || ['请重新上传正确的Word模板']).map(escapeHtmlText).join('；')}</div>`;
 
             holder.innerHTML = `
                 <div class="uploaded-plan-file">
@@ -2399,10 +2505,11 @@
                         </button>
                     </div>
                 </div>
+                ${validationHtml}
             `;
         }
 
-        function setUploadedPlanFile(siteId, file) {
+        function setUploadedPlanFile(siteId, file, rows, validation) {
             if (uploadedPlanFiles[siteId]?.url) {
                 URL.revokeObjectURL(uploadedPlanFiles[siteId].url);
             }
@@ -2412,6 +2519,16 @@
                 size: file.size,
                 url: URL.createObjectURL(file)
             };
+            pendingPlanImports[siteId] = { rows, validation };
+            renderUploadedPlanFile();
+        }
+
+        function clearUploadedPlanFile(siteId) {
+            if (uploadedPlanFiles[siteId]?.url) {
+                URL.revokeObjectURL(uploadedPlanFiles[siteId].url);
+            }
+            delete uploadedPlanFiles[siteId];
+            delete pendingPlanImports[siteId];
             renderUploadedPlanFile();
         }
 
@@ -2448,42 +2565,56 @@
         function deleteUploadedPlanFile() {
             const fileInfo = uploadedPlanFiles[currentImportSiteId];
             if (!fileInfo) return;
-            URL.revokeObjectURL(fileInfo.url);
-            delete uploadedPlanFiles[currentImportSiteId];
-            renderUploadedPlanFile();
+            clearUploadedPlanFile(currentImportSiteId);
             showToast('附件已删除');
         }
 
         function importPlanFile(file, siteId) {
             if (!file) return;
-            const fileName = file.name.toLowerCase();
+            if (!isWordTemplateFile(file)) {
+                clearUploadedPlanFile(siteId);
+                showToast('仅支持上传Word模板文件（.doc）', 'error');
+                return;
+            }
 
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    if (fileName.endsWith('.doc') || fileName.endsWith('.html')) {
-                        const rows = parseWordTemplateRows(e.target.result);
-                        if (!rows.length) throw new Error('未识别到Word表格数据');
-                        importActivityRows(siteId, rows);
-                        setUploadedPlanFile(siteId, file);
-                    } else {
-                        const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, {type: 'array'});
-                        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                        const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-                        importActivityRows(siteId, jsonData);
-                        setUploadedPlanFile(siteId, file);
+                    const buffer = e.target.result;
+                    const text = readTextFromBuffer(buffer);
+                    const rows = text.includes('<table') ? parseWordTemplateRows(text) : [];
+                    let validation = validateImportedRows(siteId, rows);
+
+                    if (!rows.length && isLegacyWordDoc(buffer)) {
+                        validation = { valid: true, errors: [], fileOnly: true };
                     }
+
+                    setUploadedPlanFile(siteId, file, rows, validation);
+                    showToast(validation.valid ? '校验通过，请点击确定导入' : '校验失败，请检查模板内容', validation.valid ? 'success' : 'error');
                 } catch (err) {
-                    showToast('导入失败，请检查模板格式', 'error');
+                    const validation = { valid: false, errors: ['未识别到Word表格数据'] };
+                    setUploadedPlanFile(siteId, file, [], validation);
+                    showToast('校验失败，请检查模板格式', 'error');
                 }
             };
 
-            if (fileName.endsWith('.doc') || fileName.endsWith('.html')) {
-                reader.readAsText(file, 'utf-8');
-            } else {
-                reader.readAsArrayBuffer(file);
+            reader.readAsArrayBuffer(file);
+        }
+
+        function confirmPlanImport() {
+            if (!currentImportSiteId) return;
+            const pending = pendingPlanImports[currentImportSiteId];
+            if (!pending?.validation?.valid) {
+                showToast('请先上传并通过校验后再导入', 'warning');
+                return;
             }
+
+            if (pending.validation.fileOnly) {
+                showToast('计划模板附件已导入');
+            } else {
+                importActivityRows(currentImportSiteId, pending.rows);
+            }
+            closePlanImportModal();
         }
 
         function handleSiteExcelUpload(event, siteId) {
@@ -2505,63 +2636,23 @@
         function handlePlanUploadDrop(event) {
             event.preventDefault();
             event.currentTarget.classList.remove('drag-over');
+            if ((event.dataTransfer?.files?.length || 0) > 1) {
+                showToast('仅支持上传1个文件', 'error');
+                return;
+            }
             const file = event.dataTransfer?.files?.[0];
             if (!file || !currentImportSiteId) return;
             importPlanFile(file, currentImportSiteId);
         }
 
         function downloadPlanTemplate() {
-            const headers = ['日期', '开始时间', '结束时间', '组别', '拟审核的过程或活动及相关的标准条款', '涉及的部门/场所'];
-            const rows = [
-                ['2024-04-15', '09:00', '12:00', 'A', '管理体系范围、方针目标及职责权限', '最高管理者/中心职能'],
-                ['2024-04-15', '13:30', '15:30', 'B', 'QMS过程控制与文件记录', '质量管理部/中心职能']
-            ];
-            const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#39;'
-            }[char]));
-            const tableRows = [
-                `<tr>${headers.map(header => `<th>${escapeHtml(header)}</th>`).join('')}</tr>`,
-                ...rows.map(row => `<tr>${row.map(cell => `<td>${escapeHtml(cell)}</td>`).join('')}</tr>`)
-            ].join('');
-            const html = `
-                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>审核计划导入模板</title>
-                    <style>
-                        body { font-family: SimSun, "Noto Sans SC", sans-serif; font-size: 12pt; }
-                        h1 { font-size: 16pt; text-align: center; margin: 0 0 16pt; }
-                        table { width: 100%; border-collapse: collapse; }
-                        th, td { border: 1px solid #000; padding: 6pt; vertical-align: top; }
-                        th { font-weight: bold; text-align: center; background: #f2f2f2; }
-                    </style>
-                </head>
-                <body>
-                    <h1>审核计划导入模板</h1>
-                    <table>${tableRows}</table>
-                </body>
-                </html>
-            `;
-            const blob = new Blob(['\ufeff', html], { type: 'application/msword;charset=utf-8' });
-            const fileName = '审核计划导入模板.doc';
-
-            if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-                window.navigator.msSaveOrOpenBlob(blob, fileName);
-            } else {
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = fileName;
-                document.body.appendChild(link);
-                link.click();
-                setTimeout(() => {
-                    URL.revokeObjectURL(link.href);
-                    link.remove();
-                }, 0);
-            }
+            const fileName = '体系认证系统-审核活动安排导入模板.doc';
+            const link = document.createElement('a');
+            link.href = encodeURI(fileName);
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
             showToast('Word模板已开始下载');
         }
 
