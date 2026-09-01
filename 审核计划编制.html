@@ -815,6 +815,101 @@
             border-top: 1px solid #e2e8f0;
         }
 
+        .plan-import-modal {
+            width: min(560px, 100%);
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 24px 70px rgba(15, 23, 42, 0.24);
+            overflow: hidden;
+        }
+
+        .plan-import-actions {
+            display: grid;
+            gap: 14px;
+            padding: 18px 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .plan-template-row {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .plan-upload-dropzone {
+            width: 100%;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 2px dashed #bfdbfe;
+            border-radius: 8px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            cursor: pointer;
+            transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .plan-upload-dropzone:hover,
+        .plan-upload-dropzone.drag-over {
+            border-color: #2563eb;
+            background: #dbeafe;
+            box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.18);
+        }
+
+        .plan-upload-dropzone i {
+            font-size: 34px;
+        }
+
+        .plan-upload-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e40af;
+        }
+
+        .plan-upload-hint {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .uploaded-plan-file {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+
+        .uploaded-plan-file-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .uploaded-plan-file-name span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .uploaded-plan-empty {
+            padding: 14px 12px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 8px;
+            background: #f8fafc;
+            font-size: 13px;
+            color: #64748b;
+            text-align: center;
+        }
+
         .past-plan-list {
             display: grid;
             gap: 12px;
@@ -1349,15 +1444,15 @@
             <div class="p-5">
                 <table class="data-table">
                     <thead>
-                        <tr><th style="width: 100px;">姓名</th><th style="width: 100px;">组内身份</th><th style="width: 180px;">资格</th><th>注册编号</th><th style="width: 120px;">CQC编号</th><th style="width: 140px;">联系电话</th><th style="width: 100px;">专兼职</th><th style="width: 200px;">审核日期区间</th></tr>
+                        <tr><th style="width: 100px;">姓名</th><th style="width: 100px;">组内身份</th><th style="width: 120px;">组别</th><th style="width: 180px;">资格</th><th>注册编号</th><th style="width: 120px;">CQC编号</th><th style="width: 140px;">联系电话</th><th style="width: 100px;">专兼职</th><th style="width: 200px;">审核日期区间</th></tr>
                     </thead>
                     <tbody>
-                        <tr><td class="font-medium text-slate-900">武荣刚</td><td><span class="personnel-tag tag-leader">组长</span></td><td>QMS高级，EMS正式</td><td class="font-mono text-xs">2022-N1QMS-6028373，2021-N1EMS-3011028</td><td class="font-mono text-xs">CQC21458</td><td>13661227694</td><td><span class="personnel-tag tag-fulltime">专职</span></td><td>2024-04-15 至 2024-04-18</td></tr>
-                        <tr><td class="font-medium text-slate-900">王洪伟</td><td><span class="personnel-tag tag-member">组员</span></td><td>QMS高级，EMS实习</td><td class="font-mono text-xs">2021-N1QMS-5012345，2024-N0EMS-0081266</td><td class="font-mono text-xs">CQC10852</td><td>13800138001</td><td><span class="personnel-tag tag-parttime">兼职</span></td><td>2024-04-15 至 2024-04-16</td></tr>
-                        <tr><td class="font-medium text-slate-900">张丽</td><td><span class="personnel-tag tag-member">组员</span></td><td>EMS正式，QMS实习</td><td class="font-mono text-xs">2020-N1EMS-3012345，2024-N0QMS-0065290</td><td class="font-mono text-xs">CQC30521</td><td>13800138002</td><td><span class="personnel-tag tag-fulltime">专职</span></td><td>2024-04-16 至 2024-04-17</td></tr>
-                        <tr><td class="font-medium text-slate-900">刘娜</td><td><span class="personnel-tag tag-member">组员</span></td><td>技术专家</td><td class="font-mono text-xs">2021-N1QMS-5018826，2020-N1EMS-3017642，2022-N1OHSMS-7013095</td><td class="font-mono text-xs">CQC40876</td><td>13800138003</td><td><span class="personnel-tag tag-parttime">兼职</span></td><td>2024-04-16 至 2024-04-18</td></tr>
-                        <tr><td class="font-medium text-slate-900">陈明</td><td><span class="personnel-tag tag-member">组员</span></td><td>QMS正式，EMS正式</td><td class="font-mono text-xs">2022-N1QMS-5012345，2022-N1EMS-4010987</td><td class="font-mono text-xs">CQC51209</td><td>13800138004</td><td><span class="personnel-tag tag-fulltime">专职</span></td><td>2024-04-17 至 2024-04-18</td></tr>
-                        <tr><td class="font-medium text-slate-900">赵强</td><td><span class="personnel-tag tag-member">组员</span></td><td>QMS正式，EMS实习</td><td class="font-mono text-xs">2023-N1QMS-6012345，2024-N0EMS-0098712</td><td class="font-mono text-xs">CQC60988</td><td>13800138005</td><td><span class="personnel-tag tag-parttime">兼职</span></td><td>2024-04-15 至 2024-04-18</td></tr>
+                        <tr><td class="font-medium text-slate-900">武荣刚</td><td><span class="personnel-tag tag-leader">组长</span></td><td class="font-semibold text-slate-900 team-code">A</td><td>QMS高级，EMS正式</td><td class="font-mono text-xs">2022-N1QMS-6028373，2021-N1EMS-3011028</td><td class="font-mono text-xs">CQC21458</td><td>13661227694</td><td><span class="personnel-tag tag-fulltime">专职</span></td><td>2024-04-15 至 2024-04-18</td></tr>
+                        <tr><td class="font-medium text-slate-900">王洪伟</td><td><span class="personnel-tag tag-member">组员</span></td><td class="font-semibold text-slate-900 team-code">B</td><td>QMS高级，EMS实习</td><td class="font-mono text-xs">2021-N1QMS-5012345，2024-N0EMS-0081266</td><td class="font-mono text-xs">CQC10852</td><td>13800138001</td><td><span class="personnel-tag tag-parttime">兼职</span></td><td>2024-04-15 至 2024-04-16</td></tr>
+                        <tr><td class="font-medium text-slate-900">张丽</td><td><span class="personnel-tag tag-member">组员</span></td><td class="font-semibold text-slate-900 team-code">C</td><td>EMS正式，QMS实习</td><td class="font-mono text-xs">2020-N1EMS-3012345，2024-N0QMS-0065290</td><td class="font-mono text-xs">CQC30521</td><td>13800138002</td><td><span class="personnel-tag tag-fulltime">专职</span></td><td>2024-04-16 至 2024-04-17</td></tr>
+                        <tr><td class="font-medium text-slate-900">刘娜</td><td><span class="personnel-tag tag-member">组员</span></td><td class="font-semibold text-slate-900 team-code">D</td><td>技术专家</td><td class="font-mono text-xs">2021-N1QMS-5018826，2020-N1EMS-3017642，2022-N1OHSMS-7013095</td><td class="font-mono text-xs">CQC40876</td><td>13800138003</td><td><span class="personnel-tag tag-parttime">兼职</span></td><td>2024-04-16 至 2024-04-18</td></tr>
+                        <tr><td class="font-medium text-slate-900">陈明</td><td><span class="personnel-tag tag-member">组员</span></td><td class="font-semibold text-slate-900 team-code">E</td><td>QMS正式，EMS正式</td><td class="font-mono text-xs">2022-N1QMS-5012345，2022-N1EMS-4010987</td><td class="font-mono text-xs">CQC51209</td><td>13800138004</td><td><span class="personnel-tag tag-fulltime">专职</span></td><td>2024-04-17 至 2024-04-18</td></tr>
+                        <tr><td class="font-medium text-slate-900">赵强</td><td><span class="personnel-tag tag-member">组员</span></td><td class="font-semibold text-slate-900 team-code">F</td><td>QMS正式，EMS实习</td><td class="font-mono text-xs">2023-N1QMS-6012345，2024-N0EMS-0098712</td><td class="font-mono text-xs">CQC60988</td><td>13800138005</td><td><span class="personnel-tag tag-parttime">兼职</span></td><td>2024-04-15 至 2024-04-18</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -1372,8 +1467,11 @@
                     </div>
                     审核活动安排
                 </div>
-                <button type="button" class="btn btn-primary btn-sm" onclick="openPastPlanModal()">
+                <button type="button" class="btn btn-primary btn-sm hidden" onclick="openPastPlanModal()">
                     <i class="fas fa-file-import"></i>导入过往计划
+                </button>
+                <button type="button" class="btn btn-primary btn-sm hidden" onclick="downloadPlanTemplate()">
+                    <i class="fas fa-download"></i>下载模板
                 </button>
             </div>
             
@@ -1429,9 +1527,9 @@
                         <div class="flex justify-between items-center mb-4">
                             <h4 class="text-sm font-semibold text-slate-700">审核活动明细</h4>
                             <div class="flex gap-2">
-                                <input type="file" id="excelUpload-hq" accept=".xlsx,.xls" class="hidden-file-input" onchange="handleSiteExcelUpload(event, 'hq')">
-                                <button class="btn btn-default btn-sm" onclick="document.getElementById('excelUpload-hq').click()">
-                                    <i class="fas fa-file-excel"></i>导入Excel
+                                <input type="file" id="excelUpload-hq" accept=".doc,.html,.xlsx,.xls" class="hidden-file-input" onchange="handleSiteExcelUpload(event, 'hq')">
+                                <button class="btn btn-default btn-sm" onclick="openPlanImportModal('hq')">
+                                    <i class="fas fa-file-import"></i>导入
                                 </button>
                                 <button class="btn btn-primary btn-sm" onclick="addActivityRow('hq')">
                                     <i class="fas fa-plus"></i>新增活动
@@ -1501,9 +1599,9 @@
                         <div class="flex justify-between items-center mb-4">
                             <h4 class="text-sm font-semibold text-slate-700">审核活动明细</h4>
                             <div class="flex gap-2">
-                                <input type="file" id="excelUpload-site1" accept=".xlsx,.xls" class="hidden-file-input" onchange="handleSiteExcelUpload(event, 'site1')">
-                                <button class="btn btn-default btn-sm" onclick="document.getElementById('excelUpload-site1').click()">
-                                    <i class="fas fa-file-excel"></i>导入Excel
+                                <input type="file" id="excelUpload-site1" accept=".doc,.html,.xlsx,.xls" class="hidden-file-input" onchange="handleSiteExcelUpload(event, 'site1')">
+                                <button class="btn btn-default btn-sm" onclick="openPlanImportModal('site1')">
+                                    <i class="fas fa-file-import"></i>导入
                                 </button>
                                 <button class="btn btn-primary btn-sm" onclick="addActivityRow('site1')">
                                     <i class="fas fa-plus"></i>新增活动
@@ -1574,9 +1672,9 @@
                         <div class="flex justify-between items-center mb-4">
                             <h4 class="text-sm font-semibold text-slate-700">审核活动明细</h4>
                             <div class="flex gap-2">
-                                <input type="file" id="excelUpload-site2" accept=".xlsx,.xls" class="hidden-file-input" onchange="handleSiteExcelUpload(event, 'site2')">
-                                <button class="btn btn-default btn-sm" onclick="document.getElementById('excelUpload-site2').click()">
-                                    <i class="fas fa-file-excel"></i>导入Excel
+                                <input type="file" id="excelUpload-site2" accept=".doc,.html,.xlsx,.xls" class="hidden-file-input" onchange="handleSiteExcelUpload(event, 'site2')">
+                                <button class="btn btn-default btn-sm" onclick="openPlanImportModal('site2')">
+                                    <i class="fas fa-file-import"></i>导入
                                 </button>
                                 <button class="btn btn-primary btn-sm" onclick="addActivityRow('site2')">
                                     <i class="fas fa-plus"></i>新增活动
@@ -1651,6 +1749,36 @@
                 <button type="button" class="btn btn-primary btn-sm" onclick="confirmPastPlanImport()">
                     <i class="fas fa-check"></i>确认引用
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="past-plan-modal-mask" id="planImportModal" role="dialog" aria-modal="true" aria-labelledby="planImportModalTitle">
+        <div class="plan-import-modal">
+            <div class="past-plan-modal-header">
+                <div>
+                    <div class="past-plan-modal-title" id="planImportModalTitle">导入审核计划</div>
+                    <div class="text-xs text-slate-500 mt-1" id="planImportSiteName">请选择模板后上传计划。</div>
+                </div>
+                <button type="button" class="btn btn-default btn-sm" onclick="closePlanImportModal()" aria-label="关闭">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="plan-import-actions">
+                <div class="plan-template-row">
+                    <button type="button" class="btn btn-default btn-sm" onclick="downloadPlanTemplate()">
+                        <i class="fas fa-download"></i>下载模板
+                    </button>
+                </div>
+                <button type="button" class="plan-upload-dropzone" id="planUploadDropzone" onclick="triggerPlanUpload()" ondragover="handlePlanUploadDragOver(event)" ondragleave="handlePlanUploadDragLeave(event)" ondrop="handlePlanUploadDrop(event)">
+                    <i class="fas fa-cloud-arrow-up"></i>
+                    <span class="plan-upload-title">上传计划</span>
+                    <span class="plan-upload-hint">点击选择文件，或将 Word / Excel 模板拖动到此处</span>
+                </button>
+            </div>
+            <div class="past-plan-modal-body">
+                <div class="text-sm font-semibold text-slate-700 mb-2">已上传附件</div>
+                <div id="uploadedPlanFile"></div>
             </div>
         </div>
     </div>
@@ -1808,9 +1936,29 @@
 
         let activityRowSeed = 0;
         let pendingPastPlanId = '';
+        let currentImportSiteId = '';
+        const uploadedPlanFiles = {};
+
+        function getAuditTeamCode(index) {
+            let code = '';
+            let n = index;
+            do {
+                code = String.fromCharCode(65 + (n % 26)) + code;
+                n = Math.floor(n / 26) - 1;
+            } while (n >= 0);
+            return code;
+        }
+
+        function refreshAuditTeamCodes() {
+            document.querySelectorAll('#section-team tbody tr').forEach((row, index) => {
+                const codeCell = row.querySelector('.team-code');
+                if (codeCell) codeCell.textContent = getAuditTeamCode(index);
+            });
+        }
 
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
+            refreshAuditTeamCodes();
             initPastPlanYearFilter();
             renderPastPlanList();
             addActivityRow('hq', { date: '2024-04-15', startTime: '09:00', endTime: '11:00', auditors: ['wurg'], process: '管理体系范围、方针目标及职责权限', dept: '最高管理者/中心职能' });
@@ -2154,46 +2302,267 @@
             });
         }
 
-        function handleSiteExcelUpload(event, siteId) {
-            const file = event.target.files[0];
+        function getAuditorIdsByGroup(groupValue) {
+            return String(groupValue || '').split(/[，,、\s]+/).map(code => {
+                const index = code.trim().toUpperCase().split('').reduce((total, char) => {
+                    return total * 26 + char.charCodeAt(0) - 64;
+                }, 0) - 1;
+                return auditTeam[index]?.id || '';
+            }).filter(Boolean);
+        }
+
+        function getAuditorIdsByName(nameValue) {
+            return String(nameValue || '').split(/[，,、\s]+/).map(name => {
+                const found = auditTeam.find(a => a.name === name.trim());
+                return found ? found.id : '';
+            }).filter(Boolean);
+        }
+
+        function normalizeImportedRows(rows) {
+            return rows.map(row => ({
+                date: row['日期'] || '2024-04-15',
+                startTime: row['开始时间'] || '09:00',
+                endTime: row['结束时间'] || '12:00',
+                auditors: row['组别'] ? getAuditorIdsByGroup(row['组别']) : getAuditorIdsByName(row['审核人员']),
+                process: row['拟审核的过程或活动及相关的标准条款'] || row['过程或活动'] || '',
+                dept: row['涉及的部门/场所'] || row['部门/场所'] || ''
+            }));
+        }
+
+        function importActivityRows(siteId, rows) {
+            const activities = normalizeImportedRows(rows).filter(row => row.date || row.process || row.dept || row.auditors.length);
+            const container = document.getElementById(`activityContainer-${siteId}`);
+            if (!container) return;
+
+            container.innerHTML = '';
+            activities.forEach(row => addActivityRow(siteId, row));
+            updateAuditStats();
+            showToast(`成功导入 ${activities.length} 条记录到${sitesData[siteId].name}`);
+        }
+
+        function parseWordTemplateRows(html) {
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+            const table = doc.querySelector('table');
+            if (!table) return [];
+            const trs = Array.from(table.querySelectorAll('tr'));
+            const headers = Array.from(trs.shift()?.querySelectorAll('th,td') || []).map(cell => cell.textContent.replace(/\*/g, '').trim());
+
+            return trs.map(tr => {
+                const cells = Array.from(tr.querySelectorAll('td,th')).map(cell => cell.textContent.trim());
+                return headers.reduce((row, header, index) => {
+                    row[header] = cells[index] || '';
+                    return row;
+                }, {});
+            }).filter(row => Object.values(row).some(Boolean));
+        }
+
+        function formatFileSize(size) {
+            if (!size) return '0 KB';
+            if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+            return `${(size / 1024 / 1024).toFixed(1)} MB`;
+        }
+
+        function escapeHtmlText(value) {
+            return String(value).replace(/[&<>"']/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char]));
+        }
+
+        function renderUploadedPlanFile() {
+            const holder = document.getElementById('uploadedPlanFile');
+            if (!holder) return;
+            const fileInfo = uploadedPlanFiles[currentImportSiteId];
+            const fileName = fileInfo ? escapeHtmlText(fileInfo.name) : '';
+
+            if (!fileInfo) {
+                holder.innerHTML = '<div class="uploaded-plan-empty">暂无上传附件</div>';
+                return;
+            }
+
+            holder.innerHTML = `
+                <div class="uploaded-plan-file">
+                    <div class="uploaded-plan-file-name">
+                        <i class="fas fa-file-word text-blue-600"></i>
+                        <span title="${fileName}">${fileName}</span>
+                        <span class="text-xs font-normal text-slate-500">${formatFileSize(fileInfo.size)}</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="button" class="btn btn-default btn-xs" onclick="downloadUploadedPlanFile()">
+                            <i class="fas fa-download"></i>下载
+                        </button>
+                        <button type="button" class="btn btn-danger btn-xs" onclick="deleteUploadedPlanFile()">
+                            <i class="fas fa-trash"></i>删除
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function setUploadedPlanFile(siteId, file) {
+            if (uploadedPlanFiles[siteId]?.url) {
+                URL.revokeObjectURL(uploadedPlanFiles[siteId].url);
+            }
+
+            uploadedPlanFiles[siteId] = {
+                name: file.name,
+                size: file.size,
+                url: URL.createObjectURL(file)
+            };
+            renderUploadedPlanFile();
+        }
+
+        function openPlanImportModal(siteId) {
+            currentImportSiteId = siteId;
+            const modal = document.getElementById('planImportModal');
+            const siteName = document.getElementById('planImportSiteName');
+            if (siteName) siteName.textContent = `当前导入场所：${sitesData[siteId]?.name || '未选择场所'}`;
+            renderUploadedPlanFile();
+            if (modal) modal.classList.add('show');
+        }
+
+        function closePlanImportModal() {
+            const modal = document.getElementById('planImportModal');
+            if (modal) modal.classList.remove('show');
+        }
+
+        function triggerPlanUpload() {
+            if (!currentImportSiteId) return;
+            document.getElementById(`excelUpload-${currentImportSiteId}`)?.click();
+        }
+
+        function downloadUploadedPlanFile() {
+            const fileInfo = uploadedPlanFiles[currentImportSiteId];
+            if (!fileInfo) return;
+            const link = document.createElement('a');
+            link.href = fileInfo.url;
+            link.download = fileInfo.name;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        }
+
+        function deleteUploadedPlanFile() {
+            const fileInfo = uploadedPlanFiles[currentImportSiteId];
+            if (!fileInfo) return;
+            URL.revokeObjectURL(fileInfo.url);
+            delete uploadedPlanFiles[currentImportSiteId];
+            renderUploadedPlanFile();
+            showToast('附件已删除');
+        }
+
+        function importPlanFile(file, siteId) {
             if (!file) return;
-            
+            const fileName = file.name.toLowerCase();
+
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, {type: 'array'});
-                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-                    
-                    const container = document.getElementById(`activityContainer-${siteId}`);
-                    container.innerHTML = '';
-                    
-                    jsonData.forEach(row => {
-                        const auditors = (row['审核人员'] || '').split(/[，,]/).map(s => {
-                            const name = s.trim();
-                            const found = auditTeam.find(a => a.name === name);
-                            return found ? found.id : '';
-                        }).filter(id => id);
-                        
-                        addActivityRow(siteId, {
-                            date: row['日期'] || '2024-04-15',
-                            startTime: row['开始时间'] || '09:00',
-                            endTime: row['结束时间'] || '12:00',
-                            auditors: auditors,
-                            process: row['过程或活动'] || '',
-                            dept: row['部门/场所'] || ''
-                        });
-                    });
-                    
-                    updateAuditStats();
-                    showToast(`成功导入 ${jsonData.length} 条记录到${sitesData[siteId].name}`);
+                    if (fileName.endsWith('.doc') || fileName.endsWith('.html')) {
+                        const rows = parseWordTemplateRows(e.target.result);
+                        if (!rows.length) throw new Error('未识别到Word表格数据');
+                        importActivityRows(siteId, rows);
+                        setUploadedPlanFile(siteId, file);
+                    } else {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, {type: 'array'});
+                        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+                        importActivityRows(siteId, jsonData);
+                        setUploadedPlanFile(siteId, file);
+                    }
                 } catch (err) {
-                    showToast('Excel解析失败，请检查文件格式', 'error');
+                    showToast('导入失败，请检查模板格式', 'error');
                 }
             };
-            reader.readAsArrayBuffer(file);
+
+            if (fileName.endsWith('.doc') || fileName.endsWith('.html')) {
+                reader.readAsText(file, 'utf-8');
+            } else {
+                reader.readAsArrayBuffer(file);
+            }
+        }
+
+        function handleSiteExcelUpload(event, siteId) {
+            const file = event.target.files[0];
+            importPlanFile(file, siteId);
             event.target.value = '';
+        }
+
+        function handlePlanUploadDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('drag-over');
+        }
+
+        function handlePlanUploadDragLeave(event) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('drag-over');
+        }
+
+        function handlePlanUploadDrop(event) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('drag-over');
+            const file = event.dataTransfer?.files?.[0];
+            if (!file || !currentImportSiteId) return;
+            importPlanFile(file, currentImportSiteId);
+        }
+
+        function downloadPlanTemplate() {
+            const headers = ['日期', '开始时间', '结束时间', '组别', '拟审核的过程或活动及相关的标准条款', '涉及的部门/场所'];
+            const rows = [
+                ['2024-04-15', '09:00', '12:00', 'A', '管理体系范围、方针目标及职责权限', '最高管理者/中心职能'],
+                ['2024-04-15', '13:30', '15:30', 'B', 'QMS过程控制与文件记录', '质量管理部/中心职能']
+            ];
+            const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char]));
+            const tableRows = [
+                `<tr>${headers.map(header => `<th>${escapeHtml(header)}</th>`).join('')}</tr>`,
+                ...rows.map(row => `<tr>${row.map(cell => `<td>${escapeHtml(cell)}</td>`).join('')}</tr>`)
+            ].join('');
+            const html = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>审核计划导入模板</title>
+                    <style>
+                        body { font-family: SimSun, "Noto Sans SC", sans-serif; font-size: 12pt; }
+                        h1 { font-size: 16pt; text-align: center; margin: 0 0 16pt; }
+                        table { width: 100%; border-collapse: collapse; }
+                        th, td { border: 1px solid #000; padding: 6pt; vertical-align: top; }
+                        th { font-weight: bold; text-align: center; background: #f2f2f2; }
+                    </style>
+                </head>
+                <body>
+                    <h1>审核计划导入模板</h1>
+                    <table>${tableRows}</table>
+                </body>
+                </html>
+            `;
+            const blob = new Blob(['\ufeff', html], { type: 'application/msword;charset=utf-8' });
+            const fileName = '审核计划导入模板.doc';
+
+            if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+                window.navigator.msSaveOrOpenBlob(blob, fileName);
+            } else {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                setTimeout(() => {
+                    URL.revokeObjectURL(link.href);
+                    link.remove();
+                }, 0);
+            }
+            showToast('Word模板已开始下载');
         }
 
         function openPastPlanModal() {
