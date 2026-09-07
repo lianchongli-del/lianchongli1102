@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="zh-CN">
 <head>
@@ -471,7 +472,7 @@
       margin-left: 8px;
       color: #31547c;
     }
-    .modal-filter-row { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+    .modal-filter-row { display: flex; justify-content: flex-end; align-items: center; gap: 12px; margin-bottom: 16px; }
     .modal-table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 1px solid var(--line); }
     .modal-table th, .modal-table td {
       border-bottom: 1px solid var(--line);
@@ -767,7 +768,8 @@
       background: #fff;
       color: #374151;
     }
-    .tools .search-btn {
+    .tools .search-btn,
+    .modal-filter-row .search-btn {
       height: 32px;
       border: 1px solid var(--blue);
       border-radius: 6px;
@@ -777,7 +779,8 @@
       font-size: 12px;
       font-weight: 500;
     }
-    .tools .search-btn:hover {
+    .tools .search-btn:hover,
+    .modal-filter-row .search-btn:hover {
       border-color: var(--blue-hover);
       background: var(--blue-hover);
       color: #fff;
@@ -1131,8 +1134,8 @@
   </main>
   <div class="tooltip" id="tooltip" role="status"></div>
   <div class="toast" id="toast" role="status"></div>
-  <dialog id="moreDialog" aria-labelledby="dialogTitle"><div class="dialog-head"><h2 id="dialogTitle">全部待办</h2><button type="button" aria-label="关闭">×</button></div><div class="dialog-body"></div><div class="dialog-actions"><button type="button">关闭</button></div></dialog>
-  <dialog id="noticeDialog" aria-labelledby="noticeDialogTitle"><div class="dialog-head"><h2 id="noticeDialogTitle">全部系统公告</h2><button type="button" aria-label="关闭">×</button></div><div class="dialog-body notice-dialog-body"></div><div class="dialog-actions"><button type="button">关闭</button></div></dialog>
+  <dialog id="moreDialog" aria-labelledby="dialogTitle"><div class="dialog-head"><h2 id="dialogTitle">全部待办</h2><button type="button" aria-label="关闭">×</button></div><div class="dialog-body"></div></dialog>
+  <dialog id="noticeDialog" aria-labelledby="noticeDialogTitle"><div class="dialog-head"><h2 id="noticeDialogTitle">全部系统公告</h2><button type="button" aria-label="关闭">×</button></div><div class="dialog-body notice-dialog-body"></div></dialog>
   <script>
     const rawItems = [
       ['客户管理','跨区域报备审批','销售总监','跨区域客户报备审批'], ['客户管理','跨区域报备审批','本区域总监','跨区域客户报备审批'], ['客户管理','跨区域报备审批','对方区域总监','跨区域客户报备审批'],
@@ -1268,7 +1271,7 @@
       state.modalPage = Math.min(state.modalPage, pageCount);
       const pageRows = rows.slice((state.modalPage - 1) * state.modalPageSize, state.modalPage * state.modalPageSize);
       const modalHeaders = '<tr><th>待办事项描述</th><th>客户名称</th><th>提交人/部门</th><th>创建日期</th><th>任务持续时间</th><th>处理时间</th><th>操作</th></tr>';
-      $('.dialog-body').innerHTML = `<div class="modal-filter-row"><div class="module-picker" id="modalModulePicker"><button class="module-trigger" type="button" id="modalModuleTrigger">业务模块</button><div class="module-menu" id="modalModuleMenu"></div></div><input class="filter-input" id="modalCustomerFilter" type="search" placeholder="客户名称" value="${esc(state.customerName)}"></div><table class="modal-table"><thead>${modalHeaders}</thead><tbody>${pageRows.map(item => rowHTML(item)).join('') || '<tr><td colspan="7">没有匹配的数据</td></tr>'}</tbody></table><div class="pager" id="modalPager"></div>`;
+      $('.dialog-body').innerHTML = `<div class="modal-filter-row"><div class="module-picker" id="modalModulePicker"><button class="module-trigger" type="button" id="modalModuleTrigger">业务模块</button><div class="module-menu" id="modalModuleMenu"></div></div><input class="filter-input" id="modalCustomerFilter" type="search" placeholder="客户名称" value="${esc(state.customerName)}"><button class="search-btn" id="modalSearchBtn" type="button">搜索</button></div><table class="modal-table"><thead>${modalHeaders}</thead><tbody>${pageRows.map(item => rowHTML(item)).join('') || '<tr><td colspan="7">没有匹配的数据</td></tr>'}</tbody></table><div class="pager" id="modalPager"></div>`;
       renderPager($('#modalPager'), state.modalPage, pageCount, 'modalpage', rows.length);
       $('#modalModuleMenu').innerHTML = uniqueModules().map(module => `<label><input type="checkbox" value="${esc(module)}" ${state.selectedModules.includes(module) ? 'checked' : ''}>${esc(module)}</label>`).join('') + '<div class="module-actions"><button class="clear-btn" type="button" id="modalClearModules">清空</button><button type="button" id="modalApplyModules">确定</button></div>';
       $('#modalModuleTrigger').textContent = state.selectedModules.length === uniqueModules().length ? '业务模块（全部）' : `业务模块（${state.selectedModules.length}）`;
@@ -1292,13 +1295,15 @@
         renderMainTasks();
         renderMoreDialog();
       };
-      $('#modalCustomerFilter').oninput = event => {
-        state.customerName = event.target.value.trim();
+      $('#modalSearchBtn').onclick = () => {
         syncFilters('modal');
         state.page = 1;
         state.modalPage = 1;
         renderMainTasks();
         renderMoreDialog();
+      };
+      $('#modalCustomerFilter').onkeydown = event => {
+        if (event.key === 'Enter') $('#modalSearchBtn').click();
       };
       $('#modalPager').onclick = handlePagerClick;
     }
@@ -1419,7 +1424,6 @@
       renderMoreDialog();
     };
     $('#moreDialog .dialog-head button').onclick = () => $('#moreDialog').close();
-    $('#moreDialog .dialog-actions button').onclick = () => $('#moreDialog').close();
     $('#noticeMoreBtn').onclick = event => {
       event.preventDefault();
       state.noticePage = 1;
@@ -1427,7 +1431,6 @@
       $('#noticeDialog').showModal();
     };
     $('#noticeDialog .dialog-head button').onclick = () => $('#noticeDialog').close();
-    $('#noticeDialog .dialog-actions button').onclick = () => $('#noticeDialog').close();
     $('#taskBody').onclick = event => {
       const button = event.target.closest('.handle');
       if (!button) return;
