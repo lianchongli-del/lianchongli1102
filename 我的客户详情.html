@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -806,6 +807,38 @@
         .site-credit-code-field.hidden,
         .site-country-field.hidden {
             display: none;
+        }
+
+        .site-country-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .site-country-control .form-select {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .country-code-badge {
+            flex: 0 0 54px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 13px;
+            font-weight: 800;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        }
+
+        .country-code-badge.empty {
+            background: #f8fafc;
+            border-color: #e2e8f0;
+            color: #94a3b8;
         }
 
         .site-name-autocomplete {
@@ -2459,16 +2492,19 @@
                 <div class="site-form-grid">
                     <div class="form-group site-country-field hidden" id="site-country-field">
                         <label class="form-label required">国家</label>
-                        <select class="form-select" id="site-country" onchange="normalizeCountryDisplay()">
-                            <option value="">请选择国家</option>
-                            <option value="702" data-name="新加坡">新加坡</option>
-                            <option value="276" data-name="德国">德国</option>
-                            <option value="840" data-name="美国">美国</option>
-                            <option value="826" data-name="英国">英国</option>
-                            <option value="392" data-name="日本">日本</option>
-                            <option value="410" data-name="韩国">韩国</option>
-                            <option value="036" data-name="澳大利亚">澳大利亚</option>
-                        </select>
+                        <div class="site-country-control">
+                            <select class="form-select" id="site-country" onchange="normalizeCountryDisplay()">
+                                <option value="">请选择国家</option>
+                                <option value="702">新加坡</option>
+                                <option value="276">德国</option>
+                                <option value="840">美国</option>
+                                <option value="826">英国</option>
+                                <option value="392">日本</option>
+                                <option value="410">韩国</option>
+                                <option value="036">澳大利亚</option>
+                            </select>
+                            <span class="country-code-badge empty" id="site-country-code">---</span>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label required" id="site-name-label">场所名称（中文）</label>
@@ -3721,11 +3757,11 @@
 
         function normalizeCountryDisplay() {
             const select = document.getElementById('site-country');
+            const codeBadge = document.getElementById('site-country-code');
             if (!select) return;
-            Array.from(select.options).forEach(option => {
-                if (!option.value) return;
-                option.textContent = option.selected ? option.value : option.dataset.name;
-            });
+            if (!codeBadge) return;
+            codeBadge.textContent = select.value || '---';
+            codeBadge.classList.toggle('empty', !select.value);
         }
 
         function handleSiteNameInput(field) {
