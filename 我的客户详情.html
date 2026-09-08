@@ -735,6 +735,251 @@
             gap: 16px;
         }
 
+        .site-modal-container {
+            max-width: 1120px;
+            border-radius: 8px;
+            max-height: 92vh;
+        }
+
+        .site-modal-container .modal-header,
+        .site-modal-container .modal-footer {
+            background: #fff;
+            border-color: transparent;
+        }
+
+        .site-modal-container .modal-body {
+            padding-top: 0;
+        }
+
+        .site-form-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .site-field-wide {
+            grid-column: span 2;
+        }
+
+        .site-field-full {
+            grid-column: 1 / -1;
+        }
+
+        .site-form-grid .form-group {
+            margin-bottom: 0;
+        }
+
+        .site-form-grid .form-textarea {
+            min-height: 76px;
+        }
+
+        .site-customer-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px;
+            margin-bottom: 16px;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        .site-customer-toggle button {
+            min-width: 92px;
+            height: 32px;
+            border: none;
+            border-radius: 6px;
+            background: transparent;
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .site-customer-toggle button.active {
+            background: #2563eb;
+            color: #fff;
+            box-shadow: 0 1px 3px rgba(37, 99, 235, 0.22);
+        }
+
+        .site-region-field.hidden,
+        .site-credit-code-field.hidden,
+        .site-country-field.hidden {
+            display: none;
+        }
+
+        .site-name-autocomplete {
+            position: relative;
+        }
+
+        .site-suggestion-list {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: calc(100% + 4px);
+            z-index: 1010;
+            display: none;
+            max-height: 220px;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid #dbeafe;
+            border-radius: 8px;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
+        }
+
+        .site-suggestion-list.active {
+            display: block;
+        }
+
+        .site-suggestion-item {
+            width: 100%;
+            padding: 10px 12px;
+            border: none;
+            background: #fff;
+            text-align: left;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .site-suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .site-suggestion-item:hover {
+            background: #eff6ff;
+        }
+
+        .site-suggestion-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .site-suggestion-meta {
+            margin-top: 3px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .cascader {
+            position: relative;
+        }
+
+        .cascader-trigger {
+            width: 100%;
+            min-height: 40px;
+            padding: 10px 36px 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: #fff;
+            color: #1f2937;
+            font-size: 14px;
+            text-align: left;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .cascader-trigger::after {
+            content: '\f107';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        .cascader-trigger.placeholder {
+            color: #9ca3af;
+        }
+
+        .cascader-panel {
+            position: absolute;
+            left: 0;
+            top: calc(100% + 4px);
+            z-index: 1010;
+            display: none;
+            min-width: 520px;
+            max-width: 760px;
+            background: #fff;
+            border: 1px solid #dbeafe;
+            border-radius: 8px;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
+            overflow: hidden;
+        }
+
+        .cascader-panel.active {
+            display: flex;
+        }
+
+        .cascader-column {
+            width: 180px;
+            max-height: 252px;
+            overflow-y: auto;
+            border-right: 1px solid #eef2f7;
+            padding: 6px;
+        }
+
+        .cascader-column:last-child {
+            border-right: none;
+        }
+
+        .cascader-option {
+            width: 100%;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 10px;
+            background: transparent;
+            color: #334155;
+            font-size: 13px;
+            line-height: 1.35;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .cascader-option:hover,
+        .cascader-option.active {
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-weight: 700;
+        }
+
+        .input-with-count {
+            position: relative;
+        }
+
+        .input-with-count .form-input,
+        .input-with-count .form-textarea {
+            padding-right: 58px;
+        }
+
+        .char-count {
+            position: absolute;
+            right: 12px;
+            bottom: 10px;
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1;
+            pointer-events: none;
+        }
+
+        .site-contact-note {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 14px;
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1280px) {
+            .site-form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .site-field-wide { grid-column: span 2; }
+        }
+
         .tag-select-container {
             border: 1px solid #d1d5db;
             border-radius: 8px;
@@ -1160,11 +1405,11 @@
                             <span class="text-sm font-medium text-gray-800" id="address-region">北京市 北京市 东城区</span>
                         </div>
                         <div class="mb-3">
-                            <span class="text-xs text-gray-500 block mb-1">详细地址</span>
+                            <span class="text-xs text-gray-500 block mb-1">注册地址</span>
                             <span class="text-sm font-medium text-gray-800" id="address-detail">东直门北大街9号中国石油大厦</span>
                         </div>
                         <div>
-                            <span class="text-xs text-gray-500 block mb-1">英文地址</span>
+                            <span class="text-xs text-gray-500 block mb-1">注册地址（英）</span>
                             <span class="text-sm font-medium text-gray-800" id="address-detail-en">No.9 Dongzhimen North Street, PetroChina Tower, Dongcheng District, Beijing, China</span>
                         </div>
                         <div class="mt-3 pt-3 border-t border-gray-100">
@@ -1172,7 +1417,7 @@
                             <span class="text-sm font-medium text-gray-800" id="operating-address">北京市海淀区中关村软件园二期8号楼</span>
                         </div>
                         <div class="mt-3">
-                            <span class="text-xs text-gray-500 block mb-1">运营地址（英文）</span>
+                            <span class="text-xs text-gray-500 block mb-1">运营地址（英）</span>
                             <span class="text-sm font-medium text-gray-800" id="operating-address-en">Building 8, Zhongguancun Software Park Phase II, Haidian District, Beijing, China</span>
                         </div>
                     </div>
@@ -1950,12 +2195,12 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label required">详细地址</label>
-                    <textarea class="form-textarea" id="addr-detail" placeholder="请输入详细街道、门牌号等信息">东直门北大街9号中国石油大厦</textarea>
+                    <label class="form-label required">注册地址</label>
+                    <textarea class="form-textarea" id="addr-detail" placeholder="请输入注册地址">东直门北大街9号中国石油大厦</textarea>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">英文详细地址</label>
-                    <textarea class="form-textarea" id="addr-detail-en" placeholder="请输入英文详细地址">No.9 Dongzhimen North Street, PetroChina Tower, Dongcheng District, Beijing, China</textarea>
+                    <label class="form-label">注册地址（英）</label>
+                    <textarea class="form-textarea" id="addr-detail-en" placeholder="请输入注册地址英文">No.9 Dongzhimen North Street, PetroChina Tower, Dongcheng District, Beijing, China</textarea>
                 </div>
             </div>
             <div class="modal-footer">
@@ -2194,7 +2439,7 @@
 
     <!-- 场所编辑/新增弹窗 -->
     <div id="siteModal" class="modal-overlay">
-        <div class="modal-container">
+        <div class="modal-container site-modal-container">
             <div class="modal-header">
                 <div class="modal-title">
                     <i class="fas fa-building text-blue-600"></i>
@@ -2206,43 +2451,97 @@
             </div>
             <div class="modal-body">
                 <input type="hidden" id="site-id">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label required">场所名称（中文）</label>
-                        <input type="text" class="form-input" id="site-name" placeholder="如：总部办公楼">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">场所名称（英文）</label>
-                        <input type="text" class="form-input" id="site-name-en" placeholder="如：Beijing Headquarters">
-                    </div>
+                <input type="hidden" id="site-customer-type" value="domestic">
+                <div class="site-customer-toggle" role="group" aria-label="客户境内外类型">
+                    <button type="button" id="site-domestic-btn" class="active" onclick="setSiteCustomerType('domestic')">境内场所</button>
+                    <button type="button" id="site-overseas-btn" onclick="setSiteCustomerType('overseas')">境外场所</button>
                 </div>
-                <div class="form-row">
+                <div class="site-form-grid">
+                    <div class="form-group site-country-field hidden" id="site-country-field">
+                        <label class="form-label required">国家</label>
+                        <select class="form-select" id="site-country" onchange="normalizeCountryDisplay()">
+                            <option value="">请选择国家</option>
+                            <option value="702" data-name="新加坡">新加坡</option>
+                            <option value="276" data-name="德国">德国</option>
+                            <option value="840" data-name="美国">美国</option>
+                            <option value="826" data-name="英国">英国</option>
+                            <option value="392" data-name="日本">日本</option>
+                            <option value="410" data-name="韩国">韩国</option>
+                            <option value="036" data-name="澳大利亚">澳大利亚</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label required" id="site-name-label">场所名称（中文）</label>
+                        <div class="site-name-autocomplete">
+                            <div class="input-with-count">
+                                <input type="text" class="form-input" id="site-name" placeholder="输入场所名称/企业名称联想" maxlength="90" autocomplete="off" onfocus="handleSiteNameInput(this)" oninput="handleSiteNameInput(this)">
+                                <span class="char-count">0 / 90</span>
+                            </div>
+                            <div class="site-suggestion-list" id="site-name-suggestions"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" id="site-name-en-label">场所名称（英文）</label>
+                        <div class="input-with-count">
+                            <input type="text" class="form-input" id="site-name-en" placeholder="如：Beijing Headquarters" maxlength="90" oninput="updateCharCount(this)">
+                            <span class="char-count">0 / 90</span>
+                        </div>
+                    </div>
+                    <div class="form-group site-credit-code-field">
+                        <label class="form-label" id="site-credit-code-label">统一社会信用代码</label>
+                        <div class="input-with-count">
+                            <input type="text" class="form-input" id="site-credit-code" placeholder="如：91120242MA0QFK058N" maxlength="20" oninput="updateCharCount(this)">
+                            <span class="char-count">0 / 20</span>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label class="form-label required">场所人数</label>
                         <input type="number" class="form-input" id="site-employees" placeholder="如：450" min="1">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">场所类型</label>
+                        <label class="form-label required">场所类型</label>
                         <select class="form-select" id="site-type">
+                            <option value="">请选择场所类型</option>
                             <option value="fixed">固定场所</option>
                             <option value="service">服务点</option>
                         </select>
                     </div>
-                </div>
-                <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label required">省份</label>
-                        <select class="form-select" id="site-province" onchange="updateSiteRegionOptions('province')"></select>
+                        <label class="form-label required">法定代表人</label>
+                        <input type="text" class="form-input" id="site-legal-person" placeholder="请输入法定代表人">
                     </div>
                     <div class="form-group">
-                        <label class="form-label required">城市</label>
-                        <select class="form-select" id="site-city" onchange="updateSiteRegionOptions('city')"></select>
+                        <label class="form-label required">联系电话</label>
+                        <input type="tel" class="form-input" id="site-phone" placeholder="请输入联系电话">
                     </div>
-                </div>
-                <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label required">区/县</label>
-                        <select class="form-select" id="site-district"></select>
+                        <label class="form-label required">注册资本（万元）</label>
+                        <input type="number" class="form-input" id="site-registered-capital" placeholder="如：5000" min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label required">注册资本币种</label>
+                        <select class="form-select" id="site-capital-currency">
+                            <option value="CNY">人民币</option>
+                            <option value="USD">美元</option>
+                            <option value="EUR">欧元</option>
+                            <option value="HKD">港币</option>
+                        </select>
+                    </div>
+                    <div class="form-group site-region-field" id="site-region-field">
+                        <label class="form-label required">省市区</label>
+                        <input type="hidden" id="site-region">
+                        <div class="cascader" id="site-region-cascader">
+                            <button type="button" class="cascader-trigger placeholder" onclick="toggleCascader('site-region')">请选择省市区</button>
+                            <div class="cascader-panel" id="site-region-panel"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">所属国民经济行业</label>
+                        <input type="hidden" id="site-industry">
+                        <div class="cascader" id="site-industry-cascader">
+                            <button type="button" class="cascader-trigger placeholder" onclick="toggleCascader('site-industry')">请选择所属国民经济行业</button>
+                            <div class="cascader-panel" id="site-industry-panel"></div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="checkbox-wrapper" style="margin-top: 30px;">
@@ -2250,15 +2549,39 @@
                             <span class="text-sm font-medium text-gray-700">是否为中心职能场所</span>
                         </label>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label required">详细地址</label>
-                    <input type="text" class="form-input" id="site-address-detail" placeholder="请输入街道、门牌号、楼栋等详细地址">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">场所联系人</label>
-                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm text-gray-600">
-                        保存场所后，可在场所卡片下添加联系人，并为联系人配置负责的认证领域、电话、邮箱和现场职责。
+                    <div class="form-group site-field-wide">
+                        <label class="form-label required" id="site-registered-address-label">注册地址</label>
+                        <div class="input-with-count">
+                            <textarea class="form-textarea" id="site-registered-address" placeholder="请输入注册地址" maxlength="300" oninput="updateCharCount(this)"></textarea>
+                            <span class="char-count">0 / 300</span>
+                        </div>
+                    </div>
+                    <div class="form-group site-field-wide">
+                        <label class="form-label" id="site-registered-address-en-label">注册地址（英）</label>
+                        <div class="input-with-count">
+                            <textarea class="form-textarea" id="site-registered-address-en" placeholder="请输入注册地址英文" maxlength="300" oninput="updateCharCount(this)"></textarea>
+                            <span class="char-count">0 / 300</span>
+                        </div>
+                    </div>
+                    <div class="form-group site-field-wide">
+                        <label class="form-label required" id="site-address-detail-label">运营地址</label>
+                        <div class="input-with-count">
+                            <textarea class="form-textarea" id="site-address-detail" placeholder="请输入街道、门牌号、楼栋等运营地址" maxlength="300" oninput="updateCharCount(this)"></textarea>
+                            <span class="char-count">0 / 300</span>
+                        </div>
+                    </div>
+                    <div class="form-group site-field-wide">
+                        <label class="form-label" id="site-address-detail-en-label">运营地址（英）</label>
+                        <div class="input-with-count">
+                            <textarea class="form-textarea" id="site-address-detail-en" placeholder="请输入运营地址英文" maxlength="300" oninput="updateCharCount(this)"></textarea>
+                            <span class="char-count">0 / 300</span>
+                        </div>
+                    </div>
+                    <div class="form-group site-field-full">
+                        <label class="form-label">场所联系人</label>
+                        <div class="site-contact-note">
+                            保存场所后，可在场所卡片下添加联系人，并为联系人配置负责的认证领域、电话、邮箱和现场职责。
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2446,11 +2769,22 @@
                 employees: 450,
                 type: 'fixed',
                 isHeadquarters: true,
+                customerType: 'domestic',
+                country: '156',
                 isCentral: true,
+                creditCode: '91110000100010433W',
+                legalPerson: '王建国',
+                phone: '010-12345678',
+                registeredCapital: '50000',
+                capitalCurrency: 'CNY',
+                industry: 'D/44/441/4416',
                 province: '北京市',
                 city: '北京市',
                 district: '东城区',
+                registeredAddress: '北京市东城区东直门北大街9号',
+                registeredAddressEn: 'No.9 Dongzhimen North Street, Dongcheng District, Beijing, China',
                 addressDetail: '东直门北大街9号中国石油大厦',
+                addressDetailEn: 'No.9 Dongzhimen North Street, PetroChina Tower, Dongcheng District, Beijing, China',
                 address: '北京市东城区东直门北大街9号中国石油大厦',
                 contacts: [
                     { name: '张伟', duty: '环境体系对接人', mobile: '138-0013-8000', email: 'zhang.wei@fengyuan.com', scopes: ['EMS'] }
@@ -2463,11 +2797,22 @@
                 employees: 1200,
                 type: 'fixed',
                 isHeadquarters: false,
+                customerType: 'domestic',
+                country: '156',
                 isCentral: false,
+                creditCode: '91120242MA0QFK058N',
+                legalPerson: '刘明',
+                phone: '022-66218888',
+                registeredCapital: '12000',
+                capitalCurrency: 'CNY',
+                industry: 'C/38/382/3825',
                 province: '天津市',
                 city: '天津市',
                 district: '滨海新区',
+                registeredAddress: '天津市滨海新区第九大街18号',
+                registeredAddressEn: 'No.18 Ninth Avenue, Binhai New Area, Tianjin, China',
                 addressDetail: '第九大街18号',
+                addressDetailEn: 'No.18 Ninth Avenue, Binhai New Area, Tianjin, China',
                 address: '天津市滨海新区第九大街18号',
                 contacts: [
                     { name: '李芳', duty: '职业健康安全联系人', mobile: '139-0013-9000', email: 'li.fang@fengyuan.com', scopes: ['OHSMS'] },
@@ -2481,11 +2826,22 @@
                 employees: 180,
                 type: 'service',
                 isHeadquarters: false,
+                customerType: 'domestic',
+                country: '156',
                 isCentral: false,
+                creditCode: '91130605MA0G8X21X9',
+                legalPerson: '陈立',
+                phone: '0312-3128888',
+                registeredCapital: '3000',
+                capitalCurrency: 'CNY',
+                industry: 'C/38/382/3825',
                 province: '河北省',
                 city: '保定市',
                 district: '高新区',
+                registeredAddress: '河北省保定市高新区向阳北大街2899号',
+                registeredAddressEn: 'No.2899 Xiangyang North Street, Gaoxin District, Baoding, Hebei, China',
                 addressDetail: '向阳北大街2899号',
+                addressDetailEn: 'No.2899 Xiangyang North Street, Gaoxin District, Baoding, Hebei, China',
                 address: '河北省保定市高新区向阳北大街2899号',
                 contacts: [
                     { name: '周敏', duty: 'EMS现场联系人', mobile: '134-0013-4000', email: 'zhou.min@fengyuan.com', scopes: ['EMS'] },
@@ -2520,6 +2876,32 @@
             '山西省': {
                 '太原市': ['小店区', '迎泽区', '杏花岭区'],
                 '大同市': ['平城区', '云冈区', '新荣区']
+            }
+        };
+
+        const nationalIndustryOptions = {
+            'C 制造业': {
+                '36 汽车制造业': {
+                    '367 汽车零部件及配件制造': ['3670 汽车零部件及配件制造']
+                },
+                '38 电气机械和器材制造业': {
+                    '382 输配电及控制设备制造': ['3825 光伏设备及元器件制造']
+                }
+            },
+            'D 电力、热力、燃气及水生产和供应业': {
+                '44 电力、热力生产和供应业': {
+                    '441 电力生产': ['4416 太阳能发电']
+                }
+            },
+            'I 信息传输、软件和信息技术服务业': {
+                '65 软件和信息技术服务业': {
+                    '651 软件开发': ['6513 应用软件开发']
+                }
+            },
+            'L 租赁和商务服务业': {
+                '72 商务服务业': {
+                    '721 组织管理服务': ['7212 投资与资产管理']
+                }
             }
         };
 
@@ -2823,7 +3205,8 @@
                         province: '北京市',
                         city: '北京市',
                         district: '东城区',
-                        detail: '东直门北大街9号中国石油大厦A座'
+                        detail: '东直门北大街9号中国石油大厦A座',
+                        detailEn: 'Building A, PetroChina Tower, No.9 Dongzhimen North Street, Dongcheng District, Beijing, China'
                     }
                 };
                 
@@ -2839,8 +3222,8 @@
                     if (label.includes('注册资金')) valueSpan.textContent = latestData.capital + ' / 人民币';
                     if (label.includes('公司总人数')) valueSpan.textContent = latestData.employeeTotal;
                     if (label.includes('行业分类')) valueSpan.textContent = latestData.industry;
-                    if (label.includes('详细地址') && !label.includes('英文')) valueSpan.textContent = latestData.address.detail;
-                    if (label.includes('英文地址')) valueSpan.textContent = latestData.address.detailEn;
+                    if (label.includes('注册地址') && !label.includes('英')) valueSpan.textContent = latestData.address.detail;
+                    if (label.includes('注册地址') && label.includes('英')) valueSpan.textContent = latestData.address.detailEn;
                 });
                 
                 // 显示同步成功状态
@@ -2876,9 +3259,11 @@
             const city = document.getElementById('addr-city').value;
             const district = document.getElementById('addr-district').value;
             const detail = document.getElementById('addr-detail').value;
+            const detailEn = document.getElementById('addr-detail-en').value;
             
             document.getElementById('address-region').textContent = `${province} ${city} ${district}`;
             document.getElementById('address-detail').textContent = detail;
+            document.getElementById('address-detail-en').textContent = detailEn;
             
             closeModal('addressEditModal');
             showToast('地址信息保存成功');
@@ -3043,29 +3428,135 @@
         }
 
         // 场所管理（精简版）
-        function updateSiteRegionOptions(level, preset = {}) {
-            const provinceSelect = document.getElementById('site-province');
-            const citySelect = document.getElementById('site-city');
-            const districtSelect = document.getElementById('site-district');
-            if (!provinceSelect || !citySelect || !districtSelect) return;
+        function getSiteRegionValue(province, city, district) {
+            return [province || '', city || '', district || ''].join('|');
+        }
 
-            if (!provinceSelect.options.length) {
-                provinceSelect.innerHTML = Object.keys(regionOptions).map(province => `<option value="${province}">${province}</option>`).join('');
+        function parseSiteRegionValue(value) {
+            const [province = '', city = '', district = ''] = (value || '').split('|');
+            return { province, city, district };
+        }
+
+        const cascaderState = {
+            'site-region': { path: [] },
+            'site-industry': { path: [] }
+        };
+
+        function getCascaderData(type) {
+            return type === 'site-region' ? regionOptions : nationalIndustryOptions;
+        }
+
+        function getCascaderPlaceholder(type) {
+            return type === 'site-region' ? '请选择省市区' : '请选择所属国民经济行业';
+        }
+
+        function getCascaderLeafValue(type, path) {
+            if (type === 'site-region') return getSiteRegionValue(path[0], path[1], path[2]);
+            const leaf = path[path.length - 1] || '';
+            const code = leaf.split(' ')[0] || '';
+            return code ? `${path[0]?.charAt(0) || ''}/${path[1]?.split(' ')[0] || ''}/${path[2]?.split(' ')[0] || ''}/${code}` : '';
+        }
+
+        function getCascaderLeafPath(type, value) {
+            if (!value) return [];
+            if (type === 'site-region') {
+                const region = parseSiteRegionValue(value);
+                return [region.province, region.city, region.district].filter(Boolean);
             }
 
-            if (preset.province) provinceSelect.value = preset.province;
-            const province = provinceSelect.value || Object.keys(regionOptions)[0];
-            const cities = Object.keys(regionOptions[province] || {});
+            const parts = value.split('/');
+            const targetCode = parts[parts.length - 1];
+            let foundPath = [];
+            Object.entries(nationalIndustryOptions).some(([first, seconds]) => {
+                return Object.entries(seconds).some(([second, thirds]) => {
+                    return Object.entries(thirds).some(([third, fourths]) => {
+                        const leaf = fourths.find(item => item.startsWith(`${targetCode} `));
+                        if (leaf) {
+                            foundPath = [first, second, third, leaf];
+                            return true;
+                        }
+                        return false;
+                    });
+                });
+            });
+            return foundPath;
+        }
 
-            if (level === 'province' || !citySelect.options.length || preset.city) {
-                citySelect.innerHTML = cities.map(city => `<option value="${city}">${city}</option>`).join('');
-                citySelect.value = preset.city && cities.includes(preset.city) ? preset.city : cities[0];
+        function getNodeAtPath(data, path) {
+            return path.reduce((node, key) => {
+                if (Array.isArray(node)) return node;
+                return node?.[key];
+            }, data);
+        }
+
+        function renderCascader(type) {
+            const panel = document.getElementById(`${type}-panel`);
+            const trigger = document.querySelector(`#${type}-cascader .cascader-trigger`);
+            if (!panel || !trigger) return;
+
+            const data = getCascaderData(type);
+            const path = cascaderState[type].path;
+            const columns = [];
+            let node = data;
+
+            for (let level = 0; level < 4 && node; level++) {
+                const options = Array.isArray(node) ? node : Object.keys(node);
+                columns.push({ level, options });
+                const selected = path[level];
+                node = selected && !Array.isArray(node) ? node[selected] : (Array.isArray(node) ? null : node[options[0]]);
+                if (Array.isArray(node) && path[level + 1]) node = null;
             }
 
-            const city = citySelect.value || cities[0];
-            const districts = regionOptions[province]?.[city] || [];
-            districtSelect.innerHTML = districts.map(district => `<option value="${district}">${district}</option>`).join('');
-            districtSelect.value = preset.district && districts.includes(preset.district) ? preset.district : districts[0];
+            panel.innerHTML = columns.map(column => `
+                <div class="cascader-column">
+                    ${column.options.map(option => `
+                        <button type="button" class="cascader-option ${path[column.level] === option ? 'active' : ''}" onclick="chooseCascaderOption('${type}', ${column.level}, '${option.replace(/'/g, "\\'")}')">${option}</button>
+                    `).join('')}
+                </div>
+            `).join('');
+
+            const value = document.getElementById(type)?.value;
+            const selectedPath = getCascaderLeafPath(type, value);
+            trigger.textContent = selectedPath.length ? selectedPath.join(' / ') : getCascaderPlaceholder(type);
+            trigger.classList.toggle('placeholder', !selectedPath.length);
+        }
+
+        function chooseCascaderOption(type, level, option) {
+            const nextPath = cascaderState[type].path.slice(0, level);
+            nextPath[level] = option;
+            cascaderState[type].path = nextPath;
+
+            const data = getCascaderData(type);
+            const node = getNodeAtPath(data, nextPath);
+            if (Array.isArray(node)) {
+                document.getElementById(type).value = getCascaderLeafValue(type, nextPath);
+                document.getElementById(`${type}-panel`)?.classList.remove('active');
+            } else {
+                document.getElementById(type).value = '';
+            }
+
+            renderCascader(type);
+        }
+
+        function toggleCascader(type) {
+            document.querySelectorAll('.cascader-panel').forEach(panel => {
+                if (panel.id !== `${type}-panel`) panel.classList.remove('active');
+            });
+            const panel = document.getElementById(`${type}-panel`);
+            panel?.classList.toggle('active');
+            renderCascader(type);
+        }
+
+        function setCascaderValue(type, value) {
+            const field = document.getElementById(type);
+            if (!field) return;
+            field.value = value || '';
+            cascaderState[type].path = getCascaderLeafPath(type, field.value);
+            renderCascader(type);
+        }
+
+        function updateSiteRegionOptions(preset = {}) {
+            setCascaderValue('site-region', getSiteRegionValue(preset.province, preset.city, preset.district));
         }
 
         function formatRegionAddress(province, city, district, detail) {
@@ -3075,13 +3566,231 @@
 
         function buildSiteAddress(site) {
             const address = formatRegionAddress(site.province, site.city, site.district, site.addressDetail);
-            return address || site.address || '-';
+            return address || site.address || site.addressDetailEn || '-';
+        }
+
+        function updateCharCount(field) {
+            const wrapper = field.closest('.input-with-count');
+            const counter = wrapper?.querySelector('.char-count');
+            if (!counter) return;
+            counter.textContent = `${field.value.length} / ${field.maxLength}`;
+        }
+
+        function setSiteFieldValue(id, value) {
+            const field = document.getElementById(id);
+            if (!field) return;
+            field.value = value || '';
+            if (field.maxLength > 0) updateCharCount(field);
+        }
+
+        function refreshSiteCharCounts() {
+            document.querySelectorAll('#siteModal .input-with-count input, #siteModal .input-with-count textarea').forEach(updateCharCount);
+        }
+
+        const aiSiteSuggestions = [
+            {
+                customerType: 'domestic',
+                country: '156',
+                name: '丰源新能源集团有限公司天津生产基地',
+                nameEn: 'Fengyuan New Energy Group Tianjin Production Base',
+                creditCode: '91120242MA0QFK058N',
+                employees: 450,
+                type: 'fixed',
+                legalPerson: '刘明',
+                phone: '022-66218888',
+                registeredCapital: '12000',
+                capitalCurrency: 'CNY',
+                industry: 'C/38/382/3825',
+                province: '天津市',
+                city: '天津市',
+                district: '滨海新区',
+                registeredAddress: '天津市滨海新区第九大街18号',
+                registeredAddressEn: 'No.18 Ninth Avenue, Binhai New Area, Tianjin, China',
+                addressDetail: '第九大街18号',
+                addressDetailEn: 'No.18 Ninth Avenue, Binhai New Area, Tianjin, China'
+            },
+            {
+                customerType: 'domestic',
+                country: '156',
+                name: '丰源新能源集团有限公司保定储能试制中心',
+                nameEn: 'Fengyuan New Energy Group Baoding Energy Storage Pilot Center',
+                creditCode: '91130605MA0G8X21X9',
+                employees: 180,
+                type: 'service',
+                legalPerson: '陈立',
+                phone: '0312-3128888',
+                registeredCapital: '3000',
+                capitalCurrency: 'CNY',
+                industry: 'C/38/382/3825',
+                province: '河北省',
+                city: '保定市',
+                district: '高新区',
+                registeredAddress: '河北省保定市高新区向阳北大街2899号',
+                registeredAddressEn: 'No.2899 Xiangyang North Street, Gaoxin District, Baoding, Hebei, China',
+                addressDetail: '向阳北大街2899号',
+                addressDetailEn: 'No.2899 Xiangyang North Street, Gaoxin District, Baoding, Hebei, China'
+            },
+            {
+                customerType: 'domestic',
+                country: '156',
+                name: '丰源新能源集团有限公司总部办公楼',
+                nameEn: 'Fengyuan New Energy Group Beijing Headquarters',
+                creditCode: '91110000100010433W',
+                employees: 450,
+                type: 'fixed',
+                legalPerson: '王建国',
+                phone: '010-12345678',
+                registeredCapital: '50000',
+                capitalCurrency: 'CNY',
+                industry: 'D/44/441/4416',
+                province: '北京市',
+                city: '北京市',
+                district: '东城区',
+                registeredAddress: '北京市东城区东直门北大街9号',
+                registeredAddressEn: 'No.9 Dongzhimen North Street, Dongcheng District, Beijing, China',
+                addressDetail: '东直门北大街9号中国石油大厦',
+                addressDetailEn: 'No.9 Dongzhimen North Street, PetroChina Tower, Dongcheng District, Beijing, China'
+            },
+            {
+                customerType: 'overseas',
+                country: '702',
+                name: '',
+                nameEn: 'Fengyuan Energy Singapore Pte. Ltd.',
+                creditCode: '202412345N',
+                employees: 86,
+                type: 'fixed',
+                legalPerson: 'Liu Ming',
+                phone: '+65 6123 8899',
+                registeredCapital: '800',
+                capitalCurrency: 'USD',
+                industry: 'I/65/651/6513',
+                province: '',
+                city: '',
+                district: '',
+                registeredAddress: '',
+                registeredAddressEn: '10 Anson Road, #20-01 International Plaza, Singapore 079903',
+                addressDetail: '',
+                addressDetailEn: '10 Anson Road, #20-01 International Plaza, Singapore 079903'
+            },
+            {
+                customerType: 'overseas',
+                country: '276',
+                name: '',
+                nameEn: 'Fengyuan Energy GmbH Munich Branch',
+                creditCode: 'HRB 298765',
+                employees: 42,
+                type: 'service',
+                legalPerson: 'Chen Li',
+                phone: '+49 89 1234 5678',
+                registeredCapital: '500',
+                capitalCurrency: 'EUR',
+                industry: 'L/72/721/7212',
+                province: '',
+                city: '',
+                district: '',
+                registeredAddress: '',
+                registeredAddressEn: 'Leopoldstrasse 23, 80802 Munich, Germany',
+                addressDetail: '',
+                addressDetailEn: 'Leopoldstrasse 23, 80802 Munich, Germany'
+            }
+        ];
+
+        function setRequiredLabel(id, required) {
+            document.getElementById(id)?.classList.toggle('required', required);
+        }
+
+        function setSiteCustomerType(type) {
+            const isOverseas = type === 'overseas';
+            document.getElementById('site-customer-type').value = type;
+            document.getElementById('site-domestic-btn')?.classList.toggle('active', !isOverseas);
+            document.getElementById('site-overseas-btn')?.classList.toggle('active', isOverseas);
+            document.getElementById('site-region-field')?.classList.toggle('hidden', isOverseas);
+            document.getElementById('site-country-field')?.classList.toggle('hidden', !isOverseas);
+            const creditCodeLabel = document.getElementById('site-credit-code-label');
+            const creditCodeInput = document.getElementById('site-credit-code');
+            if (creditCodeLabel) creditCodeLabel.textContent = isOverseas ? '税号/登记号' : '统一社会信用代码';
+            if (creditCodeInput) creditCodeInput.placeholder = isOverseas ? '如：202412345N / HRB 298765' : '如：91120242MA0QFK058N';
+            setRequiredLabel('site-name-label', !isOverseas);
+            setRequiredLabel('site-name-en-label', isOverseas);
+            setRequiredLabel('site-registered-address-label', !isOverseas);
+            setRequiredLabel('site-registered-address-en-label', isOverseas);
+            setRequiredLabel('site-address-detail-label', !isOverseas);
+            setRequiredLabel('site-address-detail-en-label', isOverseas);
+            document.getElementById('site-name-suggestions')?.classList.remove('active');
+        }
+
+        function normalizeCountryDisplay() {
+            const select = document.getElementById('site-country');
+            if (!select) return;
+            Array.from(select.options).forEach(option => {
+                if (!option.value) return;
+                option.textContent = option.selected ? option.value : option.dataset.name;
+            });
+        }
+
+        function handleSiteNameInput(field) {
+            updateCharCount(field);
+            const keyword = field.value.trim().toLowerCase();
+            const list = document.getElementById('site-name-suggestions');
+            if (!list) return;
+            const customerType = document.getElementById('site-customer-type')?.value || 'domestic';
+            const source = aiSiteSuggestions.filter(site => (site.customerType || 'domestic') === customerType);
+
+            const matches = (keyword
+                ? source.filter(site => `${site.name} ${site.nameEn} ${site.creditCode}`.toLowerCase().includes(keyword))
+                : source).slice(0, 5);
+
+            list.innerHTML = matches.map((site, index) => `
+                <button type="button" class="site-suggestion-item" onclick="selectAiSiteSuggestion(${index})">
+                    <div class="site-suggestion-name">${site.name || site.nameEn}</div>
+                    <div class="site-suggestion-meta">${customerType === 'overseas' ? '税号/登记号' : '统一社会信用代码'}：${site.creditCode} · ${site.registeredAddress || site.registeredAddressEn}</div>
+                </button>
+            `).join('');
+            list.classList.toggle('active', matches.length > 0);
+            list.dataset.matches = JSON.stringify(matches.map(site => site.creditCode));
+        }
+
+        function selectAiSiteSuggestion(index) {
+            const list = document.getElementById('site-name-suggestions');
+            const codes = JSON.parse(list?.dataset.matches || '[]');
+            const site = aiSiteSuggestions.find(item => item.creditCode === codes[index]);
+            if (!site) return;
+
+            setSiteCustomerType(site.customerType || 'domestic');
+            setSiteFieldValue('site-name', site.name);
+            setSiteFieldValue('site-name-en', site.nameEn);
+            setSiteFieldValue('site-credit-code', site.creditCode);
+            setSiteFieldValue('site-employees', site.employees);
+            setSiteFieldValue('site-type', site.type);
+            setSiteFieldValue('site-country', site.country);
+            normalizeCountryDisplay();
+            setSiteFieldValue('site-legal-person', site.legalPerson);
+            setSiteFieldValue('site-phone', site.phone);
+            setSiteFieldValue('site-registered-capital', site.registeredCapital);
+            setSiteFieldValue('site-capital-currency', site.capitalCurrency);
+            setCascaderValue('site-industry', site.industry);
+            if ((site.customerType || 'domestic') === 'domestic') {
+                updateSiteRegionOptions({
+                    province: site.province,
+                    city: site.city,
+                    district: site.district
+                });
+            } else {
+                setCascaderValue('site-region', '');
+            }
+            setSiteFieldValue('site-registered-address', site.registeredAddress);
+            setSiteFieldValue('site-registered-address-en', site.registeredAddressEn);
+            setSiteFieldValue('site-address-detail', site.addressDetail);
+            setSiteFieldValue('site-address-detail-en', site.addressDetailEn);
+            list.classList.remove('active');
+            showToast('已根据企业名称带入场所相关信息，可继续手动调整');
         }
 
         function openSiteModal(siteId = null) {
             const modal = document.getElementById('siteModal');
             const title = document.getElementById('site-modal-title');
-            updateSiteRegionOptions('province');
+            updateSiteRegionOptions();
+            document.getElementById('site-name-suggestions')?.classList.remove('active');
             
             if (siteId) {
                 const site = sitesData.find(s => s.id === siteId);
@@ -3092,30 +3801,62 @@
                     }
                     title.textContent = '编辑场所';
                     document.getElementById('site-id').value = site.id;
-                    document.getElementById('site-name').value = site.name;
-                    document.getElementById('site-name-en').value = site.nameEn;
-                    document.getElementById('site-employees').value = site.employees;
-                    document.getElementById('site-type').value = site.type || 'fixed';
+                    setSiteCustomerType(site.customerType || 'domestic');
+                    setSiteFieldValue('site-name', site.name);
+                    setSiteFieldValue('site-name-en', site.nameEn);
+                    setSiteFieldValue('site-credit-code', site.creditCode);
+                    setSiteFieldValue('site-employees', site.employees);
+                    setSiteFieldValue('site-type', site.type || 'fixed');
+                    setSiteFieldValue('site-country', site.country || '');
+                    normalizeCountryDisplay();
+                    setSiteFieldValue('site-legal-person', site.legalPerson);
+                    setSiteFieldValue('site-phone', site.phone);
+                    setSiteFieldValue('site-registered-capital', site.registeredCapital);
+                    setSiteFieldValue('site-capital-currency', site.capitalCurrency || 'CNY');
+                    setCascaderValue('site-industry', site.industry);
                     document.getElementById('site-is-central').checked = site.isCentral;
-                    updateSiteRegionOptions('province', {
-                        province: site.province || '北京市',
-                        city: site.city || '北京市',
-                        district: site.district || '东城区'
-                    });
-                    document.getElementById('site-address-detail').value = site.addressDetail || '';
+                    if ((site.customerType || 'domestic') === 'domestic') {
+                        updateSiteRegionOptions({
+                            province: site.province || '北京市',
+                            city: site.city || '北京市',
+                            district: site.district || '东城区'
+                        });
+                    } else {
+                        setCascaderValue('site-region', '');
+                    }
+                    setSiteFieldValue('site-registered-address', site.registeredAddress);
+                    setSiteFieldValue('site-registered-address-en', site.registeredAddressEn);
+                    setSiteFieldValue('site-address-detail', site.addressDetail || '');
+                    setSiteFieldValue('site-address-detail-en', site.addressDetailEn);
                 }
             } else {
                 title.textContent = '添加场所';
                 document.getElementById('site-id').value = '';
-                document.getElementById('site-name').value = '';
-                document.getElementById('site-name-en').value = '';
-                document.getElementById('site-employees').value = '';
-                document.getElementById('site-type').value = 'fixed';
+                setSiteCustomerType('domestic');
+                setSiteFieldValue('site-name', '');
+                setSiteFieldValue('site-name-en', '');
+                setSiteFieldValue('site-credit-code', '');
+                setSiteFieldValue('site-employees', '');
+                setSiteFieldValue('site-type', '');
+                setSiteFieldValue('site-country', '');
+                normalizeCountryDisplay();
+                setSiteFieldValue('site-legal-person', '');
+                setSiteFieldValue('site-phone', '');
+                setSiteFieldValue('site-registered-capital', '');
+                setSiteFieldValue('site-capital-currency', 'CNY');
+                setCascaderValue('site-industry', '');
                 document.getElementById('site-is-central').checked = false;
-                updateSiteRegionOptions('province', { province: '北京市', city: '北京市', district: '东城区' });
-                document.getElementById('site-address-detail').value = '';
+                updateSiteRegionOptions({ province: '北京市', city: '北京市', district: '东城区' });
+                setSiteFieldValue('site-registered-address', '');
+                setSiteFieldValue('site-registered-address-en', '');
+                setSiteFieldValue('site-address-detail', '');
+                setSiteFieldValue('site-address-detail-en', '');
+                setTimeout(() => handleSiteNameInput(document.getElementById('site-name')), 0);
             }
             
+            refreshSiteCharCounts();
+            renderCascader('site-region');
+            renderCascader('site-industry');
             openModal('siteModal');
         }
 
@@ -3126,34 +3867,102 @@
         function saveSite() {
             const id = document.getElementById('site-id').value;
             const name = document.getElementById('site-name').value.trim();
+            const nameEn = document.getElementById('site-name-en').value.trim();
             const addressDetail = document.getElementById('site-address-detail').value.trim();
+            const addressDetailEn = document.getElementById('site-address-detail-en').value.trim();
+            const type = document.getElementById('site-type').value;
+            const legalPerson = document.getElementById('site-legal-person').value.trim();
+            const phone = document.getElementById('site-phone').value.trim();
+            const registeredCapital = document.getElementById('site-registered-capital').value;
+            const capitalCurrency = document.getElementById('site-capital-currency').value;
+            const registeredAddress = document.getElementById('site-registered-address').value.trim();
+            const registeredAddressEn = document.getElementById('site-registered-address-en').value.trim();
+            const customerType = document.getElementById('site-customer-type').value;
+            const isOverseas = customerType === 'overseas';
+            const country = document.getElementById('site-country').value;
+            const region = parseSiteRegionValue(document.getElementById('site-region').value);
             
-            if (!name) {
+            if (!isOverseas && !name) {
                 alert('请填写场所名称');
                 return;
             }
-            if (!addressDetail) {
-                alert('请填写场所详细地址');
+            if (isOverseas && !nameEn) {
+                alert('请填写场所名称（英文）');
+                return;
+            }
+            if (!type) {
+                alert('请选择场所类型');
+                return;
+            }
+            if (!legalPerson) {
+                alert('请填写法定代表人');
+                return;
+            }
+            if (!phone) {
+                alert('请填写联系电话');
+                return;
+            }
+            if (!registeredCapital) {
+                alert('请填写注册资本');
+                return;
+            }
+            if (!capitalCurrency) {
+                alert('请选择注册资本币种');
+                return;
+            }
+            if (!isOverseas && (!region.province || !region.city || !region.district)) {
+                alert('请选择省市区');
+                return;
+            }
+            if (isOverseas && !country) {
+                alert('请选择国家');
+                return;
+            }
+            if (!isOverseas && !registeredAddress) {
+                alert('请填写注册地址');
+                return;
+            }
+            if (isOverseas && !registeredAddressEn) {
+                alert('请填写注册地址（英）');
+                return;
+            }
+            if (!isOverseas && !addressDetail) {
+                alert('请填写运营地址');
+                return;
+            }
+            if (isOverseas && !addressDetailEn) {
+                alert('请填写运营地址（英）');
                 return;
             }
             
             const newSite = {
                 id: id ? parseInt(id) : Date.now(),
+                customerType,
+                country: isOverseas ? country : '156',
                 name: name,
-                nameEn: document.getElementById('site-name-en').value,
+                nameEn,
+                creditCode: document.getElementById('site-credit-code').value.trim(),
                 employees: parseInt(document.getElementById('site-employees').value) || 0,
-                type: document.getElementById('site-type').value,
+                type,
                 isHeadquarters: false,
                 isCentral: document.getElementById('site-is-central').checked,
-                province: document.getElementById('site-province').value,
-                city: document.getElementById('site-city').value,
-                district: document.getElementById('site-district').value,
+                legalPerson,
+                phone,
+                registeredCapital,
+                capitalCurrency,
+                industry: document.getElementById('site-industry').value,
+                province: isOverseas ? '' : region.province,
+                city: isOverseas ? '' : region.city,
+                district: isOverseas ? '' : region.district,
+                registeredAddress,
+                registeredAddressEn,
                 addressDetail,
+                addressDetailEn,
                 address: formatRegionAddress(
-                    document.getElementById('site-province').value,
-                    document.getElementById('site-city').value,
-                    document.getElementById('site-district').value,
-                    addressDetail
+                    isOverseas ? '' : region.province,
+                    isOverseas ? '' : region.city,
+                    isOverseas ? '' : region.district,
+                    isOverseas ? addressDetailEn : addressDetail
                 ),
                 contacts: id ? (sitesData.find(s => s.id === parseInt(id))?.contacts || []) : []
             };
@@ -3182,6 +3991,7 @@
                     .map(contact => ({ contact, index: (site.contacts || []).indexOf(contact) }))
                     .filter(item => currentSiteContactScopeFilter === 'ALL' || (item.contact.scopes || []).includes(currentSiteContactScopeFilter));
                 const typeLabel = site.isHeadquarters ? '总部场所' : (site.type === 'service' ? '服务点' : '固定场所');
+                const displayName = site.name || site.nameEn || '-';
                 const html = `
                     <div class="site-card ${site.isCentral ? 'bg-gradient-to-r from-white to-blue-50/20 border-blue-200' : ''}" data-site-id="${site.id}">
                         <div class="flex items-start justify-between mb-4">
@@ -3191,7 +4001,7 @@
                                 </div>
                                 <div>
                                     <div class="flex items-center gap-2">
-                                        <h5 class="font-bold text-lg text-gray-800">${site.name}</h5>
+                                        <h5 class="font-bold text-lg text-gray-800">${displayName}</h5>
                                         <span class="site-type-badge ${site.isHeadquarters || site.isCentral ? 'site-type-central' : 'site-type-normal'}">${typeLabel}</span>
                                         ${site.isHeadquarters ? `<span class="px-2 py-0.5 bg-gray-100 text-gray-500 rounded text-xs">基础信息带入</span>` : ''}
                                     </div>
@@ -3227,7 +4037,7 @@
                             </div>
                         </div>
                         <div class="mt-3 bg-gray-50 rounded-lg p-3">
-                            <p class="text-xs text-gray-500 mb-1">场所地址</p>
+                            <p class="text-xs text-gray-500 mb-1">运营地址</p>
                             <p class="font-medium text-gray-800">${buildSiteAddress(site)}</p>
                         </div>
                         <div class="mt-4 border-t border-gray-100 pt-4">
@@ -3699,6 +4509,14 @@
 
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.site-name-autocomplete')) {
+                    document.getElementById('site-name-suggestions')?.classList.remove('active');
+                }
+                if (!e.target.closest('.cascader')) {
+                    document.querySelectorAll('.cascader-panel').forEach(panel => panel.classList.remove('active'));
+                }
+            });
             renderContacts();
             renderSites();
             selectCertificationDomain('ALL');
