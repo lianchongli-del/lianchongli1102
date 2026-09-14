@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>体系认证数字化项目 · 工作台</title>
+  <title>体系认证数字化项目 · 工作台 · 项目进度查询</title>
   <style>
     :root {
       --blue: #1f6cff;
@@ -815,6 +815,215 @@
       font-size: 12px;
     }
     .task-table tr:hover td { background: #f8fafc; }
+    .progress-panel {
+      grid-column: 1 / -1;
+      margin-top: 0;
+      overflow: hidden;
+    }
+    .progress-head {
+      min-height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+    .progress-head h2 {
+      margin: 0;
+      color: #0f172a;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .progress-tools {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .progress-tools .filter-input {
+      width: 150px;
+    }
+    .progress-tools #progressCustomerFilter {
+      width: 200px;
+    }
+    .progress-tools button {
+      height: 32px;
+      border: 1px solid var(--blue);
+      border-radius: 6px;
+      background: var(--blue);
+      color: #fff;
+      padding: 0 14px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .progress-tools button:hover {
+      border-color: var(--blue-hover);
+      background: var(--blue-hover);
+    }
+    .progress-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+    .progress-table th {
+      height: 42px;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--line);
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .progress-table td {
+      height: 58px;
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--soft-line);
+      color: #334155;
+      font-size: 12px;
+      vertical-align: middle;
+    }
+    .progress-table tr:hover td { background: #f8fafc; }
+    .progress-table th:nth-child(1), .progress-table td:nth-child(1) { width: 17%; }
+    .progress-table th:nth-child(2), .progress-table td:nth-child(2) { width: 8%; }
+    .progress-table th:nth-child(3), .progress-table td:nth-child(3) { width: 14%; }
+    .progress-table th:nth-child(4), .progress-table td:nth-child(4) { width: 10%; }
+    .progress-table th:nth-child(5), .progress-table td:nth-child(5) { width: 16%; }
+    .progress-table th:nth-child(6), .progress-table td:nth-child(6) { width: 10%; }
+    .progress-table th:nth-child(7), .progress-table td:nth-child(7) { width: 10%; }
+    .progress-table th:nth-child(8), .progress-table td:nth-child(8) { width: 8%; }
+    .progress-table th:nth-child(9), .progress-table td:nth-child(9) { width: 7%; text-align: center; }
+    .progress-code {
+      font-family: Consolas, "Courier New", monospace;
+      color: #1d4ed8;
+      font-weight: 600;
+    }
+    .progress-stage {
+      border: 1px solid #bfdbfe;
+      border-radius: 4px;
+      background: #eff6ff;
+      color: #1e40af;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 74px;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .progress-stage:hover {
+      border-color: var(--blue);
+      background: #dbeafe;
+    }
+    .track-step .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: auto;
+      height: auto;
+      margin-left: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: #426f9f;
+      font-size: 10px;
+      font-weight: 600;
+      line-height: 1;
+    }
+    .track-detail-table tr.completed td {
+      background: #f0fdf4;
+      color: #166534;
+    }
+    .track-detail-table tr.active td {
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-weight: 600;
+    }
+    .track-detail-table tr.not-applicable td {
+      background: #f8fafc;
+      color: #94a3b8;
+    }
+    .track-detail-table {
+      width: 100%;
+      margin-top: 16px;
+      border: 1px solid var(--line);
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+    .track-detail-table th,
+    .track-detail-table td {
+      height: 38px;
+      border-bottom: 1px solid var(--soft-line);
+      padding: 8px 12px;
+      color: #334155;
+      font-size: 12px;
+      text-align: left;
+    }
+    .track-detail-table th {
+      background: #f1f5f9;
+      color: #475569;
+      font-weight: 600;
+    }
+    .track-detail-table tr:last-child td { border-bottom: 0; }
+    #projectTrackDialog {
+      width: 760px;
+      max-width: 92vw;
+    }
+    .track-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fafc;
+      color: #475569;
+      font-size: 12px;
+    }
+    .track-summary strong {
+      display: block;
+      margin-top: 4px;
+      color: #0f172a;
+      font-size: 13px;
+    }
+    .track-steps {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      padding: 0;
+      border: 1px solid #fed7aa;
+      border-radius: 2px;
+      background: #fff;
+      overflow-x: auto;
+    }
+    .track-step {
+      min-width: 78px;
+      border: 0;
+      border-right: 1px solid #f1f5f9;
+      background: #fff;
+      color: #334155;
+      padding: 11px 10px;
+      font-size: 12px;
+      white-space: normal;
+      text-align: center;
+    }
+    .track-step:last-child { border-right: 0; }
+    .track-step.done {
+      color: #1d4ed8;
+      background: #f8fbff;
+    }
+    .track-step.active {
+      color: #0b5cff;
+      background: #eff6ff;
+      font-weight: 700;
+    }
     .task-name {
       display: block;
       color: #1e293b;
@@ -851,6 +1060,11 @@
     .table-pager,
     .pager {
       height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 0 14px;
       border-top: 1px solid var(--line);
       background: #fff;
       color: var(--muted);
@@ -934,6 +1148,10 @@
       border-color: #bfdbfe;
       background: #eff6ff;
     }
+    .monitor-item.risk {
+      border-color: #fecaca;
+      background: #fef2f2;
+    }
     .monitor-item strong { color: #0f172a; font-size: 13px; }
     .pill {
       border: 1px solid #fed7aa;
@@ -943,6 +1161,7 @@
       font-size: 11px;
     }
     .blue .pill { border-color: #93c5fd; background: #dbeafe; color: #1e40af; }
+    .risk .pill { border-color: #fecaca; background: #fee2e2; color: #b91c1c; }
     .monitor-status {
       border: 1px solid #fed7aa;
       border-radius: 4px;
@@ -951,6 +1170,68 @@
       font-size: 11px;
     }
     .blue .monitor-status { border-color: #a7f3d0; background: #d1fae5; color: #065f46; }
+    .risk .monitor-status { border-color: #fecaca; background: #fee2e2; color: #b91c1c; }
+    .monitor-item.risk .kind { color: #b91c1c; }
+    #monitorDialog {
+      width: 1100px;
+      max-width: 96vw;
+    }
+    .monitor-modal-table {
+      table-layout: fixed;
+    }
+    .monitor-modal-table th,
+    .monitor-modal-table td {
+      vertical-align: middle;
+    }
+    .monitor-modal-table th:nth-child(1), .monitor-modal-table td:nth-child(1) { width: 13%; }
+    .monitor-modal-table th:nth-child(2), .monitor-modal-table td:nth-child(2) { width: 25%; }
+    .monitor-modal-table th:nth-child(3), .monitor-modal-table td:nth-child(3) { width: 10%; }
+    .monitor-modal-table th:nth-child(4), .monitor-modal-table td:nth-child(4) { width: 14%; }
+    .monitor-modal-table th:nth-child(5), .monitor-modal-table td:nth-child(5) { width: 12%; }
+    .monitor-modal-table th:nth-child(6), .monitor-modal-table td:nth-child(6) { width: 13%; }
+    .monitor-modal-table th:nth-child(7), .monitor-modal-table td:nth-child(7) { width: 13%; }
+    .monitor-modal-table th:nth-child(7),
+    .monitor-modal-table td:nth-child(7) {
+      text-align: center;
+    }
+    .monitor-modal-table .monitor-action {
+      float: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0;
+      min-width: 76px;
+      line-height: 1.4;
+      white-space: nowrap;
+    }
+    .monitor-filter-row {
+      justify-content: flex-start;
+    }
+    .monitor-filter-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .monitor-filter-tabs button {
+      height: 30px;
+      border: 1px solid #dbe4f0;
+      border-radius: 4px;
+      background: #fff;
+      color: #60738f;
+      padding: 0 12px;
+      font-size: 12px;
+    }
+    .monitor-filter-tabs button:hover {
+      border-color: #bcd3ff;
+      color: var(--blue);
+      background: #f8fbff;
+    }
+    .monitor-filter-tabs button.active {
+      border-color: #bcd3ff;
+      background: #eef5ff;
+      color: var(--blue);
+      font-weight: 700;
+    }
     .notice-panel { height: 300px; }
     .notice-list { height: 250px; background: #fff; }
     .notice-item {
@@ -1067,7 +1348,9 @@
       .tools { justify-content: space-between; }
       .module-trigger { width: 100%; }
       .task-table { min-width: 960px; }
+      .progress-table { min-width: 960px; }
       .work-panel { overflow-x: auto; }
+      .progress-panel { overflow-x: auto; }
     }
   </style>
 </head>
@@ -1110,21 +1393,58 @@
           </table>
           <div class="table-pager" id="mainPager"></div>
         </section>
+      </div>
+      <aside class="right-col">
+        <section class="panel monitor-panel">
+          <div class="panel-heading"><h2>证后管理监控</h2><a href="#" id="monitorMoreBtn">查看全部</a></div>
+          <div class="monitor-tabs" id="monitorTabs"></div>
+          <div class="monitor-list" id="monitorList"></div>
+        </section>
+      </aside>
+      <section class="panel progress-panel">
+        <div class="progress-head">
+          <h2>项目进度查询</h2>
+          <div class="progress-tools">
+            <input class="filter-input" id="progressCustomerFilter" type="search" placeholder="客户名称">
+            <select class="filter-input" id="progressAuditTypeFilter" aria-label="审核类型">
+              <option value="">全部审核类型</option>
+            </select>
+            <select class="filter-input" id="progressFieldFilter" aria-label="认证领域">
+              <option value="">全部认证领域</option>
+            </select>
+            <select class="filter-input" id="progressStageFilter" aria-label="当前项目进度">
+              <option value="">全部项目进度</option>
+            </select>
+            <button id="progressSearchBtn" type="button">查询</button>
+          </div>
+        </div>
+        <table class="progress-table">
+          <thead>
+            <tr>
+              <th>客户名称</th>
+              <th>认证领域</th>
+              <th>项目编号</th>
+              <th>审核类型</th>
+              <th>当前项目进度</th>
+              <th>创建日期</th>
+              <th>任务持续时间</th>
+              <th>经办人</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="progressBody"></tbody>
+        </table>
+        <div class="table-pager" id="progressPager"></div>
+      </section>
+      <div class="left-col">
+
         <div class="charts">
           <section class="panel chart-panel"><div class="panel-heading"><h2>新增认证业务</h2></div><div class="chart-area"><div class="bar-chart" id="trendChart"><div class="y-labels"><span>150</span><span>120</span><span>90</span><span>60</span><span>30</span><span>0</span></div></div></div></section>
           <section class="panel chart-panel domain"><div class="panel-heading"><h2>认证领域分布</h2></div><div class="chart-area"><div class="donut-wrap"><svg class="donut-svg" id="domainChart" viewBox="0 0 180 180" aria-label="认证领域分布图"></svg><div class="legend" id="domainLegend"></div></div></div></section>
         </div>
       </div>
       <aside class="right-col">
-        <section class="panel monitor-panel">
-          <div class="panel-heading"><h2>证后管理监控</h2><a href="证书风险监控.html">查看全部</a></div>
-          <div class="monitor-tabs"><button class="active" type="button">全部 (8)</button><button type="button">监督提醒 (2)</button><button type="button">再认证 (2)</button><button type="button">暂停恢复 (2)</button></div>
-          <div class="monitor-list">
-            <article class="monitor-item"><span class="kind">监督—即将到期</span><span class="pill">剩45天</span><strong>大连机车车辆有限公司</strong><div class="monitor-meta"><span>QMS/EMS</span><span>证书号：00124012345RM</span></div><span class="monitor-status">待策划</span><a class="monitor-action" href="证书风险监控.html">立即处理 →</a></article>
-            <article class="monitor-item blue"><span class="kind">再认证提醒</span><span class="pill">剩62天</span><strong>恒力石化(大连)有限公司</strong><div class="monitor-meta"><span>OHSMS</span><span>到期：2026-03-28</span></div><span class="monitor-status">已安排</span><a class="monitor-action" href="证书风险监控.html">查看进度 →</a></article>
-            <article class="monitor-item blue"><span class="kind">暂停恢复提醒</span><span class="pill">剩15天</span><strong>华锐重工集团</strong><div class="monitor-meta"><span>QMS</span><span>恢复截止：2026-01-29</span></div><span class="monitor-status">待恢复</span><a class="monitor-action" href="证书风险监控.html">立即处理 →</a></article>
-          </div>
-        </section>
+
         <section class="panel notice-panel">
           <div class="panel-heading"><h2>系统公告</h2><a href="#" id="noticeMoreBtn">查看全部</a></div>
           <div class="notice-list" id="noticeList"></div>
@@ -1135,6 +1455,8 @@
   <div class="tooltip" id="tooltip" role="status"></div>
   <div class="toast" id="toast" role="status"></div>
   <dialog id="moreDialog" aria-labelledby="dialogTitle"><div class="dialog-head"><h2 id="dialogTitle">全部待办</h2><button type="button" aria-label="关闭">×</button></div><div class="dialog-body"></div></dialog>
+  <dialog id="monitorDialog" aria-labelledby="monitorDialogTitle"><div class="dialog-head"><h2 id="monitorDialogTitle">全部监控提醒</h2><button type="button" aria-label="关闭">×</button></div><div class="dialog-body monitor-dialog-body"></div></dialog>
+  <dialog id="projectTrackDialog" aria-labelledby="projectTrackDialogTitle"><div class="dialog-head"><h2 id="projectTrackDialogTitle">认证项目跟踪</h2><button type="button" aria-label="关闭">×</button></div><div class="dialog-body project-track-body"></div></dialog>
   <dialog id="noticeDialog" aria-labelledby="noticeDialogTitle"><div class="dialog-head"><h2 id="noticeDialogTitle">全部系统公告</h2><button type="button" aria-label="关闭">×</button></div><div class="dialog-body notice-dialog-body"></div></dialog>
   <script>
     const rawItems = [
@@ -1167,6 +1489,27 @@
       { id: 'DONE-003', module: '我的任务', desc: '审核任务确认完成', customer: '华锐重工集团', submitter: '王五 / 大连公司-交付部', createDate: '2026-01-04', duration: '3天', processTime: '2026-01-07 09:48', done: true },
       { id: 'DONE-004', module: '跨区域报备审批', desc: '跨区域客户报备已审批', customer: '东北制药集团', submitter: '刘洋 / 辽宁子公司-运营部', createDate: '2026-01-03', duration: '4天', processTime: '2026-01-07 15:30', done: true }
     ];
+    const auditTypes = ['初次认证', '监督', '再认证', '证书变更', '认证转换'];
+    const certificationFields = ['QMS', 'EMS', 'OHSMS', 'FSMS', 'HACCP', 'ISMS', 'ITSMS'];
+    const projectStages = ['认证申请', '业务评审', '方案策划', '一阶段审核任务', '二阶段审核任务', '材料上报', '材料审查', '技术评定', '区域决定', '中心决定', '证书签发'];
+    const projectHandlers = ['张三', '李四', '王五', '赵明', '刘洋', '孙悦', '周强', '钱敏', '吴越', '郑楠', '陈晨', '韩冰', '马磊'];
+    const projectProgressItems = [
+      { customer: '大连机车车辆有限公司', field: 'QMS', projectNo: '7777/Q0/2026/0386', auditType: '监督', stage: '二阶段审核任务', createDate: '2026-01-04', duration: '7天', handler: '张三' },
+      { customer: '恒力石化(大连)有限公司', field: 'OHSMS', projectNo: '7777/S0/2026/0081', auditType: '再认证', stage: '方案策划', createDate: '2026-01-05', duration: '6天', handler: '李四' },
+      { customer: '华锐重工集团', field: 'QMS', projectNo: '7777/Q0/2026/0385', auditType: '证书变更', stage: '业务评审', createDate: '2026-01-06', duration: '5天', handler: '王五' },
+      { customer: '英特尔半导体(大连)', field: 'EMS', projectNo: '7777/E0/2026/0126', auditType: '监督', stage: '二阶段审核任务', createDate: '2026-01-07', duration: '4天', handler: '赵明' },
+      { customer: '红沿河核电站', field: 'OHSMS', projectNo: '7777/Q0/2026/0384', auditType: '初次认证', stage: '材料审查', createDate: '2026-01-03', duration: '8天', handler: '刘洋' },
+      { customer: '大连港股份有限公司', field: 'EMS', projectNo: '7777/S0/2026/0080', auditType: '再认证', stage: '材料上报', createDate: '2026-01-02', duration: '9天', handler: '孙悦' },
+      { customer: '东北制药集团', field: 'QMS', projectNo: '7777/E0/2026/0125', auditType: '认证转换', stage: '认证申请', createDate: '2026-01-08', duration: '3天', handler: '周强' },
+      { customer: '大连船舶重工集团', field: 'QMS', projectNo: '7777/Q0/2026/0383', auditType: '再认证', stage: '技术评定', createDate: '2025-12-29', duration: '13天', handler: '钱敏' },
+      { customer: '辽宁华信装备制造有限公司', field: 'ISMS', projectNo: '7777/Q0/2026/0382', auditType: '初次认证', stage: '区域决定', createDate: '2025-12-27', duration: '15天', handler: '吴越' },
+      { customer: '大连北方食品有限公司', field: 'FSMS', projectNo: '7777/Q0/2026/0381', auditType: '监督', stage: '中心决定', createDate: '2025-12-26', duration: '16天', handler: '郑楠' },
+      { customer: '盘锦市粮库有限责任公司', field: 'QMS', projectNo: '7777/E0/2026/0124', auditType: '证书变更', stage: '证书签发', createDate: '2025-12-23', duration: '19天', handler: '陈晨' },
+      { customer: '沈阳精密仪器有限公司', field: 'ITSMS', projectNo: '7777/S0/2026/0079', auditType: '认证转换', stage: '业务评审', createDate: '2026-01-09', duration: '2天', handler: '韩冰' },
+      { customer: '营口绿色包装有限公司', field: 'HACCP', projectNo: '7777/Q0/2026/0380', auditType: '初次认证', stage: '方案策划', createDate: '2026-01-01', duration: '10天', handler: '马磊' },
+      { customer: '鞍山钢构制造有限公司', field: 'EMS', projectNo: '7777/E0/2026/0123', auditType: '监督', stage: '二阶段审核任务', createDate: '2025-12-31', duration: '11天', handler: '高原' },
+      { customer: '锦州海洋食品有限公司', field: 'FSMS', projectNo: '7777/S0/2026/0078', auditType: '再认证', stage: '材料审查', createDate: '2025-12-28', duration: '14天', handler: '许宁' }
+    ];
     const notices = [
       ['2026-01-14','证书签发流程维护通知','今晚 20:00-21:00 证书签发模块进行版本维护，维护期间可正常查看历史证书。','2026-01-14 09:00'],
       ['2026-01-13','审核计划模板更新','一阶段、二阶段审核计划确认页已更新签章提示，请按最新模板发起确认。','2026-01-13 17:30'],
@@ -1175,6 +1518,19 @@
       ['2026-01-10','春节值班安排发布','春节期间证后监督、证书变更等紧急事项请通过值班入口提交。','2026-01-10 16:00'],
       ['2026-01-09','客户主数据维护提醒','近期将开展客户主数据清理，请各部门核对客户名称、统一社会信用代码等基础信息。','2026-01-09 11:30'],
       ['2026-01-08','审核任务移动端上线','审核人员可在移动端确认审核任务、查看审核计划及提交现场审核记录。','2026-01-08 09:45']
+    ];
+    const monitorCategories = ['监督提醒', '再认证提醒', '企业风险'];
+    const monitorItems = [
+      { category: '监督提醒', days: 45, company: '大连机车车辆有限公司', field: 'QMS', dueDate: '2026-02-24', status: '待通知审核', action: '立即处理', tone: 'warn', detail: '监督审核距证书节点不足 60 天，需尽快通知客户确认审核安排。' },
+      { category: '监督提醒', days: 30, company: '英特尔半导体(大连)', field: 'EMS', dueDate: '2026-02-09', status: '待通知审核', action: '立即处理', tone: 'warn', detail: '监督审核计划尚未通知，建议优先确认审核窗口。' },
+      { category: '监督提醒', days: 12, company: '红沿河核电站', field: 'OHSMS', dueDate: '2026-01-22', status: '待通知审核', action: '立即处理', tone: 'warn', detail: '监督提醒临近到期，需完成通知并锁定审核组资源。' },
+      { category: '监督提醒', days: 58, company: '东北制药集团', field: 'QMS', dueDate: '2026-03-09', status: '待通知审核', action: '立即处理', tone: 'warn', detail: '监督周期进入 60 天提醒范围，需发起通知审核。' },
+      { category: '再认证提醒', days: 52, company: '恒力石化(大连)有限公司', field: 'OHSMS', dueDate: '2026-03-03', status: '待通知审核', action: '立即处理', tone: 'info', detail: '再认证证书到期前 60 天内，需通知客户启动再认证审核。' },
+      { category: '再认证提醒', days: 40, company: '大连港股份有限公司', field: 'EMS', dueDate: '2026-02-19', status: '待通知审核', action: '立即处理', tone: 'info', detail: '再认证提醒待处理，请确认合同、资料与审核安排。' },
+      { category: '再认证提醒', days: 25, company: '大连船舶重工集团', field: 'QMS', dueDate: '2026-02-04', status: '待通知审核', action: '立即处理', tone: 'info', detail: '再认证剩余时间较短，需尽快通知审核并跟进客户确认。' },
+      { category: '企业风险', days: 15, company: '华锐重工集团', field: 'QMS', dueDate: '2026-01-29', status: '待处理', action: '立即处理', tone: 'risk', detail: '企业主体状态存在风险，需核实证书暂停、撤销或忽略处理。' },
+      { category: '企业风险', days: 7, company: '大连北方食品有限公司', field: 'FSMS', dueDate: '2026-01-17', status: '待处理', action: '立即处理', tone: 'risk', detail: '经营异常信息命中证后风险监控，需进行证书处置判断。' },
+      { category: '企业风险', days: 3, company: '辽宁华信装备制造有限公司', field: 'QMS', dueDate: '2026-01-13', status: '待处理', action: '立即处理', tone: 'risk', detail: '行政处罚记录命中监控，建议优先核实认证范围受影响情况。' }
     ];
     const $ = s => document.querySelector(s);
     const $$ = s => [...document.querySelectorAll(s)];
@@ -1192,7 +1548,17 @@
       modalPage: 1,
       modalPageSize: 8,
       noticePage: 1,
-      noticePageSize: 5
+      noticePageSize: 5,
+      noticeTitle: '',
+      monitorCategory: '',
+      monitorPage: 1,
+      monitorPageSize: 6,
+      progressCustomer: '',
+      progressAuditType: '',
+      progressField: '',
+      progressStage: '',
+      progressPage: 1,
+      progressPageSize: 5
     };
     const tooltip = $('#tooltip');
     const toast = $('#toast');
@@ -1246,6 +1612,71 @@
       $('#todoTotal').textContent = todoItems.length;
       $('#todoModuleCount').textContent = `${uniqueModules().length} 个业务模块`;
       renderPager($('#mainPager'), state.page, pageCount, 'page', rows.length);
+    }
+    function filteredProjectRows() {
+      return projectProgressItems.filter(item => {
+        const customerMatched = !state.progressCustomer || item.customer.includes(state.progressCustomer);
+        const auditTypeMatched = !state.progressAuditType || item.auditType === state.progressAuditType;
+        const fieldMatched = !state.progressField || item.field === state.progressField;
+        const stageMatched = !state.progressStage || item.stage === state.progressStage;
+        return customerMatched && auditTypeMatched && fieldMatched && stageMatched;
+      });
+    }
+    function renderProgressFilters() {
+      $('#progressAuditTypeFilter').innerHTML = '<option value="">全部审核类型</option>' + auditTypes.map(type => `<option value="${esc(type)}">${esc(type)}</option>`).join('');
+      $('#progressFieldFilter').innerHTML = '<option value="">全部认证领域</option>' + certificationFields.map(field => `<option value="${esc(field)}">${esc(field)}</option>`).join('');
+      $('#progressStageFilter').innerHTML = '<option value="">全部项目进度</option>' + projectStages.map(stage => `<option value="${esc(stage)}">${esc(stage)}</option>`).join('');
+    }
+    function progressRowHTML(item) {
+      return `<tr><td><span class="task-name">${esc(item.customer)}</span></td><td>${esc(item.field)}</td><td><span class="progress-code">${esc(item.projectNo)}</span></td><td>${esc(item.auditType)}</td><td><button class="progress-stage" type="button" data-project-no="${esc(item.projectNo)}">${esc(item.stage)}</button></td><td>${esc(item.createDate)}</td><td>${esc(item.duration)}</td><td>${esc(item.handler)}</td><td><button class="handle" type="button" data-project-no="${esc(item.projectNo)}">查看详情</button></td></tr>`;
+    }
+    function renderProjectProgress() {
+      const rows = filteredProjectRows();
+      const pageCount = Math.max(1, Math.ceil(rows.length / state.progressPageSize));
+      state.progressPage = Math.min(state.progressPage, pageCount);
+      const pageRows = rows.slice((state.progressPage - 1) * state.progressPageSize, state.progressPage * state.progressPageSize);
+      $('#progressBody').innerHTML = pageRows.map(progressRowHTML).join('') || '<tr><td colspan="9">没有匹配的项目进度</td></tr>';
+      renderPager($('#progressPager'), state.progressPage, pageCount, 'progresspage', rows.length);
+    }
+    function applicableProjectStages(item) {
+      if (item.auditType === '监督' || item.auditType === '证书变更') {
+        return projectStages.filter(stage => !['认证申请', '一阶段审核任务'].includes(stage));
+      }
+      if (item.auditType === '认证转换') {
+        return projectStages.filter(stage => !['一阶段审核任务', '二阶段审核任务'].includes(stage));
+      }
+      return projectStages;
+    }
+    function stageCompletionRows(item) {
+      const applicableStages = applicableProjectStages(item);
+      const activeIndex = applicableStages.indexOf(item.stage);
+      const start = new Date(item.createDate + 'T09:00:00');
+      return projectStages.map((stage, index) => {
+        if (!applicableStages.includes(stage)) return { stage, time: '-', handler: '-', state: 'not-applicable' };
+        const applicableIndex = applicableStages.indexOf(stage);
+        const handler = projectHandlers[(index + projectProgressItems.indexOf(item)) % projectHandlers.length];
+        if (applicableIndex > activeIndex) return { stage, time: '-', handler: '-', state: 'pending' };
+        const d = new Date(start);
+        d.setDate(start.getDate() + applicableIndex);
+        const pad = n => String(n).padStart(2, '0');
+        const time = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(9 + (applicableIndex % 7))}:30`;
+        return { stage, time: applicableIndex === activeIndex ? '-' : time, handler, state: applicableIndex === activeIndex ? 'active' : 'completed' };
+      });
+    }
+    function showProjectTrack(projectNo) {
+      const item = projectProgressItems.find(row => row.projectNo === projectNo);
+      if (!item) return;
+      const detailRows = stageCompletionRows(item).map(row => `<tr class="${row.state}"><td>${esc(row.stage)}</td><td>${esc(row.handler)}</td><td>${esc(row.time)}</td></tr>`).join('');
+      $('.project-track-body').innerHTML = `<div class="track-summary"><div>项目编号<strong>${esc(item.projectNo)}</strong></div><div>客户名称<strong>${esc(item.customer)}</strong></div><div>认证领域<strong>${esc(item.field)}</strong></div><div>认证类型<strong>${esc(item.auditType)}</strong></div></div><table class="track-detail-table"><thead><tr><th>项目节点</th><th>经办人</th><th>完成时间</th></tr></thead><tbody>${detailRows}</tbody></table>`;
+      $('#projectTrackDialog').showModal();
+    }
+    function runProgressSearch() {
+      state.progressCustomer = $('#progressCustomerFilter').value.trim();
+      state.progressAuditType = $('#progressAuditTypeFilter').value;
+      state.progressField = $('#progressFieldFilter').value;
+      state.progressStage = $('#progressStageFilter').value;
+      state.progressPage = 1;
+      renderProjectProgress();
     }
     function renderModuleMenu() {
       $('#moduleMenu').innerHTML = uniqueModules().map(module => `<label><input type="checkbox" value="${esc(module)}" ${state.selectedModules.includes(module) ? 'checked' : ''}>${esc(module)}</label>`).join('') + '<div class="module-actions"><button class="clear-btn" type="button" id="clearModules">清空</button><button type="button" id="applyModules">确定</button></div>';
@@ -1349,16 +1780,84 @@
       });
       $('#domainLegend').innerHTML = data.map(([name, value, color]) => `<span><i style="background:${color}"></i>${name} ${value}</span>`).join('');
     }
+    function filteredNotices() {
+      return notices.filter(([, title]) => !state.noticeTitle || title.includes(state.noticeTitle));
+    }
+    function noticeHTML([date, title, content, time]) {
+      return `<article class="notice-item"><div><span class="notice-date">${esc(date)}</span><span class="notice-title">${esc(title)}</span></div><div class="notice-content">${esc(content)}</div><div class="notice-time">发布时间：${esc(time)}</div></article>`;
+    }
     function renderNotices() {
-      $('#noticeList').innerHTML = notices.map(([date, title, content, time]) => `<article class="notice-item"><div><span class="notice-date">${esc(date)}</span><span class="notice-title">${esc(title)}</span></div><div class="notice-content">${esc(content)}</div><div class="notice-time">发布时间：${esc(time)}</div></article>`).join('');
+      $('#noticeList').innerHTML = notices.slice(0, 5).map(noticeHTML).join('');
     }
     function renderNoticeDialog() {
-      const pageCount = Math.max(1, Math.ceil(notices.length / state.noticePageSize));
+      const rows = filteredNotices();
+      const pageCount = Math.max(1, Math.ceil(rows.length / state.noticePageSize));
       state.noticePage = Math.min(state.noticePage, pageCount);
-      const pageRows = notices.slice((state.noticePage - 1) * state.noticePageSize, state.noticePage * state.noticePageSize);
-      $('.notice-dialog-body').innerHTML = `<div class="notice-list notice-dialog-list">${pageRows.map(([date, title, content, time]) => `<article class="notice-item"><div><span class="notice-date">${esc(date)}</span><span class="notice-title">${esc(title)}</span></div><div class="notice-content">${esc(content)}</div><div class="notice-time">发布时间：${esc(time)}</div></article>`).join('')}</div><div class="pager" id="noticePager"></div>`;
-      renderPager($('#noticePager'), state.noticePage, pageCount, 'noticepage', notices.length);
+      const pageRows = rows.slice((state.noticePage - 1) * state.noticePageSize, state.noticePage * state.noticePageSize);
+      $('.notice-dialog-body').innerHTML = `<div class="modal-filter-row"><input class="filter-input" id="noticeTitleFilter" type="search" placeholder="标题名称" value="${esc(state.noticeTitle)}"><button class="search-btn" id="noticeSearchBtn" type="button">搜索</button></div><div class="notice-list notice-dialog-list">${pageRows.map(noticeHTML).join('') || '<article class="notice-item">没有匹配的系统公告</article>'}</div><div class="pager" id="noticePager"></div>`;
+      renderPager($('#noticePager'), state.noticePage, pageCount, 'noticepage', rows.length);
+      $('#noticeSearchBtn').onclick = () => {
+        state.noticeTitle = $('#noticeTitleFilter').value.trim();
+        state.noticePage = 1;
+        renderNoticeDialog();
+      };
+      $('#noticeTitleFilter').onkeydown = event => {
+        if (event.key === 'Enter') $('#noticeSearchBtn').click();
+      };
       $('#noticePager').onclick = handlePagerClick;
+    }
+    function filteredMonitorItems() {
+      return monitorItems.filter(item => !state.monitorCategory || item.category === state.monitorCategory);
+    }
+    function monitorCardHTML(item) {
+      const toneClass = item.tone === 'info' ? 'blue' : item.tone === 'risk' ? 'risk' : '';
+      return `<article class="monitor-item ${toneClass}"><span class="kind">${esc(item.category)}</span><span class="pill">剩${esc(item.days)}天</span><strong>${esc(item.company)}</strong><div class="monitor-meta"><span>${esc(item.field)}</span><span>审核截止日：${esc(item.dueDate)}</span></div><span class="monitor-status">${esc(item.status)}</span><a class="monitor-action" href="证书风险监控.html">${esc(item.action)} →</a></article>`;
+    }
+    function renderMonitorTabs() {
+      const allCount = monitorItems.length;
+      const buttons = [`<button class="${state.monitorCategory === '' ? 'active' : ''}" type="button" data-monitor-category="">全部 (${allCount})</button>`].concat(monitorCategories.map(category => {
+        const count = monitorItems.filter(item => item.category === category).length;
+        return `<button class="${state.monitorCategory === category ? 'active' : ''}" type="button" data-monitor-category="${esc(category)}">${esc(category)} (${count})</button>`;
+      }));
+      $('#monitorTabs').innerHTML = buttons.join('');
+      $$('#monitorTabs button').forEach(button => {
+        button.onclick = () => {
+          state.monitorCategory = button.dataset.monitorCategory;
+          state.monitorPage = 1;
+          renderMonitorTabs();
+          renderMonitorList();
+          if ($('#monitorDialog').open) renderMonitorDialog();
+        };
+      });
+    }
+    function renderMonitorList() {
+      $('#monitorList').innerHTML = filteredMonitorItems().slice(0, 5).map(monitorCardHTML).join('');
+      $('.stats .stat-card:nth-child(5) .stat-value').textContent = monitorItems.length;
+      $('.stats .stat-card:nth-child(5) .stat-foot').innerHTML = `<span class="up">需立即处理 ${monitorItems.length}</span>`;
+    }
+    function renderMonitorDialog() {
+      const rows = filteredMonitorItems();
+      const pageCount = Math.max(1, Math.ceil(rows.length / state.monitorPageSize));
+      state.monitorPage = Math.min(state.monitorPage, pageCount);
+      const pageRows = rows.slice((state.monitorPage - 1) * state.monitorPageSize, state.monitorPage * state.monitorPageSize);
+      const filterButtons = [''].concat(monitorCategories).map(category => {
+        const label = category || '全部';
+        const count = category ? monitorItems.filter(item => item.category === category).length : monitorItems.length;
+        return `<button class="${state.monitorCategory === category ? 'active' : ''}" type="button" data-dialog-monitor-category="${esc(category)}">${esc(label)} (${count})</button>`;
+      }).join('');
+      const bodyRows = pageRows.map(item => `<tr><td>${esc(item.category)}</td><td>${esc(item.company)}</td><td>${esc(item.field)}</td><td>${esc(item.dueDate)}</td><td>剩${esc(item.days)}天</td><td><span class="monitor-status">${esc(item.status)}</span></td><td><a class="monitor-action" href="证书风险监控.html">${esc(item.action)} →</a></td></tr>`).join('');
+      $('.monitor-dialog-body').innerHTML = `<div class="modal-filter-row monitor-filter-row"><div class="monitor-filter-tabs">${filterButtons}</div></div><table class="modal-table monitor-modal-table"><thead><tr><th>类别</th><th>企业名称</th><th>领域</th><th>审核截止日</th><th>剩余天数</th><th>状态</th><th>操作</th></tr></thead><tbody>${bodyRows || '<tr><td colspan="7">没有匹配的数据</td></tr>'}</tbody></table><div class="pager" id="monitorPager"></div>`;
+      renderPager($('#monitorPager'), state.monitorPage, pageCount, 'monitorpage', rows.length);
+      $$('.monitor-filter-tabs button').forEach(button => {
+        button.onclick = () => {
+          state.monitorCategory = button.dataset.dialogMonitorCategory;
+          state.monitorPage = 1;
+          renderMonitorTabs();
+          renderMonitorList();
+          renderMonitorDialog();
+        };
+      });
+      $('#monitorPager').onclick = handlePagerClick;
     }
     function handlePagerClick(event) {
       const button = event.target.closest('button');
@@ -1375,11 +1874,23 @@
         state.modalPage = page === 'prev' ? Math.max(1, state.modalPage - 1) : page === 'next' ? Math.min(modalPageCount, state.modalPage + 1) : Number(page);
         renderMoreDialog();
       }
+      if (button.dataset.progresspage) {
+        const progressPageCount = Math.max(1, Math.ceil(filteredProjectRows().length / state.progressPageSize));
+        const page = button.dataset.progresspage;
+        state.progressPage = page === 'prev' ? Math.max(1, state.progressPage - 1) : page === 'next' ? Math.min(progressPageCount, state.progressPage + 1) : Number(page);
+        renderProjectProgress();
+      }
       if (button.dataset.noticepage) {
-        const noticePageCount = Math.max(1, Math.ceil(notices.length / state.noticePageSize));
+        const noticePageCount = Math.max(1, Math.ceil(filteredNotices().length / state.noticePageSize));
         const page = button.dataset.noticepage;
         state.noticePage = page === 'prev' ? Math.max(1, state.noticePage - 1) : page === 'next' ? Math.min(noticePageCount, state.noticePage + 1) : Number(page);
         renderNoticeDialog();
+      }
+      if (button.dataset.monitorpage) {
+        const monitorPageCount = Math.max(1, Math.ceil(filteredMonitorItems().length / state.monitorPageSize));
+        const page = button.dataset.monitorpage;
+        state.monitorPage = page === 'prev' ? Math.max(1, state.monitorPage - 1) : page === 'next' ? Math.min(monitorPageCount, state.monitorPage + 1) : Number(page);
+        renderMonitorDialog();
       }
     }
     $('#moduleTrigger').onclick = () => $('#modulePicker').classList.toggle('open');
@@ -1404,6 +1915,19 @@
       if (button) showToast(state.tab === 'history' ? '已查看已办记录' : '已进入处理流程');
     };
     $('#mainPager').onclick = handlePagerClick;
+    $('#progressPager').onclick = handlePagerClick;
+    $('#progressSearchBtn').onclick = runProgressSearch;
+    $('#progressCustomerFilter').addEventListener('keydown', event => {
+      if (event.key === 'Enter') runProgressSearch();
+    });
+    $('#progressAuditTypeFilter').onchange = runProgressSearch;
+    $('#progressFieldFilter').onchange = runProgressSearch;
+    $('#progressStageFilter').onchange = runProgressSearch;
+    $('#progressBody').onclick = event => {
+      const button = event.target.closest('[data-project-no]');
+      if (button) showProjectTrack(button.dataset.projectNo);
+    };
+    $('#projectTrackDialog .dialog-head button').onclick = () => $('#projectTrackDialog').close();
     function runMainSearch() {
       syncFilters('main');
       state.page = 1;
@@ -1431,6 +1955,14 @@
       $('#noticeDialog').showModal();
     };
     $('#noticeDialog .dialog-head button').onclick = () => $('#noticeDialog').close();
+    $('#monitorMoreBtn').onclick = event => {
+      event.preventDefault();
+      state.monitorPage = 1;
+      renderMonitorTabs();
+      renderMonitorDialog();
+      $('#monitorDialog').showModal();
+    };
+    $('#monitorDialog .dialog-head button').onclick = () => $('#monitorDialog').close();
     $('#taskBody').onclick = event => {
       const button = event.target.closest('.handle');
       if (!button) return;
@@ -1444,17 +1976,18 @@
         renderMainTasks();
       };
     });
-    $$('.monitor-tabs button').forEach(button => {
-      button.onclick = () => $$('.monitor-tabs button').forEach(tab => tab.classList.toggle('active', tab === button));
-    });
     document.addEventListener('click', event => {
       if (!event.target.closest('#modulePicker')) $('#modulePicker').classList.remove('open');
       if (!event.target.closest('#modalModulePicker')) $('#modalModulePicker')?.classList.remove('open');
     });
     renderModuleMenu();
     renderMainTasks();
+    renderProgressFilters();
+    renderProjectProgress();
     renderTrendChart();
     renderDomainChart();
+    renderMonitorTabs();
+    renderMonitorList();
     renderNotices();
   </script>
 </body>
