@@ -1,0 +1,1777 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理体系认证合同拟制 - 中国质量认证中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans SC', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .document-preview {
+            background-image: linear-gradient(to bottom, #f8fafc 0%, #ffffff 100%);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        /* 自定义滚动条 */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        /* 报价单悬浮提示 */
+        .quotation-tooltip {
+            position: absolute;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            padding: 0.75rem;
+            z-index: 1000;
+            min-width: 280px;
+            display: none;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans overflow-hidden h-screen flex flex-col">
+
+    <!-- 顶部导航栏 -->
+    <header class="bg-gray-900 text-white px-6 py-3 flex items-center justify-between shadow-lg z-20">
+        <div class="flex items-center gap-4">
+            <button class="hover:bg-gray-800 p-2 rounded-lg transition-colors">
+                <i class="fas fa-arrow-left"></i>
+                <span class="ml-2">返回</span>
+            </button>
+            <div class="h-6 w-px bg-gray-700"></div>
+            <h1 class="text-sm font-medium text-gray-300 truncate max-w-md">
+                MSF11-06管理体系认证合同（含管理体系认证费用明细表）
+            </h1>
+        </div>
+
+        <!-- 步骤导航 -->
+        <div class="flex items-center gap-2 bg-gray-800 rounded-full px-6 py-2">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-brand-600 flex items-center justify-center text-xs font-bold">1</div>
+                <span class="text-sm font-medium text-white">拟制合同相关信息</span>
+            </div>
+            <div class="w-12 h-px bg-gray-600"></div>
+            <div class="flex items-center gap-2 opacity-50">
+                <div class="w-6 h-6 rounded-full bg-gray-600 flex items-center justify-center text-xs font-bold">2</div>
+                <span class="text-sm">合同风险审查</span>
+            </div>
+            <div class="w-12 h-px bg-gray-600"></div>
+            <div class="flex items-center gap-2 opacity-50">
+                <div class="w-6 h-6 rounded-full bg-gray-600 flex items-center justify-center text-xs font-bold">3</div>
+                <span class="text-sm">完成拟制</span>
+            </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="flex items-center gap-3">
+            <button class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
+                <i class="fas fa-users"></i>
+                邀请协作
+            </button>
+            <button onclick="saveDraft()" class="px-4 py-2 bg-white text-gray-900 hover:bg-gray-100 rounded-lg text-sm font-medium transition-colors">
+                保存草稿
+            </button>
+            <button onclick="submitContract()" class="px-6 py-2 bg-brand-600 hover:bg-brand-700 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-brand-500/30">
+                提交
+            </button>
+        </div>
+    </header>
+
+    <!-- 工具栏 -->
+    <div class="bg-white border-b border-gray-200 px-6 py-2 flex items-center gap-4 shadow-sm z-10">
+        <div class="flex items-center gap-2">
+            <select class="text-sm border border-gray-300 rounded px-2 py-1 bg-gray-50">
+                <option>仿宋_GB2312</option>
+                <option>宋体</option>
+                <option>黑体</option>
+            </select>
+            <select class="text-sm border border-gray-300 rounded px-2 py-1 bg-gray-50 w-16">
+                <option>12</option>
+                <option>14</option>
+                <option>16</option>
+            </select>
+        </div>
+        <div class="h-6 w-px bg-gray-300"></div>
+        <div class="flex items-center gap-1">
+            <button class="p-1.5 hover:bg-gray-100 rounded"><i class="fas fa-bold text-gray-700"></i></button>
+            <button class="p-1.5 hover:bg-gray-100 rounded"><i class="fas fa-italic text-gray-700"></i></button>
+            <button class="p-1.5 hover:bg-gray-100 rounded"><i class="fas fa-underline text-gray-700"></i></button>
+            <button class="p-1.5 hover:bg-gray-100 rounded"><i class="fas fa-strikethrough text-gray-700"></i></button>
+        </div>
+        <div class="h-6 w-px bg-gray-300"></div>
+        <div class="flex items-center gap-1">
+            <button class="p-1.5 hover:bg-gray-100 rounded"><i class="fas fa-align-left text-gray-700"></i></button>
+            <button class="p-1.5 hover:bg-gray-100 rounded"><i class="fas fa-align-center text-gray-700"></i></button>
+            <button class="p-1.5 hover:bg-gray-100 rounded"><i class="fas fa-align-right text-gray-700"></i></button>
+        </div>
+    </div>
+
+    <!-- 主内容区 -->
+    <main class="flex-1 flex overflow-hidden">
+        <!-- 左侧文档编辑区 -->
+        <div class="flex-1 bg-gray-100 overflow-auto p-8 custom-scroll" id="documentContainer">
+            <div class="document-preview bg-white w-full max-w-3xl mx-auto min-h-[1200px] p-12 shadow-lg relative">
+                <!-- 文档头部 -->
+                <div class="border-b-2 border-gray-800 pb-4 mb-8">
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center gap-3">
+                            <div class="w-16 h-16 bg-blue-900 rounded-full flex items-center justify-center text-white font-bold text-2xl">CQC</div>
+                            <div>
+                                <div class="text-lg font-bold text-gray-900">中国质量认证中心</div>
+                                <div class="text-xs text-gray-600">CHINA QUALITY CERTIFICATION CENTRE</div>
+                            </div>
+                        </div>
+                        <div class="text-right text-sm">
+                            <div class="mb-1"><span class="text-gray-600">文件名称：</span>管理体系认证合同</div>
+                            <div><span class="text-gray-600">文件编号：</span>MSF11-06</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 文档标题 -->
+                <div class="text-center mb-12">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2 tracking-widest">管理体系认证合同</h1>
+                    <div class="text-lg text-gray-700 font-serif italic mb-8">MANAGEMENT SYSTEM CERTIFICATION CONTRACT</div>
+                    <div class="text-right text-gray-700 mb-8">
+                        <div>项目编号：</div>
+                        <div class="text-gray-500 italic">Ref. No.</div>
+                    </div>
+                </div>
+
+                <!-- 甲方信息 -->
+                <div class="border border-gray-800 p-6 mb-6">
+                    <div class="text-lg font-bold mb-4">甲方：</div>
+                    <div class="text-gray-600 italic mb-6">Party A</div>
+                    <div class="space-y-4 text-sm">
+                        <div class="border-b border-gray-300 py-2">
+                            <span class="text-gray-600">名称：</span>
+                            <span id="docPartyA" class="font-medium"></span>
+                        </div>
+                        <div class="border-b border-gray-300 py-2">
+                            <span class="text-gray-600">地址：</span>
+                            <span id="docAddress"></span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="border-b border-gray-300 py-2">
+                                <span class="text-gray-600">电话：</span>
+                                <span id="docPhone"></span>
+                            </div>
+                            <div class="border-b border-gray-300 py-2">
+                                <span class="text-gray-600">电子邮箱：</span>
+                                <span id="docEmail"></span>
+                            </div>
+                        </div>
+                        <div class="border-b border-gray-300 py-2">
+                            <span class="text-gray-600">联系人：</span>
+                            <span id="docContact"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 乙方信息 -->
+                <div class="border border-gray-800 p-6 mb-6">
+                    <div class="text-lg font-bold mb-4">乙方：中国质量认证中心</div>
+                    <div class="text-gray-600 italic mb-6">Party B: China Quality Certification Centre</div>
+                </div>
+
+                <!-- 报价单信息（关联后显示） -->
+                <div id="docQuotationSection" class="border border-gray-800 p-6 mb-6 hidden">
+                    <div class="text-lg font-bold mb-4">关联报价单信息：</div>
+                    <div class="text-gray-600 italic mb-4">Quotation Information</div>
+                    <div class="space-y-3 text-sm bg-gray-50 p-4 rounded">
+                        <div class="flex justify-between border-b border-gray-200 py-2">
+                            <span class="text-gray-600">报价单号：</span>
+                            <span id="docQuotationNo" class="font-medium"></span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-200 py-2">
+                            <span class="text-gray-600">报价金额：</span>
+                            <span id="docQuotationAmount" class="font-medium text-brand-600"></span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-200 py-2">
+                            <span class="text-gray-600">有效期至：</span>
+                            <span id="docQuotationValidDate" class="font-medium"></span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="border-b border-gray-200 py-2">
+                                <span class="text-gray-600">折扣率：</span>
+                                <span id="docQuotationDiscount" class="font-medium"></span>
+                            </div>
+                            <div class="border-b border-gray-200 py-2">
+                                <span class="text-gray-600">认证领域数：</span>
+                                <span id="docQuotationFieldCount" class="font-medium"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 动态内容标记 -->
+                <div class="mt-8 text-gray-400 text-center text-sm italic">
+                    [合同正文内容将根据选择的模板自动填充...]
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧表单区 - 宽度680px -->
+        <div class="w-[680px] bg-white border-l border-gray-200 flex flex-col shadow-xl">
+            <!-- 标签页 -->
+            <div class="flex border-b border-gray-200">
+                <button class="flex-1 py-3 px-4 text-sm font-medium text-brand-600 border-b-2 border-brand-600 bg-brand-50">
+                    合同信息
+                </button>
+                <button class="flex-1 py-3 px-4 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors">
+                    协作批注
+                </button>
+                <button class="flex-1 py-3 px-4 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors">
+                    修订记录
+                </button>
+                <button class="flex-1 py-3 px-4 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors">
+                    插入条款
+                </button>
+            </div>
+
+            <!-- 表单内容 -->
+            <div class="flex-1 overflow-y-auto p-5 space-y-4 custom-scroll" id="formContainer">
+                
+                <!-- 基本信息 -->
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <button onclick="toggleSection('basicInfo')" class="w-full px-4 py-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform duration-200" id="icon-basicInfo"></i>
+                            <span class="font-semibold text-gray-900">基本信息</span>
+                        </div>
+                        <span class="text-xs text-red-500">* 必填</span>
+                    </button>
+                    <div id="basicInfo" class="p-4 space-y-4 border-t border-gray-200">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">合同名称 <span class="text-red-500">*</span></label>
+                                <input type="text" id="contractName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none text-sm" placeholder="请输入合同名称" onchange="updateDocument()">
+                            </div>
+                            
+                            <div class="col-span-1">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">合同类型 <span class="text-red-500">*</span></label>
+                                <select id="contractType" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm" onchange="handleContractTypeChange()">
+                                    <option value="">请选择</option>
+                                    <option value="commission">佣金合同</option>
+                                    <option value="service">服务合同</option>
+                                    <option value="framework">框架协议</option>
+                                </select>
+                                <div id="commissionWarning" class="hidden mt-1 text-xs text-amber-600 bg-amber-50 p-2 rounded">
+                                    <i class="fas fa-exclamation-triangle mr-1"></i>
+                                    佣金合同需关联其他合同
+                                </div>
+                            </div>
+
+                            <div class="col-span-1">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">合同分类 <span class="text-red-500">*</span></label>
+                                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm">
+                                    <option>常规合同</option>
+                                    <option>框架合同</option>
+                                    <option>补充协议</option>
+                                </select>
+                            </div>
+
+                            <div class="col-span-1">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">币种 <span class="text-red-500">*</span></label>
+                                <select id="currency" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm" onchange="handleCurrencyChange()">
+                                    <option value="CNY">人民币（CNY）</option>
+                                    <option value="USD">美元（USD）</option>
+                                    <option value="EUR">欧元（EUR）</option>
+                                    <option value="JPY">日元（JPY）</option>
+                                </select>
+                            </div>
+
+                            <div class="col-span-1">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">汇率</label>
+                                <input type="number" id="exchangeRate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm bg-gray-50" placeholder="非必填" disabled>
+                                <div id="rateRequired" class="hidden text-xs text-red-500 mt-1">外币需填写汇率</div>
+                            </div>
+
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">合同金额 <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <input type="number" id="contractAmount" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm pr-12" placeholder="请输入合同金额">
+                                    <span class="absolute right-3 top-2 text-gray-500 text-sm">元</span>
+                                </div>
+                            </div>
+
+                            <div class="col-span-1">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">承办部门 <span class="text-red-500">*</span></label>
+                                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm">
+                                    <option>管理体系认证部</option>
+                                    <option>产品认证部</option>
+                                    <option>客户服务部</option>
+                                </select>
+                            </div>
+
+                            <div class="col-span-1">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">主管部门 <span class="text-red-500">*</span></label>
+                                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm">
+                                    <option>质量管理部</option>
+                                    <option>运营管理部</option>
+                                </select>
+                            </div>
+
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">备注</label>
+                                <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm h-20 resize-none" placeholder="请输入备注信息"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 关联报价单 - 新增模块 -->
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+                    <button onclick="toggleSection('quotationInfo')" class="w-full px-4 py-3 flex items-center justify-between bg-gradient-to-r from-blue-50 to-white hover:from-blue-100 hover:to-blue-50 transition-colors border-l-4 border-brand-500">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-chevron-down text-brand-600 transition-transform duration-200" id="icon-quotationInfo"></i>
+                            <span class="font-semibold text-gray-900">关联报价单</span>
+                            <span class="text-xs bg-brand-100 text-brand-800 px-2 py-0.5 rounded-full">单选</span>
+                        </div>
+                        <span class="text-xs text-red-500">* 必填</span>
+                    </button>
+                    <div id="quotationInfo" class="p-4 space-y-4 border-t border-gray-200">
+                        <!-- 未选择状态 -->
+                        <div id="quotationEmptyState" class="text-center py-8 border-2 border-dashed border-gray-200 rounded-lg">
+                            <div class="w-16 h-16 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-file-invoice-dollar text-2xl text-brand-500"></i>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-2">尚未关联报价单</p>
+                            <p class="text-xs text-gray-400 mb-4">合同金额将自动与报价单金额保持一致</p>
+                            <button onclick="openQuotationModal()" class="px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors text-sm font-medium flex items-center gap-2 mx-auto">
+                                <i class="fas fa-link"></i>
+                                选择报价单
+                            </button>
+                        </div>
+
+                        <!-- 已选择状态（默认隐藏） -->
+                        <div id="quotationSelectedState" class="hidden space-y-4">
+                            <!-- 报价单卡片 -->
+                            <div class="bg-white border border-brand-200 rounded-lg p-4 relative group hover:shadow-md transition-shadow">
+                                <button onclick="removeQuotation()" class="absolute right-3 top-3 text-gray-400 hover:text-red-500 transition-colors p-1" title="移除关联">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                
+                                <div class="flex items-start gap-4">
+                                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-file-invoice text-blue-600 text-xl"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <h4 class="font-bold text-gray-900 text-sm" id="selectedQuotationNo">--</h4>
+                                            <span id="selectedQuotationStatus" class="px-2 py-0.5 rounded text-xs font-medium">--</span>
+                                        </div>
+                                        <p class="text-sm text-gray-600 truncate" id="selectedQuotationCustomer">--</p>
+                                        <div class="flex items-center gap-3 mt-2 text-xs text-gray-500">
+                                            <span><i class="fas fa-map-marker-alt mr-1"></i><span id="selectedQuotationRegion">--</span></span>
+                                            <span><i class="fas fa-calendar-alt mr-1"></i>有效期至：<span id="selectedQuotationValidDate">--</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 关键信息展示 -->
+                                <div class="mt-4 pt-4 border-t border-gray-100 grid grid-cols-4 gap-4 text-center">
+                                    <div>
+                                        <div class="text-xs text-gray-500 mb-1">报价总额</div>
+                                        <div class="font-bold text-brand-600" id="selectedQuotationTotal">--</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs text-gray-500 mb-1">折扣率</div>
+                                        <div class="font-bold text-gray-700" id="selectedQuotationDiscount">--</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs text-gray-500 mb-1">认证领域</div>
+                                        <div class="font-bold text-gray-700" id="selectedQuotationFields">--</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs text-gray-500 mb-1">技术服务</div>
+                                        <div class="font-bold text-green-600" id="selectedQuotationTech">--</div>
+                                    </div>
+                                </div>
+
+                                <!-- 认证领域明细 -->
+                                <div class="mt-3 bg-gray-50 rounded-lg p-3">
+                                    <div class="text-xs font-medium text-gray-700 mb-2 flex items-center gap-2">
+                                        <i class="fas fa-list-ul text-brand-500"></i>
+                                        认证领域明细
+                                    </div>
+                                    <div id="selectedQuotationFieldList" class="space-y-1.5">
+                                        <!-- 动态生成 -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 操作按钮 -->
+                            <div class="flex justify-center">
+                                <button onclick="openQuotationModal()" class="px-4 py-2 border border-brand-300 text-brand-700 rounded-lg hover:bg-brand-50 transition-colors text-sm font-medium flex items-center gap-2">
+                                    <i class="fas fa-exchange-alt"></i>
+                                    更换报价单
+                                </button>
+                            </div>
+
+                            <!-- 提示信息 -->
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
+                                <i class="fas fa-info-circle text-blue-500 mt-0.5"></i>
+                                <div class="text-xs text-blue-700">
+                                    <span class="font-medium">关联说明：</span>
+                                    合同金额将自动同步为报价单金额（<span id="syncAmount" class="font-bold">--</span>），请确保报价单已通过审批。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 认证业务信息 -->
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <button onclick="toggleSection('certInfo')" class="w-full px-4 py-3 flex items-center justify-between bg-brand-50 hover:bg-brand-100 transition-colors border-l-4 border-brand-500">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-chevron-down text-brand-600 transition-transform duration-200" id="icon-certInfo"></i>
+                            <span class="font-semibold text-brand-900">认证业务信息</span>
+                            <span class="text-xs bg-brand-200 text-brand-800 px-2 py-0.5 rounded-full">管理体系认证业务</span>
+                        </div>
+                    </button>
+                    <div id="certInfo" class="p-4 space-y-4 border-t border-gray-200">
+                        
+                        <!-- 认证领域列表 -->
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <label class="block text-sm font-medium text-gray-700">认证领域配置</label>
+                                <button onclick="addCertField()" class="text-sm bg-brand-600 text-white px-3 py-1.5 rounded hover:bg-brand-700 transition-colors flex items-center gap-1">
+                                    <i class="fas fa-plus"></i>
+                                    添加认证领域
+                                </button>
+                            </div>
+                            
+                            <div id="certFieldsContainer" class="space-y-3">
+                                <!-- 动态添加认证领域卡片 -->
+                            </div>
+                        </div>
+
+                        <!-- 价款信息 -->
+                        <div class="border-t border-gray-200 pt-4 mt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-3">价款信息</label>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs text-gray-600 mb-1">合同价款（元）<span class="text-red-500">*</span></label>
+                                    <input type="number" id="serviceAmount" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm" placeholder="0.00" onchange="calculateProfit()">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-600 mb-1">预估成本（元）<span class="text-red-500">*</span></label>
+                                    <input type="number" id="estimatedCost" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm" placeholder="0.00" onchange="calculateProfit()">
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="block text-xs text-gray-600 mb-1">毛利率（%）</label>
+                                    <div class="relative">
+                                        <input type="number" id="profitRate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm bg-gray-50" readonly>
+                                        <span class="absolute right-3 top-2 text-gray-500 text-sm">%</span>
+                                    </div>
+                                    <div class="text-xs text-gray-500 mt-1">自动计算：（合同价款-预估成本）/合同价款</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 相对方信息 - 弹窗选择 -->
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <button onclick="toggleSection('partyInfo')" class="w-full px-4 py-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform duration-200" id="icon-partyInfo"></i>
+                            <span class="font-semibold text-gray-900">相对方信息</span>
+                        </div>
+                        <span class="text-xs text-red-500">必填</span>
+                    </button>
+                    <div id="partyInfo" class="p-4 space-y-3 border-t border-gray-200">
+                        <div class="flex gap-2">
+                            <div class="flex-1 relative">
+                                <input type="text" id="partyDisplay" readonly class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm cursor-pointer" placeholder="请选择相对方" onclick="openPartyModal()">
+                                <i class="fas fa-search absolute right-3 top-2.5 text-gray-400"></i>
+                            </div>
+                            <button onclick="openPartyModal()" class="px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors text-sm">
+                                选择
+                            </button>
+                        </div>
+                        <div class="text-xs text-gray-500">数据来源于集团客商中心，仅可选择一个相对方</div>
+                        
+                        <!-- 相对方详情显示 -->
+                        <div id="partyDetails" class="hidden bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-2 mt-3">
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-600">相对方编号：</span>
+                                    <span class="font-medium" id="partyCode"></span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">统一社会信用代码：</span>
+                                    <span class="font-medium" id="partyCreditCode"></span>
+                                </div>
+                                <div class="col-span-2">
+                                    <span class="text-gray-600">相对方名称：</span>
+                                    <span class="font-medium" id="partyName"></span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">联系人：</span>
+                                    <span class="font-medium" id="partyContact"></span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">联系电话：</span>
+                                    <span class="font-medium" id="partyPhone"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 相关方信息 - 弹窗多选 -->
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <button onclick="toggleSection('relatedPartyInfo')" class="w-full px-4 py-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform duration-200" id="icon-relatedPartyInfo"></i>
+                            <span class="font-semibold text-gray-900">相关方信息</span>
+                        </div>
+                        <span class="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full" id="relatedPartyCount">0</span>
+                    </button>
+                    <div id="relatedPartyInfo" class="p-4 border-t border-gray-200 space-y-3">
+                        <button onclick="openRelatedPartyModal()" class="w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-brand-500 hover:text-brand-600 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                            <i class="fas fa-plus"></i>
+                            选择相关方
+                        </button>
+                        
+                        <!-- 已选相关方列表 -->
+                        <div id="relatedPartyList" class="space-y-2 max-h-48 overflow-y-auto custom-scroll">
+                            <!-- 动态显示已选相关方 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 子项目信息 - 弹窗表单 -->
+            
+
+                <!-- 附件信息 -->
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <button onclick="toggleSection('attachmentInfo')" class="w-full px-4 py-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform duration-200" id="icon-attachmentInfo"></i>
+                            <span class="font-semibold text-gray-900">附件信息</span>
+                        </div>
+                        <span class="text-xs text-gray-500" id="attachmentCount">0个文件</span>
+                    </button>
+                    <div id="attachmentInfo" class="p-4 border-t border-gray-200 space-y-3">
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-brand-500 hover:bg-brand-50 transition-colors cursor-pointer" onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                            <div class="text-sm text-gray-600">点击上传附件</div>
+                            <div class="text-xs text-gray-400 mt-1">支持多文件上传，单个文件不超过10MB</div>
+                            <input type="file" id="fileInput" multiple class="hidden" onchange="handleFileUpload(event)">
+                        </div>
+                        <div id="attachmentList" class="space-y-2">
+                            <!-- 动态显示附件 -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- 报价单选择弹窗 -->
+    <div id="quotationModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white rounded-lg shadow-xl w-[950px] max-h-[85vh] flex flex-col fade-in">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-white">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900">选择报价单</h3>
+                    <p class="text-sm text-gray-500 mt-1">请选择已通过审批的报价单进行关联</p>
+                </div>
+                <button onclick="closeQuotationModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-4 border-b border-gray-200 bg-gray-50">
+                <div class="flex gap-3">
+                    <div class="flex-1 relative">
+                        <input type="text" id="quotationSearchInput" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm" placeholder="搜索报价单号、客户名称" oninput="filterQuotationTable()">
+                        <i class="fas fa-search absolute left-3 top-2.5 text-gray-400"></i>
+                    </div>
+                    <select id="quotationStatusFilter" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none" onchange="filterQuotationTable()">
+                        <option value="">全部状态</option>
+                        <option value="approved">已通过</option>
+                        <option value="pending">待审批</option>
+                        <option value="draft">草稿</option>
+                    </select>
+                    <select id="quotationRegionFilter" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 outline-none" onchange="filterQuotationTable()">
+                        <option value="">全部区域</option>
+                        <option value="华北区">华北区</option>
+                        <option value="华东区">华东区</option>
+                        <option value="华南区">华南区</option>
+                        <option value="华西区">华西区</option>
+                    </select>
+                    <button onclick="resetQuotationSearch()" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm">
+                        <i class="fas fa-undo mr-1"></i>重置
+                    </button>
+                </div>
+            </div>
+            <div class="flex-1 overflow-auto p-0">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50 border-b border-gray-200 sticky top-0">
+                        <tr>
+                            <th class="w-16 px-4 py-3 text-center">选择</th>
+                            <th class="px-4 py-3 text-left font-medium text-gray-700">报价单号</th>
+                            <th class="px-4 py-3 text-left font-medium text-gray-700">客户名称</th>
+                            <th class="px-4 py-3 text-left font-medium text-gray-700">认证领域</th>
+                            <th class="px-4 py-3 text-right font-medium text-gray-700">金额</th>
+                            <th class="px-4 py-3 text-center font-medium text-gray-700">折扣</th>
+                            <th class="px-4 py-3 text-left font-medium text-gray-700">状态</th>
+                            <th class="px-4 py-3 text-left font-medium text-gray-700">有效期至</th>
+                        </tr>
+                    </thead>
+                    <tbody id="quotationTableBody" class="divide-y divide-gray-100">
+                        <!-- 动态生成表格行 -->
+                    </tbody>
+                </table>
+                <div id="quotationEmptyState" class="hidden p-12 text-center text-gray-500">
+                    <i class="fas fa-inbox text-4xl mb-3 text-gray-300"></i>
+                    <p>暂无符合条件的报价单</p>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="text-sm text-gray-600">
+                    已选择：<span id="selectedQuotationDisplay" class="font-medium text-brand-600">-</span>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="closeQuotationModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        取消
+                    </button>
+                    <button onclick="confirmQuotationSelection()" class="px-6 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors shadow-lg shadow-brand-500/30">
+                        确定关联
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 相对方选择弹窗 -->
+    <div id="partyModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white rounded-lg shadow-xl w-[900px] max-h-[80vh] flex flex-col fade-in">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">选择相对方</h3>
+                <button onclick="closePartyModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-4 border-b border-gray-200 bg-gray-50">
+                <div class="flex gap-3">
+                    <div class="flex-1 relative">
+                        <input type="text" id="partySearchInput" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none" placeholder="搜索相对方编码、名称、统一社会信用代码" oninput="filterPartyTable()">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    <button onclick="filterPartyTable()" class="px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors">
+                        查询
+                    </button>
+                    <button onclick="resetPartySearch()" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        重置
+                    </button>
+                </div>
+            </div>
+            <div class="flex-1 overflow-auto p-0">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50 border-b border-gray-200 sticky top-0">
+                        <tr>
+                            <th class="w-16 px-4 py-3 text-center"></th>
+                            <th class="px-4 py-3 text-left font-medium text-gray-700">相对方编码</th>
+                            <th class="px-4 py-3 text-left font-medium text-gray-700">相对方名称</th>
+                            <th class="px-4 py-3 text-left font-medium text-gray-700">法定代表人</th>
+                            <th class="px-4 py-3 text-left font-medium text-gray-700">统一社会信用代码</th>
+                        </tr>
+                    </thead>
+                    <tbody id="partyTableBody" class="divide-y divide-gray-100">
+                        <!-- 动态生成表格行 -->
+                    </tbody>
+                </table>
+                <div id="partyEmptyState" class="hidden p-8 text-center text-gray-500">
+                    <i class="fas fa-inbox text-4xl mb-2 text-gray-300"></i>
+                    <p>暂无数据</p>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="text-sm text-gray-600">
+                    已选择：<span id="selectedPartyName" class="font-medium text-brand-600">-</span>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="closePartyModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        取消
+                    </button>
+                    <button onclick="confirmPartySelection()" class="px-6 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors">
+                        确定
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 相关方选择弹窗 -->
+    <div id="relatedPartyModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white rounded-lg shadow-xl w-[900px] max-h-[80vh] flex flex-col fade-in">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">选择相关方</h3>
+                <button onclick="closeRelatedPartyModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-4 border-b border-gray-200 bg-gray-50">
+                <div class="flex gap-3">
+                    <div class="flex-1 relative">
+                        <input type="text" id="relatedPartySearchInput" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none" placeholder="搜索相关方编码、名称" oninput="filterRelatedPartyTable()">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    <button onclick="filterRelatedPartyTable()" class="px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors">
+                        查询
+                    </button>
+                </div>
+            </div>
+            <div class="flex-1 overflow-auto p-0">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50 border-b border-gray-200 sticky top-0">
+                        <tr>
+                            <th class="w-12 px-4 py-3 text-center">
+                                <input type="checkbox" id="selectAllRelated" onchange="toggleSelectAllRelated()">
+                            </th>
+                            <th class="px-4 py-3 text-left font-medium text-gray-700">相关方编码</th>
+                            <th class="px-4 py-3 text-left font-medium text-gray-700">相关方名称</th>
+                            <th class="px-4 py-3 text-left font-medium text-gray-700">法定代表人</th>
+                            <th class="px-4 py-3 text-left font-medium text-gray-700">统一社会信用代码</th>
+                        </tr>
+                    </thead>
+                    <tbody id="relatedPartyTableBody" class="divide-y divide-gray-100">
+                        <!-- 动态生成表格行 -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="px-6 py-3 border-t border-gray-200 bg-blue-50">
+                <div class="text-sm text-gray-700 mb-2">已选择的相关方：</div>
+                <div id="selectedRelatedTags" class="flex flex-wrap gap-2">
+                    <!-- 已选标签 -->
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-between items-center bg-gray-50">
+                <div class="text-sm text-gray-600">
+                    共选择 <span id="selectedRelatedCount" class="font-medium text-brand-600">0</span> 个相关方
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="closeRelatedPartyModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        取消
+                    </button>
+                    <button onclick="confirmRelatedPartySelection()" class="px-6 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors">
+                        确定
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 子项目添加弹窗 -->
+    <div id="subProjectModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white rounded-lg shadow-xl w-[600px] flex flex-col fade-in">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">新增子项目</h3>
+                <button onclick="closeSubProjectModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">子项目编号 <span class="text-red-500">*</span></label>
+                        <input type="text" id="subProjectCode" readonly class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-sm text-gray-600">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">子项目名称 <span class="text-red-500">*</span></label>
+                        <input type="text" id="subProjectName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm" placeholder="请输入子项目名称">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">子项目单价（元） <span class="text-red-500">*</span></label>
+                        <input type="number" id="subProjectPrice" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm" placeholder="0.00" oninput="calculateSubProjectTotal()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">子项目数量 <span class="text-red-500">*</span></label>
+                        <input type="number" id="subProjectQty" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm" placeholder="0" min="1" oninput="calculateSubProjectTotal()">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">税率（%）</label>
+                    <select id="subProjectTax" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm">
+                        <option value="0">0%</option>
+                        <option value="3">3%</option>
+                        <option value="6" selected>6%</option>
+                        <option value="9">9%</option>
+                        <option value="13">13%</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">备注</label>
+                    <textarea id="subProjectRemark" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm resize-none" placeholder="请输入备注信息"></textarea>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600">子项目总金额：</span>
+                        <span class="text-xl font-bold text-brand-600" id="subProjectTotalDisplay">¥0.00</span>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1 text-right">单价 × 数量 × (1 + 税率/100)</div>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3 bg-gray-50">
+                <button onclick="closeSubProjectModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                    取消
+                </button>
+                <button onclick="confirmAddSubProject()" class="px-6 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors">
+                    确定
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 提示消息 -->
+    <div id="toast" class="fixed top-20 right-6 bg-white border border-gray-200 shadow-lg rounded-lg p-4 transform translate-x-full transition-transform duration-300 z-50 flex items-center gap-3">
+        <i id="toastIcon" class="fas fa-check-circle text-green-500 text-xl"></i>
+        <div>
+            <div id="toastTitle" class="font-medium text-gray-900">提示</div>
+            <div id="toastMessage" class="text-sm text-gray-600">操作成功</div>
+        </div>
+    </div>
+
+    <script>
+        // 全局状态
+        let certFieldsCount = 0;
+        let selectedParty = null; // 当前选中的相对方
+        let selectedRelatedParties = []; // 已选相关方
+        let subProjects = []; // 子项目列表
+        let attachments = [];
+        let selectedQuotation = null; // 当前选中的报价单
+
+        // 模拟报价单数据（参考报价单管理页面）
+        const mockQuotations = [
+            {
+                id: 'BJ-2026-00432',
+                customer: '北京某科技有限公司',
+                code: '91110108MA00123456',
+                region: '华北区',
+                fields: [
+                    {name: '质量管理体系(QMS)', type: '初次认证', risk: '二级', riskLevel: 2, days: 12, unitPrice: 4500, amount: 54000},
+                    {name: '环境管理体系(EMS)', type: '初次认证', risk: '一级', riskLevel: 1, days: 8, unitPrice: 4200, amount: 33600}
+                ],
+                techServices: [
+                    {name: '内审员培训', amount: 8000}
+                ],
+                certTotal: 87600,
+                techTotal: 8000,
+                total: 95600,
+                discount: 95,
+                finalAmount: 91220,
+                status: 'approved',
+                statusName: '已通过',
+                createDate: '2026-04-10',
+                validDate: '2026-05-10'
+            },
+            {
+                id: 'BJ-2026-00431',
+                customer: '成都某化工集团有限公司',
+                code: '91510000MA00456789',
+                region: '华西区',
+                fields: [
+                    {name: '职业健康安全(OHSMS)', type: '监督审核', risk: '三级', riskLevel: 3, days: 6, unitPrice: 5600, amount: 33600},
+                    {name: '环境管理体系(EMS)', type: '监督审核', risk: '三级', riskLevel: 3, days: 6, unitPrice: 5500, amount: 33000}
+                ],
+                techServices: [],
+                certTotal: 66600,
+                techTotal: 0,
+                total: 66600,
+                discount: 85,
+                finalAmount: 56610,
+                status: 'approved',
+                statusName: '已通过',
+                createDate: '2026-04-09',
+                validDate: '2026-05-09'
+            },
+            {
+                id: 'SH-2026-00215',
+                customer: '上海某建设集团有限公司',
+                code: '91310000MA00234567',
+                region: '华东区',
+                fields: [
+                    {name: '质量管理体系(QMS)', type: '再认证', risk: '二级', riskLevel: 2, days: 10, unitPrice: 4700, amount: 47000}
+                ],
+                techServices: [
+                    {name: '管理诊断与评估', amount: 15000},
+                    {name: '供应商管理二方审核', amount: 12000}
+                ],
+                certTotal: 47000,
+                techTotal: 27000,
+                total: 74000,
+                discount: 100,
+                finalAmount: 74000,
+                status: 'approved',
+                statusName: '已通过',
+                createDate: '2026-04-08',
+                validDate: '2026-05-08'
+            },
+            {
+                id: 'GZ-2026-00188',
+                customer: '广州某食品股份有限公司',
+                code: '91440101MA00345678',
+                region: '华南区',
+                fields: [
+                    {name: '食品安全(FSMS)', type: '初次认证', risk: '三级', riskLevel: 3, days: 15, unitPrice: 6000, amount: 90000}
+                ],
+                techServices: [],
+                certTotal: 90000,
+                techTotal: 0,
+                total: 90000,
+                discount: 92,
+                finalAmount: 82800,
+                status: 'pending',
+                statusName: '待审批',
+                createDate: '2026-04-07',
+                validDate: '2026-05-07'
+            }
+        ];
+
+        // 模拟数据
+        const mockPartyData = [
+            { code: 'P20240001', name: '华为技术有限公司', contact: '张明', phone: '13800138000', creditCode: '91440300192383298M', legalPerson: '任正非' },
+            { code: 'P20240002', name: '阿里巴巴（中国）有限公司', contact: '李强', phone: '13900139000', creditCode: '91330100799655058B', legalPerson: '张勇' },
+            { code: 'P20240003', name: '腾讯科技（深圳）有限公司', contact: '王芳', phone: '13700137000', creditCode: '91440300708461136T', legalPerson: '马化腾' },
+            { code: 'P20240004', name: '北京小米科技有限责任公司', contact: '刘洋', phone: '13600136000', creditCode: '91110108551385082Q', legalPerson: '雷军' },
+            { code: 'P20240005', name: '比亚迪股份有限公司', contact: '陈静', phone: '13500135000', creditCode: '91440300192383245X', legalPerson: '王传福' },
+        ];
+
+        const mockRelatedPartyData = [
+            { code: 'R20240001', name: '深圳市腾讯计算机系统有限公司', creditCode: '91440300708461136T', legalPerson: '马化腾' },
+            { code: 'R20240002', name: '杭州阿里创业投资有限公司', creditCode: '913301006739511485', legalPerson: '马云' },
+            { code: 'R20240003', name: '北京百度网讯科技有限公司', creditCode: '91110000802100433B', legalPerson: '李彦宏' },
+            { code: 'R20240004', name: '京东集团股份有限公司', creditCode: '91110000600790206E', legalPerson: '刘强东' },
+            { code: 'R20240005', name: '美团点评集团有限公司', creditCode: '91110108399643392M', legalPerson: '王兴' },
+        ];
+
+        // 切换折叠面板
+        function toggleSection(id) {
+            const element = document.getElementById(id);
+            const icon = document.getElementById('icon-' + id);
+            
+            if (element.classList.contains('hidden')) {
+                element.classList.remove('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                element.classList.add('hidden');
+                icon.style.transform = 'rotate(-90deg)';
+            }
+        }
+
+        // 报价单相关函数
+        function openQuotationModal() {
+            document.getElementById('quotationModal').classList.remove('hidden');
+            renderQuotationTable(mockQuotations);
+        }
+
+        function closeQuotationModal() {
+            document.getElementById('quotationModal').classList.add('hidden');
+        }
+
+        function renderQuotationTable(data) {
+            const tbody = document.getElementById('quotationTableBody');
+            const emptyState = document.getElementById('quotationEmptyState');
+            
+            if (data.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            tbody.innerHTML = data.map(q => {
+                const statusStyles = {
+                    'approved': 'bg-green-100 text-green-700',
+                    'pending': 'bg-yellow-100 text-yellow-700',
+                    'draft': 'bg-gray-100 text-gray-700'
+                };
+                const isSelected = selectedQuotation?.id === q.id;
+                
+                return `
+                    <tr class="hover:bg-blue-50 cursor-pointer transition-colors ${isSelected ? 'bg-blue-50 border-l-4 border-brand-500' : ''}" 
+                        onclick="selectQuotationRow('${q.id}')">
+                        <td class="px-4 py-3 text-center">
+                            <input type="radio" name="quotationSelect" value="${q.id}" ${isSelected ? 'checked' : ''} 
+                                   onchange="selectQuotationRow('${q.id}')" onclick="event.stopPropagation()">
+                        </td>
+                        <td class="px-4 py-3 text-sm font-medium text-gray-900">${q.id}</td>
+                        <td class="px-4 py-3 text-sm text-gray-700">
+                            <div class="font-medium">${q.customer}</div>
+                            <div class="text-xs text-gray-500">${q.code}</div>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-600">
+                            <div class="flex flex-col gap-1">
+                                ${q.fields.map(f => `
+                                    <span class="inline-flex items-center gap-1">
+                                        <span class="w-2 h-2 rounded-full ${f.riskLevel === 3 ? 'bg-red-500' : f.riskLevel === 2 ? 'bg-yellow-500' : 'bg-green-500'}"></span>
+                                        ${f.name.split('(')[0]}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-right text-sm font-bold text-brand-600">¥${q.finalAmount.toLocaleString()}</td>
+                        <td class="px-4 py-3 text-center">
+                            ${q.discount < 100 ? `<span class="text-xs font-medium ${q.discount < 90 ? 'text-red-600' : 'text-brand-600'}">${q.discount}%</span>` : '<span class="text-xs text-gray-400">-</span>'}
+                        </td>
+                        <td class="px-4 py-3 text-left">
+                            <span class="px-2 py-1 rounded-full text-xs font-medium ${statusStyles[q.status] || 'bg-gray-100 text-gray-700'}">
+                                ${q.statusName}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-600">${q.validDate}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterQuotationTable() {
+            const keyword = document.getElementById('quotationSearchInput').value.toLowerCase();
+            const status = document.getElementById('quotationStatusFilter').value;
+            const region = document.getElementById('quotationRegionFilter').value;
+            
+            let filtered = mockQuotations.filter(q => {
+                const matchKeyword = !keyword || 
+                    q.id.toLowerCase().includes(keyword) || 
+                    q.customer.toLowerCase().includes(keyword) ||
+                    q.code.toLowerCase().includes(keyword);
+                const matchStatus = !status || q.status === status;
+                const matchRegion = !region || q.region === region;
+                return matchKeyword && matchStatus && matchRegion;
+            });
+            
+            renderQuotationTable(filtered);
+        }
+
+        function resetQuotationSearch() {
+            document.getElementById('quotationSearchInput').value = '';
+            document.getElementById('quotationStatusFilter').value = '';
+            document.getElementById('quotationRegionFilter').value = '';
+            renderQuotationTable(mockQuotations);
+        }
+
+        function selectQuotationRow(id) {
+            const quotation = mockQuotations.find(q => q.id === id);
+            selectedQuotation = quotation;
+            document.getElementById('selectedQuotationDisplay').textContent = quotation ? quotation.id : '-';
+            
+            // 更新radio状态
+            const radio = document.querySelector(`input[name="quotationSelect"][value="${id}"]`);
+            if (radio) radio.checked = true;
+            
+            // 重新渲染以更新选中样式
+            filterQuotationTable();
+        }
+
+        function confirmQuotationSelection() {
+            if (!selectedQuotation) {
+                showToast('error', '未选择', '请选择一个报价单');
+                return;
+            }
+            
+            // 回填信息到表单
+            document.getElementById('quotationEmptyState').classList.add('hidden');
+            document.getElementById('quotationSelectedState').classList.remove('hidden');
+            
+            // 填充报价单信息
+            document.getElementById('selectedQuotationNo').textContent = selectedQuotation.id;
+            document.getElementById('selectedQuotationCustomer').textContent = selectedQuotation.customer;
+            document.getElementById('selectedQuotationRegion').textContent = selectedQuotation.region;
+            document.getElementById('selectedQuotationValidDate').textContent = selectedQuotation.validDate;
+            document.getElementById('selectedQuotationTotal').textContent = '¥' + selectedQuotation.finalAmount.toLocaleString();
+            document.getElementById('selectedQuotationDiscount').textContent = selectedQuotation.discount < 100 ? selectedQuotation.discount + '%' : '无折扣';
+            document.getElementById('selectedQuotationFields').textContent = selectedQuotation.fields.length + '个';
+            document.getElementById('selectedQuotationTech').textContent = selectedQuotation.techServices.length > 0 ? '¥' + selectedQuotation.techTotal.toLocaleString() : '无';
+            
+            // 状态标签样式
+            const statusEl = document.getElementById('selectedQuotationStatus');
+            statusEl.textContent = selectedQuotation.statusName;
+            statusEl.className = 'px-2 py-0.5 rounded text-xs font-medium ' + 
+                (selectedQuotation.status === 'approved' ? 'bg-green-100 text-green-700' : 
+                 selectedQuotation.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700');
+            
+            // 认证领域明细
+            const fieldListEl = document.getElementById('selectedQuotationFieldList');
+            fieldListEl.innerHTML = selectedQuotation.fields.map(f => `
+                <div class="flex justify-between items-center text-xs py-1 border-b border-gray-100 last:border-0">
+                    <div class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full ${f.riskLevel === 3 ? 'bg-red-500' : f.riskLevel === 2 ? 'bg-yellow-500' : 'bg-green-500'}"></span>
+                        <span class="text-gray-700">${f.name}</span>
+                        <span class="text-gray-400">(${f.type})</span>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-medium text-gray-700">¥${f.amount.toLocaleString()}</div>
+                        <div class="text-gray-400 scale-90">${f.days}人天×¥${f.unitPrice}</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            // 同步金额提示
+            document.getElementById('syncAmount').textContent = '¥' + selectedQuotation.finalAmount.toLocaleString();
+            
+            // 同步合同金额（自动填充）
+            document.getElementById('contractAmount').value = selectedQuotation.finalAmount;
+            document.getElementById('serviceAmount').value = selectedQuotation.finalAmount;
+            calculateProfit();
+            
+            // 同步到左侧文档预览
+            document.getElementById('docQuotationSection').classList.remove('hidden');
+            document.getElementById('docQuotationNo').textContent = selectedQuotation.id;
+            document.getElementById('docQuotationAmount').textContent = '¥' + selectedQuotation.finalAmount.toLocaleString();
+            document.getElementById('docQuotationValidDate').textContent = selectedQuotation.validDate;
+            document.getElementById('docQuotationDiscount').textContent = selectedQuotation.discount < 100 ? selectedQuotation.discount + '%' : '无折扣';
+            document.getElementById('docQuotationFieldCount').textContent = selectedQuotation.fields.length + '个领域';
+            
+            closeQuotationModal();
+            showToast('success', '关联成功', `已关联报价单：${selectedQuotation.id}`);
+        }
+
+        function removeQuotation() {
+            selectedQuotation = null;
+            document.getElementById('quotationEmptyState').classList.remove('hidden');
+            document.getElementById('quotationSelectedState').classList.add('hidden');
+            
+            // 清空文档预览
+            document.getElementById('docQuotationSection').classList.add('hidden');
+            
+            showToast('info', '已移除', '报价单关联已取消');
+        }
+
+        // 处理合同类型变更
+        function handleContractTypeChange() {
+            const type = document.getElementById('contractType').value;
+            const warning = document.getElementById('commissionWarning');
+            
+            if (type === 'commission') {
+                warning.classList.remove('hidden');
+                showToast('warning', '业务规则', '佣金合同必须关联其他合同，请确保已选择关联合同');
+            } else {
+                warning.classList.add('hidden');
+            }
+        }
+
+        // 处理币种变更
+        function handleCurrencyChange() {
+            const currency = document.getElementById('currency').value;
+            const rateInput = document.getElementById('exchangeRate');
+            const rateRequired = document.getElementById('rateRequired');
+            
+            if (currency !== 'CNY') {
+                rateInput.disabled = false;
+                rateInput.classList.remove('bg-gray-50');
+                rateInput.classList.add('bg-white', 'border-red-300');
+                rateRequired.classList.remove('hidden');
+            } else {
+                rateInput.disabled = true;
+                rateInput.classList.add('bg-gray-50');
+                rateInput.classList.remove('bg-white', 'border-red-300');
+                rateRequired.classList.add('hidden');
+                rateInput.value = '';
+            }
+        }
+
+        // 添加认证领域 - 新设计，与表单风格一致
+        function addCertField() {
+            certFieldsCount++;
+            const container = document.getElementById('certFieldsContainer');
+            const fieldId = `certField_${certFieldsCount}`;
+            
+            const html = `
+                <div id="${fieldId}" class="bg-white border border-gray-200 rounded-lg p-4 space-y-4 fade-in relative group">
+                    <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-brand-100 text-brand-700 text-xs font-bold px-2 py-1 rounded">领域 ${certFieldsCount}</span>
+                            <select class="text-sm font-medium border border-gray-300 rounded px-3 py-1.5 bg-white focus:ring-2 focus:ring-brand-500 outline-none min-w-[200px]">
+                                <option value="">请选择认证体系</option>
+                                <option value="QMS">QMS（质量管理体系）</option>
+                                <option value="EMS">EMS（环境管理体系）</option>
+                                <option value="OHSMS">OHSMS（职业健康安全管理体系）</option>
+                                <option value="EnMS">EnMS（能源管理体系）</option>
+                                <option value="ISMS">ISMS（信息安全管理体系）</option>
+                                <option value="ITSMS">ITSMS（信息技术服务管理体系）</option>
+                                <option value="FSMS">FSMS（食品安全管理体系）</option>
+                            </select>
+                        </div>
+                        <button onclick="removeCertField('${fieldId}')" class="text-gray-400 hover:text-red-500 transition-colors p-1">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-4 gap-3">
+                        <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                            <input type="checkbox" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4">
+                            <span class="text-sm text-gray-700">关键场所</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                            <input type="checkbox" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4">
+                            <span class="text-sm text-gray-700">CNAS认可</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                            <input type="checkbox" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4">
+                            <span class="text-sm text-gray-700">本地项目</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
+                            <input type="checkbox" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4">
+                            <span class="text-sm text-gray-700">资源满足</span>
+                        </label>
+                    </div>
+
+                    <div class="border-t border-gray-100 pt-3">
+                        <div class="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
+                            <i class="fas fa-shield-alt text-brand-500"></i>
+                            认证风险评估
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-3 space-y-2">
+                            ${generateRiskItem('客户相关资质是否具备', fieldId, 1)}
+                            ${generateRiskItem('客户其他信息是否充分', fieldId, 2)}
+                            ${generateRiskItem('认证要求是否已明确说明', fieldId, 3)}
+                            ${generateRiskItem('与客户间是否还有理解差异', fieldId, 4)}
+                            ${generateRiskItem('是否存在对公正性的威胁', fieldId, 5)}
+                            ${generateRiskItem('认证转换条件是否满足', fieldId, 6)}
+                            ${generateRiskItem('有无其他风险', fieldId, 7)}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        function generateRiskItem(label, fieldId, index) {
+            const name = `risk_${fieldId}_${index}`;
+            return `
+                <div class="flex items-center justify-between text-sm hover:bg-white p-2 rounded transition-colors">
+                    <span class="text-gray-600">${label}</span>
+                    <div class="flex gap-4">
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="radio" name="${name}" value="no" class="text-brand-600 focus:ring-brand-500" checked>
+                            <span class="text-gray-700">否</span>
+                        </label>
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="radio" name="${name}" value="yes" class="text-brand-600 focus:ring-brand-500">
+                            <span class="text-gray-700">是</span>
+                        </label>
+                    </div>
+                </div>
+            `;
+        }
+
+        function removeCertField(id) {
+            document.getElementById(id).remove();
+            certFieldsCount--;
+            // 重新编号
+            const containers = document.getElementById('certFieldsContainer').children;
+            Array.from(containers).forEach((container, index) => {
+                const badge = container.querySelector('.bg-brand-100');
+                if (badge) badge.textContent = `领域 ${index + 1}`;
+            });
+            certFieldsCount = containers.length;
+        }
+
+        // 计算毛利率
+        function calculateProfit() {
+            const amount = parseFloat(document.getElementById('serviceAmount').value) || 0;
+            const cost = parseFloat(document.getElementById('estimatedCost').value) || 0;
+            
+            if (amount > 0) {
+                const rate = ((amount - cost) / amount * 100).toFixed(2);
+                document.getElementById('profitRate').value = rate;
+            }
+        }
+
+        // 相对方弹窗相关函数
+        function openPartyModal() {
+            document.getElementById('partyModal').classList.remove('hidden');
+            renderPartyTable(mockPartyData);
+        }
+
+        function closePartyModal() {
+            document.getElementById('partyModal').classList.add('hidden');
+        }
+
+        function renderPartyTable(data) {
+            const tbody = document.getElementById('partyTableBody');
+            const emptyState = document.getElementById('partyEmptyState');
+            
+            if (data.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            tbody.innerHTML = data.map(party => `
+                <tr class="hover:bg-gray-50 cursor-pointer" onclick="selectPartyRow('${party.code}', '${party.name}')">
+                    <td class="px-4 py-3 text-center">
+                        <input type="radio" name="partySelect" value="${party.code}" ${selectedParty?.code === party.code ? 'checked' : ''} 
+                               onchange="selectPartyRow('${party.code}', '${party.name}')" onclick="event.stopPropagation()">
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-900">${party.code}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900 font-medium">${party.name}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600">${party.legalPerson}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600 font-mono">${party.creditCode}</td>
+                </tr>
+            `).join('');
+        }
+
+        function filterPartyTable() {
+            const keyword = document.getElementById('partySearchInput').value.toLowerCase();
+            const filtered = mockPartyData.filter(p => 
+                p.code.toLowerCase().includes(keyword) || 
+                p.name.toLowerCase().includes(keyword) || 
+                p.creditCode.toLowerCase().includes(keyword)
+            );
+            renderPartyTable(filtered);
+        }
+
+        function resetPartySearch() {
+            document.getElementById('partySearchInput').value = '';
+            renderPartyTable(mockPartyData);
+        }
+
+        function selectPartyRow(code, name) {
+            const party = mockPartyData.find(p => p.code === code);
+            selectedParty = party;
+            document.getElementById('selectedPartyName').textContent = name;
+            // 更新radio选中状态
+            const radio = document.querySelector(`input[name="partySelect"][value="${code}"]`);
+            if (radio) radio.checked = true;
+        }
+
+        function confirmPartySelection() {
+            if (!selectedParty) {
+                showToast('error', '未选择', '请选择一个相对方');
+                return;
+            }
+            
+            // 回显到主表单
+            document.getElementById('partyDisplay').value = selectedParty.name;
+            document.getElementById('partyDetails').classList.remove('hidden');
+            document.getElementById('partyCode').textContent = selectedParty.code;
+            document.getElementById('partyName').textContent = selectedParty.name;
+            document.getElementById('partyCreditCode').textContent = selectedParty.creditCode;
+            document.getElementById('partyContact').textContent = selectedParty.contact;
+            document.getElementById('partyPhone').textContent = selectedParty.phone;
+            
+            // 同步到左侧文档
+            document.getElementById('docPartyA').textContent = selectedParty.name;
+            document.getElementById('docContact').textContent = selectedParty.contact;
+            document.getElementById('docPhone').textContent = selectedParty.phone;
+            
+            closePartyModal();
+            showToast('success', '选择成功', `已选择相对方：${selectedParty.name}`);
+        }
+
+        // 相关方弹窗相关函数
+        function openRelatedPartyModal() {
+            document.getElementById('relatedPartyModal').classList.remove('hidden');
+            renderRelatedPartyTable(mockRelatedPartyData);
+            updateSelectedRelatedTags();
+        }
+
+        function closeRelatedPartyModal() {
+            document.getElementById('relatedPartyModal').classList.add('hidden');
+        }
+
+        function renderRelatedPartyTable(data) {
+            const tbody = document.getElementById('relatedPartyTableBody');
+            tbody.innerHTML = data.map(party => {
+                const isSelected = selectedRelatedParties.some(p => p.code === party.code);
+                return `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-3 text-center">
+                            <input type="checkbox" value="${party.code}" ${isSelected ? 'checked' : ''} 
+                                   onchange="toggleRelatedParty('${party.code}')" class="rounded text-brand-600 focus:ring-brand-500">
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-900">${party.code}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900 font-medium">${party.name}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600">${party.legalPerson}</td>
+                        <td class="px-4 py-3 text-sm text-gray-600 font-mono">${party.creditCode}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterRelatedPartyTable() {
+            const keyword = document.getElementById('relatedPartySearchInput').value.toLowerCase();
+            const filtered = mockRelatedPartyData.filter(p => 
+                p.code.toLowerCase().includes(keyword) || 
+                p.name.toLowerCase().includes(keyword)
+            );
+            renderRelatedPartyTable(filtered);
+        }
+
+        function toggleRelatedParty(code) {
+            const party = mockRelatedPartyData.find(p => p.code === code);
+            const index = selectedRelatedParties.findIndex(p => p.code === code);
+            
+            if (index > -1) {
+                selectedRelatedParties.splice(index, 1);
+            } else {
+                selectedRelatedParties.push(party);
+            }
+            
+            updateSelectedRelatedTags();
+            document.getElementById('selectedRelatedCount').textContent = selectedRelatedParties.length;
+        }
+
+        function toggleSelectAllRelated() {
+            const selectAll = document.getElementById('selectAllRelated').checked;
+            if (selectAll) {
+                selectedRelatedParties = [...mockRelatedPartyData];
+            } else {
+                selectedRelatedParties = [];
+            }
+            renderRelatedPartyTable(mockRelatedPartyData);
+            updateSelectedRelatedTags();
+            document.getElementById('selectedRelatedCount').textContent = selectedRelatedParties.length;
+        }
+
+        function updateSelectedRelatedTags() {
+            const container = document.getElementById('selectedRelatedTags');
+            container.innerHTML = selectedRelatedParties.map(p => `
+                <span class="inline-flex items-center gap-1 px-2 py-1 bg-brand-100 text-brand-700 text-xs rounded border border-brand-200">
+                    ${p.name}
+                    <button onclick="removeRelatedPartyTag('${p.code}')" class="hover:text-brand-900">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </span>
+            `).join('');
+        }
+
+        function removeRelatedPartyTag(code) {
+            selectedRelatedParties = selectedRelatedParties.filter(p => p.code !== code);
+            renderRelatedPartyTable(mockRelatedPartyData);
+            updateSelectedRelatedTags();
+            document.getElementById('selectedRelatedCount').textContent = selectedRelatedParties.length;
+        }
+
+        function confirmRelatedPartySelection() {
+            renderRelatedPartyList();
+            document.getElementById('relatedPartyCount').textContent = selectedRelatedParties.length;
+            closeRelatedPartyModal();
+            showToast('success', '选择成功', `已选择 ${selectedRelatedParties.length} 个相关方`);
+        }
+
+        function renderRelatedPartyList() {
+            const container = document.getElementById('relatedPartyList');
+            
+            if (selectedRelatedParties.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            container.innerHTML = selectedRelatedParties.map(party => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 group">
+                    <div class="flex-1 min-w-0">
+                        <div class="font-medium text-sm text-gray-900 truncate">${party.name}</div>
+                        <div class="text-xs text-gray-500 mt-0.5">
+                            <span class="mr-2">编码：${party.code}</span>
+                            <span>联系人：${party.legalPerson}</span>
+                        </div>
+                    </div>
+                    <button onclick="removeRelatedParty('${party.code}')" class="ml-2 text-gray-400 hover:text-red-500 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removeRelatedParty(code) {
+            selectedRelatedParties = selectedRelatedParties.filter(p => p.code !== code);
+            renderRelatedPartyList();
+            document.getElementById('relatedPartyCount').textContent = selectedRelatedParties.length;
+        }
+
+        // 子项目弹窗相关函数
+        function openSubProjectModal() {
+            document.getElementById('subProjectModal').classList.remove('hidden');
+            // 自动生成编号
+            const code = 'SUB' + Date.now().toString().slice(-10);
+            document.getElementById('subProjectCode').value = code;
+            // 重置表单
+            document.getElementById('subProjectName').value = '';
+            document.getElementById('subProjectPrice').value = '';
+            document.getElementById('subProjectQty').value = '';
+            document.getElementById('subProjectTax').value = '6';
+            document.getElementById('subProjectRemark').value = '';
+            calculateSubProjectTotal();
+        }
+
+        function closeSubProjectModal() {
+            document.getElementById('subProjectModal').classList.add('hidden');
+        }
+
+        function calculateSubProjectTotal() {
+            const price = parseFloat(document.getElementById('subProjectPrice').value) || 0;
+            const qty = parseInt(document.getElementById('subProjectQty').value) || 0;
+            const tax = parseFloat(document.getElementById('subProjectTax').value) || 0;
+            
+            const total = price * qty * (1 + tax / 100);
+            document.getElementById('subProjectTotalDisplay').textContent = '¥' + total.toFixed(2);
+        }
+
+        function confirmAddSubProject() {
+            const code = document.getElementById('subProjectCode').value;
+            const name = document.getElementById('subProjectName').value;
+            const price = parseFloat(document.getElementById('subProjectPrice').value) || 0;
+            const qty = parseInt(document.getElementById('subProjectQty').value) || 0;
+            const tax = parseFloat(document.getElementById('subProjectTax').value) || 0;
+            const remark = document.getElementById('subProjectRemark').value;
+            
+            if (!name) {
+                showToast('error', '校验失败', '请输入子项目名称');
+                return;
+            }
+            if (price <= 0) {
+                showToast('error', '校验失败', '请输入有效的单价');
+                return;
+            }
+            if (qty <= 0) {
+                showToast('error', '校验失败', '请输入有效的数量');
+                return;
+            }
+            
+            const total = price * qty * (1 + tax / 100);
+            const project = {
+                id: Date.now(),
+                code,
+                name,
+                price,
+                qty,
+                tax,
+                total,
+                remark
+            };
+            
+            subProjects.push(project);
+            renderSubProjects();
+            closeSubProjectModal();
+            showToast('success', '添加成功', `子项目 "${name}" 已添加`);
+        }
+
+        function renderSubProjects() {
+            const container = document.getElementById('subProjectList');
+            const totalEl = document.getElementById('totalAmount');
+            const headerTotal = document.getElementById('subProjectTotal');
+            
+            let total = 0;
+            
+            if (subProjects.length === 0) {
+                container.innerHTML = '<tr><td colspan="4" class="px-3 py-8 text-center text-gray-400 text-sm">暂无子项目</td></tr>';
+            } else {
+                container.innerHTML = subProjects.map(p => {
+                    total += p.total;
+                    return `
+                        <tr class="hover:bg-gray-50 group border-b border-gray-100">
+                            <td class="px-3 py-3 text-xs text-gray-600 font-mono">${p.code}</td>
+                            <td class="px-3 py-3">
+                                <div class="font-medium text-sm text-gray-900">${p.name}</div>
+                                ${p.remark ? `<div class="text-xs text-gray-500 mt-0.5">${p.remark}</div>` : ''}
+                            </td>
+                            <td class="px-3 py-3 text-right font-medium text-sm">¥${p.total.toFixed(2)}</td>
+                            <td class="px-3 py-3 text-center">
+                                <button onclick="removeSubProject(${p.id})" class="text-gray-400 hover:text-red-500 transition-colors p-1">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+            
+            totalEl.textContent = '¥' + total.toFixed(2);
+            headerTotal.textContent = '合计：¥' + total.toFixed(2);
+        }
+
+        function removeSubProject(id) {
+            subProjects = subProjects.filter(p => p.id !== id);
+            renderSubProjects();
+        }
+
+        // 处理文件上传
+        function handleFileUpload(event) {
+            const files = Array.from(event.target.files);
+            
+            files.forEach(file => {
+                attachments.push({
+                    name: file.name,
+                    size: (file.size / 1024).toFixed(1) + 'KB',
+                    type: file.name.split('.').pop().toUpperCase(),
+                    date: new Date().toLocaleString('zh-CN')
+                });
+            });
+            
+            renderAttachments();
+        }
+
+        function removeAttachment(index) {
+            attachments.splice(index, 1);
+            renderAttachments();
+        }
+
+        function renderAttachments() {
+            const container = document.getElementById('attachmentList');
+            const count = document.getElementById('attachmentCount');
+            
+            count.textContent = attachments.length + '个文件';
+            
+            container.innerHTML = attachments.map((file, index) => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium text-gray-900">${file.name}</div>
+                            <div class="text-xs text-gray-500">${file.size} • ${file.date}</div>
+                        </div>
+                    </div>
+                    <button onclick="removeAttachment(${index})" class="text-gray-400 hover:text-red-500 p-2">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // 更新文档预览
+        function updateDocument() {
+            const name = document.getElementById('contractName').value;
+            // 可以添加更多同步逻辑
+        }
+
+        // 保存草稿
+        function saveDraft() {
+            showToast('success', '保存成功', '合同草稿已保存');
+        }
+
+        // 提交合同
+        function submitContract() {
+            // 校验必填项
+            const contractName = document.getElementById('contractName').value;
+            const contractType = document.getElementById('contractType').value;
+            const contractAmount = document.getElementById('contractAmount').value;
+            
+            if (!contractName || !contractType || !contractAmount) {
+                showToast('error', '校验失败', '请填写所有必填项');
+                return;
+            }
+            
+            if (!selectedParty) {
+                showToast('error', '校验失败', '请选择相对方信息');
+                return;
+            }
+            
+            if (!selectedQuotation) {
+                showToast('error', '校验失败', '请关联报价单');
+                return;
+            }
+            
+            showToast('success', '提交成功', '合同已进入审核流程');
+        }
+
+        // 显示提示
+        function showToast(type, title, message) {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            const titleEl = document.getElementById('toastTitle');
+            const messageEl = document.getElementById('toastMessage');
+            
+            const icons = {
+                success: 'fa-check-circle text-green-500',
+                error: 'fa-times-circle text-red-500',
+                warning: 'fa-exclamation-triangle text-amber-500',
+                info: 'fa-info-circle text-blue-500'
+            };
+            
+            icon.className = `fas ${icons[type]} text-xl`;
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            
+            toast.classList.remove('translate-x-full');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+            }, 3000);
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 默认展开前几个面板
+            renderSubProjects();
+            
+            // 点击遮罩关闭弹窗
+            document.getElementById('partyModal').addEventListener('click', function(e) {
+                if (e.target === this) closePartyModal();
+            });
+            document.getElementById('relatedPartyModal').addEventListener('click', function(e) {
+                if (e.target === this) closeRelatedPartyModal();
+            });
+            document.getElementById('subProjectModal').addEventListener('click', function(e) {
+                if (e.target === this) closeSubProjectModal();
+            });
+            document.getElementById('quotationModal').addEventListener('click', function(e) {
+                if (e.target === this) closeQuotationModal();
+            });
+        });
+    </script>
+</body>
+</html>
