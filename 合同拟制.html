@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -62,6 +63,7 @@
         .custom-scroll::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+
         /* 报价单悬浮提示 */
         .quotation-tooltip {
             position: absolute;
@@ -287,11 +289,10 @@
                             <i class="fas fa-chevron-down text-gray-400 transition-transform duration-200" id="icon-basicInfo"></i>
                             <span class="font-semibold text-gray-900">基本信息</span>
                         </div>
-                        <span class="text-xs text-red-500">* 必填</span>
                     </button>
                     <div id="basicInfo" class="p-4 space-y-4 border-t border-gray-200">
                         <div class="grid grid-cols-2 gap-4">
-                            <div class="col-span-2">
+                            <div class="col-span-1">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">合同名称 <span class="text-red-500">*</span></label>
                                 <input type="text" id="contractName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none text-sm" placeholder="请输入合同名称" onchange="updateDocument()">
                             </div>
@@ -311,11 +312,37 @@
                             </div>
 
                             <div class="col-span-1">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">合同分类 <span class="text-red-500">*</span></label>
-                                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm">
-                                    <option>常规合同</option>
-                                    <option>框架合同</option>
-                                    <option>补充协议</option>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">是否框架合同 <span class="text-red-500">*</span></label>
+                                <div class="flex items-center gap-6 h-10">
+                                    <label class="inline-flex items-center gap-2 text-sm text-gray-700"><input type="radio" name="frameworkContract" value="yes">是</label>
+                                    <label class="inline-flex items-center gap-2 text-sm text-gray-700"><input type="radio" name="frameworkContract" value="no" checked>否</label>
+                                </div>
+                            </div>
+
+                            <div class="col-span-1">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">结算类型 <span class="text-red-500">*</span></label>
+                                <div class="flex items-center gap-5 h-10">
+                                    <label class="inline-flex items-center gap-2 text-sm text-gray-700"><input type="radio" name="settlementType" value="income">收款合同</label>
+                                    <label class="inline-flex items-center gap-2 text-sm text-gray-700"><input type="radio" name="settlementType" value="payment">付款合同</label>
+                                    <label class="inline-flex items-center gap-2 text-sm text-gray-700"><input type="radio" name="settlementType" value="none" checked>无收无支</label>
+                                </div>
+                            </div>
+
+                            <div class="col-span-1">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">是否为涉外合同 <span class="text-red-500">*</span></label>
+                                <div class="flex items-center gap-6 h-10">
+                                    <label class="inline-flex items-center gap-2 text-sm text-gray-700"><input type="radio" name="foreignContract" value="yes">是</label>
+                                    <label class="inline-flex items-center gap-2 text-sm text-gray-700"><input type="radio" name="foreignContract" value="no" checked>否</label>
+                                </div>
+                            </div>
+
+                            <div class="col-span-1">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">司库合同类型 <span class="text-red-500">*</span></label>
+                                <select id="treasuryContractType" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm">
+                                    <option value="">请选择司库合同类型</option>
+                                    <option>境内合同</option>
+                                    <option>境外合同</option>
+                                    <option>其他</option>
                                 </select>
                             </div>
 
@@ -330,13 +357,13 @@
                             </div>
 
                             <div class="col-span-1">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">汇率</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">约定汇率</label>
                                 <input type="number" id="exchangeRate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm bg-gray-50" placeholder="非必填" disabled>
                                 <div id="rateRequired" class="hidden text-xs text-red-500 mt-1">外币需填写汇率</div>
                             </div>
 
-                            <div class="col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">合同金额 <span class="text-red-500">*</span></label>
+                            <div class="col-span-1">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">合同含税金额 <span class="text-red-500">*</span></label>
                                 <div class="relative">
                                     <input type="number" id="contractAmount" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm pr-12" placeholder="请输入合同金额">
                                     <span class="absolute right-3 top-2 text-gray-500 text-sm">元</span>
@@ -360,6 +387,21 @@
                                 </select>
                             </div>
 
+                            <div class="col-span-1">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">本单位自定义编码</label>
+                                <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm" placeholder="请输入本单位自定义编码">
+                            </div>
+
+                            <div class="col-span-1">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">产品线分类</label>
+                                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm">
+                                    <option value="">请选择产品线分类</option>
+                                    <option>管理体系认证</option>
+                                    <option>产品认证</option>
+                                    <option>服务认证</option>
+                                </select>
+                            </div>
+
                             <div class="col-span-2">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">备注</label>
                                 <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm h-20 resize-none" placeholder="请输入备注信息"></textarea>
@@ -372,13 +414,12 @@
                 <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
                     <button onclick="toggleSection('quotationInfo')" class="w-full px-4 py-3 flex items-center justify-between bg-gradient-to-r from-blue-50 to-white hover:from-blue-100 hover:to-blue-50 transition-colors border-l-4 border-brand-500">
                         <div class="flex items-center gap-2">
-                            <i class="fas fa-chevron-down text-brand-600 transition-transform duration-200" id="icon-quotationInfo"></i>
+                    <i class="fas fa-chevron-down text-brand-600 transition-transform duration-200" id="icon-quotationInfo" style="transform: rotate(-90deg)"></i>
                             <span class="font-semibold text-gray-900">关联报价单</span>
                             <span class="text-xs bg-brand-100 text-brand-800 px-2 py-0.5 rounded-full">单选</span>
                         </div>
-                        <span class="text-xs text-red-500">* 必填</span>
                     </button>
-                    <div id="quotationInfo" class="p-4 space-y-4 border-t border-gray-200">
+                    <div id="quotationInfo" class="hidden p-4 space-y-4 border-t border-gray-200">
                         <!-- 未选择状态 -->
                         <div id="quotationEmptyState" class="text-center py-8 border-2 border-dashed border-gray-200 rounded-lg">
                             <div class="w-16 h-16 bg-brand-50 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -479,12 +520,11 @@
                         </div>
                     </button>
                     <div id="certInfo" class="p-4 space-y-4 border-t border-gray-200">
-                        
                         <!-- 认证领域列表 -->
                         <div class="space-y-3">
                             <div class="flex justify-between items-center">
                                 <label class="block text-sm font-medium text-gray-700">认证领域配置</label>
-                                <button onclick="addCertField()" class="text-sm bg-brand-600 text-white px-3 py-1.5 rounded hover:bg-brand-700 transition-colors flex items-center gap-1">
+                                <button onclick="openCertDomainModal()" class="text-sm bg-brand-600 text-white px-3 py-1.5 rounded hover:bg-brand-700 transition-colors flex items-center gap-1">
                                     <i class="fas fa-plus"></i>
                                     添加认证领域
                                 </button>
@@ -495,28 +535,6 @@
                             </div>
                         </div>
 
-                        <!-- 价款信息 -->
-                        <div class="border-t border-gray-200 pt-4 mt-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-3">价款信息</label>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs text-gray-600 mb-1">合同价款（元）<span class="text-red-500">*</span></label>
-                                    <input type="number" id="serviceAmount" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm" placeholder="0.00" onchange="calculateProfit()">
-                                </div>
-                                <div>
-                                    <label class="block text-xs text-gray-600 mb-1">预估成本（元）<span class="text-red-500">*</span></label>
-                                    <input type="number" id="estimatedCost" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm" placeholder="0.00" onchange="calculateProfit()">
-                                </div>
-                                <div class="col-span-2">
-                                    <label class="block text-xs text-gray-600 mb-1">毛利率（%）</label>
-                                    <div class="relative">
-                                        <input type="number" id="profitRate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm bg-gray-50" readonly>
-                                        <span class="absolute right-3 top-2 text-gray-500 text-sm">%</span>
-                                    </div>
-                                    <div class="text-xs text-gray-500 mt-1">自动计算：（合同价款-预估成本）/合同价款</div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -592,26 +610,95 @@
                 </div>
 
                 <!-- 子项目信息 - 弹窗表单 -->
-            
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <button onclick="toggleSection('subProjectInfo')" class="w-full px-4 py-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform duration-200" id="icon-subProjectInfo"></i>
+                            <span class="font-semibold text-gray-900">子项目信息</span>
+                        </div>
+                        <span id="subProjectTotal" class="text-sm font-medium text-gray-700">合计：¥0.00</span>
+                    </button>
+                    <div id="subProjectInfo" class="p-4 border-t border-gray-200 space-y-3">
+                        <div class="flex items-center gap-3">
+                            <button type="button" onclick="openSubProjectModal()" class="px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 text-sm font-medium"><i class="fas fa-plus mr-1"></i>添加子项目</button>
+                            <button type="button" disabled class="px-4 py-2 border border-gray-200 text-gray-400 rounded-lg text-sm">批量删除</button>
+                            <button type="button" disabled class="px-4 py-2 border border-gray-200 text-gray-400 rounded-lg text-sm">批量导入</button>
+                        </div>
+                        <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                            <table class="w-full text-sm min-w-[760px]">
+                                <thead class="bg-gray-50 text-gray-700">
+                                    <tr>
+                                        <th class="px-3 py-3 text-center font-medium"><input type="checkbox" disabled></th>
+                                        <th class="px-3 py-3 text-center font-medium">操作</th>
+                                        <th class="px-3 py-3 text-left font-medium">子项目名称</th>
+                                        <th class="px-3 py-3 text-right font-medium">单价</th>
+                                        <th class="px-3 py-3 text-right font-medium">数量</th>
+                                        <th class="px-3 py-3 text-right font-medium">含税金额</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="subProjectList"></tbody>
+                            </table>
+                        </div>
+                        <div class="flex justify-end text-sm font-medium text-gray-700">含税金额总计：<span id="totalAmount" class="ml-2 text-brand-600">¥0.00</span></div>
+                    </div>
+                </div>
+
+                <!-- 收支计划 -->
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                    <button onclick="toggleSection('collectionPlanInfo')" class="w-full px-4 py-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-chevron-down text-gray-400 transition-transform duration-200" id="icon-collectionPlanInfo"></i>
+                            <span class="font-semibold text-gray-900">收支计划</span>
+                        </div>
+                    </button>
+                    <div id="collectionPlanInfo" class="p-4 border-t border-gray-200 space-y-3">
+                        <div class="flex items-center gap-3">
+                            <button type="button" onclick="openCollectionPlanModal()" class="px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 text-sm font-medium"><i class="fas fa-plus mr-1"></i>添加收支计划</button>
+                            <button type="button" disabled class="px-4 py-2 border border-gray-200 text-gray-400 rounded-lg text-sm">批量删除</button>
+                        </div>
+                        <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                            <table class="w-full text-sm min-w-[760px]">
+                                <thead class="bg-gray-50 text-gray-700">
+                                    <tr>
+                                        <th class="px-3 py-3 text-center font-medium"><input type="checkbox" disabled></th>
+                                        <th class="px-3 py-3 text-center font-medium">操作</th>
+                                        <th class="px-3 py-3 text-left font-medium">计划名称</th>
+                                        <th class="px-3 py-3 text-left font-medium">默认合同名称</th>
+                                        <th class="px-3 py-3 text-right font-medium">计划金额</th>
+                                        <th class="px-3 py-3 text-center font-medium">预计收/付款日期</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="collectionPlanList"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- 附件信息 -->
                 <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                    <button onclick="toggleSection('attachmentInfo')" class="w-full px-4 py-3 flex items-center justify-between bg-gray-50 hover:bg-gray-100 transition-colors">
+                    <div class="w-full px-4 py-3 flex items-center justify-between bg-gray-50">
                         <div class="flex items-center gap-2">
                             <i class="fas fa-chevron-down text-gray-400 transition-transform duration-200" id="icon-attachmentInfo"></i>
                             <span class="font-semibold text-gray-900">附件信息</span>
                         </div>
-                        <span class="text-xs text-gray-500" id="attachmentCount">0个文件</span>
-                    </button>
+                        <button type="button" onclick="document.getElementById('fileInput').click()" class="px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 text-sm font-medium"><i class="fas fa-plus mr-1"></i>添加附件信息</button>
+                    </div>
                     <div id="attachmentInfo" class="p-4 border-t border-gray-200 space-y-3">
-                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-brand-500 hover:bg-brand-50 transition-colors cursor-pointer" onclick="document.getElementById('fileInput').click()">
-                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
-                            <div class="text-sm text-gray-600">点击上传附件</div>
-                            <div class="text-xs text-gray-400 mt-1">支持多文件上传，单个文件不超过10MB</div>
-                            <input type="file" id="fileInput" multiple class="hidden" onchange="handleFileUpload(event)">
-                        </div>
-                        <div id="attachmentList" class="space-y-2">
-                            <!-- 动态显示附件 -->
+                        <input type="file" id="fileInput" multiple class="hidden" onchange="handleFileUpload(event)">
+                        <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                            <table class="w-full text-sm min-w-[720px]">
+                                <thead class="bg-gray-50 text-gray-700">
+                                    <tr>
+                                        <th class="px-3 py-3 text-center font-medium"><input type="checkbox" disabled></th>
+                                        <th class="px-3 py-3 text-center font-medium">操作</th>
+                                        <th class="px-3 py-3 text-left font-medium">文件名称</th>
+                                        <th class="px-3 py-3 text-left font-medium">附件类型</th>
+                                        <th class="px-3 py-3 text-right font-medium">文件大小</th>
+                                        <th class="px-3 py-3 text-center font-medium">创建时间</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="attachmentList"></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -619,6 +706,52 @@
             </div>
         </div>
     </main>
+
+    <!-- 新增认证领域弹窗 -->
+    <div id="certDomainModal" class="fixed inset-0 bg-slate-900/45 z-50 hidden items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-[900px] max-h-[80vh] flex flex-col fade-in">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-bold text-gray-900">新增认证领域</h3>
+                <button type="button" onclick="closeCertDomainModal()" class="text-gray-400 hover:text-gray-700 w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors" title="关闭">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <div class="px-4 pt-4 space-y-3 overflow-auto">
+                <div class="flex flex-col xl:flex-row gap-3">
+                    <div class="flex-1 relative">
+                        <input type="search" id="certDomainModalSearch" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-sm" placeholder="搜索认证领域、代码、关键词..." oninput="renderCertDomainModal()">
+                        <i class="fas fa-search absolute left-3.5 top-2.5 text-gray-400"></i>
+                    </div>
+                    <div class="flex rounded-lg border border-gray-300 overflow-hidden shrink-0">
+                        <button type="button" id="certDomainCommonTab" onclick="setCertDomainTab('common')" class="px-5 py-2 bg-brand-600 text-white text-sm font-medium transition-colors">常用领域</button>
+                        <button type="button" id="certDomainOtherTab" onclick="setCertDomainTab('other')" class="px-5 py-2 bg-white text-gray-600 hover:bg-gray-50 text-sm font-medium transition-colors">其他领域</button>
+                    </div>
+                    <button type="button" onclick="selectVisibleCertDomains()" class="px-4 py-2 border border-brand-400 text-brand-600 rounded-lg hover:bg-brand-50 transition-colors text-sm font-medium whitespace-nowrap">
+                        <i class="far fa-check-square mr-1"></i>批量选择
+                    </button>
+                    <button type="button" onclick="clearCertDomainSelection()" class="px-4 py-2 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium whitespace-nowrap">
+                        <i class="fas fa-undo mr-1"></i>清空
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-between text-gray-500 text-sm">
+                    <div>当前显示 <span id="certDomainVisibleCount" class="text-brand-600 font-semibold">0</span> 项，已勾选 <span id="certDomainSelectedCount" class="text-brand-600 font-semibold">0</span> 项</div>
+                    <div class="hidden md:block text-sm text-gray-400">常用领域优先展示，其他领域可搜索筛选</div>
+                </div>
+
+                <div id="certDomainOptionList" class="grid grid-cols-1 lg:grid-cols-2 gap-3 pb-3"></div>
+                <div id="certDomainEmptyState" class="hidden py-16 text-center text-gray-400">暂无匹配的认证领域</div>
+            </div>
+
+            <div class="px-4 py-3 border-t border-gray-200 flex justify-end gap-3 bg-gray-50 rounded-b-xl">
+                <button type="button" onclick="closeCertDomainModal()" class="px-4 py-2 border border-gray-300 text-gray-600 rounded-lg hover:bg-white transition-colors text-sm">取消</button>
+                <button type="button" id="confirmCertDomainButton" onclick="confirmCertDomainSelection()" class="px-5 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    <i class="far fa-check-circle mr-1"></i>确认添加
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- 报价单选择弹窗 -->
     <div id="quotationModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center backdrop-blur-sm">
@@ -674,7 +807,7 @@
                         <!-- 动态生成表格行 -->
                     </tbody>
                 </table>
-                <div id="quotationEmptyState" class="hidden p-12 text-center text-gray-500">
+                <div id="quotationModalEmptyState" class="hidden p-12 text-center text-gray-500">
                     <i class="fas fa-inbox text-4xl mb-3 text-gray-300"></i>
                     <p>暂无符合条件的报价单</p>
                 </div>
@@ -814,6 +947,38 @@
         </div>
     </div>
 
+    <!-- 收支计划添加弹窗 -->
+    <div id="collectionPlanModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white rounded-lg shadow-xl w-[620px] max-w-[calc(100vw-32px)] fade-in">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">添加收支计划</h3>
+                <button type="button" onclick="closeCollectionPlanModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="p-6 grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">计划名称 <span class="text-red-500">*</span></label>
+                    <input type="text" id="collectionPlanName" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="请输入计划名称">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">默认合同名称</label>
+                    <input type="text" id="collectionPlanContract" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="请输入默认合同名称">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">计划金额（元） <span class="text-red-500">*</span></label>
+                    <input type="number" id="collectionPlanAmount" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="请输入计划金额">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">预计收/付款日期</label>
+                    <input type="date" id="collectionPlanDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 bg-gray-50">
+                <button type="button" onclick="closeCollectionPlanModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700">取消</button>
+                <button type="button" onclick="confirmCollectionPlan()" class="px-5 py-2 bg-brand-600 text-white rounded-lg text-sm">添加</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 子项目添加弹窗 -->
     <div id="subProjectModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center backdrop-blur-sm">
         <div class="bg-white rounded-lg shadow-xl w-[600px] flex flex-col fade-in">
@@ -893,11 +1058,31 @@
     <script>
         // 全局状态
         let certFieldsCount = 0;
+        let certDomainTab = 'common';
+        let certDomainSelection = new Set();
         let selectedParty = null; // 当前选中的相对方
         let selectedRelatedParties = []; // 已选相关方
         let subProjects = []; // 子项目列表
+        let collectionPlans = []; // 收支计划列表
         let attachments = [];
         let selectedQuotation = null; // 当前选中的报价单
+
+        const certificationDomainOptions = [
+            { code: 'QMS', name: '质量管理体系', category: '管理体系', common: true },
+            { code: 'EMS', name: '环境管理体系', category: '管理体系', common: true },
+            { code: 'OHSMS', name: '职业健康安全管理体系', category: '管理体系', common: true },
+            { code: 'FSMS', name: '食品安全管理体系', category: '管理体系', common: true },
+            { code: 'HACCP', name: '危害分析与关键控制点', category: '管理体系', common: true },
+            { code: 'ISMS', name: '信息安全管理体系', category: '管理体系', common: true },
+            { code: 'ITSMS', name: '信息技术服务管理体系', category: '管理体系', common: true },
+            { code: 'EnMS', name: '能源管理体系', category: '管理体系', common: true },
+            { code: 'IPMS', name: '知识产权管理体系', category: '管理体系', common: false },
+            { code: 'BCMS', name: '业务连续性管理体系', category: '管理体系', common: false },
+            { code: 'EC9000', name: '工程建设施工企业质量管理体系认证', category: '管理体系', common: false },
+            { code: 'HSE', name: '职业健康安全环境管理体系', category: 'D', common: false },
+            { code: 'CMS', name: '合规管理体系', category: '管理体系', common: false },
+            { code: 'AIMS', name: '人工智能管理体系', category: '管理体系', common: false }
+        ];
 
         // 模拟报价单数据（参考报价单管理页面）
         const mockQuotations = [
@@ -1029,7 +1214,7 @@
 
         function renderQuotationTable(data) {
             const tbody = document.getElementById('quotationTableBody');
-            const emptyState = document.getElementById('quotationEmptyState');
+            const emptyState = document.getElementById('quotationModalEmptyState');
             
             if (data.length === 0) {
                 tbody.innerHTML = '';
@@ -1169,8 +1354,11 @@
             
             // 同步合同金额（自动填充）
             document.getElementById('contractAmount').value = selectedQuotation.finalAmount;
-            document.getElementById('serviceAmount').value = selectedQuotation.finalAmount;
-            calculateProfit();
+            const firstAmountInput = document.querySelector('input[id^="serviceAmount_"]');
+            if (firstAmountInput) {
+                firstAmountInput.value = selectedQuotation.finalAmount;
+                calculateFieldProfit(firstAmountInput.id.replace('serviceAmount_', ''));
+            }
             
             // 同步到左侧文档预览
             document.getElementById('docQuotationSection').classList.remove('hidden');
@@ -1228,8 +1416,171 @@
             }
         }
 
+        function openCollectionPlanModal() {
+            document.getElementById('collectionPlanModal').classList.remove('hidden');
+            document.getElementById('collectionPlanName').value = '';
+            document.getElementById('collectionPlanContract').value = '';
+            document.getElementById('collectionPlanAmount').value = '';
+            document.getElementById('collectionPlanDate').value = '';
+        }
+
+        function closeCollectionPlanModal() {
+            document.getElementById('collectionPlanModal').classList.add('hidden');
+        }
+
+        function confirmCollectionPlan() {
+            const name = document.getElementById('collectionPlanName').value.trim();
+            const amount = parseFloat(document.getElementById('collectionPlanAmount').value) || 0;
+            if (!name || amount <= 0) {
+                showToast('error', '校验失败', '请填写计划名称和有效的计划金额');
+                return;
+            }
+            collectionPlans.push({
+                id: Date.now(),
+                name,
+                contract: document.getElementById('collectionPlanContract').value.trim(),
+                amount,
+                date: document.getElementById('collectionPlanDate').value || '--'
+            });
+            renderCollectionPlans();
+            closeCollectionPlanModal();
+            showToast('success', '添加成功', `收支计划“${name}”已添加`);
+        }
+
+        function renderCollectionPlans() {
+            const container = document.getElementById('collectionPlanList');
+            if (!collectionPlans.length) {
+                container.innerHTML = '<tr><td colspan="6" class="px-3 py-8 text-center text-gray-400 text-sm">暂无数据</td></tr>';
+                return;
+            }
+            container.innerHTML = collectionPlans.map(plan => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                    <td class="px-3 py-3 text-center"><input type="checkbox"></td>
+                    <td class="px-3 py-3 text-center"><button type="button" onclick="removeCollectionPlan(${plan.id})" class="text-gray-400 hover:text-red-500" title="删除"><i class="fas fa-trash-alt"></i></button></td>
+                    <td class="px-3 py-3 text-gray-700">${plan.name}</td>
+                    <td class="px-3 py-3 text-gray-600">${plan.contract || '--'}</td>
+                    <td class="px-3 py-3 text-right font-medium">¥${plan.amount.toFixed(2)}</td>
+                    <td class="px-3 py-3 text-center text-gray-600">${plan.date}</td>
+                </tr>
+            `).join('');
+        }
+
+        function removeCollectionPlan(id) {
+            collectionPlans = collectionPlans.filter(plan => plan.id !== id);
+            renderCollectionPlans();
+        }
+
+        function openCertDomainModal() {
+            certDomainTab = 'common';
+            certDomainSelection = new Set();
+            document.getElementById('certDomainModalSearch').value = '';
+            document.getElementById('certDomainModal').classList.remove('hidden');
+            document.getElementById('certDomainModal').classList.add('flex');
+            renderCertDomainModal();
+        }
+
+        function closeCertDomainModal() {
+            document.getElementById('certDomainModal').classList.add('hidden');
+            document.getElementById('certDomainModal').classList.remove('flex');
+        }
+
+        function setCertDomainTab(tab) {
+            certDomainTab = tab;
+            renderCertDomainModal();
+        }
+
+        function getVisibleCertDomainOptions() {
+            const keyword = document.getElementById('certDomainModalSearch').value.trim().toLowerCase();
+            return certificationDomainOptions.filter(option => {
+                const inTab = certDomainTab === 'common' ? option.common : !option.common;
+                const searchText = `${option.code} ${option.name} ${option.category}`.toLowerCase();
+                return inTab && (!keyword || searchText.includes(keyword));
+            });
+        }
+
+        function renderCertDomainModal() {
+            const visibleOptions = getVisibleCertDomainOptions();
+            const list = document.getElementById('certDomainOptionList');
+            const emptyState = document.getElementById('certDomainEmptyState');
+            const commonTab = document.getElementById('certDomainCommonTab');
+            const otherTab = document.getElementById('certDomainOtherTab');
+
+            commonTab.className = certDomainTab === 'common'
+                ? 'px-6 py-2.5 bg-brand-600 text-white font-medium transition-colors'
+                : 'px-6 py-2.5 bg-white text-gray-600 hover:bg-gray-50 font-medium transition-colors';
+            otherTab.className = certDomainTab === 'other'
+                ? 'px-6 py-2.5 bg-brand-600 text-white font-medium transition-colors'
+                : 'px-6 py-2.5 bg-white text-gray-600 hover:bg-gray-50 font-medium transition-colors';
+
+            document.getElementById('certDomainVisibleCount').textContent = visibleOptions.length;
+            document.getElementById('certDomainSelectedCount').textContent = certDomainSelection.size;
+            document.getElementById('confirmCertDomainButton').disabled = certDomainSelection.size === 0;
+
+            list.innerHTML = visibleOptions.map(option => {
+                const selected = certDomainSelection.has(option.code);
+                return `
+                    <label class="flex items-start gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${selected ? 'border-brand-500 bg-brand-50' : 'border-gray-200 hover:border-brand-300 hover:bg-gray-50'}">
+                        <input type="checkbox" class="mt-0.5 h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500" ${selected ? 'checked' : ''} onchange="toggleCertDomainSelection('${option.code}')">
+                        <span class="min-w-0">
+                            <span class="block text-base font-semibold text-gray-800">${option.code}（${option.name}）</span>
+                            <span class="block mt-1 text-xs text-gray-400">${option.category} · ${option.common ? '常用' : '非常用'}</span>
+                        </span>
+                    </label>
+                `;
+            }).join('');
+
+            emptyState.classList.toggle('hidden', visibleOptions.length > 0);
+            list.classList.toggle('hidden', visibleOptions.length === 0);
+        }
+
+        function toggleCertDomainSelection(code) {
+            if (certDomainSelection.has(code)) {
+                certDomainSelection.delete(code);
+            } else {
+                certDomainSelection.add(code);
+            }
+            renderCertDomainModal();
+        }
+
+        function selectVisibleCertDomains() {
+            const visibleOptions = getVisibleCertDomainOptions();
+            const allSelected = visibleOptions.length > 0 && visibleOptions.every(option => certDomainSelection.has(option.code));
+            visibleOptions.forEach(option => {
+                if (allSelected) certDomainSelection.delete(option.code);
+                else certDomainSelection.add(option.code);
+            });
+            renderCertDomainModal();
+        }
+
+        function clearCertDomainSelection() {
+            certDomainSelection.clear();
+            renderCertDomainModal();
+        }
+
+        function confirmCertDomainSelection() {
+            const selectedOptions = certificationDomainOptions.filter(option => certDomainSelection.has(option.code));
+            const existingValues = new Set([...document.querySelectorAll('.cert-domain-value')].map(value => value.dataset.value || value.textContent.trim()).filter(Boolean));
+            let addedCount = 0;
+
+            selectedOptions.forEach(option => {
+                const value = `${option.code}（${option.name}）`;
+                if (!existingValues.has(value)) {
+                    addCertField(value);
+                    existingValues.add(value);
+                    addedCount++;
+                }
+            });
+
+            closeCertDomainModal();
+            if (addedCount) {
+                showToast('success', '添加成功', `已添加 ${addedCount} 个认证领域`);
+            } else {
+                showToast('info', '无需添加', '所选认证领域已存在');
+            }
+        }
+
         // 添加认证领域 - 新设计，与表单风格一致
-        function addCertField() {
+        function addCertField(domainValue = '') {
             certFieldsCount++;
             const container = document.getElementById('certFieldsContainer');
             const fieldId = `certField_${certFieldsCount}`;
@@ -1239,54 +1590,53 @@
                     <div class="flex justify-between items-center border-b border-gray-100 pb-3">
                         <div class="flex items-center gap-2">
                             <span class="bg-brand-100 text-brand-700 text-xs font-bold px-2 py-1 rounded">领域 ${certFieldsCount}</span>
-                            <select class="text-sm font-medium border border-gray-300 rounded px-3 py-1.5 bg-white focus:ring-2 focus:ring-brand-500 outline-none min-w-[200px]">
-                                <option value="">请选择认证体系</option>
-                                <option value="QMS">QMS（质量管理体系）</option>
-                                <option value="EMS">EMS（环境管理体系）</option>
-                                <option value="OHSMS">OHSMS（职业健康安全管理体系）</option>
-                                <option value="EnMS">EnMS（能源管理体系）</option>
-                                <option value="ISMS">ISMS（信息安全管理体系）</option>
-                                <option value="ITSMS">ITSMS（信息技术服务管理体系）</option>
-                                <option value="FSMS">FSMS（食品安全管理体系）</option>
-                            </select>
+                            <div class="cert-domain-value text-base font-semibold text-gray-800" data-value="${domainValue || '未选择认证领域'}">${domainValue || '未选择认证领域'}</div>
                         </div>
                         <button onclick="removeCertField('${fieldId}')" class="text-gray-400 hover:text-red-500 transition-colors p-1">
                             <i class="fas fa-trash-alt"></i>
                         </button>
                     </div>
                     
-                    <div class="grid grid-cols-4 gap-3">
-                        <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
-                            <input type="checkbox" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4">
-                            <span class="text-sm text-gray-700">关键场所</span>
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
-                            <input type="checkbox" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4">
-                            <span class="text-sm text-gray-700">CNAS认可</span>
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
-                            <input type="checkbox" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4">
-                            <span class="text-sm text-gray-700">本地项目</span>
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors">
-                            <input type="checkbox" class="rounded text-brand-600 focus:ring-brand-500 w-4 h-4">
-                            <span class="text-sm text-gray-700">资源满足</span>
-                        </label>
-                    </div>
-
                     <div class="border-t border-gray-100 pt-3">
                         <div class="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                             <i class="fas fa-shield-alt text-brand-500"></i>
                             认证风险评估
                         </div>
                         <div class="bg-gray-50 rounded-lg p-3 space-y-2">
-                            ${generateRiskItem('客户相关资质是否具备', fieldId, 1)}
-                            ${generateRiskItem('客户其他信息是否充分', fieldId, 2)}
-                            ${generateRiskItem('认证要求是否已明确说明', fieldId, 3)}
-                            ${generateRiskItem('与客户间是否还有理解差异', fieldId, 4)}
-                            ${generateRiskItem('是否存在对公正性的威胁', fieldId, 5)}
-                            ${generateRiskItem('认证转换条件是否满足', fieldId, 6)}
-                            ${generateRiskItem('有无其他风险', fieldId, 7)}
+                            ${generateRiskItem('客户相关资质是否具备（营业执照、安全生产许可证等）', fieldId, 1)}
+                            ${generateRiskItem('客户提交的认证信息和资料是否充分', fieldId, 2)}
+                            ${generateRiskItem('近3年是否发生被监管部门责令停产停业整顿', fieldId, 3)}
+                            ${generateRiskItem('是否被市场监管部门列入异常经营名录、严重违法失信名单', fieldId, 4)}
+                            ${generateRiskItem('认证要求是否已明确说明', fieldId, 5)}
+                            ${generateRiskItem('与客户间是否还有理解差异', fieldId, 6)}
+                            ${generateRiskItem('是否存在对公正性的威胁', fieldId, 7)}
+                            ${generateRiskItem('客户管理体系运行范围和边界是否清晰明确', fieldId, 8)}
+                            ${generateRiskItem('客户是否存在不允许接触的活动过程', fieldId, 9)}
+                            ${generateRiskItem('有无其他风险', fieldId, 10)}
+                        </div>
+                        <div class="mt-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">评审说明</label>
+                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm h-24 resize-y" maxlength="1000" placeholder="支持各种字符录入，1000字以内"></textarea>
+                        </div>
+                        <div class="mt-4 border-t border-gray-200 pt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-3">价款信息</label>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs text-gray-600 mb-1">合同价款（元）<span class="text-red-500">*</span></label>
+                                    <input type="number" id="serviceAmount_${fieldId}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm" placeholder="0.00" onchange="calculateFieldProfit('${fieldId}')">
+                                </div>
+                                <div>
+                                    <label class="block text-xs text-gray-600 mb-1">预估成本（元）<span class="text-red-500">*</span></label>
+                                    <input type="number" id="estimatedCost_${fieldId}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm" placeholder="0.00" onchange="calculateFieldProfit('${fieldId}')">
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="block text-xs text-gray-600 mb-1">毛利率（%）</label>
+                                    <div class="relative">
+                                        <input type="number" id="profitRate_${fieldId}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 outline-none text-sm bg-gray-50" readonly>
+                                        <span class="absolute right-3 top-2 text-gray-500 text-sm">%</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1297,16 +1647,17 @@
 
         function generateRiskItem(label, fieldId, index) {
             const name = `risk_${fieldId}_${index}`;
+            const defaultYes = [1, 2, 5, 8].includes(index);
             return `
                 <div class="flex items-center justify-between text-sm hover:bg-white p-2 rounded transition-colors">
                     <span class="text-gray-600">${label}</span>
                     <div class="flex gap-4">
                         <label class="flex items-center gap-1.5 cursor-pointer">
-                            <input type="radio" name="${name}" value="no" class="text-brand-600 focus:ring-brand-500" checked>
+                            <input type="radio" name="${name}" value="no" class="text-brand-600 focus:ring-brand-500" ${defaultYes ? '' : 'checked'}>
                             <span class="text-gray-700">否</span>
                         </label>
                         <label class="flex items-center gap-1.5 cursor-pointer">
-                            <input type="radio" name="${name}" value="yes" class="text-brand-600 focus:ring-brand-500">
+                            <input type="radio" name="${name}" value="yes" class="text-brand-600 focus:ring-brand-500" ${defaultYes ? 'checked' : ''}>
                             <span class="text-gray-700">是</span>
                         </label>
                     </div>
@@ -1326,15 +1677,14 @@
             certFieldsCount = containers.length;
         }
 
-        // 计算毛利率
-        function calculateProfit() {
-            const amount = parseFloat(document.getElementById('serviceAmount').value) || 0;
-            const cost = parseFloat(document.getElementById('estimatedCost').value) || 0;
-            
-            if (amount > 0) {
-                const rate = ((amount - cost) / amount * 100).toFixed(2);
-                document.getElementById('profitRate').value = rate;
-            }
+        // 计算指定认证领域的毛利率
+        function calculateFieldProfit(fieldId) {
+            const amount = parseFloat(document.getElementById(`serviceAmount_${fieldId}`).value) || 0;
+            const cost = parseFloat(document.getElementById(`estimatedCost_${fieldId}`).value) || 0;
+            const rateInput = document.getElementById(`profitRate_${fieldId}`);
+
+            if (!rateInput) return;
+            rateInput.value = amount > 0 ? ((amount - cost) / amount * 100).toFixed(2) : '';
         }
 
         // 相对方弹窗相关函数
@@ -1616,23 +1966,26 @@
             let total = 0;
             
             if (subProjects.length === 0) {
-                container.innerHTML = '<tr><td colspan="4" class="px-3 py-8 text-center text-gray-400 text-sm">暂无子项目</td></tr>';
+                container.innerHTML = '<tr><td colspan="6" class="px-3 py-8 text-center text-gray-400 text-sm">暂无数据</td></tr>';
             } else {
                 container.innerHTML = subProjects.map(p => {
                     total += p.total;
                     return `
                         <tr class="hover:bg-gray-50 group border-b border-gray-100">
-                            <td class="px-3 py-3 text-xs text-gray-600 font-mono">${p.code}</td>
-                            <td class="px-3 py-3">
-                                <div class="font-medium text-sm text-gray-900">${p.name}</div>
-                                ${p.remark ? `<div class="text-xs text-gray-500 mt-0.5">${p.remark}</div>` : ''}
-                            </td>
-                            <td class="px-3 py-3 text-right font-medium text-sm">¥${p.total.toFixed(2)}</td>
+                            <td class="px-3 py-3 text-center"><input type="checkbox"></td>
                             <td class="px-3 py-3 text-center">
-                                <button onclick="removeSubProject(${p.id})" class="text-gray-400 hover:text-red-500 transition-colors p-1">
+                                <button onclick="removeSubProject(${p.id})" class="text-gray-400 hover:text-red-500 transition-colors p-1" title="删除">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </td>
+                            <td class="px-3 py-3">
+                                <div class="font-medium text-sm text-gray-900">${p.name}</div>
+                                <div class="text-xs text-gray-400 mt-0.5">${p.code}</div>
+                                ${p.remark ? `<div class="text-xs text-gray-500 mt-0.5">${p.remark}</div>` : ''}
+                            </td>
+                            <td class="px-3 py-3 text-right text-gray-700">¥${p.price.toFixed(2)}</td>
+                            <td class="px-3 py-3 text-right text-gray-700">${p.qty}</td>
+                            <td class="px-3 py-3 text-right font-medium text-sm">¥${p.total.toFixed(2)}</td>
                         </tr>
                     `;
                 }).join('');
@@ -1672,24 +2025,18 @@
             const container = document.getElementById('attachmentList');
             const count = document.getElementById('attachmentCount');
             
-            count.textContent = attachments.length + '个文件';
+            if (count) count.textContent = attachments.length + '个文件';
             
-            container.innerHTML = attachments.map((file, index) => `
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
-                            <i class="fas fa-file-alt"></i>
-                        </div>
-                        <div>
-                            <div class="text-sm font-medium text-gray-900">${file.name}</div>
-                            <div class="text-xs text-gray-500">${file.size} • ${file.date}</div>
-                        </div>
-                    </div>
-                    <button onclick="removeAttachment(${index})" class="text-gray-400 hover:text-red-500 p-2">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `).join('');
+            container.innerHTML = attachments.length ? attachments.map((file, index) => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                    <td class="px-3 py-3 text-center"><input type="checkbox"></td>
+                    <td class="px-3 py-3 text-center"><button type="button" onclick="removeAttachment(${index})" class="text-gray-400 hover:text-red-500" title="删除"><i class="fas fa-trash-alt"></i></button></td>
+                    <td class="px-3 py-3 text-gray-700">${file.name}</td>
+                    <td class="px-3 py-3 text-gray-600">${file.type}</td>
+                    <td class="px-3 py-3 text-right text-gray-600">${file.size}</td>
+                    <td class="px-3 py-3 text-center text-gray-600">${file.date}</td>
+                </tr>
+            `).join('') : '<tr><td colspan="6" class="px-3 py-8 text-center text-gray-400 text-sm">暂无数据</td></tr>';
         }
 
         // 更新文档预览
@@ -1717,11 +2064,6 @@
             
             if (!selectedParty) {
                 showToast('error', '校验失败', '请选择相对方信息');
-                return;
-            }
-            
-            if (!selectedQuotation) {
-                showToast('error', '校验失败', '请关联报价单');
                 return;
             }
             
@@ -1757,6 +2099,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // 默认展开前几个面板
             renderSubProjects();
+            renderCollectionPlans();
             
             // 点击遮罩关闭弹窗
             document.getElementById('partyModal').addEventListener('click', function(e) {
@@ -1767,6 +2110,12 @@
             });
             document.getElementById('subProjectModal').addEventListener('click', function(e) {
                 if (e.target === this) closeSubProjectModal();
+            });
+            document.getElementById('collectionPlanModal').addEventListener('click', function(e) {
+                if (e.target === this) closeCollectionPlanModal();
+            });
+            document.getElementById('certDomainModal').addEventListener('click', function(e) {
+                if (e.target === this) closeCertDomainModal();
             });
             document.getElementById('quotationModal').addEventListener('click', function(e) {
                 if (e.target === this) closeQuotationModal();
