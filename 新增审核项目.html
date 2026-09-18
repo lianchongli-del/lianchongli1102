@@ -1,0 +1,2536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新增审核项目</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .form-section {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            scroll-margin-top: 88px;
+        }
+
+        .form-section:hover {
+            box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.1);
+        }
+
+        .required::after {
+            content: "*";
+            color: #dc2626;
+            margin-left: 2px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-field label {
+            font-size: 12px;
+            font-weight: 500;
+            color: #475569;
+            line-height: 1.4;
+        }
+
+        .form-field input,
+        .form-field select,
+        .form-field textarea {
+            min-height: 36px;
+            padding: 7px 10px;
+            font-size: 13px;
+            line-height: 1.4;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .form-field input:focus,
+        .form-field select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-field input:read-only {
+            color: #64748b;
+            background: #f3f4f6;
+            cursor: not-allowed;
+        }
+
+        .form-field textarea {
+            min-height: 96px;
+            resize: vertical;
+        }
+
+        .form-field .textarea-tall {
+            min-height: 132px;
+        }
+
+        .business-panel {
+            display: grid;
+            gap: 18px;
+        }
+
+        .business-items {
+            display: grid;
+            gap: 16px;
+        }
+
+        .business-empty {
+            padding: 32px 20px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            color: #94a3b8;
+            background: #f8fafc;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .reviewer-card {
+            display: grid;
+            gap: 14px;
+            padding: 0;
+        }
+
+        .reviewer-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .reviewer-card-title {
+            color: #1e293b;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .reviewer-empty {
+            padding: 24px 16px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 8px;
+            color: #94a3b8;
+            background: #f8fafc;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .reviewer-modal-content {
+            max-width: 900px;
+        }
+
+        .reviewer-option-table {
+            width: 100%;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .reviewer-option-table th,
+        .reviewer-option-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #eef2f7;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .reviewer-option-table th {
+            color: #475569;
+            background: #f8fafc;
+            font-weight: 600;
+        }
+
+        .reviewer-option-table tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .reviewer-option-table input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #2563eb;
+        }
+
+        .reviewer-search-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .reviewer-unit-search {
+            position: relative;
+        }
+
+        .reviewer-unit-suggestions {
+            position: absolute;
+            top: calc(100% + 4px);
+            right: 0;
+            left: 0;
+            z-index: 10;
+            max-height: 220px;
+            overflow-y: auto;
+            border: 1px solid #dbe3ef;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, .12);
+        }
+
+        .reviewer-unit-suggestion {
+            display: block;
+            width: 100%;
+            padding: 9px 12px;
+            color: #475569;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        .reviewer-unit-suggestion:hover {
+            color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .reviewer-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .reviewer-option-card {
+            display: grid;
+            gap: 8px;
+            min-width: 0;
+            min-height: 132px;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .reviewer-option-card:hover {
+            border-color: #93c5fd;
+            background: #eff6ff;
+        }
+
+        .reviewer-option-card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reviewer-option-card-name {
+            overflow: hidden;
+            color: #334155;
+            font-size: 14px;
+            font-weight: 600;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .reviewer-option-card-meta {
+            overflow-wrap: anywhere;
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .reviewer-no-result {
+            grid-column: 1 / -1;
+            padding: 32px 16px;
+            color: #64748b;
+            text-align: center;
+        }
+
+        .business-item {
+            display: grid;
+            gap: 16px;
+            padding: 18px;
+            border: 1px solid #dbe3ef;
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .business-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #eef2f7;
+        }
+
+        .business-item-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1e293b;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .business-item-index {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 999px;
+            color: #2563eb;
+            background: #dbeafe;
+            font-size: 12px;
+        }
+
+        .business-readonly-field {
+            display: flex;
+            align-items: center;
+            min-height: 40px;
+            padding: 8px 0 4px;
+            color: #334155;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .business-remove {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .business-remove:hover {
+            color: #dc2626;
+        }
+
+        .business-pick-row {
+            display: grid;
+            grid-template-columns: minmax(260px, .8fr) minmax(360px, 1.2fr);
+            gap: 16px;
+            align-items: end;
+        }
+
+        .business-category-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 8px;
+        }
+
+        .business-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 24px 40px;
+        }
+
+        .business-info-field {
+            min-width: 0;
+        }
+
+        .business-info-field > label {
+            display: block;
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .category-toggle {
+            display: inline-flex;
+            width: 100%;
+            padding: 4px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+
+        .category-toggle button {
+            flex: 1 1 0;
+            min-height: 34px;
+            border-radius: 7px;
+        }
+
+        .business-summary {
+            display: block;
+            padding: 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+        }
+
+        .business-summary .readonly-display {
+            min-height: 48px;
+            padding: 8px 0 0;
+            border: 0;
+            background: transparent;
+            color: #334155;
+            font-size: 14px;
+        }
+
+        .business-editor-card > .readonly-display {
+            border: 0;
+            background: transparent;
+            padding: 8px 0 0;
+            color: #334155;
+            font-size: 14px;
+        }
+
+        .business-editor-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 16px;
+            align-items: stretch;
+        }
+
+        .business-editor-grid.single-editor {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .business-editor-grid textarea {
+            display: block;
+            width: 100%;
+            height: 100px;
+            min-height: 100px;
+            max-height: 640px;
+            overflow: auto;
+            resize: vertical !important;
+        }
+
+        .business-editor-card {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 0;
+            padding: 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .business-editor-card label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #334155;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .field-help {
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: 400;
+        }
+
+        .readonly-display {
+            min-height: 180px;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            color: #475569;
+            background: #f8fafc;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            overflow: auto;
+        }
+
+        .upload-zone {
+            border: 2px dashed #3b82f6;
+            border-radius: 12px;
+            background: #eff6ff;
+            transition: all .2s ease;
+        }
+
+        .upload-zone:hover,
+        .upload-zone.dragover {
+            border-color: #3b82f6;
+            background: #dbeafe;
+        }
+
+        .modal {
+            opacity: 0;
+            visibility: hidden;
+            transition: all .2s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            transform: scale(.96);
+            transition: all .2s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .business-modal-content {
+            max-width: 720px;
+            border-radius: 16px;
+        }
+
+        .business-modal-header {
+            padding: 20px 28px;
+        }
+
+        .business-modal-header h3 {
+            font-size: 20px;
+        }
+
+        .business-modal-close {
+            color: #94a3b8;
+            font-size: 22px;
+        }
+
+        .business-modal-body {
+            display: grid;
+            gap: 20px;
+            padding: 26px 28px 30px;
+        }
+
+        .business-modal-body .form-field {
+            gap: 10px;
+        }
+
+        .business-modal-body .form-field > label {
+            color: #475569;
+            font-size: 14px;
+        }
+
+        .business-modal-body select {
+            min-height: 46px;
+            padding: 0 14px;
+            border-radius: 10px;
+            color: #334155;
+            font-size: 14px;
+        }
+
+        .business-modal-body .category-toggle {
+            min-height: 56px;
+            padding: 5px;
+            border-radius: 12px;
+        }
+
+        .business-modal-body .category-toggle button {
+            min-height: 44px;
+            border-radius: 9px;
+            font-size: 16px;
+        }
+
+        .business-modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding: 18px 28px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .business-modal-footer button {
+            min-width: 78px;
+            min-height: 44px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .footer-actions {
+            position: sticky;
+            bottom: 0;
+            z-index: 20;
+            background: rgba(255, 255, 255, .96);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .anchor-nav {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            height: 42px;
+            overflow-x: auto;
+            border-top: 1px solid #eef2f7;
+        }
+
+        .anchor-link {
+            display: inline-flex;
+            align-items: center;
+            height: 42px;
+            flex: 0 0 auto;
+            border-bottom: 2px solid transparent;
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 500;
+            transition: color .2s ease, border-color .2s ease;
+        }
+
+        .anchor-link:hover,
+        .anchor-link.active {
+            border-bottom-color: #2563eb;
+            color: #2563eb;
+        }
+
+        .anchor-section {
+            scroll-margin-top: 112px;
+        }
+
+        @media (max-width: 1024px) {
+            .form-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .business-pick-row,
+            .business-summary,
+            .business-editor-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .reviewer-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 640px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .reviewer-search-grid,
+            .reviewer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-800 bg-slate-50">
+    <div class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div class="max-w-[1600px] mx-auto px-6">
+            <div class="flex items-center justify-between h-14">
+                <div class="flex items-center gap-4">
+                    <button onclick="history.back()" class="text-slate-600 hover:text-slate-900 flex items-center gap-2 text-sm transition-colors">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>返回</span>
+                    </button>
+                    <div class="h-4 w-px bg-slate-300"></div>
+                    <h1 class="text-lg font-bold text-slate-900">新增技术服务/培训项目</h1>
+                    <span id="projectTypeBadge" class="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">技术服务</span>
+                    <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">待提交</span>
+                </div>
+                <div class="flex gap-2">
+                    <button type="button" onclick="saveDraft()" class="px-3 py-2 border border-slate-300 rounded-lg hover:bg-slate-50 text-sm font-medium text-slate-700 transition-all">
+                        <i class="fas fa-save mr-1.5"></i>保存
+                    </button>
+                    <button type="button" onclick="submitForm()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md shadow-blue-200 transition-all active:scale-95">
+                        <i class="fas fa-paper-plane mr-1.5"></i>提交
+                    </button>
+                </div>
+            </div>
+            <nav class="anchor-nav" aria-label="页面导航">
+                <a class="anchor-link active" href="#basicInfo">基本信息</a>
+                <a class="anchor-link" href="#businessInfo">业务信息</a>
+                <a class="anchor-link" href="#personnelInfo">人员信息</a>
+                <a class="anchor-link" href="#attachmentInfo">附件信息</a>
+            </nav>
+        </div>
+    </div>
+
+    <main class="max-w-[1600px] mx-auto px-6 py-6 space-y-6">
+        <section id="basicInfo" class="anchor-section form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">1</div>
+                <h2 class="font-semibold text-slate-900">基本信息</h2>
+            </div>
+            <div class="p-6">
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label class="required">项目编号</label>
+                        <input type="text" id="projectNo" value="1100Q20260001" readonly>
+                    </div>
+                    <div class="form-field">
+                        <label class="required">客户名称</label>
+                        <input type="search" id="customerName" list="customerOptions" placeholder="输入客户名称检索并选择" autocomplete="off">
+                        <datalist id="customerOptions"></datalist>
+                    </div>
+                    <div class="form-field">
+                        <label>统一社会信用代码</label>
+                        <input type="text" id="creditCode" readonly placeholder="选择客户后自动带入">
+                    </div>
+                    <div class="form-field">
+                        <label class="required">关键场所机构</label>
+                        <input type="search" id="siteOrg" list="orgOptions" placeholder="输入总部或分中心名称检索" autocomplete="off">
+                    </div>
+                    <div class="form-field">
+                        <label class="required">业务来源机构</label>
+                        <input type="search" id="sourceOrg" list="orgOptions" placeholder="输入总部或分中心名称检索" autocomplete="off">
+                        <datalist id="orgOptions"></datalist>
+                    </div>
+                    <div class="form-field">
+                        <label class="required">计划启动日期</label>
+                        <input type="date" id="startDate">
+                    </div>
+                    <div class="form-field">
+                        <label class="required">计划结束日期</label>
+                        <input type="date" id="endDate">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="businessInfo" class="anchor-section form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">2</div>
+                    <h2 class="font-semibold text-slate-900">业务信息</h2>
+                </div>
+                <button type="button" onclick="addBusinessItem()" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                    <i class="fas fa-plus mr-1"></i>新增业务
+                </button>
+            </div>
+            <div class="p-6">
+                <div id="businessItems" class="business-items"></div>
+            </div>
+        </section>
+
+        <section id="personnelInfo" class="anchor-section form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">3</div>
+                <h2 class="font-semibold text-slate-900">人员信息</h2>
+                </div>
+                <button type="button" onclick="openReviewerModal()" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                    <i class="fas fa-user-plus mr-1"></i>选择人员
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="reviewer-card">
+                    <div id="reviewerList"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="attachmentInfo" class="anchor-section form-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">4</div>
+                    <h2 class="font-semibold text-slate-900">附件信息</h2>
+                </div>
+            </div>
+            <div class="p-6">
+                <label class="upload-zone flex items-center justify-between gap-4 p-5 cursor-pointer" id="uploadZone">
+                    <input id="projectFiles" type="file" multiple hidden accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                    <span class="min-w-0">
+                        <span>
+                            <span class="block text-sm font-semibold text-slate-900">上传项目附件</span>
+                            <span class="block text-xs text-slate-500 mt-1">支持上传 PDF、Word、图片格式，单个文件不超过 20M。</span>
+                        </span>
+                    </span>
+                    <span class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm">选择文件</span>
+                </label>
+
+                <div class="mt-4 border border-slate-200 rounded-xl overflow-hidden bg-white">
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-50 text-slate-700">
+                            <tr>
+                                <th class="px-4 py-3 text-left font-semibold">附件名称</th>
+                                <th class="px-4 py-3 text-center font-semibold w-40">上传人</th>
+                                <th class="px-4 py-3 text-center font-semibold w-40">上传日期</th>
+                                <th class="px-4 py-3 text-center font-semibold w-48">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attachmentBody" class="divide-y divide-slate-100">
+                            <tr id="emptyAttachment">
+                                <td colspan="4" class="px-4 py-8 text-center text-slate-500">暂无随附单据，请点击选择文件或拖拽文件到上方区域</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="toast" class="hidden fixed top-20 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-lg shadow-2xl z-50 flex items-center gap-2 opacity-0 transition-all duration-300">
+        <i class="fas fa-check-circle text-green-400"></i>
+        <span id="toastMessage">操作成功</span>
+    </div>
+
+    <div id="businessModal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4" onclick="closeBusinessModal(event)">
+        <div class="modal-content business-modal-content w-full bg-white shadow-2xl" onclick="event.stopPropagation()">
+            <div class="business-modal-header flex items-center justify-between border-b border-slate-200">
+                <h3 class="font-semibold text-slate-900">新增业务</h3>
+                <button type="button" class="business-modal-close hover:text-slate-700" onclick="closeBusinessModal()" aria-label="关闭">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="business-modal-body">
+                <div class="form-field">
+                    <label class="required">业务大类</label>
+                    <div class="category-toggle">
+                        <button type="button" data-modal-category="技术服务" class="text-sm font-medium bg-blue-600 text-white shadow-sm">技术服务</button>
+                        <button type="button" data-modal-category="培训" class="text-sm font-medium text-slate-600 hover:text-blue-600">培训</button>
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label class="required" for="modalBusinessType">业务类型</label>
+                    <select id="modalBusinessType"></select>
+                </div>
+                <div class="form-field">
+                    <label class="required" for="modalBusinessName">业务名称</label>
+                    <select id="modalBusinessName"></select>
+                </div>
+            </div>
+            <div class="business-modal-footer">
+                <button type="button" onclick="closeBusinessModal()" class="border border-slate-300 font-medium text-slate-700 hover:bg-slate-50">取消</button>
+                <button type="button" onclick="confirmAddBusiness()" class="bg-blue-600 font-medium text-white hover:bg-blue-700">添加</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="reviewerModal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4" onclick="closeReviewerModal(event)">
+        <div class="modal-content reviewer-modal-content w-full rounded-xl bg-white shadow-2xl" onclick="event.stopPropagation()">
+            <div class="business-modal-header flex items-center justify-between border-b border-slate-200">
+                <h3 class="font-semibold text-slate-900">选择人员</h3>
+                <button type="button" class="business-modal-close hover:text-slate-700" onclick="closeReviewerModal()" aria-label="关闭">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="business-modal-body">
+                <div class="reviewer-search-grid">
+                    <div class="form-field">
+                        <label for="reviewerNameSearch">人员姓名</label>
+                        <input type="search" id="reviewerNameSearch" placeholder="输入姓名" autocomplete="off">
+                    </div>
+                    <div class="form-field">
+                        <label for="reviewerIdSearch">CQC编号</label>
+                        <input type="search" id="reviewerIdSearch" placeholder="输入CQC编号" autocomplete="off">
+                    </div>
+                    <div class="form-field reviewer-unit-search">
+                        <label for="reviewerUnitSearch">工作单位</label>
+                        <input type="search" id="reviewerUnitSearch" list="reviewerUnitOptions" placeholder="输入或选择工作单位" autocomplete="off">
+                        <datalist id="reviewerUnitOptions"></datalist>
+                        <div id="reviewerUnitSuggestions" class="reviewer-unit-suggestions hidden"></div>
+                    </div>
+                </div>
+                <table class="reviewer-option-table">
+                    <thead>
+                        <tr>
+                            <th class="w-16 text-center">选择</th>
+                            <th>人员姓名</th>
+                            <th>CQC编号</th>
+                            <th>工作单位</th>
+                            <th>联系电话</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reviewerOptions"></tbody>
+                </table>
+                <div class="flex items-center justify-between text-sm text-slate-500">
+                    <span id="reviewerPageInfo"></span>
+                    <div class="flex items-center gap-2">
+                        <button type="button" id="reviewerPrev" onclick="changeReviewerPage(-1)" class="px-3 py-1.5 border border-slate-300 rounded-lg hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50">上一页</button>
+                        <button type="button" id="reviewerNext" onclick="changeReviewerPage(1)" class="px-3 py-1.5 border border-slate-300 rounded-lg hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50">下一页</button>
+                    </div>
+                </div>
+            </div>
+            <div class="business-modal-footer">
+                <button type="button" onclick="closeReviewerModal()" class="border border-slate-300 font-medium text-slate-700 hover:bg-slate-50">取消</button>
+                <button type="button" onclick="confirmReviewers()" class="bg-blue-600 font-medium text-white hover:bg-blue-700">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+window.BUSINESS_ITEMS = [
+  {
+    "category": "技术服务",
+    "no": 1,
+    "type": "体系建设",
+    "name": "Q/E/S传统体系建设技术服务",
+    "content": "依据Q/E/S标准，为客户搭建Q/E/S管理体系架构，并帮助客户有效运行管理体系，获得Q/E/S认证证书",
+    "field": "质量管理领域\\n环境能源管理领域\\n风险防控领域",
+    "proposal": "JSFW-1-2 质量环境职业健康QES三体系认证服务方案 江苏公司\nJSFW-1-3 质量管理体系建立技术服务方案 江苏公司\nJSFW-1-13 QES三体系持续建设技术服务方案 河北公司\nJSFW-1-20 Q/E/S管理体系建设技术服务方案 云南公司\nJSFW-1-22 某公司QES管理体系建立技术服务方案 贵州公司\nJSFW-1-24 质量管理体系迭代升级技术服务方案 云南公司\nJSFW-1-25 某设计公司管理提升技术服务方案 重庆公司\nJSFW-1-26 质量、环境、职业健康安全管理体系及其他证书技术服务方案 广西公司\nJSFW-1-45 南航洗涤中心QES管理体系搭建及中检品控过程认证方案 广东公司\nJSFW-1-52 某集团QES管理体系建设技术服务方案 海南公司\nJSFW-1-53 某能源发展公司QES管理体系建立技术服务方案 湖南公司\nJSFW-1-58 某公司QES三标管理体系建设技术服务方案 甘肃公司\nJSFW-1-59 QHSE管理体系量化审核技术服务方案 陕西公司"
+  },
+  {
+    "category": "技术服务",
+    "no": 2,
+    "type": "体系建设",
+    "name": "F/H食品管理体系建设技术服务",
+    "content": "依据F/H标准，为客户搭建F/H管理体系架构，并帮助客户有效运行管理体系，获得F/H认证证书",
+    "field": "食品(农产品)安全管理领域",
+    "proposal": "JSFW-1-11 Q/E/S/F/H管理体系提升技术服务方案 厦门公司\nJSFW-1-38 国际旅游公司QESH管理体系建立技术服务方案 上海公司\nJSFW-1-59 QHSE管理体系量化审核技术服务方案 陕西公司"
+  },
+  {
+    "category": "技术服务",
+    "no": 3,
+    "type": "体系建设",
+    "name": "16949管理体系建设技术服务",
+    "content": "依据16949标准，为客户搭建16949管理体系架构，并帮助客户有效运行管理体系，获得16949认证证书",
+    "field": "质量管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 4,
+    "type": "体系建设",
+    "name": "知识产权管理体系建设技术服务",
+    "content": "依据知识产权标准，为客户搭建知识产权管理体系架构，并帮助客户有效运行管理体系，获得知识产权认证证书",
+    "field": "质量管理领域",
+    "proposal": "JSFW-1-27  质量、知识产权、信息安全、信息服务管理体系建设技术服务方案 广西公司"
+  },
+  {
+    "category": "技术服务",
+    "no": 5,
+    "type": "体系建设",
+    "name": "FSSC体系技术服务项目",
+    "content": "依据FSSC标准，为客户搭建FSSC管理体系架构，并帮助客户有效运行管理体系，获得FSSC认证证书",
+    "field": "食品(农产品)安全管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 6,
+    "type": "体系建设",
+    "name": "有机产品管理体系建设技术服务",
+    "content": "依据有机产品标准，为客户搭建有机产品管理体系架构，并帮助客户有效运行管理体系，获得有机产品认证证书",
+    "field": "食品(农产品)安全管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 7,
+    "type": "体系建设",
+    "name": "良好农业规范（C/G GAP）技术服务",
+    "content": "依据C/G GAP标准，为客户搭建C/G GAP管理体系架构，并帮助客户有效运行管理体系，获得C/G GAP认证证书",
+    "field": "食品(农产品)安全管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 8,
+    "type": "体系建设",
+    "name": "英国零售商协会（BRC）认证技术服务",
+    "content": "依据BRC标准，为客户搭建BRC管理体系架构，并帮助客户有效运行管理体系，获得BRC认证证书",
+    "field": "食品(农产品)安全管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 9,
+    "type": "体系建设",
+    "name": "供应链安全管理体系建设技术服务",
+    "content": "依据ISO28000标准，为客户搭建供应链安全管理体系架构，并帮助客户有效运行管理体系，获得供应链安全管理体系认证证书",
+    "field": "质量管理领域",
+    "proposal": "JSFW-1-51  供应链安全管理体系建设技术服务方案 珠海公司"
+  },
+  {
+    "category": "技术服务",
+    "no": 10,
+    "type": "体系建设",
+    "name": "其它认证为目的的低价值技术服务",
+    "content": "——",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 11,
+    "type": "标准规范建设",
+    "name": "标准制/修订（地方标准、团体标准、企业标准）",
+    "content": "一、服务依据\n标准起草：GB/T 1.1-2020；团标良评价：《团体标准管理规定》和GB/T 20004.1《团体标准化 第1部分：良好行为指南》而实施的第三方评价活动，制定了《团体标准化良好行为评价管理办法》《团体标准化良好行为评价师注册和管理》《团体标准化良好行为评价机构认定和管理规则》《团体标准化良好行为评价实施规则》；企业标准化框架搭建和指导：GB/T 1.1-2020；GB/T 19001-2016等\n二、服务周期\n国标地标团标1-2年；企标3-6月；团标良评价证书有效期3年，获证后 18 个月内评价机构实施 1 次例行监督；企业标准化框架搭建和指导1年\n三、服务等级\n国标地标团标；企标；团标良评价；企业标准化框架搭建和指导\n四、服务方法\n国标地标团标企标现场+文审+检测/测试；团标良评价现场+文审；企业标准化框架搭建和指导现场+文审；\n五、交付物\n标准/报告/文件",
+    "field": "质量管理领域",
+    "proposal": "JSFW-1-66 水稻生产技术规程地方标准编技术服务方案 西藏公司\nJSFW-1-68  高速公路公司标准化作业规程编制服务方案 河南公司"
+  },
+  {
+    "category": "技术服务",
+    "no": 12,
+    "type": "标准规范建设",
+    "name": "标准化试点示范创建",
+    "content": "一、服务依据\nGB/T 35778、GB/T 15496、GB/T 24421.1~5等一系列国家标准构建试点要求的标准化体系。\n二、服务周期：4-10个月。\n三、服务等级\n1、基础级，适用于基础较好的单位，服务侧重于材料包装、申报流程指导。\n2、提高级，针对需要从零开始或系统性提升的单位，全面建设，提供从标准体系设计、文件编制、全员培训到运行落地的全套服务。\n3、定制级，面向成为行业标杆的单位，服务侧重于标准体系的先进性、特色模式总结、可复制经验提炼及标准化成果（如标准、论文、专利）的创造。\n四、服务方法\n诊断评估与差距分析，顶层设计与体系规划，标准编写与文件整合，培训宣导与运行辅导，模拟评审与持续改进。\n五、交付物\n《国家标准化试点项目申报书》、《实施方案》、《标准化试点建设可行性研究报告》、《项目任务书》、《试点建设实施方案》、《企业标准体系结构图与标准明细表》、全套《企业标准文本》（技术、管理、工作标准汇编）、相关《标准化管理制度》、《试点建设工作总结报告》、《标准化试点验收自评报告》、完整的《试点建设过程佐证材料汇编》（记录、图片、数据等）、各部门迎检汇报材料（PPT、宣传片等）。",
+    "field": "质量管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 13,
+    "type": "标准规范建设",
+    "name": "全产业链标准体系构建",
+    "content": "一、服务依据\n遵循国家在相关产业领域发布的政策文件、法律法规，确保标准体系符合宏观政策导向与法律要求；参考国际、国内同行业先进标准，结合行业发展趋势与特点，使构建的标准体系具有权威性与通用性；深入调研企业全产业链各环节的业务流程、管理模式、技术特点等，以企业实际运营和发展战略为重要依据，保证标准体系的实用性和针对性。\n二、服务周期\n项目服务周期一般为18 - 30个月。前期3 - 6个月用于全面调研产业链现状、收集资料；中间9 - 18个月开展标准体系框架设计、标准制定与研讨修改；后期6 - 12个月进行标准试点应用、效果评估与持续优化。\n三、服务等级/难易程度\n属于较高难度复杂项目。全产业链涉及众多环节和利益主体，各环节标准差异大，协调统一困难；且需考虑技术快速迭代、市场需求变化等因素对标准的影响，对专业知识和综合能力要求极高。\n四、服务方法\n采用实地调研、数据分析、专家咨询、试点验证等多种方法。通过实地走访了解实际情况，运用数据分析挖掘潜在问题，借助专家智慧提供专业指导，开展试点验证确保标准的可行性。\n五、交付物\n包括《全产业链标准体系编制说明》及收集的现行有效的相关标准文本、各环节制定的标准文件、标准实施指南、标准应用评估报告、标准化SOP作业指导书、标准动态优化机制方案以及相关培训资料等。",
+    "field": "食品(农产品)安全管理领域",
+    "proposal": "JSFW-1-64 某产品产业链供应链质量联动提升技术服务方案 西藏公司\nJSFW-1-65 藏香产业链质量提升行动工作方案 西藏公司"
+  },
+  {
+    "category": "技术服务",
+    "no": 14,
+    "type": "供应链评价",
+    "name": "二方审核（供应商，OEM等）",
+    "content": "一、服务依据\n国家及地方相关法律法规、行业标准；客户提出的质量安全合规要求（含指定国际法规、双方约定要求）\n二、服务周期\n客户合同约定为准，常规为1年；\n三、服务方法\n围绕客户指定的供应商及OEM工厂，开展专业化质量安全二方审核工作，具体流程如下：\n1.  前期对接客户，明确审核范围、标准及重点要求，制定个性化审核方案；2.  组织专业审核团队，赴受审核方现场开展实地核查，全面排查其在质量管控、生产安全、合规运营等方面存在的问题；\n3.  对核查发现的不符合项进行精准界定、详细描述，明确整改要求及整改时限；\n4.  系统梳理审核过程、核查结果及不符合项，编制完整审核报告；\n5.  审核结果作为客户供应商准入、合作续期、分级管理及优化供应商体系的重要依据，为客户供应商管理决策提供支撑。\n四、交付物\n1.  客户指定固定格式的单家供应商/OEM工厂审核报告（含审核概况、核查结果、不符合项详情、整改建议等）；\n2.  多供应商汇总审核报告（如需），系统汇总所有受审核方的审核情况、整体评价及优化建议；\n3.  审核过程相关佐证资料（如现场核查照片、不符合项确认单等），确保审核工作可追溯、可核查。",
+    "field": "食品(农产品)安全管理领域\\n质量管理领域",
+    "proposal": "JSFW-1-5  供应商二方审核技术服务方案 江苏公司\nJSFW-1-16 质量体系建设及二方审核技术服务方案 北京公司\nJSFW-1-30 洲际酒店综合质量评估服务方案 上海公司\nJSFW-1-31 食品安全风险评估二方审核服务方案 浙江公司\nJSFW-1-32 百联门店食品安全审核方案 上海公司\nJSFW-1-33 产品标签合规和供应商评审技术服务方案 上海公司\nJSFW-1-50 员工餐厅卫生安全检查技术服务方案 深圳公司\\nJSFW-1-56 服务贸易(外包)园区(基地)评价技术服务方案 山东公司"
+  },
+  {
+    "category": "技术服务",
+    "no": 15,
+    "type": "供应链评价",
+    "name": "生态原产地产品评价",
+    "content": "一、服务依据   \n1.基础标准：TC/CIQA 4-2023《生态原产地产品通用要求》（核心技术依据）、TC/CIQA 6-2023《生态原产地产品保护区通用要求》、SN/T 4756—2017《生态原产地产品保护评定技术规范》（出入境检验检疫行业标准）\n2.管理文件：《生态原产地产品和产品保护区管理办法》、《生态原产地产品和产品保护区评审工作指南》\n3.辅助依据：产品相关法律法规（如环保、质量安全法规）、GB/T 24040-2008/GB/T 24044-2008（生命周期评价标准）、WTO《原产地规则协定》（实质性改变判定标准）\n二、服务周期\n技术服务周期：3-6 个月，证书有效期：3 年\n三、服务等级\n1. 服务等级（按产品类型划分）\n等级\t                适用产品领域\t                                核心特征\n一级(简单)   第一产业（农产品、林产品等）\t原产地属性明确，生态流程简单\n二级(中等)   第三产业（旅游、非遗服务等）\t需结合服务场景与地域文化关联性\n三级(复杂)   第二产业（化工、电子、建材）\t需核查全产业链生态合规（含跨境配件）\n2. 核心难易点\n高难度项：生态合规性证明（全生命周期低碳节能数据）、原产地溯源链完整性（尤其是多环节加工产品）\n中等难度项：区域生态环境质量检测报告、传统工艺与生态标准的融合验证\n基础要求：申请人资质合规（企业 / 政府 / 行业组织均可申请）、产品命名规范（需含地名 / 注册商标 / 产品名三要素）\n四、服务方法\n1.双重认定逻辑：\n◦生态性认定：核查全生命周期（生产 / 加工 / 运输 / 储存）的绿色环保、资源节约属性\n◦原产地认定：验证产品与特定地域的自然 / 人文基因关联性\n2.具体实施手段：\n◦文件评审：审核申请书、生态报告、溯源记录等 10 + 类材料\n◦现场核验：实地核查生产流程、产地环境、管理体系运行情况\n◦综合评定：采用定量（能耗 / 污染物排放数据）+ 定性（工艺先进性 / 社会责任）结合法\n◦证后监督：年度抽查 + 专项核查，动态维护认证有效性\n五、交付物\n1.核心交付物：生态原产地产品保护证书（有效期 3 年）、生态原产地保护产品标志使用权授权文件\n2.辅助交付物：评审报告（含生态 / 原产地双维度评价结论）、公示公告文件（协会官网发布截图）、整改建议清单（如适用）\n3.延伸服务成果：国际互认对接支持（突破绿色贸易壁垒）、区域公共品牌申报指导（如地方政府申请场景）",
+    "field": "食品(农产品)安全管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 16,
+    "type": "供应链评价",
+    "name": "合规管理体系有效性评价",
+    "content": "一、服务依据\nISO37302:2025《合规管理体系-有效性评价指南》、《中央企业合规管理指引（试行）》、《国资委出资监管企业合规管理办法（试行）》（各地方国资委）以及结合企业情况根据“合规管理体系建设合规”和“重点领域合规”二个维度编制的合规有效性评价标准\n二、服务周期\n出具有效性评价报告时间周期3-5天之间；颁发合规管理体系有效性评价证书按认证管理方案的人天数要求\n三、服务等级\n中等及以上难度\n四、服务方法\n文审+网络核验+现场评价\n五、交付物\n合规管理体系有效性评价报告、合规管理体系有效性评价证书",
+    "field": "合规治理领域",
+    "proposal": "JSFW-1-9 合规管理体系建设有效性评价技术服务方案 江西公司\nJSFW-1-55 省属企业合规管理体系建设评价技术服务方案 山东公司"
+  },
+  {
+    "category": "技术服务",
+    "no": 17,
+    "type": "供应链评价",
+    "name": "安生生产评估(HSE体系）",
+    "content": "满足安全生产法定要求，降低处罚风险；建立可运行、可检查、可改进的 HSE 管理体系；减少事故、职业病、环境事件；提升企业标准化、规范化、品牌化水平；支持客户体系认证、项目投标、政府验收、园区入园\n一、服务依据\n法律法规依据：《中华人民共和国安全生产法》、《中华人民共和国职业病防治法》、《中华人民共和国消防法》、《危险化学品安全管理条例》、地方安全生产条例、应急管理部门要求等\n标准规范依据：GB/T 45001 职业健康安全管理体系 要求及使用指南、GB/T 24001 环境管理体系 要求及使用指南、HSE 管理体系规范（石油化工、化工、工贸等行业版本）、行业专项安全规范、风险分级管控与隐患排查治理相关标准、企业现行制度、操作规程、现场布局、工艺设备资料、监管部门检查意见、整改通知、评审要求\n二、服务周期：1-4个月\n三、服务等级\n适用对象：中石油行业、生产型企业、工贸企业、危化相关企业、园区企业、建筑 / 仓储 / 物流等\n小微企业：合规性诊断 + 简易 HSE 框架 + 隐患排查 + 基础制度\n中型企业：完整 HSE 体系搭建 + 风险评估 + 文件体系 + 培训 + 内部审核\n大型/集团企业：体系成熟度评估 + 过程化 HSE 运行 + 绩效监测 + 持续改进 + 迎审辅导\n四、服务方法\n资料审查、现场踏勘与风险识别、HSE诊断、文件编写/修订、培训宣贯、内审与整改、验收交付\n五、交付物\nHSE 现状评估报告、HSE 管理体系文件套装、风险辨识与风险评估报告、隐患排查与整改建议表、应急预案 / 现场处置方案等",
+    "field": "风险防控领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 18,
+    "type": "供应链评价",
+    "name": "数据资产入表",
+    "content": "1、数据盘点、整理\n工作内容：对数据情况进行调研、形成数据盘点和目录建设方案，形成资源清单\n输出物：《数据资源目录》、《目录建设方案》、《数据资源清单》\n2、数据应用场景分析\n工作内容：根据盘点情况，对数据类型、体量分析，形成应用场景的设计，分析可行性。\n输出物：《数据应用场景分析报告》\n3、数据资源合规分析\n工作内容：收集企业数据合规方面的管理制度、相关方合同、数据采集授权作证、场景应用的合规。\n输出物：《数据合规报告》\n4、数据确权\n工作内容：材料收集、申请登记、公示、颁发证书。\n输出物：《确权证书》\n5、数据资产质量评估\n工作内容：定制质量评估方案，构建全面评价指标体系，执行评测并出具数据资产质量评估报告。\n输出物：《测评方案》、《测评计划》、《测评日志记录》《测试报告》（测试报告应包含整改建议）。\n6、数据资产价值评估\n工作内容：明确评估对象和范围，结合应用场景和资产类型，通过数据资产评估方法适用性分析，选取适用的评估方法，完成数据资产价值评估。\n输出物：《数据资产价值评估报告》。\n7、数据资产评估入表服务\n工作内容：基于甲方提供的数据完成资产入表评估，对于现有符合合规要求和财务标准的数据资产，明确数据资产分类科目、计量等要素，输出专项评估入表报告。\n输出物：《数据资产评估入表报告》。\n8、数据资产列报和披露\n工作内容：确定财务列报科目、内容及金额，并撰写详细披露内容，确保财务报告准确、全面。\n输出物：《数据资产入表列示及披露报告》。\n数据资产入表流程服务周期是4-6个月",
+    "field": "信息(数智)化管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 19,
+    "type": "供应链评价",
+    "name": "数据资产质量等级评价",
+    "content": "依据CQC/GF DQ1001-2024  《数据资产质量测评规范》，服务周期约为1个月，服务方法为到客户现场进行数据探查和数据测评后，进行等级评估，交付物为《数据资产质量等级评价证书》。",
+    "field": "信息(数智)化管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 20,
+    "type": "供应链评价",
+    "name": "数据资产质量测评",
+    "content": "依据CQC/GF DQ1001-2024  《数据资产质量测评规范》，服务周期约为1个月，服务方法为到客户现场进行数据探查和数据测评，交付物为《数据资产质量测评证书》和测评报告",
+    "field": "信息(数智)化管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 21,
+    "type": "供应链评价",
+    "name": "生成式人工智能服务安全认证",
+    "content": "依据《GBT+45654-2025网络安全技术 生成式人工智能服务安全基本要求》对生成式人工智能服务安全进行服务认证，服务方法：服务认证。交付物为《生成式人工智能服务安全认证证书》，服务周期：一个月",
+    "field": "信息(数智)化管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 22,
+    "type": "供应链评价",
+    "name": "信用分级评价",
+    "content": "数据信息收集，依据《重要采购方信用分级评分细则》中的基本要求、合规经营、综合素质、财务能力、交易信用、社会责任、业务连续性、发展潜力的评分基准进行评分；3-5个工作日；共分AAA、AA、A、BBB、BB、B、CCC、CC、C九个等级；远程；报告/证书",
+    "field": "质量管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 23,
+    "type": "供应链评价",
+    "name": "企业标准化良好行为等级评价",
+    "content": "依据 GB/T 35778-2017、GB/T 15496-2017、GB/T 15497-2017、GB/T 15498-2017、GB/T 19273-2017 五项国家标准，以及 CAS/GSP 001 (2026 版)《企业标准化良好行为评价与管理准则》及配套系列评价指引文件，为企业提供标准化良好行为等级（AAA/AAAA/AAAAA）评价全流程服务。\n服务周期：3-6 个月\n服务等级：\n1、AAA 级，适用于标准化基础较好、已按五项国标建立企业标准体系并有效运行 3 个月以上的单位，服务侧重于申报材料合规梳理、自评工作全程指导、迎评材料规范筹备。\n2、AAAA 级，针对已获得 AAA 级标良证书、需逐级提升等级且企业标准体系需进一步优化规范的单位，提供从体系对标完善、标准文件制修订、标准化人员专业培训、体系有效运行落地到模拟评审的全流程服务。\n3、AAAAA 级，面向已获得 AAAA 级标良证书、争创行业标良示范标杆的单位，服务侧重于体系高端优化升级、特色标准化模式提炼、标准化品牌打造、标准先进性建设及标准化创新成果转化。\n服务方法：诊断评估与合规性自查，体系对标五项国标及 2026 版评价准则，标准文件制修订与整合，标准化人员专项培训与体系运行辅导，自评流程指导与模拟现场评价，持续改进与标准化长效管理体系建设。\n交付物：《企业标准化良好行为评价申请表》、《企业标准化工作自我评价报告》、《企业标准水平自我声明报告》、《企业标准化良好行为评价自评报告》、《企业标准体系结构图、标准明细表及编制说明》、《企业标准体系运行发布令》、《企业标准化组织架构图》、全套修订完善《企业标准文本》（产品实现、基础保障、岗位标准体系汇编 / 技术、管理、工作标准汇编）、《标准化工作管理制度及岗位职责》、《评价验收迎检资料汇编》（评价记录、佐证图片、运行数据等）、《企业标准化工作改进方案及长效运行计划》、各部门迎评汇报材料（PPT、宣传片等）、《企业标准化良好行为评价全程辅导台账》。",
+    "field": "质量管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 24,
+    "type": "供应链评价",
+    "name": "认证监督检查(有效性，双随机，一公开）",
+    "content": "一、服务依据\n由国家市场监督管理总局（国家认证认可监督管理委员会） 统一部署、制定方案、抽取检查对象，配合各省、市、县（区）市场监督管理部门进行负责辖区内获证组织的现场检查、问题处置与结果公开，开展2025年认证获证组织“双随机、一公开”，监督检查，督检查依据《认证认可条例》、《认证机构管理办法》及相关实施规则要求，主要以获证组织现场查验为主，包括认证和施工现场检查、文件资料核验、从业人员询问等方式进行，重点查找认证机构及获证组织在认证活动中存在违法违规问题(重点以认证机构为主)。\n二、服务周期\n启动部署：2025年3月，总局下发《市场监管总局办公厅关于开展 2025 年认证从业机构 “双随机、一公开” 检查的通知》（市监认证函〔2025〕158 号），统一启动。\n现场检查：2025年6—9月为集中现场检查期，各地按计划完成抽取与核查荆州市市场监管局。\n结果公示：检查完成后20个工作日内公开结果，2025年10—12月完成全年度汇总与公示\n三、服务难易程度：中等难度\n四、服务方法\n由行政监管或执法人员组成检查组(每次检查不少于2人，并指定1名负责人)，配备1名认证审核专家开展检查。\n五、交付物\n《获证组织现场查验提纲及评分》、《认证从业机构“双随机、一公开”检查事实确认表》",
+    "field": "质量管理领域",
+    "proposal": "JSFW-1-14 自愿性认证结果“双随机”监督检查技术服务方案 河北公司\nJSFW-1-17 市场监督管理局认证活动监督检查技术服务方案 河北公司\nJSFW-1-34 市场监管局有机产品认证专项检查技术服务方案 浙江公司\nJSFW-1-35 市场监管局第三方食品安全评估（HACCP）服务方案 上海公司\nJSFW-1-42 市场监管局自愿性认证活动辅助监督检查技术服务方案 广东公司\nJSFW-1-61 市场监管局质量强市建设技术服务方案 西藏公司"
+  },
+  {
+    "category": "技术服务",
+    "no": 25,
+    "type": "供应链评价",
+    "name": "数字化转型成熟度评价",
+    "content": "一、服务依据\n遵循国家关于数字化转型的相关政策文件，以及行业权威发布的数字化转型成熟度模型标准，确保评价工作符合宏观导向与行业规范；以企业自身的数字化转型战略规划、业务发展目标为依据，使评价紧密围绕企业实际需求和发展方向。\n二、服务周期\n1 - 2个月。前期1 - 2周进行资料收集、调研访谈，了解企业数字化转型现状；中期3 - 4周开展评价分析工作；后期5-6周撰写报告、进行成果汇报与沟通。工作量共需3-4人天。\n三、服务等级/难易程度：中等难度项目\n四、服务方法\n综合运用问卷调查、访谈交流、数据收集与分析、案例对比等方法。通过问卷调查广泛收集信息，与关键人员进行访谈深入了解细节，对相关数据进行定量分析，结合行业案例进行定性对比。\n五、交付物\n数字化转型成熟度评价报告》、《成熟度等级评定证书》、为企业制定针对性的数字化转型改进计划和时间表等。",
+    "field": "信息(数智)化管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 26,
+    "type": "管理提升",
+    "name": "流程优化（ISO 9001,6S管理，精准六西格玛等）",
+    "content": "一、服务依据\nISO 9001:2015国际标准、国家质量管理体系相关法规、合规管理要求、小微企业/大型企业行业特性及发展需求、企业现有业务流程及痛点；6S管理核心标准、行业现场管理规范、六西格玛DMAIC核心逻辑等\n服务周期：\n二、服务周期：1-8个月\n三、服务等级\n基础型/小微企业：低成本、快落地、易执行，优先解决基础流程混乱、现场不规范、质量管控缺失等核心痛点，无需复杂体系，侧重实用性和可操作性，避免增加企业管理负担。\n专业型/中型企业：完善流程体系、打通部门协同、提升流程效率、实现质量量化管控，具备一定管理基础，需兼顾标准化与灵活性，解决“部门壁垒、流程冗余、质量波动”等痛点，支撑业务战略发展\n定制型/大型集团公司：构建一体化流程体系、实现全价值链协同、提升流程智能化水平、建立持续改进机制，具备完善的管理基础，需兼顾标准化、规模化与创新性，解决“多层级冗余、跨地域协同低效、流程与战略脱节”等痛点，支撑企业全球化、多元化发展\n四、服务方法\n现场诊断评估，体系设计规划，过程实施支持，检查与验证\n五、交付物\n诊断报告、推行方案、管理手册、风控手册、培训课件及培训记录、服务验收报告/项目成果报告、6S推行方案、6S管理手册",
+    "field": "质量管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 27,
+    "type": "管理提升",
+    "name": "合规管理体系技术服务",
+    "content": "一、服务依据\nISO 37301和GB/T 35770-2022及行业特定法律法规（如金融、医药、数据安全等领域的监督规定），结合企业的合规目标、文化及运行的管理体系，为客户搭建或完善合规管理体系架构，并帮助客户有效运行管理体系，获得合规管理体系认证证书。\n二、服务周期：4-9个月。\n三、服务等级\n1、基础级，适用于中小型企业，提供合规框架搭建、基础培训与风险评估。\n2、专业级，针对中大型企业，涵盖全面合规体系建设、专项领域及深度培训。\n3、定制级，面向跨国企业或高监管行业，提供全球化合规策略、复杂风险应对。\n四、服务方法\n诊断与评估，体系设计与规划，培训与宣导，实施支持，监测与评审。\n五、交付物\n《合规管理体系文件》、《合规专项指引》、《合规义务与风险清单》、《岗位职责清单》、《流程管控清单》、《风险评价标准》、《合规培训教案》、《合规诊断及制度评审报告》等。",
+    "field": "合规治理领域",
+    "proposal": "JSFW-1-4 某公司合规管理体系技术服务方案 江苏公司\nJSFW-1-19 合规管理体系认证服务后续增值服务方案 四川公司\nJSFW-1-21 合规管理体系认证服务方案 四川公司\nJSFW-1-38 电信公司合规管理体系建设技术服务方案 上海公司 \nJSFW-1-41 合规管理体系认证服务方案 广东公司\nJSFW-1-48 合规内控体系建设技术服务方案 深圳公司\nJSFW-1-54 某核电企业合规管理体系建设技术服务方案 湖南公司\nJSFW-1-57 某热电公司合规管理体系建设技术服务方案 甘肃公司\nJSFW-1-60 内控风险体系及合规管理体系建设技术服务方案 陕西公司\nJSFW-1-67 某控股集团合规管理体系建设技术服务方案 辽宁公司"
+  },
+  {
+    "category": "技术服务",
+    "no": 28,
+    "type": "管理提升",
+    "name": "信息类管理体系技术服务（信息安全、信息技术、云安全、个人信息安全等）",
+    "content": "一、服务依据\nISO27001、ISO20000-1、ISO27701、ISO27017、ISO27018等信息安全和信息技术服务相关标准，结合网络安全法、数据安全法、个人信息保护法、网络等级保护2.0、行业监管部门（如工信部、银保监会）发布的信息科技风险管理指引等相关要求，为客户搭建管理体系架构，并帮助客户有效运行管理体系，获得相关管理体系认证证书。\n二、服务周期：1-9个月\n三、服务等级\n1、基础级，适用于处于管理体系建设初期，首要目标是快速获取认证证书以满足招投标或合规门槛的企业。具体服务内容包括：\na.诊断咨询：提供一次性的现状调研与差距分析，明确需补充的硬件、软件及文档。\nb.体系搭建：提供标准化的体系文件模板（管理手册、程序文件），指导企业进行本地化修改。\nc.人员培训：提供标准解析和内审员培训，确保核心人员理解标准要求。\n2、专业级，适用于不仅需要证书，更希望借助体系提升内部管理效率、优化IT服务流程、有效防范信息安全风险的企业。具体服务内容包括：\na.基础级涵盖的所有服务内容。\nb.风险评估与服务改进： 针对信息安全（ISO 27001），进行全面的资产识别与风险评价；针对IT服务（ISO 20000），进行服务级别管理（SLA）和可用性管理的深度优化。\nc.流程优化： 结合企业实际业务流，优化事件管理、问题管理、变更管理等关键流程，使其“写我所做，做我所写”。\nd.云安全专项（可选）：如果涉及云服务，增加ISO 27017/27018的扩展控制措施导入，明确云上责任共担模型的管理。\n3、定制级，适用于大型集团、上市公司或面临严格监管（如金融、互联网大厂）的企业，需要将管理体系与公司治理、数字化转型战略深度融合。具体服务内容包括：\na.专业级涵盖的所有服务内容。\nb.多体系整合：将ISO 27001、ISO 20000、ISO 27701及ISO 9001等体系进行一体化整合，形成一套文件，覆盖多张证书，减少管理冗余。\nc.个人信息保护（PIPL/GDPR）合规：重点针对ISO 27701，帮助企业建立隐私影响评估（PIA）流程，制定个人信息主体权利响应机制，处理跨境数据传输合规性问题。\nd.自动化与工具落地：指导企业将管理要求固化到ITSM工具、SIEM平台或数据防泄漏（DLP）系统中，实现合规要求的自动化监测与响应。\ne.供应链安全管理：建立针对供应商和合作伙伴的信息安全准入和审计机制。\nf.长期顾问服务： 提供年度管理评审支持、体系持续改进跟踪及监管动态更新服务。\n四、服务方法\n诊断与评估，体系设计与规划，培训与宣导，实施支持，监测与评审。\n五、交付物\n《现状调研与差距分析报告》、《信息类管理体系文件包》（含管理手册、程序文件、记录表格模板）、《内审员培训教材》及考核试卷、《内部审核报告》及不符合项清单、《管理评审报告》、《不符合项整改指导记录》及整改验证报告、认证机构审核通过的 《管理体系认证证书》。",
+    "field": "信息(数智)化管理领域",
+    "proposal": "JSFW-1-27  质量、知识产权、信息安全、信息服务管理体系建设技术服务方案 广西公司\nJSFW-1-36  ISO27701/ISO27017/ISO27018/CMMI-3/CCRC/CSA-Sta等多体系建设及认证服务方案 宁波公司\nJSFW-1-49  ISO27001信息安全管理体系认证服务方案 深圳公司"
+  },
+  {
+    "category": "技术服务",
+    "no": 29,
+    "type": "管理提升",
+    "name": "能源管理体系技术服务",
+    "content": "一、服务依据\nGB/T 23331、ISO 50001、国家节能相关法律法规、政策及标准\n二、服务周期：3-6 个月\n三、服务方法\n体系策划、文件编制、现场诊断、运行指导、内部审核、管理评审\n四、交付物\n能源管理体系文件、体系运行指导报告、认证推荐材料及认证证书",
+    "field": "环境能源管理领域",
+    "proposal": "JSFW-1-10 Q/E/S/En/M（“五标一体”）管理体系建设技术服务方案 江西公司\nJSFW-1-23 能源管理体系建设技术服务方案 云南公司\nJSFW-1-44 能源管理体系建设技术服务方案 广东公司"
+  },
+  {
+    "category": "技术服务",
+    "no": 30,
+    "type": "管理提升",
+    "name": "温室气体、碳管理体系及双碳领域其他技术服务",
+    "content": "一、服务依据\n碳管理体系：T/CCAA 39-2022 碳管理体系 要求，温室气体管理体系：GB/T46566-2025 温室气体管理体系 要求。\n二、服务周期\n项目服务周期一般为3 - 6个月。前期1-2个月用于全面调研碳管理/温室气体管理现状、收集资料；中间1-2个月开展碳管理/温室气体管理框架设计和文件编制；后期3-6个月进行体系运行。\n三、服务等级/难易程度\n属于较高难度复杂项目。碳管理/温室气体管理涉及众多碳管理活动，如碳排放、碳足迹、碳资产、碳交易等，涉及方法学较多，数据获取较难，协调统一困难。\n四、服务方法\n采用实地调研、数据分析、专家咨询、文件编制、体系运行辅导等多种方法。通过实地走访了解实际情况，运用数据分析挖掘潜在问题，借助专家智慧提供专业指导，建立体系并指导运行。\n五、交付物\n碳评审报告/温室气体评审报告，碳管理手册/温室气体管理手册、碳管理/温室气体管理程序文件及相关作业指导书等。",
+    "field": "环境能源管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 31,
+    "type": "管理提升",
+    "name": "供应链管理能力提升技术服务",
+    "content": "一、服务依据\n遵循国际和国家有关供应链管理的标准、同时在遵守供应链行业的发布的政策文件、法律法规。\n二、服务周期\n项目服务周期一般为6 - 12个月。前期1-2个月用于全面调研供应链现状、收集资料；中间3-4个月开展供应链管理框架设计和文件编制；后期6 - 12个月进行标准试点应用、效果评估与持续优化。\n三、服务等级/难易程度\n属于较高难度复杂项目。供应链管理涉及众多环节和利益主体，各环节标准差异大，协调统一困难。\n四、服务方法\n采用实地调研、数据分析、专家咨询、试点验证等多种方法。通过实地走访了解实际情况，运用数据分析挖掘潜在问题，借助专家智慧提供专业指导，开展试点验证确保标准的可行性。\n五、交付物\n供应链管理相关制度以及流程以及相关培训资料等。如《供应商管控流程图》《SQE组织架构图》和《SQE岗位说明书》《供应商管理制度》、《供应商战略分型标准》、《供应商评审表》《供应商调查手册》《供应商管理文件集册》",
+    "field": "质量管理领域",
+    "proposal": "JSFW-1-64 某产品产业链供应链质量联动提升技术服务方案 西藏公司\nJSFW-1-65 藏香产业链质量提升行动工作方案 西藏公司"
+  },
+  {
+    "category": "技术服务",
+    "no": 32,
+    "type": "管理提升",
+    "name": "QC小组建设技术服务",
+    "content": "一、服务依据\nTCAQ10201-2024质量管理小组活动准则、TCAQ10208-2024质量管理小组活动推进指南、QC常见新老七大工具。\n二、服务周期\n项目服务周期一般为3-6 月。服务周期要根据项目的多少以及复杂程度确定。通常包括项目选择阶段、方法及工具培训阶段、项目实施阶段、项目评审阶段、结项报告编制阶段。\n三、服务等级/难易程度\n属于较简单的质量改进项目，通常涉及到现场一线员工与他们工作有关的改善。\n四、服务方法\n采用培训+现场辅导的方式。\n五、交付物\n选题清单、项目阶段性评审报告、QC最终结项报告、培训PPT。",
+    "field": "质量管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 33,
+    "type": "管理提升",
+    "name": "能源审计技术服务",
+    "content": "一、服务依据\n《能源审计技术通则》（GB/T 17166-2019  ）、《公共机构能源审计技术导则》（GB/T 31342-2014  ）等。\n二、服务周期：1-3个月。\n三、服务等级\n1、基础级：面向一般用能企业，开展基础用能数据核算、用能现状梳理、关键用能环节排查及普惠性节能建议。\n2、进阶级：面向列入政府重点用能单位管理范围内的企业，开展全流程用能系统诊断、能效对标分析、深度节能降碳潜力挖掘，支撑企业精细化用能管理、能效标杆提升。\n四、服务方法\n节能降耗规划、能源审计指标核算、能源管理持续改进辅导。\n五、交付物\n《能源审计报告》等。",
+    "field": "环境能源管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 34,
+    "type": "管理提升",
+    "name": "智能制造能力成熟度咨询及评价（CMMM）",
+    "content": "一、服务依据\n根据标准《GB/T39116智能制造能力成熟度》《GB/T39117智能制造能力成熟度评估方法》开展\n二、服务周期：6-12月\n三、服务等级\n    一级：(规划级)企业应开始对实施智能制造的基础和条件进行规划,能够对核心业务活动(设计、生产、物流、销售、服务)进行流程化管理。\n    二级：(规范级)企业应采用自动化技术、信息技术手段对核心装备和核心业务活动等进行改造和规范,实现单一业务活动的数据共享。\n    三级：(集成级)企业应对装备、系统等开展集成,实现跨业务活动间的数据共享。\n    四级：(优化级)企业应对人员、资源、制造等进行数据挖掘,形成知识、模型等,实现对核心业务活动的精准预测和优化。\n    五级：(引领级)企业应基于模型持续驱动业务活动的优化和创新,实现产业链协同并衍生新的制造模式和商业模式。\n    首次申请评估的企业，原则上从成熟度一级、二级、三级开始申请，达到成熟度三级后满一年的企业，可以申请成熟度四级评估。针对获得工业和信息化部智能制造示范工厂揭榜单位、卓越级智能工厂的企业，首次可直接申请成熟度四级评估。\n四、服务方法\n对企业智能制造现状开展调研评估，确定成熟度等级，按照子域收集答辩材料，准备成熟度申报答辩PPT，提交预评估申请，开展预评估，提交正式评估申请，开展正式评估，提交正式评估记录材料，专家委员会评审，评审通过后发放证书。\n五、交付物\n成熟度申报答辩PPT、申请材料、成熟度评估证书",
+    "field": "信息(数智)化管理领域",
+    "proposal": "JSFW-1-1 DCMM数据管理能力成熟度评估模型建立及评估技术服务方案  江苏公司"
+  },
+  {
+    "category": "技术服务",
+    "no": 35,
+    "type": "管理提升",
+    "name": "数据管理能力成熟度（DCMM）",
+    "content": "一、服务依据\n《GB/T 36073-2018 数据管理能力成熟度评估模型》\n二、服务等级\n    DCMM模型将组织的数据能力成熟度划分为初始级、受管理级、稳健级、量化管理级和优化级共5个发展等级，帮助组织进行数据管理能力成熟度的评价。\n第1级（初始级）：数据管理依附于单项目需求，被动响应；无统一流程，存在数据孤岛，缺乏跨部门协同机制。\n第2级（受管理级）：建立部门级数据规范，识别数据质量与孤岛问题；初步整合业务系统，但解决方案未系统化。\n第3级（稳健级）：实现企业级数据标准化，建立组织/制度/流程；主动结合业务战略与监管要求实施数据治理。\n第4级（量化管理级）：构建可量化评估体系，数据驱动业务创新；主导行业标准制定，数据成为核心资产竞争力。\n第5级（优化级）：数据驱动企业全流程动态优化，支撑战略决策；建立行业最佳实践，形成生态级数据协同网络。\n三、服务方法\n开展调研确定成熟度等级，准备评估材料，提交评估申请，资料收集解读，开展现场评估，撰写评估报告，提交DCMM专家委员会审核，审核通过后颁发证书。\n四、交付物\n评估申请材料、评估证书",
+    "field": "信息(数智)化管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 36,
+    "type": "管理提升",
+    "name": "软件能力成熟度（CMMI）",
+    "content": "一、服务依据：CMMI模型\n二、服务周期：3-6个月\n三、服务等级\n    CMMI一级：初始级，企业对项目的目标与要做的努力很清晰，项目的目标得以实现。但是由于任务的完成带有很大的偶然性，企业无法保证在实施同类项目的时候仍然能够完成任务。\nCMMI二级：管理级，企业具备一定的项目管理能力，能够遵循预定的计划和流程进行项目实施，具备资源分配、人员职责明确、流程监控和控制等项目管理要素。\n    CMMI三级：定义级，企业能够根据自身的特殊情况以及自己的标准流程，将这套管理体系与流程予以制度化。企业不仅能够在同类的项目上得到成功的实施，在不同类的项目上一样能够得到成功的实施。\n    CMMI四级：量化级，企业的项目管理不仅形成了一种制度，而且要实现数字化的管理。对管理流程要做到量化与数字化。通过量化技术来实现流程的稳定性，实现管理的精度，降低项目实施在质量上的波动。\n    CMMI五级：优化级，企业的项目管理达到了最高的境界。企业要能够充分利用信息资料，对企业在项目实施的过程中可能出现的次品予以预防。能够主动地改善流程，运用新技术，实现流程的优化。\n四、服务方法\n根据企业现有的质量体系、实施过程和效果，以及企业规模、实力、管理需求等因素，评估确定合适的CMMI级别，确定评估组成员，开展CMMI模型基础培训，在CMMI研究院官网进行信息注册，确定评估日期，提交评估申请，开展正式评估，整理所有评估的工作输出物，通过评估系统提交给官方审查，审查通过或者整改通过后颁发证书。\n五、交付物\n评估申请材料、模型培训、认证证书",
+    "field": "信息(数智)化管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 37,
+    "type": "管理提升",
+    "name": "两化融合管理体系",
+    "content": "一、服务依据\nGB/T23001-2017 信息化和工业化融合管理体系要求\n二、服务周期：6-8个月\n三、服务等级\n    A（规范级）:开展了规范级能力建设，支持和优化相关业务范围内的生产经营管理活动，但尚未有效建成支持主营业务范围内关键业务数字化和柔性化运行的新型能力：按照GB/T23001-2017的要求建立了两化融合管理体系，能够规范有效开展职能驱动型的能力打造过程管理。\n    AA（场景级）：聚焦主营业务范围内关键业务场景，建成支持关键业务资源配置效率提升、关键业务活动数字化场景化和柔性化运行的场景级能力：开展了技术使能型的能力打造过程管理，符合GB/T23001-2017标准的要求：主要达成效率提升、成本降低、质量提高等预期价值效益目标。\n    AAA（领域级）：聚焦组织（企业）主营业务领域，建成支持主要业务流程资源高效配置、关键业务集成融合、动态协同和一体化运行的领域级能力：开展了知识驱动型的能力打造过程管理，且支持过程管理动态优化：实现组织整体业务成本降低、效率提升、质量提高等预期价值效益目标，并有效拓展延伸业务。\n    AAAA（平台级）：聚焦组织全员、全要素和全过程，建成支持组织（企业）以及组织（企业）之间资源动态配置、主营业务网络化协同和社会化协作的平台级能力能够按需开展数据驱动型的能力打造过程管理：实现供应链/产业链整体成本降低、效率提升、产品/服务创新、用户连接与赋能等价值效益目标，有条件的组织（企业）培育发展平台级数字业务，开辟业务平台化价值创造新空间。\n    AAAAA（生态级）：聚焦跨组织（企业）、生态合作伙伴、用户等，建成支持智能驱动的生态资源按需精准配置，以及生态合作伙伴间业务智能化、集群化、生态化发展，实现价值开放共创的生态级能力；能够自组织开展智能驱动型的能力打造过程管理。全面实现生态圈用户/生态合作伙伴连接与赋能、数字业务壮大、绿色可持续发展等价值效益目标。\n四、服务方法\n开展企业调研及确定评价等级，建立专门项目工作组，贯标启动，体系文件策划及发布，识别和确定新型能力，开展新型能力策划，新型能力试运行，测评及改进，提交认证申请，协助客户现场迎审，审核通过，颁发认证证书。\n五、交付物\n体系文件材料、认证申请材料、认证证书",
+    "field": "信息(数智)化管理领域",
+    "proposal": "JSFW-1-43 两化融合管理体系实施方案  广东公司"
+  },
+  {
+    "category": "技术服务",
+    "no": 38,
+    "type": "管理提升",
+    "name": "小微企业质量提升",
+    "content": "协助市场总局持续开展“小微企业质量管理体系认证提升行动”，核心是通过引入专业认证、培训、人才培养等方式，帮助企业建立规范、高效的管理体系。",
+    "field": "质量管理领域",
+    "proposal": "JSFW-1-8 小微企业质量管理提升行动技术服务方案 福建公司\nJSFW-1-63 小微企业管理体系提升技术服务方案 西藏公司\nJSFW-1-69 小微企业质量提升-振动产业提升行动试点方案 河南公司\nJSFW-1-70  葡萄酒小微企业质量管理体系提升行动方案 宁夏公司"
+  },
+  {
+    "category": "技术服务",
+    "no": 39,
+    "type": "资质采信",
+    "name": "绿色工厂（市级、省级、国家级）",
+    "content": "一、服务依据\n国家级以工信部发布的《绿色工厂梯度培育及管理暂行办法》为总纲，具体评论依据GB/T 36132标准，省级以各省工信厅《绿色制造梯度培育管理实施细则》为依据，市级以各市工信局《绿色工厂梯度培育管理实施细则》为主要依据。\n二、服务周期：6-12个月。\n三、服务等级\n1、基础级，满足基本门槛，基础管理体系建立、协助完成必要的清洁生产审核等。多见于市级评选。\n2、提高级，在市级基础上主要绩效指标（如单位产品能耗、物耗）达到省内同行业先进水平。通常要求企业已被列入市级培育库或名单。多见于省级评选。\n3、定制级，代表国内最高水平。要求工厂的碳排放、能效、水效等关键指标达到国家发布的标杆水平或行业领先水平，通常要求企业已是省级绿色工厂，审核更为严格，注重全生命周期的绿色低碳和供应链影响。多见于国家级评选。\n四、服务方法\n差距诊断与评估，标准解读培训，绿色发展规划与建设方案，申报评价指标填报过程辅导，现场抽查迎审，持续改进与动态管理辅导。\n五、交付物\n《绿色工厂建设实施方案》、《梯度培育计划》、《绿色工厂指标计算过程表及佐证材料》等。",
+    "field": "环境能源管理领域",
+    "proposal": "无"
+  },
+  {
+    "category": "技术服务",
+    "no": 40,
+    "type": "资质采信",
+    "name": "智能工厂（先进级）",
+    "content": "一、服务依据\n根据工信部发布《六部门关于开展XX年度智能工厂梯度培育行动的通知》，智能工厂包括基础级、先进级、卓越级、领航级四个等级。江苏省先进级智能工厂根据江苏省工信厅每年发布的《关于组织开展XX年江苏省先进级智能工厂申报工作的通知》为准（以有关部门文件为准）。\n建设内容：\n    围绕工厂建设、研发设计、生产作业、生产管理、运营管理等环节开展智能工厂建设，建设场景数不低于《自评价参考》中的15个场景，至少应覆盖生产作业、生产管理、运营管理三个环节，智能制造能力成熟度自评价水平达到GB/T39116-2020《智能制造能力成熟度模型》二级及以上。\n    鼓励企业参考《江苏省制造业领域人工智能技术场景应用自评价参考（2026年版）》（以下简称《AI应用自评价参考》），开展人工智能技术在典型场景的融合应用。\n二、服务周期：3-6个月\n三、服务方法\n对企业智能制造水平开展现场调研诊断，对于满足先进级智能工厂申报条件的企业，制定具体申报方案，确定申报场景，收集申报场景所需系统截图及现场设备图片，整理收集其他申报必要材料，完成申报材料的编制及打磨，完成申报材料的系统填报。\n四、交付物\n《智能工厂诊断报告》《先进级智能工厂申报书》",
+    "field": "信息(数智)化管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 41,
+    "type": "资质采信",
+    "name": "绿色工业园区（省级、国家级）",
+    "content": "一、服务依据\n国家级以工信部发布的《绿色工厂梯度培育及管理暂行办法》为总纲，具体依据《绿色工业园区评价要求》，省级以各省工信厅《绿色工厂绿色工业园区梯度培育及管理实施细则》为依据。\n二、服务周期：3-6个月。\n三、服务等级\n1、省级绿色工业园区，主要绩效指标达到省内园区先进水平。\n2、国家绿色工业园区，代表国内最高水平。要求园区的产业发展、能源利用、资源利用、基础设施、生态环境等关键指标达到国内领先水平，通常要求园区已是省级绿色工业园区，审核更为严格。\n四、服务方法\n差距诊断与评估，标准解读培训，绿色发展规划与建设方案，申报评价指标填报过程辅导，现场抽查迎审，持续改进与动态管理辅导。\n五、交付物\n《绿色工业园区建设实施方案》、《绿色工业园区指标计算过程表及佐证材料》等",
+    "field": "环境能源管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 42,
+    "type": "资质采信",
+    "name": "零碳工厂/零碳园区",
+    "content": "一、服务依据\n省级以各省工信厅《江苏省零碳（近零碳）工厂培育建设工作方案（2025—2027年）》（苏工信节能〔2025〕181号）《江苏省零碳（近零碳）工厂建设指南（试行）》为依据。\n二、服务周期：6-12个月。\n三、服务等级\n1、（近）零碳工厂，在建成绿色工厂的基础上，建立科学规范的温室气体管理体系，充分实施自主减排，抵消剩余排放的工厂，自主减排比例≥80%，类别1+类别2碳排放量100%抵消评分≥80分。\n2、零碳工厂，在建成绿色工厂的基础上，建立科学规范的温室气体管理体系，充分实施自主减排，抵消剩余排放的工厂，自主减排比例≥50%，类别1+类别2碳排放量100%抵消评分≥80分。\n四、服务方法\n差距诊断与评估，标准解读培训，（近）零碳工厂建设方案，申报评价指标填报过程辅导，现场抽查迎审，持续改进与动态管理辅导。\n五、交付物\n《（近）零碳工厂建设实施方案》、《（近）零碳工厂申报报告》等",
+    "field": "环境能源管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 43,
+    "type": "资质采信",
+    "name": "质量奖(卓越绩效导入)",
+    "content": "一、服务依据\n核心标准GB/T 19580和BG/Z 19579，以及各级（国家、省、市、区县）政府发布的《质量奖评审管理办法》及最新评审细则，为企业管理体系进行全面对标、诊断和改进，以系统性地提升综合绩效和核心竞争力，进而成功创奖。\n二、服务周期\n3-12个月（可根据企业基础、创奖等级需求灵活调整）\n三、服务等级\n1、基础级，质量工作基础扎实，聚焦申报落地的企业，对标评审标准开展全维度差距扫描；精准提炼企业质量工作亮点；专业编写申报材料（含证实性材料梳理）；提供迎审流程培训与基础应答指导。\n2、提高级，有一定管理基础，需系统化提升的企业，导入卓越绩效模式完整框架；设计贴合企业业务的管理改进路径；培育内部自评师团队（含标准解读、自评方法实操培训）；\n3、定制级，行业领先，志在高分获奖的标杆企业，深度融合卓越绩效模式与企业核心竞争力；提炼具有行业引领性、可复制的独特质量管理模式；优化管理体系细节，打造评审高分亮点；定制化模拟评审（含多轮现场演练、专家点评优化）；全程护航申报全流程，确保高分通过评审。\n四、服务方法\n诊断与评估，体系规划与改进，培训与赋能，材料编写与申报，模拟评审与迎审。\n五、交付物\n《政府质量奖申报表》《组织概述》、《自我评价报告》、全套申报材料及证实性材料汇编、系列培训课件和培训记录、现场评审汇报PPT及展示文件、全场景迎审应答预案、模拟评审点评报告与优化记录。",
+    "field": "质量管理领域",
+    "proposal": "JSFW-1-6 质量奖技术服务方案 江苏公司\nJSFW-1-18 卓越绩效管理模式咨询暨创天府质量奖技术服务方案 四川公司\nJSFW-1-40 卓越绩效及质量奖导入技术服务方案 安徽公司"
+  },
+  {
+    "category": "技术服务",
+    "no": 44,
+    "type": "资质采信",
+    "name": "通关/跨境咨询业务（通关资质）",
+    "content": "一、服务依据\n依据《中华人民共和国海关注册登记和备案企业信用管理办法》、《海关认证企业标准指南》等政策文件，为企业提供符合通关资质要求的全流程咨询服务。\n二、服务周期\n3-12个月（根据企业现有管理体系基础、认证目标等级及整改难度灵活调整）\n三、服务等级\n一般认证企业：适用于初次申请海关一般认证或基础较弱的企业。服务内容包括海关认证标准解读、差距分析、基础制度梳理、申报材料整理、内部培训、模拟认证等，确保企业具备一般认证申报条件，提升合规管理水平。\n高级认证企业：已具备较好管理基础的企业。提供深度定制化服务，包括全面内控体系优化、贸易安全专项提升、财务状况深度核查、多轮模拟认证与现场演练、亮点提炼与风险点排查、持续改进机制建设等，确保企业高质量通过高级认证并持续保持合规状态。（新办法建立了企业容错机制，对非主观故意轻微违规给予整改机会，支持企业稳定经营）\n四、服务方法\n差距诊断与评估、制度优化与体系建设、专项培训与能力提升、申报材料编写与审核、模拟认证与现场演练、持续跟踪与改进支持。\n五、交付物\n《海关认证申请表》《企业概况说明》《内部控制制度汇编》《财务状况说明》《贸易安全管理制度》《符合性声明》等全套申报材料；认证标准对照分析报告；培训课件与培训记录；模拟认证评估报告与整改建议；现场迎审应答预案；认证通过后的持续维护建议方案。",
+    "field": "质量管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 45,
+    "type": "资质采信",
+    "name": "FDA注册代办及验厂辅导",
+    "content": "1、注册代办流程\n前期评估：产品分类、法规适用性分析、合规风险评估；\n准备阶段：资料收集、DUNS 编码申请、美国代理人确定；\n提交申请：系统注册、信息填报、文件上传、费用缴纳（如适用）；\n审核跟进：跟踪申请进度、协助补充资料、处理问询；\n获批维护：获取 FEI 号 / 注册号、年度更新、信息变更管理。\n2、验厂辅导流程\n（1）进行FDA验厂(模拟)全面文件审核+远程预验厂+出具详细预验厂审核报告+不符合项整改指导，预计会有2-3名专项人员参与，其中一人为外部专家(FDA官方背景)；\n（2）全面验厂文件审核十出具预审核报告+不符合项整改指导，会有2-3名专项人员参与；\n（3）首次会议答疑+验厂文件审核+提出不符合项+末次会议答疑，会有2-3名专项人员参与。",
+    "field": "质量管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 46,
+    "type": "资质采信",
+    "name": "检验检测机构CMA、CNAS技术服务",
+    "content": "一、服务依据：国家法律法规、资质认定评审准则、ISO/IEC 17025、国家标准、行业标准、技术规范\n二、服务周期：6-12 个月\n三、服务方法：文件体系审核、现场技术核查、能力验证、仪器校准与确认\n四、交付物：CMA/CNAS 资质认定 / 认可证书、检测报告、体系文件与技术记",
+    "field": "质量管理领域",
+    "proposal": "JSFW-1-39 IS017025实验室认可技术服务方案 安徽公司"
+  },
+  {
+    "category": "技术服务",
+    "no": 47,
+    "type": "资质采信",
+    "name": "国际认证技术服务（UL、RoHS、CE建材认证、拖拉机E-mark认证、EAC海关联盟认证、小家电CE认证等）",
+    "content": "机械类CE认证\n一、服务依据：欧盟法规、指令、协调标准\n二、服务周期：1-3个月\n三、服务方法：材料验证、现场试验验证\n四、交付物：CE认证证书及报告",
+    "field": "质量管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 48,
+    "type": "资质采信",
+    "name": "供港澳蔬菜生产加工企业备案辅导",
+    "content": "一、服务依据：以海关总署《供港澳蔬菜检验检疫监督管理办法》中对供港澳蔬菜生产加工企业备案与管理的要求条件为准。\n二、服务周期：10个工作日。\n三、服务方法：走访调研，指导完善质量安全管理体系，核验生产环境、人员健康、企业农残检测能力是否达标，收集与编写材料，指导备案，跟进材料补正。\n四、交付物：《供港澳蔬菜生产加工企业备案申请表》",
+    "field": "食品(农产品)安全管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 49,
+    "type": "资质采信",
+    "name": "出口食品生产企业备案辅导",
+    "content": "一、服务依据：以海关总署《出口食品生产企业备案核准》要求条件为准。\n二、服务周期：3个工作日。\n三、服务方法：走访调研，指导完善食品安全卫生控制体系，收集与编写材料，指导备案，跟进材料补正。\n四、交付物：《出口食品生产企业备案申请表》",
+    "field": "食品(农产品)安全管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 50,
+    "type": "品牌建设",
+    "name": "区域品牌技术服务（标准、评估、培训）",
+    "content": "一、服务依据\n依据国家及地方政府乡村振兴及品牌建设等相关政策，深入贯彻落实乡村振兴与品牌强国战略，助力产业质量提升、标准规范，实现品牌价值。\n二、服务周期：6-18个月\n三、服务难易程度：较高\n四、服务方法\n区域公用品牌建设（可根据需求定制化）\n品牌策略规划：根据当地特色农食及文旅产业等区域优势，聚焦主导特色产业，开展实地产业调研，深入分析特色产业特点，明确品牌发展定位，制定发展规划；\n品牌设计：确认商标图文、Logo及使用范围，注册进度跟进以及VIS配套元素设计等；\n管理机制建设：搭建区域公共品牌授权/使用管理办法，编制区域公共品牌评价技术指南及规范；\n评价标准体系建设：根据当地/产品区域特色，编制且发布评价标准体系以及配套的现场实施评价、监督记录等成套档案记录表单；\n选品评价：依据标准体系，在县域范围对优质产品进行遴选，组织开展现场评价认证及后续每年监督评价。\n推广运营：组织线上线下宣传推广活动，组织区域公用品牌发布，扩大品牌影响力等。\n五、交付物\n区域公用品牌调研报告、品牌VIS、品牌授权管理办法、配套品牌标准体系（评价标准或产品标准发布、评价技术指南及规范、配套的现场实施评价、监督记录表单等）、选品评价及证书、品牌发布会品牌推广活动等。",
+    "field": "质量管理领域",
+    "proposal": "JSFW-1-28 区域公用品牌建设技术服务方案 四川公司\nJSFW-1-46 区域公共品牌建设技术服务方案 广东公司"
+  },
+  {
+    "category": "技术服务",
+    "no": 51,
+    "type": "品牌建设",
+    "name": "圳品一站式服务",
+    "content": "一、服务依据\n依据《供深食品评价工作管理办法》《“圳品”评价实施规则 食用农产品》《“圳品”评价实施规则 预包装食品》等文件为企业提供圳品申报辅导服务。\n二、服务周期\n整体服务周期约 3-10 个月（视拟申报产品数量、类别及企业配合程度而定）。\n三、服务难易程度\n1、基础级，适用于体系运行较好，配合度高单一企业（产品）申报辅导，提供调研及标准宣贯、体系文件编写及系统申报指导、现场管理辅导及现场评价协助服务，辅导企业获得“圳品”评价证书；\n2、提高级，“圳品”申报一站式辅导服务，适用于无体系或体系运行较差企业，从企业调研、培训宣贯、产品检测、认证策划及管理体系文件梳理、编制、发布和指导应用，认证发证，根据圳品评价要求，申报材料准备至评价全流程进行辅导，直至企业通过认证，发放圳品评价证书；\n3、定制级，县域优质农产食品圳品申报培育（多个企业圳品辅导+产销对接），围绕当地特色农食产业，通过统筹策划并持续的“圳品”申报专项培训及一对一的现场辅导，规范并提高当地企业的整体质量管控水平，推进当地产品通过“圳品”评价，配合提供产销对接、媒体推广等增值服务。\n四、交付物\n现场诊断问题清单及整改建议、整套管理体系文件、获得“圳品”评价证书、产销活动",
+    "field": "食品(农产品)安全管理领域",
+    "proposal": "JSFW-1-47 深圳“Z品”现场评价及监督检查技术服务方案"
+  },
+  {
+    "category": "技术服务",
+    "no": 52,
+    "type": "品牌建设",
+    "name": "中检品控技术服务",
+    "content": "一、服务依据\n严格依据国家法律法规、行业标准、技术规范及相关认证实施规则开展服务；遵循合格评定相关要求，面向门店终端、电商平台、供应链管理、区域品牌、进出口贸易、政府项目及产业升级等多类应用场景，提供专业化、定制化质量技术服务。\n二、服务周期：整体服务周期为2-6个月。\n三、服务难易程度\n1、基础级，为检测、常规认证类服务，流程规范、实施高效；\n2、提高级，为过程评价、工厂审核、电商品控、供应商审核类服务，需开展现场核查与过程验证，专业性要求更高；\n3、定制级，为标准制定、全链条品控、品控系统搭建、多主体协同及产业综合提升类项目，覆盖范围广、实施复杂度高。\n四、服务方法\n采用检验检测、认证、过程评价、品控监管、数字化监管及一体化方案组合实施，通过文件审核、现场核查、定期抽检、不定期抽检、驻场品控、监装监造等方式开展品控；运用二维码数字化技术，实现品控信息全程可追溯、可展示、可查询。\n五、交付物\n证书类包含CQC认证证书、过程评价证书；标签与标识类包含CCIC-Q-MARK官方防伪标签、专属品控二维码；检测与审核类包含检测报告、验证报告、抽检报告。",
+    "field": "质量管理领域",
+    "proposal": "JSFW-1-45 南航洗涤中心QES管理体系搭建及中检品控过程认证方案  广东公司"
+  },
+  {
+    "category": "技术服务",
+    "no": 53,
+    "type": "行业规划与综述",
+    "name": "蓝/白皮书编写",
+    "content": "一、服务依据\n依据委托方的核心战略、政策导向或拟发布的重大决策，遵循行业通行的数据发布、分析研究及报告撰写的专业标准，深度洞察报告的目标读者（如政府、行业、公众），以确定内容深度与表达方式，严格依据调研数据、案例分析及客观事实，确保权威性与公信力。\n二、服务周期：4-12个月。\n三、服务等级\n1、基础级，主要是信息与资料的整理、汇编与基础分析，形成结构清晰的报告。\n2、提高级，需进行原创性调研、数据分析、趋势研判，并形成有独立见解的核心观点与对策建议。\n3、定制级，不仅产出报告，更注重报告的战略定位、发布策划与传播，旨在影响行业政策或塑造领军形象。此级别对思想性、前瞻性和资源整合能力要求最高。\n四、服务方法\n对接规划、框架设计与大纲评审、资料研究与内容撰写、评审与修改、设计排版与成果交付。\n五、交付物：完整的《XXX蓝皮书/白皮书》。",
+    "field": "质量管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "技术服务",
+    "no": 54,
+    "type": "行业规划与综述",
+    "name": "生态产品价值核算报告编写",
+    "content": "一、服务依据\n中办、国办《关于建立健全生态产品价值实现机制的意见》（中办发〔2021〕24号）；国家发改委、国家统计局《生态产品总值核算规范（试行）》（发改基础〔2022〕481号）；《生态系统评估 陆域生态产品总值核算技术指南》（GB/T 46869—2025）。\n二、服务周期\n整体服务周期为2-6个月，具体周期可根据核算范围大小、数据获取难度、核算精度要求等灵活调整。\n三、服务难易程度\n（1）行政区域单元GEP核算：基础级，核算整市（县）GEP，对核算结果进行整体分析；进阶级，在整市（县）GEP核算结果基础上，深度分析各区县（乡镇）GEP分布、各类生态系统类型GEP分布，为政府绩效考核、横向生态保护补偿提供依据；专业级，在GEP核算基础上，提供市（县）生态产品价值实现机制研究方案，探索价值转化路径。\n（2）特定地域单元VEP核算：基础级，明确特定地域单元界定及适宜产业发展方向，聚焦未来开发期限内生态产品预期收益开展核算，提供核算报告；专业级，开展项目/特定地域单元VEP核算，聚焦抵质押贷款、生态产品交易等市场化路径，提出可操作的市场化应用建议。\n四、服务方法\n明确生态系统类型与分布，收集相关数据资料，编制生态产品目录清单，开展生态产品实物量核算，开展生态产品价值量核算；编制生态产品价值核算报告。\n五、交付物\n《生态产品总值（GEP）核算报告》、《特定地域单元生态产品价值（VEP）核算报告》。",
+    "field": "环境能源管理领域",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 1,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "管理体系认证通用知识培训",
+    "content": "1.理解与掌握管理体系认证相关基础知识及其在审核中的应用；\n2.理解与掌握管理体系审核通用知识和技术在审核中的应用；\n3.理解质量管理方法与工具知识及其在审核中的应用；\n4.理解法律法规及规范性文件要求及其在审核中的应用。\\n课时：16课时\\n指导报价区间：公开课费用：1500/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 2,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "ISO 19011:2018管理体系审核知识培训",
+    "content": "1.理解审核的概念、审核有关的术语、审核的特征、审核原则。\n2. 理解和掌握认证方案的概念、审核方案与审核计划的基本概念、审核方案的建立、审核方案的实施、评审和改进、审核方案的管理。\n3. 理解和掌握审核技术的基本概念、审核关键技术的核心内容、审核的基本方法。\n4 .理解和掌握审核阶段的划分、典型的审核流程与认证流程及其相关性与区别、审核启动阶段包括的活动、审核准备阶段包括的活动、审核活动实施阶段包括的活动、审核报告的编制和分发、审核的后续活动。\\n课时：12课时\\n指导报价区间：公开课费用：800/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 3,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "IS0 9001:2015质量管理体系",
+    "content": "1.了解ISO 9000 族标准的概念、产生、发展及其结构，理解质量管理原则、质量管理体系基本概念和术语； \n2.掌握ISO 9001质量管理体系要求； \n3.了解相关法律法规和其他要求和质量管理领域必要的专业知识。\\n课时：12课时\n仅换版培训8学时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 4,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "ISO 9001质量管理体系内审员",
+    "content": "1.了解ISO 9000 族标准的概念、产生、发展及其结构，理解质量管理原则、质量管理体系基本概念和术语； \n2.掌握ISO 9001质量管理体系要求； \n3.了解相关法律法规和其他要求和质量管理领域必要的专业知识；\n4.理解并掌握管理体系审核的相关知识及要求；\n5.更灵活地运用审核原则、审核方案管理和管理体系审核实施等内容和要求，提高审核员的能力和管理体系审核的有效性。\\n课时：24课时\\n指导报价区间：公开课费用：1500/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 5,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "IS0 14001:2015环境管理体系",
+    "content": "1．理解ISO14001环境管理体系标准的产生和发展；\n2. 掌握ISO14001标准的主要要求；        \n3. 了解相关法律法规和其他要求和环境管理领域必要的专业知识。\\n课时：12课时\n仅换版培训8学时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 6,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "ISO 14001环境管理体系内审员",
+    "content": "1.了解ISO 14000 系列标准的概念、产生、发展及其结构； \n2.掌握ISO 14001环境管理体系要求； \n3.了解相关法律法规和其他要求和环境管理领域必要的专业知识；\n4.理解并掌握管理体系审核的相关知识及要求；\n5.更灵活地运用审核原则、审核方案管理和管理体系审核实施等内容和要求，提高审核员的能力和管理体系审核的有效性。\\n课时：24课时\\n指导报价区间：公开课费用：1500/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 7,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "IS0 45001:2018职业健康安全管理体系",
+    "content": "1．理解ISO 45001标准的产生、发展； \n2．掌握ISO 45001标准的要求； \n3．掌握危险源辨识、风险评价和控制措施确定的常用方法；\n4．了解相关法律法规和其他要求和职业健康安全管理领域必要的专业知识。\\n课时：12课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 8,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "ISO 45001职业健康安全管理体系内审员",
+    "content": "1.了解ISO 45001 标准的产生及发展； \n2.掌握ISO 45001环境管理体系要求； \n3.了解相关法律法规和其他要求和职业健康安全管理领域必要的专业知识；\n4.理解并掌握管理体系审核的相关知识及要求；\n5.更灵活地运用审核原则、审核方案管理和管理体系审核实施等内容和要求，提高审核员的能力和管理体系审核的有效性。\\n课时：24课时\\n指导报价区间：公开课费用：1500/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 9,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "能源管理体系",
+    "content": "1．理解ISO 50001标准的产生、发展； \n2．掌握ISO 50001标准的要求； \n3．了解相关法律法规和其他要求和能源管理领域必要的专业知识。\\n课时：12课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 10,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "知识产权管理体系",
+    "content": "1．理解GB/T 29490标准的产生、发展； \n2．掌握GB/T 29490标准的要求； \n3．了解相关法律法规和其他要求和知识产权合规管理领域必要的专业知识。\\n课时：12课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 11,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "供应链安全管理体系",
+    "content": "1．理解ISO 28000标准的产生、发展； \n2．掌握ISO 28000标准的要求； \n3．了解相关法律法规和其他要求和供应链安全管理领域必要的专业知识。\\n课时：12课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 12,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "资产管理体系",
+    "content": "1．理解ISO 55001标准的产生、发展； \n2．掌握ISO 55001标准的要求； \n3．了解相关法律法规和其他要求和资产管理领域必要的专业知识。\\n课时：12课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 13,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "创新管理体系",
+    "content": "1．理解ISO 56001标准的产生、发展； \n2．掌握ISO 56001标准的要求； \n3．了解相关法律法规和其他要求和创新管理领域必要的专业知识。\\n课时：12课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 14,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "企业诚信管理体系",
+    "content": "1．理解GB/T 31950标准的产生、发展； \n2．掌握GB/T 31950标准的要求； \n3．了解企业诚信管理领域必要的专业知识。\\n课时：12课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 15,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "业务连续性管理体系",
+    "content": "1．理解ISO 22301标准的产生、发展； \n2．掌握ISO 22301标准的要求； \n3．了解业务连续性管理领域必要的专业知识。\\n课时：12课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 16,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "大型活动可持续性管理体系",
+    "content": "1．理解ISO 20121标准的产生、发展； \n2．掌握ISO 20121标准的要求； \n3．了解大型活动可持续性管理领域必要的专业知识。\\n课时：12课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 17,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "IS0 22000:2018食品安全管理体系",
+    "content": "1．理解IS0 22000标准的产生、发展； \n2．掌握IS0 22000标准的要求； \n3．了解食品安全管理领域必要的专业知识。\\n课时：12课时\\n指导报价区间：公开课费用：1800/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 18,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "ISO 22000食品安全管理体系内审员",
+    "content": "1.了解ISO 45001 标准的产生及发展； \n2.掌握ISO 45001环境管理体系要求； \n3.了解相关法律法规和其他要求和职业健康安全管理领域必要的专业知识；\n4.理解并掌握管理体系审核的相关知识及要求；\n5.更灵活地运用审核原则、审核方案管理和管理体系审核实施等内容和要求，提高审核员的能力和管理体系审核的有效性。\\n课时：24课时\\n指导报价区间：公开课费用：1500/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 19,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "IATF16949汽车行业质量管理体系",
+    "content": "1．理解IATF 16949标准的产生、发展； \n2．掌握IATF 16949标准的要求； \n3．了解汽车行业质量管理领域必要的专业知识。\\n课时：12课时\\n指导报价区间：公开课费用：1200/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 20,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "IATF 16949 汽车行业质量管理体系内审员培训（AIAG）",
+    "content": "1.能够识别质量管理原则及其与质量管理体系要求的关联；\n2.能够证实理解并实施基于风险的汽车行业过程方法；\n3.能够证实理解ISO 9001:2015和 IATF 16949:2016标准要求\n能够理解适用于内审员的IATF 16949要求；\n4.能够理解核心工具（FMEA、SPC和MSA）的基础知识；\n5.能够识别IATF 16949:2016要求与顾客特定要求（CSR）的关联，包括如何审核适用的CSR；\n6.能够识别IATF 16949:2016要求与核心工具之间的关联；\n7.能够作为内审员应用基于ISO 19011的审核技能。\\n课时：24课时\\n指导报价区间：公开课费用：3500/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 21,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "IATF 16949 汽车行业质量管理体系内审员培训（CQC）",
+    "content": "1.能够识别质量管理原则及其与质量管理体系要求的关联；\n2.能够证实理解并实施基于风险的汽车行业过程方法；\n3.能够证实理解ISO 9001:2015和 IATF 16949:2016标准要求\n能够理解适用于内审员的IATF 16949要求；\n4.能够理解核心工具（FMEA、SPC和MSA）的基础知识；\n5.能够识别IATF 16949:2016要求与顾客特定要求（CSR）的关联，包括如何审核适用的CSR；\n6.能够识别IATF 16949:2016要求与核心工具之间的关联；\n7.能够作为内审员应用基于ISO 19011的审核技能。\\n课时：24课时\\n指导报价区间：公开课费用：1800/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 22,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "建筑施工质量管理体系",
+    "content": "1．理解GB/T 50430标准的产生、发展； \n2．掌握GB/T 50430标准的要求； \n3．了解建筑施工质量管理领域必要的专业知识。\\n课时：12课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 23,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "道路交通安全管理体系",
+    "content": "1．理解ISO 39001标准的产生、发展； \n2．掌握ISO 39001标准的要求； \n3．了解道路交通安全管理领域必要的专业知识。\\n课时：12课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 24,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "危害分析与关键控制点体系(HACCP)",
+    "content": "1．掌握HACCP体系认证的要求； \n2．理解食品行业危害分析与关键控制的方法及相关专业知识。\\n课时：8课时\\n指导报价区间：公开课费用：800/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 25,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "医疗器械质量管理体系",
+    "content": "1．理解ISO 13485标准的产生、发展； \n2．掌握ISO 13485标准的要求； \n3．了解医疗器械质量管理领域必要的专业知识。\\n课时：8课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 26,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "药品初包装材料-质量管理体系",
+    "content": "1．理解ISO 15378标准的产生、发展； \n2．掌握ISO 15378标准的要求； \n3．了解药品初包装材料质量管理领域必要的专业知识。\\n课时：8课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 27,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "教育组织管理体系",
+    "content": "1．理解ISO 21001标准的产生、发展； \n2．掌握ISO 21001标准的要求； \n3．了解教育组织管理领域必要的专业知识。\\n课时：8课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 28,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "测量管理体系",
+    "content": "1．理解ISO 10012标准的产生、发展； \n2．掌握ISO 10012标准的要求； \n3．了解测量管理领域必要的专业知识。\\n课时：8课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 29,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "合规管理体系",
+    "content": "1．理解ISO 37301标准的产生、发展； \n2．掌握ISO 37301标准的要求； \n3．了解合规管理领域必要的专业知识。\\n课时：8课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 30,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "反贿赂管理体系",
+    "content": "1．理解ISO 37001标准的产生、发展； \n2．掌握ISO 37001标准的要求； \n3．了解反贿赂管理领域必要的专业知识。\\n课时：8课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 31,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "社会责任管理体系",
+    "content": "1．理解GB/T 39604标准的产生、发展； \n2．掌握GB/T 39604标准的要求； \n3．了解社会责任管理领域必要的专业知识。\\n课时：8课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 32,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "信息安全管理体系",
+    "content": "1．理解ISO 27001标准的产生、发展； \n2．掌握ISO 27001标准的要求； \n3．了解信息安全管理领域必要的专业知识。\\n课时：12课时\\n指导报价区间：公开课费用：1500/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 33,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "信息技术服务管理体系",
+    "content": "1．理解ISO 20000标准的产生、发展； \n2. 掌握ISO 20000标准的要求； \n3．了解信息安全管理领域必要的专业知识。\\n课时：12课时\\n指导报价区间：公开课费用：1500/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 34,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "云服务信息安全管理体系",
+    "content": "1．理解ISO 27017标准的产生、发展； \n2．掌握ISO 27017标准的要求； \n3．了解云服务信息安全管理领域必要的专业知识。\\n课时：8课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 35,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "个人可识别信息(PI)信息安全管理体系",
+    "content": "1．理解ISO 27018标准的产生、发展； \n2．掌握ISO 27018标准的要求； \n3．了解个人可识别信息(PI)信息安全管理领域必要的专业知识。\\n课时：8课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 36,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "个人身份信息保护管理体系",
+    "content": "1．理解ISO 29151标准的产生、发展； \n2．掌握ISO 29151标准的要求； \n3．了解个人身份信息保护管理领域必要的专业知识。\\n课时：8课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 37,
+    "type": "管理体系认证标准（内审员）培训",
+    "name": "个人信息安全管理",
+    "content": "1．理解ISO 29151标准的产生、发展； \n2．掌握ISO 29151标准的要求； \n3．了解个人身份信息保护管理领域必要的专业知识。\\n课时：8课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 38,
+    "type": "质量工具",
+    "name": "精益生产管理培训",
+    "content": "1.精益生产的产生与概念；\n2.常见的八大浪费；\n3.精益生产的目的与原则；\n4.精益生产的工具简介；\n5.精益生产的实施；\n6.实施精益生产的关键因素等。\\n课时：12课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 39,
+    "type": "质量工具",
+    "name": "卓越绩效培训",
+    "content": "通过培训，让学员了解质量管理的演进与卓越绩效模式 、掌握卓越绩效准则的条款类型和层次等\\n课时：12课时\\n指导报价区间：公开课费用：600/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 40,
+    "type": "质量工具",
+    "name": "六西格玛通用知识培训",
+    "content": "六西格玛通用知识培训主要通过系统化的方法论帮助企业提升质量管理和运营效率，其核心内容包括DMAIC流程（定义、测量、分析、改进、控制）以及精益思想的应用。\\n课时：8课时\\n指导报价区间：公开课费用：800/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 41,
+    "type": "质量工具",
+    "name": "六西格玛黄带培训",
+    "content": "旨在帮助学员了解和掌握六西格玛的基础知识和工具。课程内容主要包括：六西格玛管理法概述、六西格玛管理法实施、六西格玛项目案例\\n课时：18课时\\n指导报价区间：公开课费用：2500/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 42,
+    "type": "质量工具",
+    "name": "APQP产品质量先期策划培训",
+    "content": "1.APQP概述；\n2.APQP阶段；\n3.策划和项目确定；\n4.产品的设计和开发；\n5.过程的设计和开发；\n6.产品和过程的确认；\n7.反馈评估和纠正行动；\n8.PPAP 4th。\\n课时：8课时\\n指导报价区间：公开课费用：1200/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 43,
+    "type": "质量工具",
+    "name": "PPAP生产件批准培训",
+    "content": "1.PPAP 定义、范围和目的\n2. 提交要求\n3.提交等级（文件和表单）\n4. 零件提交状态（提交状态定义）\n5.记录的保存\n6.标准样件的保存\n7.零件批准要求\n8.PPAP 过程要求\n9.PPAP记录控制\\n课时：8课时\\n指导报价区间：公开课费用：1200/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 44,
+    "type": "质量工具",
+    "name": "FMEA潜在失效模式及后果分析培训",
+    "content": "1.FMEA基础、概念和术语；\n2.DFMEA最佳实践及案例分析；\n3.FMEA-MSR最佳实践及案例分析；\n4.PFMEA最佳实践及案例分析；\n5.P图稳健设计。\\n课时：8课时\\n指导报价区间：公开课费用：1200/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 45,
+    "type": "质量工具",
+    "name": "SPC统计过程控制培训",
+    "content": "1.质量问题的来源；\n2.预防思想；\n3.基础统计知识及其变异；\n4.统计分布的三个类型；\n5.控制图的理论基础：\n6.控制图的前提条件：\n7.控制图的三个种类：\n8.八个异常判定准则。\\n课时：8课时\\n指导报价区间：公开课费用：1200/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 46,
+    "type": "质量工具",
+    "name": "MSA测量系统分析培训",
+    "content": "1.MSA概述；\n2.MSA和其它核心工具的关系；\n3.测量系统的统计特性；\n4.量具分辨率；\n5.偏倚线性和稳定性；\n6.重复性和再现性分析；\n7.属性类量具的分析方法；\n8.复杂系统的MSA；\n9.使用软件MINITAB进行MSA以提高其可操作性并保证其有效性。\\n课时：8课时\\n指导报价区间：公开课费用：1200/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 47,
+    "type": "质量工具",
+    "name": "CP控制计划",
+    "content": "1.CP概述；\n2.统计过程控制基础；\n3.关键质量控制点的分析与管理；\n4.数据收集、分析和过程能力评估；\n5.实施和维护CP控制计划；\n6.持续改进与最佳实践分享。\\n课时：8课时\\n指导报价区间：公开课费用：1200/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 48,
+    "type": "质量工具",
+    "name": "新旧QC七大手法培训",
+    "content": "1.旧QC七大工具（检查表、柏拉图、直方图、散布图、鱼骨图、控制图、层别法）\n2.新QC七大工具（关联图、亲和图、箭条图、系统图、PDPC、矩阵图、矩阵解析）\\n课时：8课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 49,
+    "type": "质量工具",
+    "name": "TQM全面质量管理培训",
+    "content": "1.全面质量管理基本概念；\n2.质量管理工具与技术；\n3.过程管理；\n4.持续改进方法；\n5.顾客需求分析；\n6.团队合作与沟通；\n7.质量绩效评估。\\n课时：12课时\\n指导报价区间：公开课费用：1000/人\n定制课费用：结合企业的要求和培训时长定价",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 50,
+    "type": "定制化培训",
+    "name": "TIC行业经营模拟舱沙盘课",
+    "content": "·课程背景：为服务TIC行业人才培养和能力提升，面向TIC行业经营管理人才需求，CQC打造了具有完全自主知识产权的“TIC经营模拟舱沙盘课”。课程纳入TIC企业经营中的关键要素，通过营造经营实践环境，启发学习者切实体会“一利五率”含义与企业战略经营的要义。\n·课程目标：通过经营实战体验，使学员\n1.构建经营全局观，促进管理思维向经营思维转换；\n2.明晰“一利五率”于企业高质量发展的意义和价值；\n3.学习如何通过战略管理与运营管理实现“一利五率”；\n4.打通财务与经营的任督二脉，实现业财融合。\n·课程核心内容：\n1. 财务维度：经营中理解经营三轮——资产轮、利润轮、现金轮；应用中学习三大报表——利润表、资产负债表和现金流量表\n2.战略维度：实战中演练战略洞察，战略规划与执行管理\n3.运营维度：经营三流管理——信息流、物流、资金流\\n课时：18课时\\n指导报价区间：70000元/期\n注：原则上整班为30-36人（分6组，每组5-6人）",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 51,
+    "type": "定制化培训",
+    "name": "人才发展全周期培训",
+    "content": "依据：为深入贯彻落实中共中央《全国干部教育培训规划（2023-2027年）》精神，精准对接企业中长期人才战略目标与业务发展需求，特开发长期陪伴式培训服务方案。本方案旨在超越传统短期培训模式，通过体系化设计、业务深度耦合与持续效果追踪，构建支撑企业战略落地与组织能力进阶的学习发展生态系统，助力企业锻造高素质、专业化、复合型的干部人才队伍。\n服务周期：长期业务陪伴（3年起）。\n服务等级：\n战略级（面向集团总部、核心领导班子、战略关键岗位）。定位： 驱动战略共识与组织变革，培育引领企业未来发展的核心领导力。\n专业级（面向各业务条线、职能部门及中层管理者）定位： 攻克业务瓶颈，提升专业效能，锻造承上启下的中坚力量。 \n基础级（面向新任干部、高潜员工及全员通用素养提升）定位： 夯实管理基础，统一文化语言，加速人才孵化与融合。\n服务方法:核心服务方法（PDCA闭环）：1. 诊断与评估（Plan）、2. 设计与规划（Plan）3. 落地与实施（Do & Check）4. 监督与复盘（Check & Act）。\\n课时：根据企业需求\\n指导报价区间：根据客户指定的天数报价1.5万-5万/天（课程包）住宿及场地包另算",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 52,
+    "type": "定制化培训",
+    "name": "《人工智能发展及ChatGPT在企业中应用》",
+    "content": "课程背景：\n2016年ALFGO战胜韩国围棋九段李世石，人工智能再一次引起各界的关注，人工智能（AI）的第三波热潮汹涌而来。与历史上其他两次人工热潮很快退去不同，第三次热潮将持续升温，并一直延续下去。因为AI已经走进我们的生活的工作，在很多行业和细分领域得到了落地的应用，AI已经变得非常有用！\nAI必将改变未来，深刻改变每一个行业。了解AI的原理和支撑的技术，掌握AI在各领域的应用现状和未来趋势，是每个企业都应该立刻关注的。踏准时代发展的节拍，获得新的发展机遇。\n为此，我们开发了《人工智能与行业应用》课程，为大家全面、深入解读人工智能与行业应用的内容。 \n课程收益：\n● 掌握人工智能的发展历史、基本原理与核心支撑技术；\n● 掌握人工智能在语音交互领域的行业应用和探索实践；\n● 掌握人工智能在视觉交互领域的行业应用和探索实践；\n● 掌握人工智能在无人驾驶领域的行业应用和探索实践；\n● 掌握人工智能与大数据融合的行业应用和探索实践；\n● 掌握人工智能在工业领域的行业应用和探索实践；\n● 掌握人工智能在国家层面的布局和发展趋势。\n课程对象：公司管理人员、政府机关人员等\n课程方式：讲师讲授+案例解读\n课程天数：1天，6小时/天\\n课时：根据企业需求\\n指导报价区间：1.5-3万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 53,
+    "type": "定制化培训",
+    "name": "《职场AI赋能：让你的工作效率百倍提升》",
+    "content": "课程背景：\n在数字经济浪潮席卷全球的当下，信息过载已成为现代职场的常态。据统计，80%的企业知识工作者每日需处理超过20份文档、分析复杂数据报表，并频繁参与跨部门会议，即便熟练使用Office等基础办公软件，仍需耗费大量时间在重复性、机械性的工作环节。与此同时，生成式AI、智能算法等前沿技术虽已渗透至办公场景，但企业在实际应用中普遍陷入“技术陷阱”：复杂的AI平台操作界面让非技术人员望而却步，简单粗放的提示词导致生成内容与实际需求严重脱节，人机协作缺乏标准化流程，更有甚者仅将AI当作聊天工具，未能挖掘其在文档处理、数据分析、创意设计等核心场景的深度价值。\n本课程直击企业效率提升的关键痛点，以国产领先AI助手DeepSeek为核心，深度融合Word、Excel、PPT等职场高频使用工具，创新性地构建“精准提示词+智能化工作流”双引擎教学体系。助力企业突破效率瓶颈，实现从“人力驱动”到“智能驱动”的生产力质变，让AI真正成为驱动企业降本增效、创新发展的核心引擎。\n课程收益：\n1、效率突破：掌握DeepSeek与Office三件套的深度融合技巧，实现文档撰写、数据处理、PPT制作效率翻倍，每日节省2小时以上重复工作时间。\n2、质量跃升：运用SWIFT雨燕功法优化提示词，确保AI生成内容直接满足企业规范，会议纪要、报告等交付物可用率\n3、技能升级：从基础搜索到复杂数据处理，系统掌握AI文本生成、智能分析、PPT设计四大核心技能，告别低效手动操作。\n4、流程重构：学习“AI+传统工具”标准化工作流，实现会议录音转待办、数据自动清洗等场景的自动化处理，减少人为失误。\n5、协作提效：打破人机协作壁垒，通过智能体辅助、多工具协同，推动跨部门协作效率提升，加速项目落地周期。\n课程时间：2天，6小时/天\n课程对象：企业全员\n课程方式：理论讲解+讲师实操演示+讲师实时指导的学员实操\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 54,
+    "type": "定制化培训",
+    "name": "《AI助力新媒体制作》",
+    "content": "课程背景：\n新媒体运营已经成为很多企业的标配，承担品牌宣传、获客、客户关系管理甚至直接销售转化的重要智能。但当前企业新媒体运营面临多重挑战：\n内容产能瓶颈：高频次、高质量的内容需求与有限人力之间的矛盾日益突出。\n同质化竞争：传统创作模式难以突破“跟风模仿”困境，缺乏差异化创新。\n热点响应滞后：人工追热点的效率难以匹配社交媒体话题的瞬时爆发特性。\n人才困局：企业普遍希望引入高水平的新媒体运营人才，但这样的人才成本高，招聘难留存难。绝大多数企业的新媒体运营团队必须面对一个人才问题：本企业招不到优秀的新媒体运营人才，但仍然希望将新媒体运营工作做好。\nAI困境：新媒体团队普遍知道AI对新媒体运营的重大价值，但对如何系统用好、用足AI工具，普遍缺乏系统认识和实践。通常是部分人员自己尝试着初步使用一些AI工具，远远没有发挥AI在新媒体运营中的巨大潜力。\n生成式AI的成熟为破局提供了全新可能：从图文创作、短视频制作到全渠道内容分发，AI正重新定义新媒体运营的“人机协作”范式。\n本课程通过“工具实战+流程重构+组织升级”三维赋能，帮助企业构建AI驱动的新媒体运营体系，实现内容效率与创意的双提升。\n课程收益：\n1、全链路效率革新：深度掌握文本、图片、视频等多类型AI工具，结合SWIFT高效创作体系与标准化流程，彻底打通新媒体内容从选题、创作到发布的全链路，大幅提升整体运营效率。\n2、差异化爆款突围：借助AI拆解热门内容底层逻辑，融入品牌特色进行创新重构，精准匹配各平台用户偏好，持续产出兼具传播力与品牌调性的优质内容，摆脱同质化竞争困境。\n3、热点极速响应：构建AI驱动的热点监测与创作闭环，实现热点内容从捕捉、分析到成品发布的无缝衔接，显著缩短热点响应周期，快速抢占流量高地。\n4、精细化粉丝运营：运用AI定制个性化粉丝互动策略，基于账号风格与用户需求生成精准回复话术，有效激活粉丝活跃度，提升内容二次传播与用户转化效果。\n5、组织智能升级：重新定义AI时代新媒体团队架构与工作模式，明确各岗位能力要求与协作流程，打造敏捷高效的智能运营体系，降低对高水平人才的依赖，增强团队可持续发展能力。\n课程时间：2-3天，6小时/天\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 55,
+    "type": "定制化培训",
+    "name": "《30分钟生成AI财务分析报告》",
+    "content": "课程背景：\n在数字经济浪潮下，财务部门正面临前所未有的挑战：海量票据处理耗时费力、人工核算易错率高、战略分析依赖经验判断、合规审计风险难追溯，传统工作模式已难以适应企业降本增效与数字化转型的需求。与此同时，AI技术的突破为财务工作范式革新提供了新机遇——从发票自动识别到现金流智能预测，从风险动态预警到战略建模分析，AI正在重构财务全流程价值链。然而，企业在落地AI工具时普遍面临三大难题：场景碎片化（缺乏系统性应用框架）、技术门槛高（提示词设计、数据处理与系统集成能力不足）以及数据安全隐患​（公共模型与本地化部署的权衡困境）。\n本课程以AI技术为核心，围绕“场景赋能-工具实操-体系重构”三大维度展开。课程深度结合《AI财务工作流重构方法论》，系统拆解从自动化账务处理（如发票结构化提取、VBA脚本自动生成）、智能分析（成本波动预测、偿债能力建模）到战略决策支持（投资回报模拟等）的全链路解决方案。通过五维提示词工程、财务数据清洗标准化、AI知识库搭建等实操模块，针对性解决“AI工具调教难”“业务逻辑编码弱”“数据安全不可控”等痛点。课程以真实企业案例为牵引，帮助学员建立“技术-业务-安全”三位一体的AI自动化财务体系，真正实现从基础核算到战略赋能的跨越式升级。\n课程收益：\n● 破解效率瓶颈：掌握AI自动化处理高频财务事务（如发票处理等重复性工作）的核心方法，显著提升财务工作效率\n● 精通AI工具应用：深度掌握AI提示词工程五维操作法，获得财务专属提示词模板及调优技巧，使AI工具生成更加精准、贴合实际需求的内容\n● 重构工作范式：构建智能财务工作流设计能力，实现VBA脚本编写、数据清洗、可视化分析等技术的AI赋能，让财务工作更高效、更有品质\n● 强化决策支持：运用AI完成盈利能力分析、战略解码、投资决策等复杂场景分析，输出专业级分析报告，赋能企事业单位高质量发展\n课程时间：1天，6小时/天\n课程对象：各级财务人员、财务管理者、财务数据配合工作者等\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 56,
+    "type": "定制化培训",
+    "name": "《数字化领导力与组织创新》",
+    "content": "课程背景：\n当前，数字经济已成为全球经济增长的核心引擎。政策推动、技术革新与市场竞争三重驱动下，企业数字化转型从“可选项”变为“必选项”。\n然而，多数企业面临“战略模糊、资源不足、组织僵化”三大困局——领导者若无法打破传统思维、构建系统性转型框架，将导致转型停滞在表面，错失重塑商业模式的机会。\n本课程聚焦领导者视角，针对“战略认知不足、资源整合低效、组织文化滞后”三大核心痛点，结合标杆企业实践经验，提供从顶层设计到落地执行的完整方法论，帮助领导者突破思维局限，推动数字化转型从“规划图”走向“施工图”。\n课程收益：\n1. 构建战略思维框架：掌握“战略-组织-技术”三位一体的数字化转型顶层设计逻辑；\n2. 突破资源整合瓶颈：用“五级进阶模型”平衡短期收益与长期价值，破解“投入大见效慢”困局；\n3. 掌握关键落地工具：通过“用户价值图+业务演进图+架构生长图”三图联动实现战略精准落地；\n4. 打造组织变革引擎：建立数据驱动的决策机制与文化转型路径，解决“人效低下、部门墙厚重”难题。\n课程时间：2天，6小时/天\n课程对象：\n1. 企业创始人、董事长、CEO等核心决策层\n2. 政府/企业数字化转型领导小组负责人\n3. 战略规划、运营管理、技术研发等中高层管理者\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 57,
+    "type": "定制化培训",
+    "name": "《PMC计划编制与物料管理》",
+    "content": "课程背景：\n准时化生产是精益生产的一个重要内容，随着时代节奏加快的变化。客户对企业的交货期要求越来越苛刻，能否快速、准确地交货将成为企业未来生存重要考验。同时准时化生产也是企业降低成本，降低库存，增加现金流的制胜法宝。为什么我们很多企业生产周期很长，交货期一拖再拖，在制品堆满车间，产成品库存居高不下，而且有的产成品库龄很高。其实都与生产计划的编制不科学有着很大的关系。因此，学习准时化生产下的生产计划科学编制是企业迫在眉睫的课题，也是当务之急。\n本课程从精益生产的角度出发，深入分析企业的生产形态、产品特点、工艺流程、标准工时、生产节拍、产能负荷关系和客户需求，如何在低的在制品和产成品库存的情况下，做到快速准确地交货。\n课程收益 ：\n● 了解“零库存”是精益生产的核心；\n● 学会分析自己企业的生产形态和产品特点；\n● 学会标准工时的制定方法；\n● 学会产能和负荷的正确评估；\n● 学会如何确定订单的生产节拍；\n● 学会如何计算产品的生产周期；\n● 学会如何进行生产线的平衡技巧；\n● 学会在低在制品和低产成品库存下的快速交货的生产计划编制方法。\n课程时间：2天，6小时/天\n课程对象：生产副总、生产主管、生产计划专员、车间主管、仓库主管、工程技术人员\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 58,
+    "type": "定制化培训",
+    "name": "《TQM全面质量管理实战训练》",
+    "content": "课程背景：\n全面质量管理是以产品质量为核心，建立起一套科学严密高效的质量体系，以提供满足用户需要的产品或服务的全部活动。\n全面质量管理即TQM(Total Quality Management)就是指一个组织以质量为中心，以全员参与为基础，目的在于通过顾客满意和本组织所有成员及社会受益而达到长期成功的管理途径。在全面质量管理中，质量这个概念和全部管理目标的实现有关。\n课程收益：\n● 了解什么是质量和质量管理的定义\n● 了解TQM体系构成要素和内涵\n● 掌握现场品质检验的原则\n● 掌握如何在部门开展QC小组活动的方法和流程\n● 掌握TQM七大手法在实践中使用方法\n课程时间：2天，6小时/天\n课程对象：品管部和生产部主管、品管员、车间主管、班组长、QC小组成员\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 59,
+    "type": "定制化培训",
+    "name": "《精益生产实战技法》",
+    "content": "课程背景：\n随着全球经济一体化进程的加速，中国的企业不仅要面临国内企业的竞争，还有面对国外企业的竞争。人们对产品和服务的要求越来越高，多品种、低价格、高质量和短交期已成为21世纪市场的主旋律。精益生产方式就是在这种时代的潮流下诞生的，它一出世就显示出旺盛的生命力，实施精益生产的企业一路过关斩将，发展成为世界顶尖级的企业。一时间精益生产方式成为企业制胜的法宝。中国制造业要走出粗放式、高能耗的生产模式，实现绿色的可持续发展，就必须走精益生产之路，就必须向精益制造实践的先行者学习。\n过去一段时间在中国培训业推出的精益生产课程主要是一些抽象的概念，很少有与实际工作相结合的，也没有抓到精益生产的核心。本课程主要从实操层面，通过大量的案例讲述精益生产在实际工作中的运用。\n课程收益：；\n本课程从精益生产“零库存”的核心出发，如何做到原材料、在制品、产成品三个环节的零库存以及精益生产工具在三个环节的具体运用。通过学习，学员将得到以下收益：\n● 了解什么是真正精益生产；\n● 原材料“零库存”在采购、货运、仓储管理的实操技法；\n● 在制品“零库存”在工艺、排产、布局、看板管理、防错、IE管理的实操技法；\n● 产成品“零库存”在订单管理、交期管理的实操技法\n课程时间：2天，6小时/天\n课程对象：高层管理、中基层生产管理人员\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 60,
+    "type": "定制化培训",
+    "name": "《生产班组长6门必修课》",
+    "content": "课程背景：\n班组是企业最基层的组织，却是企业最重要的一级组织。班组长素质的高低直接关系到企业效益的好坏，因为，企业的任何政策都要靠他们贯彻执行下去。目前企业的班组长普遍存在管理能力弱的情况，很多班组长不敢管、不会管。很多企业开始重视班组长培训，但普遍存在一些误区。一是重视班组长通用管理知识的培训，讲一些领导艺术、沟通技巧，列举的案例都是一些高大上人物事迹，如：牛根生、任正非和马云等；二是重视班组长专业生产管理技能的培训，如：精益生产、成本管理与控制、生产计划和六西格玛等。这些知识好不好，当然好。但是是不是适合班组长的需求呢？\n班组长其实就是一个普通的比较优秀员工，他们面对的是一群普通的员工。他们需要的不是一些高大上的领导艺术或高深专业管理知识，他们需要的是贴近实际工作而容易被普通员工接受的管理方法。班组管理说穿了就是二件事，一是管人二是管事。管人就是怎么让员工相信你佩服你，从而服从你的领导。管事就是如何保证按时完成生产计划、确保产品质量的稳定。\n这6堂课程就是从最基层的实际生产出发，为班组长量身打造的好学好用简单易懂，但又具备与时俱进管理知识。为班组长培训提供新的思路。\n课程收益：\n● 价值1：明确班组长的角色定位-----改变不正确的工作方法\n● 价值2：掌握正确工作教导方法-----员工迅速掌握生产技能\n● 价值3：学会质量控制与攻关法-----让质量提升一个新台阶\n● 价值4：产前产中产后控制技法 ----计划落实交货期获保障\n● 价值5：掌握5S 现场管理技巧----环境设备安全完全改善\n● 价值6：掌握工作关系处理方法----班组团结人心齐泰山移\n课程时间：5天，6小时/天\n课程对象：制造业企业高中基层管理人员\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 61,
+    "type": "定制化培训",
+    "name": "《生产管理问题分析与解决》",
+    "content": "课程背景：\n发生在2019年末和2020年初的新冠肺炎给中国经济造成上万亿的经济损失和人民生活的困顿。在痛定思痛的前提下，我们应该思考和反思什么呢？这场疫情可不可以阻止它发生？可不可以缩小它的影响范围？其实只要我们各项工作做得好是完全可以做到的。问题在哪？在于我们的干部和群众缺乏问题意识，缺乏对出现问题时的解决方法。\n这种现象在企业生产管理过程中难道不是普遍存在的问题吗？为什么生产现场“脏乱差”长期得不到很好解决，为什么安全事故不断，为什么交货期延误层出不穷，为什么产品质量屡屡出现客户抱怨等等。这些现象的根本原因就是我们的工作人员缺乏问题意识和问题解决办法。\n这个问题不解决将对我们企业的发展带来制约，对全体员工的素质提升带来极大的影响。\n课程收益：\n● 价值1：掌握强化员工的问题意识方法----树立问题意识必须坚持的6项机制\n● 价值2：掌握工作中问题快速识别方法----问题的二阶段性定义问题解决方向\n● 价值3：掌握如何明确问题的透明方法----利用3W1H工具将模糊问题明确化\n● 价值4：掌握如何分解问题的实用技巧----活用4 W 方法分解问题达问题点\n● 价值5：掌握根据问题点设定改善目标----用SMART法则确定出清晰的目标\n● 价值6：掌握问题真正原因的分析方法----连续用5个WHY直捣问题的核心\n● 价值7：掌握审慎制定对策的思考方向----制定对策5大活动筛选正确的对策\n● 价值8：掌握贯彻对策简单易行的方法----用甘特图制定贯彻实施计划防反弹\n● 价值9：掌握评价解决问题效果的方法----三个维度都满意才是真正问题解决\n● 价值10：掌握不使成果昙花一现的方法---PDCA循环使问题解决永远不停步\n课程时间：2天，6小时/天\n课程对象：制造业企业高中基层管理人员\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 62,
+    "type": "定制化培训",
+    "name": "《智能化工厂管理与应用》",
+    "content": "课程背景：\n我们国家正处在一个大的结构转型升级这么一个时代，现有的技术已不足以支撑经济的快速发展，需要新的技术突破。现在全球面临整个的制造模式也不可持续，必须我们要变革我们现有的模式，寻找一种新的我们的制造模式。\n过去中国改革开放差不多30年的时间，人口红利是我们中国在整个制造业里面一个非常重要的竞争力的一个要素。但是今天劳动力成本已经是在快速上升。还有一个要素，全球所有的行业几乎都是一个产能过剩的现状。现在我们整个市场需求的个性化定制化，技术与产品快速迭代更新，使我们过去我们的生产模式批量，刚性，这种模式已经不可持续了。所以我们的制造模式必须要变革，也就是由过去的大批量刚性过去追求这种规模化，像现在的小批量啊，个性化定制化，也就像我们的柔性智能制造模式来转变。\n进入到第4次工业革命和中国制造2025时代，就是智能制造的这么一个时代。智能制造驱动的要素：第一个要素，我们称之为叫技术要素，包括机器人、互联网、物联网、新的信息技术、大数据、云，实际是为我们这次工业革命的提供了技术的支撑。第二个要素是市场要素，也就是产能过剩，个性化定制化产品，生命周期的快速的更新，在倒逼制造模式的变革。还有一些社会要素，也就是我们劳动力成本的上升，就业人口的减少，资源环境现在无以为继。那么这三大要素支撑，加速了这次制造模式的变革。\n中国制造业能否快速完成这样一个转型升级，关键在于对于智能制造知识的了解和学习。本课程就是针对企业转型过程中开发的，希望对制造业企业有所帮助。\n课程收益：\n● 了解什么智能工厂\n● 了解智能工厂运营和管理方式\n● 了解MES制造系统的运作管理方式\n● 了解智能物流的运作和管理方式\n● 了解SCADA远程监控运作和管理方式\n● 了解RFID射频识别技术运作和管理方式\n课程时间：2天，6小时/天\n课程对象：高层管理、中基层管理人员\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 63,
+    "type": "定制化培训",
+    "name": "《TRACC人力资本领导力》",
+    "content": "课程背景：\n移动互联网时代，企业发起人才争夺战。\n如何带领团队成功？人力资本TRACC（HC TRACC）关注有抱负的世界级组织需要做哪些工作，以实现人才机制的最优管理和发展。由人才愿景推动，最初关注于“落实基础”，然后在后期阶段着手人力资本优化的核心部分；在人力资本优化的过程中，人才被认为是组织竞争优势的主要来源。TRACC推崇：唯有将直线管理层（执行官、经理和团队领导）、员工和HR团队团结起来，才能实现这个愿景。\n大量研究发现，那些拥有积极态度并能竭尽全力激发并鼓励下属发展的变革型领导总能取得辉煌成就。这些研究还发现，得力领导对自己有更好的了解，更能够意识到自身的优势，注重价值观，且情商较高。 他们通过有效管理与同事和下属之间的交流和关系，开展领导工作。人们习惯用可量化的结果来衡量领导效能，比如，利润增加、产品/服务质量改进、运营成本减少等。\n然而，领导者需要对其自身的优缺点以及如何与他人建立关系进行反思，比如，如何对待下属、如何解决纠纷、如何为团队成员提供发展和成长的机会、如何提供反馈 —— 这些典型标准能够确保绩效目标的实现，展示领导力风范。\n课程收益：\n1. 学规划与精准传达团队愿景，凝聚全员力量，抢占人才竞争高地；\n2. 效管理全流程技巧，利用量化指标驱动团队产出，达成利润提升的成果；\n3. 我认知，掌握反思性领导力，精准洞察自身优缺点，稳固团队关系；\n4. 队价值整合，将个人价值观与组织理念深度融合，激发下属内驱力；\n5. 续改进的方法与思维，能动态优化人才机制与管理模式，保障团队长期保持高效能与强竞争力。\n课程时间：2天，6小时/天\n课程对象：具有高品质工作追求的人力资源从业者、企业高层、中层管理者\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 64,
+    "type": "定制化培训",
+    "name": "《大数据时代人力资源视野——人力资源数字化转型》",
+    "content": "课程背景：\n人力资源数字化是移动互联网时代的发展趋势，即大数据时代的来临。大数据就是很大的数据。但在不同领域，又有不同状况。大数据作为一种数据集合，当我们使用这个概念的时候，实际包含有三层含义：一是数据很大；二是变化很快；三是构成复杂。但是大数据里面蕴藏着大知识、大智慧、大价值、大发展。因为大数据是一种思维方式和管理、治理路径，尤其是对于人才管理领域来说，数据量变积累达到质变的结果，更是一个可以大幅度提升管理水平的良好契机。\n大数据就是海量信息，“云计算”相当于计算机和操作系统。如果没有大数据的信息积淀，“云计算”的能力再强大，也没有用武之地。二者结合，将给世界带来一场深刻的管理技术革命与社会治理创新。当然，可以强有力支持各行业的人才管理。\n课程特点：\n学术性强：为关键管理者与人力资源岗位工作者而设\n实用性强：案例丰富经典为技术面操作人力资源落地\n系统性强：覆盖人力资源管理与开发全套数字化体系\n操作性强：企业可依据课程进行辅导操作后明显效果\n课程收益：\n1. 开拓管理思路走进数字化时代的领域学习\n2. 提升人力资源管理能力如何切入数字管理\n3. 提高绩效考核指挥棒作用理解数字化绩效\n4. 学习数字化领导力与企业人力培养的关联\n课程时间：2天，6小时/天\n课程对象：人力资源条线、企业管理者\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 65,
+    "type": "定制化培训",
+    "name": "《国企中长期激励——破解企业分钱难题》",
+    "content": "课程背景：\n国有企业改制正在进行时，中长期激励是战略问题。\n企业激励，是许多组织面临的现实问题，表面是分钱问题，实质是人的问题，是如何科学分钱给到哪些人的问题。企业创始人共同的期待是激活组织，从理论上讲组织激活的三大杀手锏：挥金如土、求贤若渴、末尾淘汰。但做到的企业，离不开科学的操盘，因为科学分钱是一个系统，而不是老板的一意孤行；科学分钱是一套智慧，而不是基于马斯洛层次理论的刻板执行；科学分钱是多米诺骨牌，牵一发而动全身，而不是单独的麻将牌。\n科学分钱需要“道术结合”，有术无道止于术，有道无术尚可求，有道有术才是本课的重要宗旨。基于企业的真实问题，提供解决思路，提供解决方案。\n课程收益：\n思路：形成一套科学分钱的激励思路，指引具体规章制度的发布；\n表格：拿到一套具体实操的企业表格，落地执行过程中的标准化；\n方法：总结提炼企业存在的共性问题，运用通用模板破解关键点；\n专业：掌握激励员工的专业薪酬设计，应对企业中个性化的问题。\n课程时间：2天，6小时/天\n课程对象：企业决策者、高层管理、中层管理、HRD\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 66,
+    "type": "定制化培训",
+    "name": "《降本增效——人工成本与人效双拼》",
+    "content": "课程背景：\n降低人工成本与提升人效，是一枚硬币的双面。\n大环境的变化与行业竞争，让企业回归更理性的管理，关于降本增效的解决方案，需要使用科学的分析与控制。企业管理者越来越清楚成本控制不是单纯减少，是要考核性价比，如果成本增加后，减少的其他的运营成本或者增加的利润与成本付出相比较大，那何乐而不为呢？再比如：员工收入的增长必然会引起成本的上升吗？从美国、日本、德国等国的经验来看，中国企业还存在着很大的管理提升的空间。通过管理的实施有可能实现人均生产效率提升30%，质量不良率下降50%，库存减少50%。企业转型升级是个热门话题，但对于大多数中国企业而言，最迫切的是管理升级。随着成本上升，企业利润空间不断被压缩，如何在微利时代生存下来成为企业的首要任务，课程交付18套ROI (return on investment)方案。\n什么是ROI？是指通过投资而应返回的价值，即企业从一项投资活动中得到的经济回报。它涵盖了企业的获利目标，这里专指通过成本的科学管控，企业得到的价值。\n课程收益：\n价值1：从系统经营思维进行科学降本增效\n价值2：从战略成本角度进行科学降本增效\n价值3：从价值链角度分析战略成本的管理\n价值4：人力成本是重要的关注对象可干预\n课程时间：2天，6小时/天\n课程对象：管理层、决策层\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 67,
+    "type": "定制化培训",
+    "name": "《企业文化与企业战略——落地方案》",
+    "content": "课程背景：\n每个企业有自己的行业个性与企业气质。\n企业的竞争最终都是企业文化的胜出，企业的基业长青最终都是企业文化的流芳百世。文化是虚的、软的，企业文化的推行与落地就是要把这些虚的和软的东西落到实处，从而发挥出巨大的威力。从经验管理到科学管理是企业管理的第一次飞跃，从科学管理到文化管理是企业管理的第二次飞跃。文化管理的特点是以人为中心进行管理，以人为出发点，培育共同价值观，实质在于调动人的自觉性和积极性，主动性和创造性，最大程度地挖掘人的潜力。\n本课程从企业文化的案例研讨中，充分体现了文化在管理中如何落地到实处的方案设计。\n课程收益：\n1. 企业已经有了自己的企业文化体系，如何操盘落地\n2. 掌握企业文化扎实的基础知识与企业文化的技术面\n3. 掌握把虚的文化变为实的内容并与业务领域强挂钩\n课程特点：\n生动：案例丰富、经典并具有代表性，又结合企业自己案例。\n幽默：课程轻松快乐、深入浅出，理论开天窗，落地接地气。\n深刻：从身边案例到专业知识的引导，从小事到大事的流程。\n实用：使用教练工具辅导教学，给企业注入灵魂的赋能课程。\n课程时间：2天，6小时/天\n课程对象：企业决策层、企业管理者、企业文化工作者\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 68,
+    "type": "定制化培训",
+    "name": "《人才盘点与人才体系建设》",
+    "content": "课程背景：\n人才盘点与人才体系建设的目的是为企业绩效改善与效益服务，人力资源部应该从技术上实现此诉求。而胜任力建模与人才画像是人才盘点的技术前提。\n行业领先的公司正越来越倾向于采用精密的分析方法对人力资源数据进行分析，从而保持自己的竞争优势。谷歌、华为、通用电器、百思买、思科和其它许多卓越的企业开始明白如何使组织保持高生产率和员工工作投入以及较低的人才流失率。如果你想从最优秀的员工身上获取最佳绩效，你就必须清楚知道谁是组织的财富而谁又是组织的负担，同时清楚有没有把合适的人配置到合适的岗位上。在这一方面，理性的分析显然比拍脑袋的方式更能给出可信的答案。\n为提升HR管理竞争优势，课程以人力资源思维和分析方法为核心，通过实际案例，从实战角度讲解如何通过人才盘点用数据说话，并有效制定“人力资源配置的方案”、胜任力建模的流程与技术，如何呈现人才画像的方法。\n课程收益：\n1. 掌握人才盘点报告的标准模版如何设计\n2. 数据分析在人力资源管理决策中的应用\n3. 胜任素质模型如何建立方法工具与流程\n4. 人才画像的模版支持企业人才地图建设\n课程时间：2天，6小时/天\n课程对象：专业人力资源从业者、企业中高层管理者\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 69,
+    "type": "定制化培训",
+    "name": "《金融生态与跨界整合营销》",
+    "content": "课程背景：\n中国银行业在过去的时间中蓬勃发展，呈现出欣欣向荣之相，无论是金融资产规模，还是经营管理水平等，都得到长足发展，然天下理无常是，事无常非，在今天，在当下这个瞬息万变的市场环境中，诸多待破之题置于眼前，在中国经济增速放缓的大环境下，金融市场也成为多事之秋，随着金融媒介多元化，直接融资亦以加速，对银行的资产业务形成直接的冲击。伴着互联网金融的冲击，客户多元金融需求亦以呈现，对银行员工的专业化提出了挑战。另加之利率市场化改革的影响，各家银行采用价格战策略拼杀市场，这些都对今天的银行业形成了冲击，然则，攘外必先安内，外部环境的变化固然会对银行经营提出了新的挑战，但真正能够导致一个企业难以为继的关键却在于内因。强者强自内心，摧枯拉朽之力也无法困住前行的脚步，而故步自封最终会导致裹足不前。立足现在，放眼未来，打破价格战恶性竞争的路径，重在银行金融生态圈。\n课程收益：\n● 学习营销服务转型，破解价格战营销困局\n● 整合存量客户资源，打造常态化经营模式\n● 链接政府商户客户，构建共赢化金融生态\n● 精准定位四大工程，创新跨界化整合营销\n● 锁定核心目标客群，实现批量化业绩提升\n课程时间：2天，6小时/天\n课程对象：银行市分行行长；零售行长；个金部总经理；支行长等。农信系统董事长；行长；营销部门总经理；支行长等\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 70,
+    "type": "定制化培训",
+    "name": "《客户经营与关系维护技巧》",
+    "content": "课程背景：\n理财经理工作繁忙，没时间维护客户，怎么办？\n大量存量客户，不知道如何筛选潜力客户，怎么办？\n陌生客户警惕心中，不愿意与我行沟通，怎么办？\n大客户随时可能被他行策反，不懂如何留住客户，怎么办？\n客户不买我行产品，不知道原因无法推进，怎么办？\n不知道如何让老客户转介新客户，怎么办？\n课程收益：\n● 客户筛选：通过学习银行客户筛选的4招24式，全方位无死角的掌握从海量的存量客户中筛选出优质的潜力客户。\n● 客户经营：把存量客户价值最大化，精准锁定潜力客户，有步骤地推进彼此关系，升级客户综合金融资产与金融业务。\n● 关系策略：通过五个步骤，循序渐进的升级关系，有条不紊的推进业务，是零售与对公客户经理都需要学习的一门技巧。\n● 维护技巧：五大常规维护方式结合不同的关系程度采用不同的维护技巧，真正做到精确定位，精心维护，精准营销。\n课程时间：1天，6小时/天\n课程对象：银行零售行长；零售部总经理；支行长；理财经理；客户经理等\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 71,
+    "type": "定制化培训",
+    "name": "《人性需求与行长激励技巧》",
+    "content": "课程背景：\n除了发钱，真不知道还有什么办法能激励员工工作激情？\n临近退休老员工，一副无所谓的样子，影响团队氛围，我该怎么办？\n年轻员工竟然有躺平心态，我都替他着急，恨铁不成钢该如何激励？\n中年员工感觉升迁无望，做一天和尚撞一天钟的状态，我该如何是好？\n网点排名常年落后，我满身干劲，但不知道如何给团队打气，我该怎么办？\n如果您有以上困惑，请认真听这个课程，能帮你找到更多的管理灵感和激励技巧。\n课程收益：\n● 学习人性需求五大理论，掌握不同员工的内心燃点，对症下药。\n● 了解员工非物质的七大心理诉求，找到对应实施办法。\n● 学习他行各类员工的激励案例，举一反三，激发自我管理灵感。\n● 学习银行员工的五维激励法，有的放矢地激发员工干劲。\n● 掌握自我激励方法，身先士卒，起到模范带头作用。\n课程时间：1天，6小时\n课程对象：管理层课程，仅限银行管理干部学习，请勿让基层员工参与，导致转化受阻\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 72,
+    "type": "定制化培训",
+    "name": "《五行性格与行长识人用人》",
+    "content": "课程背景：\n我性格外向，但为什么就是不能和员工打成一片，性格中的问题是什么？\n我是好心，为什么我就适合这个员工搞不到一起去？\n我知道性格中的问题，该如何调整我的性格呢？\n为什么在管理工作中，面对某些人，我会莫名其妙的发火？\n客户经理这个岗位，哪种性格的人干起来会得心应手？\n业绩不好，我情绪低落，如何快速走出情绪低谷？\n哪些性格特征，会成为做领导者的最大障碍？\n江山易改，本性难移。性格是不是真的不能改变？\n本门课程，为您一一解答。\n课程收益：\n● 学习性格分析方法，了解自己的性格中优势与劣势。\n● 学会分析人的性格，安排合适的人放在合适的岗位。\n● 了解岗位适配性格，培养员工具备完成工作的心性。\n● 掌握改变性格方法，去除不利职业生涯发展的禀性。\n● 优化团队班子搭建，利用不同性格的成员取长补短。\n课程时间：1天，6小时/天\n课程对象：银行管理干部与全体员工\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 73,
+    "type": "定制化培训",
+    "name": "《银行沙龙与六大营销模式》",
+    "content": "课程背景：\n银行没有好的课题，缺少新意，咱么办？\n客户听到银行沙龙，拒绝参加，咱么办？\n银行存量客户不够，没有客户，怎么办？\n大型沙龙成本过高，没有费用，怎么办？\n员工不会邀约客户，请不到人，怎么办？\n沙龙没有营销效果，没有业绩，怎么办？\n课程收益：\n● 顺应时代变革，创新营销模式，从等客上门到主动获客。\n● 颠覆传统思维，尊重客户体验，从被动推销到主动营销。\n● 商户结盟合作，多维服务客户，从传统模式到多方共赢\n● 学习六种模式，吃透活动营销，从敷衍了事到落地生根\n● 金融生态模式，降低各种成本，从偶尔举办到持续举办\n● 掌握核心要领，实现知行合一，从听课学习到我能操作\n课程时间：\n培训：课程共计五个板块，完整讲授需要3天，浓缩版本1天（六类活动讲解）（6小时/天）\n咨询：咨询项目6天，包括2天培训与筹备；2天商户结盟；1天演练与落地；1天四百人大沙举办等\n课程对象：银行零售主管行长；零售部总经理；支行长；客户经理等沙龙策划组织相关人员\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 74,
+    "type": "定制化培训",
+    "name": "《中国商道与银行营销智慧》",
+    "content": "课程背景：\n零售银行是我国商业银行面对利率市场化和金融脱媒化进行改革的重要出路之一，而中高端客群则被认为是必争“高地”。高端客户相比于其他客群，市场增长率更快，回报率更高，在过去十年中，伴随着中国经济共同高速发展，零售业务中高端客户营销为银行贡献了不错的成绩。经过十年的发展，商业银行已经走过了从“跑马圈地”的规模化发展到“精耕细作”的专业化发展的历程，但纵观各行营销者却存在与以下薄弱环节：\n1. 营销者年龄结构与高端客户客户圈层不匹配\n2. 营销者知识体系与高端客户兴趣话题不匹配\n3. 营销者社交水平与高端客户社会爱好不匹配\n4. 营销者心理成熟与高端客户人生阅历不匹配\n5. 营销者理财观念与高端客户财富规划不匹配\n面对这些短板，如何能够让银行营销者，尤其是年轻的营销者建立与高端客户客户的无障碍交往，恐怕若没有相关知识；人生阅历；财富驾驭；企业经营等人生体验，很难建立共同的对话频道。\n课程收益：\n● 学习中国商道的人文魅力，从推销变为合作共赢。\n● 认识银行营销的关键问题，从内心突破营销难题。\n● 掌握客户对银行真正诉求，从多元提供差异服务。\n● 了解高净值客户心理轨迹，从利他展开营销布局。\n● 回归银行职业使命与精神，从思想改变职业倦怠。\n● 转变被动敷衍的精神面貌，从哲学提升思想境界。\n课程时间：2天，6小时/天\n课程对象：主管个金行长；支行长；私人银行理财经理；财富管理中心客户经理；理财经理；理财顾问；客户经理；个贷经理；个人客户经理；个人业务顾问等营销职能人员\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  },
+  {
+    "category": "培训",
+    "no": 75,
+    "type": "定制化培训",
+    "name": "《中国文化与行长领导智慧》",
+    "content": "课程背景：\n对于领导思想，西方重形，东方重意；西方人求技，东方人论道； 西方文化以科学自居，东方文化以智慧闻名。我们习惯于讲西方领导科学与东方领导智慧，而被称为东方领导智慧的中国领导科学与中国优秀传统文化有着千丝万缕的联系，渗透着中国传统文化的血液， 结合中国银行业发展的时代变迁，从而形成了具有中国特色的银行业领导风格。\n自古以来，历代君王与贤臣良将都有很好的领导者素质。那么领导者的素质应该是什么样的呢？传统文化对领导者有何启迪？\n课程收益：\n● 掌握本质规律，洞悉事业成功之路径。\n● 提升个人修为，塑造银行领导之魅力。\n● 洞察时代变化，提高员工执行之效能。\n● 结合中西理论，提升管理工作之水平。\n● 凝聚道法精髓，构建个人组织之威望。\n课程时间：2天．6小时/天\n课程对象：国有行市分行领导；职能部门总经理；支行管理干部；农信系统董事长；理事长；监事长；行长；部门总；支行长等管理干部\\n课时：根据企业需求\\n指导报价区间：1.5-2万/天",
+    "field": "",
+    "proposal": ""
+  }
+];
+window.TECH_SERVICE_ITEMS = window.BUSINESS_ITEMS;
+    </script>
+    <script>
+        const customers = [
+            { name: '北京中检技术服务有限公司', creditCode: '91110108MA01A1B23C' },
+            { name: '中质智联科技有限公司', creditCode: '91110105MA02B2C34D' },
+            { name: '华信环境监测技术中心', creditCode: '12110000MB03C3D45E' },
+            { name: '北京质量技术服务中心', creditCode: '12110000MB04D4E56F' },
+            { name: '中国质量认证中心有限公司', creditCode: '91110000710920173K' },
+            { name: '中国检验认证集团北京有限公司', creditCode: '91110101700245182W' }
+        ];
+
+        const orgs = [
+            '中国质量认证中心总部',
+            '中国质量认证中心北京分中心',
+            '中国质量认证中心上海分中心',
+            '中国质量认证中心广州分中心',
+            '中国质量认证中心南京分中心',
+            '中国质量认证中心成都分中心',
+            '中国质量认证中心武汉分中心',
+            '中国质量认证中心西安分中心',
+            '中国质量认证中心沈阳分中心',
+            '中国质量认证中心青岛分中心',
+            '中国质量认证中心深圳分中心',
+            '中国质量认证中心杭州分中心'
+        ];
+
+        const serviceItems = window.BUSINESS_ITEMS || window.TECH_SERVICE_ITEMS || [];
+        const files = [];
+        const businessRows = [];
+        const pendingBusiness = { category: '技术服务', type: '', name: '' };
+        const reviewerCandidates = [
+            { id: 'CQC-A001', name: '李俊峰', unit: '中国质量认证中心总部', phone: '13800010001' },
+            { id: 'CQC-B018', name: '王晓宁', unit: '中国质量认证中心北京分中心', phone: '13800010018' },
+            { id: 'CQC-S026', name: '陈思远', unit: '中国质量认证中心上海分中心', phone: '13800010026' },
+            { id: 'CQC-G033', name: '赵文博', unit: '中国质量认证中心广州分中心', phone: '13800010033' },
+            { id: 'CQC-N041', name: '周雅琴', unit: '中国质量认证中心南京分中心', phone: '13800010041' }
+        ];
+        const selectedReviewers = [];
+        const reviewerPageSize = 10;
+        let reviewerPage = 1;
+        const reviewerFilters = { name: '', id: '', unit: '' };
+
+        function fillDatalist(id, values) {
+            document.getElementById(id).innerHTML = values.map(value => {
+                const label = typeof value === 'object' ? value.name : value;
+                return `<option value="${escapeHtml(label)}"></option>`;
+            }).join('');
+        }
+
+        function updateCustomerCreditCode() {
+            const customerName = document.getElementById('customerName').value.trim();
+            const customer = customers.find(item => item.name === customerName);
+            document.getElementById('creditCode').value = customer?.creditCode || '';
+        }
+
+        function initBusinessOptions() {
+            renderBusinessItems();
+            renderReviewers();
+            renderModalBusinessOptions();
+            ['name', 'id', 'unit'].forEach(field => {
+                document.getElementById(`reviewer${field === 'id' ? 'Id' : field.charAt(0).toUpperCase() + field.slice(1)}Search`).addEventListener('input', event => {
+                    reviewerFilters[field] = event.target.value.trim().toLowerCase();
+                    reviewerPage = 1;
+                    renderReviewerOptions();
+                    if (field === 'unit') renderReviewerUnitSuggestions();
+                });
+            });
+            document.getElementById('reviewerUnitSearch').addEventListener('focus', renderReviewerUnitSuggestions);
+            document.getElementById('reviewerUnitSearch').addEventListener('blur', () => {
+                setTimeout(() => document.getElementById('reviewerUnitSuggestions').classList.add('hidden'), 150);
+            });
+            document.getElementById('modalBusinessType').addEventListener('change', event => {
+                pendingBusiness.type = event.target.value;
+                pendingBusiness.name = '';
+                renderModalBusinessNames();
+            });
+            document.getElementById('modalBusinessName').addEventListener('change', event => {
+                pendingBusiness.name = event.target.value;
+            });
+            document.querySelectorAll('[data-modal-category]').forEach(button => {
+                button.addEventListener('click', () => setModalBusinessCategory(button.dataset.modalCategory));
+            });
+        }
+
+        function openReviewerModal() {
+            reviewerPage = 1;
+            reviewerFilters.name = '';
+            reviewerFilters.id = '';
+            reviewerFilters.unit = '';
+            document.getElementById('reviewerNameSearch').value = '';
+            document.getElementById('reviewerIdSearch').value = '';
+            document.getElementById('reviewerUnitSearch').value = '';
+            renderReviewerOptions();
+            document.getElementById('reviewerModal').classList.add('active');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeReviewerModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('reviewerModal').classList.remove('active');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        function renderReviewerUnitSuggestions() {
+            const query = document.getElementById('reviewerUnitSearch').value.trim().toLowerCase();
+            const suggestions = orgs.filter(unit => !query || unit.toLowerCase().includes(query)).slice(0, 8);
+            const container = document.getElementById('reviewerUnitSuggestions');
+            container.innerHTML = suggestions.map(unit => `<button type="button" class="reviewer-unit-suggestion" data-unit="${escapeHtml(unit)}">${escapeHtml(unit)}</button>`).join('');
+            container.classList.toggle('hidden', !suggestions.length);
+            container.querySelectorAll('[data-unit]').forEach(button => {
+                button.addEventListener('mousedown', event => event.preventDefault());
+                button.addEventListener('click', () => selectReviewerUnit(button.dataset.unit));
+            });
+        }
+
+        function selectReviewerUnit(unit) {
+            document.getElementById('reviewerUnitSearch').value = unit;
+            reviewerFilters.unit = unit.toLowerCase();
+            reviewerPage = 1;
+            renderReviewerOptions();
+            document.getElementById('reviewerUnitSuggestions').classList.add('hidden');
+        }
+
+        function renderReviewerOptions() {
+            const selectedIds = new Set(selectedReviewers.map(person => person.id));
+            const filteredReviewers = reviewerCandidates.filter(person => {
+                return (!reviewerFilters.name || person.name.toLowerCase().includes(reviewerFilters.name))
+                    && (!reviewerFilters.id || person.id.toLowerCase().includes(reviewerFilters.id))
+                    && (!reviewerFilters.unit || person.unit.toLowerCase().includes(reviewerFilters.unit));
+            });
+            const totalPages = Math.max(1, Math.ceil(filteredReviewers.length / reviewerPageSize));
+            reviewerPage = Math.min(reviewerPage, totalPages);
+            const start = (reviewerPage - 1) * reviewerPageSize;
+            const pageReviewers = filteredReviewers.slice(start, start + reviewerPageSize);
+            document.getElementById('reviewerOptions').innerHTML = pageReviewers.length ? pageReviewers.map(person => `
+                <tr>
+                    <td class="text-center"><input type="checkbox" value="${escapeHtml(person.id)}" ${selectedIds.has(person.id) ? 'checked' : ''}></td>
+                    <td class="text-slate-700">${escapeHtml(person.name)}</td>
+                    <td class="text-slate-600">${escapeHtml(person.id)}</td>
+                    <td class="text-slate-600">${escapeHtml(person.unit)}</td>
+                    <td class="text-slate-600">${escapeHtml(person.phone)}</td>
+                </tr>
+            `).join('') : '<tr><td colspan="5" class="px-4 py-8 text-center text-slate-500">未找到匹配的审核人员</td></tr>';
+            document.getElementById('reviewerPageInfo').textContent = `共 ${filteredReviewers.length} 人，第 ${reviewerPage} / ${totalPages} 页`;
+            document.getElementById('reviewerPrev').disabled = reviewerPage <= 1;
+            document.getElementById('reviewerNext').disabled = reviewerPage >= totalPages;
+        }
+
+        function changeReviewerPage(step) {
+            reviewerPage += step;
+            renderReviewerOptions();
+        }
+
+        function confirmReviewers() {
+            const selectedIds = [...document.querySelectorAll('#reviewerOptions input[type="checkbox"]:checked')].map(input => input.value);
+            selectedReviewers.splice(0, selectedReviewers.length, ...reviewerCandidates.filter(person => selectedIds.includes(person.id)));
+            renderReviewers();
+            closeReviewerModal();
+        }
+
+        function removeReviewer(id) {
+            const index = selectedReviewers.findIndex(person => person.id === id);
+            if (index >= 0) selectedReviewers.splice(index, 1);
+            renderReviewers();
+        }
+
+        function renderReviewers() {
+            const container = document.getElementById('reviewerList');
+            if (!selectedReviewers.length) {
+                container.innerHTML = '<div class="reviewer-empty">暂无审核人员，请点击右上角选择人员</div>';
+                return;
+            }
+            container.innerHTML = `
+                <div class="border border-slate-200 rounded-lg overflow-hidden">
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-50 text-slate-700">
+                            <tr>
+                                <th class="px-4 py-3 text-left font-semibold">人员姓名</th>
+                                <th class="px-4 py-3 text-left font-semibold">CQC编号</th>
+                                <th class="px-4 py-3 text-left font-semibold">工作单位</th>
+                                <th class="px-4 py-3 text-left font-semibold">联系电话</th>
+                                <th class="px-4 py-3 text-center font-semibold w-20">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            ${selectedReviewers.map(person => `
+                                <tr>
+                                    <td class="px-4 py-3 text-slate-700">${escapeHtml(person.name)}</td>
+                                    <td class="px-4 py-3 text-slate-600">${escapeHtml(person.id)}</td>
+                                    <td class="px-4 py-3 text-slate-600">${escapeHtml(person.unit)}</td>
+                                    <td class="px-4 py-3 text-slate-600">${escapeHtml(person.phone)}</td>
+                                    <td class="px-4 py-3 text-center"><button type="button" onclick="removeReviewer('${escapeHtml(person.id)}')" class="text-red-600 hover:text-red-700">删除</button></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function addBusinessItem() {
+            pendingBusiness.category = '技术服务';
+            pendingBusiness.type = '';
+            pendingBusiness.name = '';
+            renderModalBusinessOptions();
+            document.getElementById('businessModal').classList.add('active');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeBusinessModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('businessModal').classList.remove('active');
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        function setModalBusinessCategory(category) {
+            pendingBusiness.category = category;
+            pendingBusiness.type = '';
+            pendingBusiness.name = '';
+            document.querySelectorAll('[data-modal-category]').forEach(button => {
+                const active = button.dataset.modalCategory === category;
+                button.classList.toggle('bg-blue-600', active);
+                button.classList.toggle('text-white', active);
+                button.classList.toggle('shadow-sm', active);
+                button.classList.toggle('text-slate-600', !active);
+                button.classList.toggle('hover:text-blue-600', !active);
+            });
+            renderModalBusinessOptions();
+        }
+
+        function renderModalBusinessOptions() {
+            const types = [...new Set(serviceItems.filter(item => item.category === pendingBusiness.category).map(item => item.type).filter(Boolean))];
+            pendingBusiness.type = types[0] || '';
+            document.getElementById('modalBusinessType').innerHTML = '<option value="">请选择业务类型</option>' + types.map(type => `<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`).join('');
+            document.getElementById('modalBusinessType').value = pendingBusiness.type;
+            renderModalBusinessNames();
+        }
+
+        function renderModalBusinessNames() {
+            const list = serviceItems.filter(item => item.category === pendingBusiness.category && item.type === pendingBusiness.type);
+            pendingBusiness.name = list[0]?.no ?? '';
+            document.getElementById('modalBusinessName').innerHTML = list.map(item => `<option value="${item.no}">${escapeHtml(item.name)}</option>`).join('');
+            document.getElementById('modalBusinessName').value = pendingBusiness.name;
+        }
+
+        function confirmAddBusiness() {
+            if (!pendingBusiness.category || !pendingBusiness.type || !pendingBusiness.name) {
+                showToast('请选择完整的业务信息');
+                return;
+            }
+            const duplicated = businessRows.some(row => row.category === pendingBusiness.category
+                && row.type === pendingBusiness.type
+                && String(row.name) === String(pendingBusiness.name));
+            if (duplicated) {
+                showToast('该业务项目已添加，请勿重复添加');
+                return;
+            }
+            businessRows.push({ ...pendingBusiness });
+            closeBusinessModal();
+            renderBusinessItems();
+            document.getElementById(`businessItem-${businessRows.length - 1}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function removeBusinessItem(index) {
+            if (businessRows.length === 1) {
+                showToast('至少保留一条业务信息');
+                return;
+            }
+            syncBusinessRowsFromDom();
+            businessRows.splice(index, 1);
+            renderBusinessItems();
+        }
+
+        function renderBusinessItems() {
+            syncBusinessRowsFromDom();
+            const container = document.getElementById('businessItems');
+            const badge = document.getElementById('projectTypeBadge');
+            if (badge) badge.textContent = businessRows.length === 0 ? '未添加业务' : (businessRows.length === 1 ? businessRows[0].category : '多项业务');
+            if (!businessRows.length) {
+                container.innerHTML = '<div class="business-empty">暂无业务信息，请点击右上角“新增业务”</div>';
+                return;
+            }
+            container.innerHTML = businessRows.map((row, index) => `
+                <div class="business-item" id="businessItem-${index}" data-business-index="${index}">
+                    <div class="business-item-header">
+                    <div class="business-item-title">
+                            <span class="business-item-index">${index + 1}</span>
+                            <span>${escapeHtml(row.category)}项目</span>
+                        </div>
+                        <button type="button" class="business-remove" onclick="removeBusinessItem(${index})">
+                            <i class="fas fa-trash-alt mr-1"></i>删除
+                        </button>
+                    </div>
+                    <div class="business-info-grid">
+                        <div class="business-info-field">
+                            <label>业务大类</label>
+                            <div class="business-readonly-field">${escapeHtml(row.category)}</div>
+                        </div>
+                        <div class="business-info-field">
+                            <label>业务类型</label>
+                            <div class="business-readonly-field">${escapeHtml(row.type || '--')}</div>
+                        </div>
+                        <div class="business-info-field">
+                            <label>业务名称</label>
+                            <div class="business-readonly-field">${escapeHtml(getBusinessName(row))}</div>
+                        </div>
+                        <div class="business-info-field">
+                            <label>服务领域</label>
+                            <div id="serviceField-${index}" class="business-readonly-field">--</div>
+                        </div>
+                    </div>
+                    <div class="business-editor-grid">
+                        <div class="business-editor-card">
+                            <label class="required" for="serviceContent-${index}">服务内容</label>
+                            <textarea id="serviceContent-${index}" class="textarea-tall" data-field="content" data-index="${index}" required></textarea>
+                        </div>
+                        <div class="business-editor-card" id="proposalField-${index}">
+                            <label for="proposalPlan-${index}">投标技术方案</label>
+                            <div id="proposalPlan-${index}" class="business-readonly-field">--</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            businessRows.forEach((_, index) => applySelectedBusiness(index));
+        }
+
+        function syncBusinessRowsFromDom() {
+            businessRows.forEach((row, index) => {
+                const content = document.getElementById(`serviceContent-${index}`);
+                if (content) row.content = content.value;
+            });
+        }
+
+        function getBusinessName(row) {
+            const item = serviceItems.find(candidate => candidate.category === row.category && candidate.type === row.type && String(candidate.no) === String(row.name));
+            return item?.name || '--';
+        }
+
+        function applySelectedBusiness(index) {
+            const row = businessRows[index];
+            const no = Number(row.name);
+            const item = serviceItems.find(candidate => candidate.category === row.category && candidate.no === no);
+            document.getElementById(`serviceContent-${index}`).value = row.content ?? item?.content ?? '';
+            document.getElementById(`serviceField-${index}`).textContent = item?.field || '--';
+            document.getElementById(`proposalPlan-${index}`).textContent = item?.proposal ? String(item.proposal).replace(/\\n/g, '\n') : '--';
+            const isTechService = row.category === '技术服务';
+            document.getElementById(`proposalField-${index}`).classList.toggle('hidden', !isTechService);
+        }
+
+        document.getElementById('businessItems').addEventListener('input', event => {
+            const index = Number(event.target.dataset.index);
+            if (event.target.dataset.field === 'content' && businessRows[index]) {
+                businessRows[index].content = event.target.value;
+            }
+        });
+
+        document.getElementById('customerName').addEventListener('input', updateCustomerCreditCode);
+        document.getElementById('customerName').addEventListener('change', updateCustomerCreditCode);
+
+        function renderFiles() {
+            const body = document.getElementById('attachmentBody');
+            if (!files.length) {
+                body.innerHTML = '<tr id="emptyAttachment"><td colspan="4" class="px-4 py-8 text-center text-slate-500">暂无随附单据，请点击选择文件或拖拽文件到上方区域</td></tr>';
+                return;
+            }
+            body.innerHTML = files.map((entry, index) => `
+                <tr>
+                    <td class="px-4 py-3 text-slate-700">${escapeHtml(entry.file.name)}</td>
+                    <td class="px-4 py-3 text-center text-slate-600">李俊峰</td>
+                    <td class="px-4 py-3 text-center text-slate-600">${entry.date}</td>
+                    <td class="px-4 py-3 text-center">
+                        <button type="button" onclick="previewFile(${index})" class="text-blue-600 hover:text-blue-700 text-sm mr-3">预览</button>
+                        <button type="button" onclick="downloadFile(${index})" class="text-blue-600 hover:text-blue-700 text-sm mr-3">下载</button>
+                        <button type="button" onclick="removeFile(${index})" class="text-red-600 hover:text-red-700 text-sm">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function addFiles(fileList) {
+            Array.from(fileList || []).forEach(file => {
+                files.push({
+                    file,
+                    url: URL.createObjectURL(file),
+                    date: new Date().toISOString().slice(0, 10)
+                });
+            });
+            renderFiles();
+            if (files.length) showToast('附件上传成功');
+        }
+
+        function previewFile(index) {
+            const entry = files[index];
+            if (!entry) return;
+            window.open(entry.url, '_blank');
+        }
+
+        function downloadFile(index) {
+            const entry = files[index];
+            if (!entry) return;
+            const link = document.createElement('a');
+            link.href = entry.url;
+            link.download = entry.file.name;
+            link.click();
+        }
+
+        function removeFile(index) {
+            const [entry] = files.splice(index, 1);
+            if (entry?.url) URL.revokeObjectURL(entry.url);
+            renderFiles();
+            showToast('附件已删除');
+        }
+
+        document.getElementById('projectFiles').addEventListener('change', event => {
+            addFiles(event.target.files);
+            event.target.value = '';
+        });
+
+        ['dragenter', 'dragover'].forEach(type => {
+            document.getElementById('uploadZone').addEventListener(type, event => {
+                event.preventDefault();
+                document.getElementById('uploadZone').classList.add('dragover');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(type => {
+            document.getElementById('uploadZone').addEventListener(type, event => {
+                event.preventDefault();
+                document.getElementById('uploadZone').classList.remove('dragover');
+            });
+        });
+
+        document.getElementById('uploadZone').addEventListener('drop', event => addFiles(event.dataTransfer.files));
+
+        function validateForm() {
+            syncBusinessRowsFromDom();
+            const requiredIds = ['customerName', 'siteOrg', 'sourceOrg', 'startDate', 'endDate'];
+            if (requiredIds.some(id => !document.getElementById(id).value)) {
+                showToast('请先填写必填信息');
+                return false;
+            }
+            if (!businessRows.length || businessRows.some(row => !row.category || !row.type || !row.name || !row.content?.trim())) {
+                showToast('请完善每条业务信息');
+                return false;
+            }
+            if (document.getElementById('endDate').value < document.getElementById('startDate').value) {
+                showToast('计划结束日期不能早于启动日期');
+                return false;
+            }
+            return true;
+        }
+
+        function saveDraft() {
+            showToast('已保存草稿');
+        }
+
+        function submitForm() {
+            if (!validateForm()) return;
+            showToast('审核项目已提交');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.remove('hidden', 'opacity-0');
+            toast.classList.add('opacity-100');
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                setTimeout(() => toast.classList.add('hidden'), 300);
+            }, 1800);
+        }
+
+        function initAnchorNavigation() {
+            const links = [...document.querySelectorAll('.anchor-link')];
+            const sections = links.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+            const setActive = id => links.forEach(link => link.classList.toggle('active', link.getAttribute('href') === `#${id}`));
+            const updateActive = () => {
+                const threshold = 132;
+                let current = sections[0];
+                sections.forEach(section => {
+                    if (section.getBoundingClientRect().top <= threshold) current = section;
+                });
+                if (current) setActive(current.id);
+            };
+            links.forEach(link => {
+                link.addEventListener('click', event => {
+                    event.preventDefault();
+                    const target = document.querySelector(link.getAttribute('href'));
+                    if (!target) return;
+                    setActive(target.id);
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            });
+            window.addEventListener('scroll', updateActive, { passive: true });
+            updateActive();
+        }
+
+        function escapeHtml(value) {
+            return String(value || '').replace(/[&<>"']/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char]));
+        }
+
+        fillDatalist('customerOptions', customers);
+        fillDatalist('orgOptions', orgs);
+        fillDatalist('reviewerUnitOptions', orgs);
+        initAnchorNavigation();
+        initBusinessOptions();
+    </script>
+</body>
+</html>
