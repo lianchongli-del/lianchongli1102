@@ -1534,8 +1534,17 @@
             });
         }
 
+        function getExistingCertDomainValues() {
+            return new Set(
+                [...document.querySelectorAll('.cert-domain-value')]
+                    .map(value => value.dataset.value || value.textContent.trim())
+                    .filter(Boolean)
+            );
+        }
+
         function renderCertDomainModal() {
             const visibleOptions = getVisibleCertDomainOptions();
+            const existingValues = getExistingCertDomainValues();
             const list = document.getElementById('certDomainOptionList');
             const emptyState = document.getElementById('certDomainEmptyState');
             const commonTab = document.getElementById('certDomainCommonTab');
@@ -1553,13 +1562,15 @@
             document.getElementById('confirmCertDomainButton').disabled = certDomainSelection.size === 0;
 
             list.innerHTML = visibleOptions.map(option => {
-                const selected = certDomainSelection.has(option.code);
+                const value = `${option.code}（${option.name}）`;
+                const alreadyAdded = existingValues.has(value);
+                const selected = !alreadyAdded && certDomainSelection.has(option.code);
                 return `
-                    <label class="flex items-start gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${selected ? 'border-brand-500 bg-brand-50' : 'border-gray-200 hover:border-brand-300 hover:bg-gray-50'}">
-                        <input type="checkbox" class="mt-0.5 h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500" ${selected ? 'checked' : ''} onchange="toggleCertDomainSelection('${option.code}')">
+                    <label class="flex items-start gap-3 p-3 border rounded-lg transition-colors ${alreadyAdded ? 'border-gray-200 bg-gray-50 cursor-not-allowed' : selected ? 'border-brand-500 bg-brand-50 cursor-pointer' : 'border-gray-200 hover:border-brand-300 hover:bg-gray-50 cursor-pointer'}">
+                        <input type="checkbox" class="mt-0.5 h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500" ${selected ? 'checked' : ''} ${alreadyAdded ? 'disabled' : ''} onchange="toggleCertDomainSelection('${option.code}')">
                         <span class="min-w-0">
-                            <span class="block text-base font-semibold text-gray-800">${option.code}（${option.name}）</span>
-                            <span class="block mt-1 text-xs text-gray-400">${option.category} · ${option.common ? '常用' : '非常用'}</span>
+                            <span class="block text-base font-semibold ${alreadyAdded ? 'text-gray-400' : 'text-gray-800'}">${option.code}（${option.name}）</span>
+                            <span class="block mt-1 text-xs text-gray-400">${alreadyAdded ? '已添加' : `${option.category} · ${option.common ? '常用' : '非常用'}`}</span>
                         </span>
                     </label>
                 `;
@@ -1570,6 +1581,8 @@
         }
 
         function toggleCertDomainSelection(code) {
+            const option = certificationDomainOptions.find(item => item.code === code);
+            if (!option || getExistingCertDomainValues().has(`${option.code}（${option.name}）`)) return;
             if (certDomainSelection.has(code)) {
                 certDomainSelection.delete(code);
             } else {
@@ -1579,7 +1592,8 @@
         }
 
         function selectVisibleCertDomains() {
-            const visibleOptions = getVisibleCertDomainOptions();
+            const existingValues = getExistingCertDomainValues();
+            const visibleOptions = getVisibleCertDomainOptions().filter(option => !existingValues.has(`${option.code}（${option.name}）`));
             const allSelected = visibleOptions.length > 0 && visibleOptions.every(option => certDomainSelection.has(option.code));
             visibleOptions.forEach(option => {
                 if (allSelected) certDomainSelection.delete(option.code);
