@@ -2309,10 +2309,6 @@ window.TECH_SERVICE_ITEMS = window.BUSINESS_ITEMS;
         }
 
         function removeBusinessItem(index) {
-            if (businessRows.length === 1) {
-                showToast('至少保留一条业务信息');
-                return;
-            }
             syncBusinessRowsFromDom();
             businessRows.splice(index, 1);
             renderBusinessItems();
