@@ -89,6 +89,10 @@
         .data-table tbody tr:last-child td { border-bottom: none; }
 
         .risk-type-tag { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; white-space: nowrap; margin: 2px; }
+        .risk-type-tags { display: inline-flex; align-items: center; flex-wrap: wrap; position: relative; max-width: 100%; }
+        .risk-type-more { position: relative; display: inline-flex; align-items: center; justify-content: center; min-width: 30px; padding: 3px 7px; margin: 2px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f8fafc; color: #475569; font-size: 11px; font-weight: 600; cursor: help; }
+        .risk-type-more-content { display: none; position: absolute; z-index: 20; left: 0; top: calc(100% + 6px); min-width: 220px; padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px; background: white; box-shadow: 0 8px 20px rgba(15,23,42,0.15); white-space: normal; }
+        .risk-type-more:hover .risk-type-more-content { display: block; }
         .risk-info { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
         .risk-status { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
         .risk-serious { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
@@ -114,6 +118,12 @@
         .action-btn.gray:hover { background: #f3f4f6; color: #374151; }
 
         .risk-desc-list { line-height: 1.6; }
+        .risk-desc-tags { display: inline-flex; align-items: center; position: relative; max-width: 100%; vertical-align: middle; }
+        .risk-desc-preview { display: inline-block; max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #4b5563; vertical-align: middle; }
+        .risk-desc-more { position: relative; display: inline-flex; align-items: center; justify-content: center; min-width: 30px; padding: 3px 7px; margin-left: 6px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f8fafc; color: #475569; font-size: 11px; font-weight: 600; cursor: help; }
+        .risk-desc-more-content { display: none; position: absolute; z-index: 20; left: 0; top: calc(100% + 6px); min-width: 280px; max-width: 420px; padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px; background: white; box-shadow: 0 8px 20px rgba(15,23,42,0.15); white-space: normal; }
+        .risk-desc-more:hover .risk-desc-more-content { display: block; }
+        .risk-desc-more-content-item { display: block; padding: 4px 6px; color: #475569; line-height: 1.5; }
         .risk-desc-item { padding-left: 12px; position: relative; color: #4b5563; }
         .risk-desc-item::before { content: ''; position: absolute; left: 0; top: 7px; width: 4px; height: 4px; border-radius: 50%; background: #94a3b8; }
         .risk-desc-item + .risk-desc-item { margin-top: 4px; }
@@ -141,6 +151,20 @@
         .modal-close:hover { background: #f1f5f9; color: #1e293b; }
         .modal-body { padding: 20px; overflow-y: auto; flex: 1; background: #fff; }
         .modal-footer { padding: 16px 20px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 12px; background: #fafafa; flex-shrink: 0; }
+        .process-page { display:none; padding:20px 24px 32px; } .process-page.show { display:block; animation:fadeIn .2s ease-out; }
+        .process-page-shell { width:100%; max-width:1440px; margin:0 auto; background:white; border:1px solid #e2e8f0; border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,.05); overflow:hidden; }
+        .process-page-header { padding:16px 20px; border-bottom:1px solid #e2e8f0; display:flex; align-items:center; justify-content:space-between; gap:16px; } .process-page-title { display:flex; align-items:center; gap:10px; font-size:18px; font-weight:600; color:#1e293b; }
+        .process-page-body { padding:20px; background:#fff; }
+        .process-page-topbar { padding:14px 20px; border-bottom:1px solid #e2e8f0; display:flex; align-items:center; justify-content:space-between; background:#fff; }
+        .process-page-topbar-right { display:flex; align-items:center; gap:16px; min-width:0; }
+        .process-page-readonly-summary { display:flex; align-items:center; gap:10px; min-width:0; color:#475569; font-size:13px; }
+        .process-page-summary-text { max-width:520px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#64748b; }
+        .process-explanation { margin:20px 20px 0; padding:12px 16px; border:1px solid #dbeafe; border-left:4px solid #3b82f6; border-radius:6px; background:#f8fafc; }
+        .process-explanation-title { margin-bottom:6px; color:#334155; font-size:13px; font-weight:600; }
+        .process-explanation-text { color:#475569; font-size:13px; line-height:1.6; word-break:break-word; }
+        .process-page-status { display:flex; align-items:center; gap:8px; color:#64748b; font-size:13px; } .process-page-footer { padding:16px 20px; border-top:1px solid #e2e8f0; display:flex; justify-content:flex-end; align-items:center; gap:12px; background:#fafafa; } .process-page-actions { display:flex; gap:12px; }
+        .subject-change-section { margin-top:14px; padding-top:12px; border-top:1px dashed #cbd5e1; } .subject-change-title { margin-bottom:8px; color:#334155; font-size:13px; font-weight:600; }
+        .subject-change-table { width:100%; border-collapse:collapse; table-layout:fixed; } .subject-change-table th,.subject-change-table td { padding:8px 10px; border:1px solid #e2e8f0; font-size:12px; text-align:left; word-break:break-word; } .subject-change-table th { background:#f8fafc; color:#475569; font-weight:600; } .subject-change-table td { color:#475569; background:#fff; }
 
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; margin-bottom: 6px; font-weight: 500; color: #374151; font-size: 13px; }
@@ -258,6 +282,7 @@
         <div class="status-tab active" data-status="">全部</div>
         <div class="status-tab" data-status="未处理">未处理</div>
         <div class="status-tab" data-status="已处理">已处理</div>
+        <div class="status-tab" data-status="已忽略">已忽略</div>
     </div>
 
     <div class="table-container">
@@ -299,86 +324,65 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="processModal">
-        <div class="modal modal-lg">
-            <div class="modal-header">
-                <h3><svg style="width:18px;height:18px;margin-top:-2px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg> 风险处理详情</h3>
-                <button class="modal-close" onclick="closeModal('processModal')">&times;</button>
-            </div>
-            <div class="modal-body">
-                
-                <table class="image-styled-table">
-                    <tr>
-                        <th>企业名称</th><td colspan="3" id="processImgCompanyName" style="color: #3b82f6; font-weight: 600; font-size: 15px;">-</td>
-                    </tr>
-                    <tr>
-                        <th>企业代码</th><td colspan="3" id="processImgCompanyCode" style="font-family: Consolas, monospace; color: #64748b;">-</td>
-                    </tr>
-                    <tr>
-                        <th>风险类型</th><td colspan="3" id="processImgRiskType" style="color: #ef4444; font-weight: 600;">-</td>
-                    </tr>
-                    <tr>
-                        <th>风险描述</th><td colspan="3" id="processImgRiskDesc" style="line-height: 1.6; color: #475569;">-</td>
-                    </tr>
-                    <tr class="process-info-row">
-                        <th>处理人</th><td id="processImgProcessor">-</td>
-                        <th>处理时间</th><td id="processImgProcessTime">-</td>
-                    </tr>
-                </table>
-
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <div style="font-size:14px;font-weight:600;color:#1e293b;border-left: 4px solid #3b82f6;padding-left: 8px;">该企业下关联的证书清单</div>
+    <div class="process-page" id="processModal">
+        <div class="process-page-shell">
+            <div class="process-page-topbar">
+                <button class="btn btn-secondary btn-sm" onclick="closeModal('processModal')">返回列表</button>
+                <div class="process-page-topbar-right">
+                    <div class="process-page-readonly-summary hidden" id="processReadonlySummary">
+                        <span class="record-status-tag status-done" id="processPageStatus">已处理</span>
+                    </div>
+                    <div class="process-page-actions" id="processActionButtons"><button class="btn btn-warning" onclick="openActionConfirm('忽略')">忽略</button><button class="btn btn-primary" onclick="openActionConfirm('确认处理')">确认处理</button></div>
                 </div>
-                
+            </div>
+            <div class="process-explanation hidden" id="processExplanation">
+                <div class="process-explanation-title" id="processExplanationTitle">处理说明</div>
+                <div class="process-explanation-text" id="processExplanationText">-</div>
+            </div>
+            <div class="process-page-body">
+                <table class="image-styled-table">
+                    <tr><th>企业名称</th><td colspan="3" id="processImgCompanyName" style="color:#3b82f6;font-weight:600;font-size:15px;">-</td></tr>
+                    <tr><th>企业代码</th><td colspan="3" id="processImgCompanyCode" style="font-family:Consolas,monospace;color:#64748b;">-</td></tr>
+                    <tr><th>风险类型</th><td colspan="3" id="processImgRiskType" style="color:#ef4444;font-weight:600;">-</td></tr>
+                    <tr><th>风险描述</th><td colspan="3" id="processImgRiskDesc" style="line-height:1.6;color:#475569;">-</td></tr>
+                    <tr class="hidden" id="subjectChangeRow">
+                        <th>主体信息变更</th>
+                        <td colspan="3">
+                            <div class="subject-change-section">
+                                <table class="subject-change-table">
+                                    <thead><tr><th>变更类型</th><th>变更前</th><th>变更后</th></tr></thead>
+                                    <tbody id="subjectChangeBody"></tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr><th>处理方式</th><td id="processImgProcessMethod">-</td><th>处理人</th><td id="processImgProcessor">-</td></tr>
+                    <tr><th>处理时间</th><td colspan="3" id="processImgProcessTime">-</td></tr>
+                    <tr class="hidden" id="processIgnoreReasonRow"><th>忽略原因</th><td colspan="3" id="processImgIgnoreReason">-</td></tr>
+                </table>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><div style="font-size:14px;font-weight:600;color:#1e293b;border-left:4px solid #3b82f6;padding-left:8px;">该企业下关联的证书清单</div></div>
                 <table class="data-table" id="certListTable">
-                    <thead><tr style="background:#f8fafc;">
-                        <th style="width:130px;">证书编号</th>
-                        <th style="width:60px;">领域</th>
-                        <th style="width:100px;">认证标准</th>
-                        <th style="width:auto;">认证范围</th>
-                        <th style="width:60px;">状态</th>
-                    </tr></thead>
+                    <thead><tr style="background:#f8fafc;"><th style="width:130px;">证书编号</th><th style="width:60px;">领域</th><th style="width:100px;">认证标准</th><th style="width:auto;">认证范围</th><th style="width:60px;">状态</th></tr></thead>
                     <tbody id="certListTableBody"></tbody>
                 </table>
-
-                <div class="form-group" style="margin-top:16px;margin-bottom:0;">
-                    <label>处理结果 <span style="color:#ef4444;">*</span></label>
-                    <textarea id="processResultText" rows="4" placeholder="请输入本次风险处理结果"></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('processModal')">取消</button>
-                <button class="btn btn-primary" onclick="confirmProcessRisk()">确认处理</button>
             </div>
         </div>
     </div>
-
-    <div class="modal-overlay" id="processedDetailModal">
-        <div class="modal modal-lg">
-            <div class="modal-header">
-                <h3><svg style="width:18px;height:18px;margin-top:-2px;color:#10b981;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 已处理详情 <span style="font-size:13px;color:#64748b;margin-left:8px;font-weight:normal;" id="processedCompanyName">-</span></h3>
-                <button class="modal-close" onclick="closeModal('processedDetailModal')">&times;</button>
-            </div>
+    <div class="modal-overlay" id="actionConfirmModal">
+        <div class="modal" style="max-width:620px;">
+            <div class="modal-header"><h3 id="actionConfirmTitle">确认风险处理</h3><button class="modal-close" onclick="closeModal('actionConfirmModal')">&times;</button></div>
             <div class="modal-body">
-                <table class="data-table" id="processedCertTable" style="table-layout: fixed;">
-                    <thead><tr style="background:#f8fafc;">
-                        <th style="width:160px;">证书编号</th>
-                        <th style="width:80px;">认证领域</th>
-                        <th style="width:130px;">认证标准</th>
-                        <th style="width:180px;">处理结果</th>
-                        <th style="width:150px;">处理时间</th>
-                        <th style="width:100px;">处理人</th>
-                    </tr></thead>
-                    <tbody id="processedCertTableBody"></tbody>
-                </table>
+                <div style="padding:10px 12px;margin-bottom:16px;border-left:3px solid #3b82f6;background:#f8fafc;color:#475569;font-size:13px;" id="actionConfirmHint">请填写处理信息</div>
+                <div class="form-group" id="actionReasonGroup"><label>忽略原因 <span style="color:#ef4444;">*</span></label><textarea id="actionReasonText" rows="3" placeholder="请输入忽略原因"></textarea></div>
+                <div class="form-group" id="actionResultGroup" style="margin-bottom:0;"><label>处理结果 <span style="color:#ef4444;">*</span></label><textarea id="actionResultText" rows="4" placeholder="请输入本次风险处理结果"></textarea></div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal('processedDetailModal')">关闭</button>
-            </div>
+            <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('actionConfirmModal')">取消</button><button class="btn btn-primary" onclick="submitActionConfirm()">确认提交</button></div>
         </div>
     </div>
+
     <script>
         var currentCompany = null;
+        var pendingProcessMethod = '';
 
         // ================= 数据初始化与结构 =================
         var riskTypeClassMap = {
@@ -392,36 +396,60 @@
         var statusClassMap = {
             '未处理': 'status-undone',
             '已处理': 'status-done',
+            '已忽略': 'status-pending',
             '有效': 'status-valid',
             '暂停': 'status-suspend',
             '撤销': 'status-revoked'
         };
 
-        function getPrimaryRiskType(data) {
-            return data && data.riskTypes && data.riskTypes.length ? data.riskTypes[0] : '-';
+        function escapeHtml(value) {
+            return String(value == null ? '' : value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+        function renderRiskTypeTags(types, compact) {
+            var list = types && types.length ? types : ['-'];
+            var visible = compact && list.length > 1 ? list.slice(0, 1) : list;
+            var hidden = compact && list.length > 1 ? list.slice(1) : [];
+            var html = '<span class="risk-type-tags">';
+            for (var i = 0; i < visible.length; i++) html += '<span class="risk-type-tag ' + (riskTypeClassMap[visible[i]] || '') + '">' + escapeHtml(visible[i]) + '</span>';
+            if (hidden.length) {
+                html += '<span class="risk-type-more">+' + hidden.length + '<span class="risk-type-more-content">';
+                for (var j = 0; j < list.length; j++) html += '<span class="risk-type-tag ' + (riskTypeClassMap[list[j]] || '') + '">' + escapeHtml(list[j]) + '</span>';
+                html += '</span></span>';
+            }
+            return html + '</span>';
+        }
+        function renderRiskDescTags(descs) {
+            var list = descs && descs.length ? descs : ['-'];
+            var html = '<span class="risk-desc-tags"><span class="risk-desc-preview">' + escapeHtml(list[0]) + '</span>';
+            if (list.length > 1) {
+                html += '<span class="risk-desc-more">+' + (list.length - 1) + '<span class="risk-desc-more-content">';
+                for (var i = 0; i < list.length; i++) html += '<span class="risk-desc-more-content-item">' + escapeHtml(list[i]) + '</span>';
+                html += '</span></span>';
+            }
+            return html + '</span>';
         }
 
         var companyData = [
-            { company: '深圳市神州线缆有限公司', code: '91440300MA5G8KXXXX', riskTypes: ['企业主体信息异常'], riskDescs: ['企业名称变更、法人变更（与客户库不一致）'], status: '未处理', date: '2026-05-10', processTime: '', processor: '', certs: [
+            { company: '深圳市神州线缆有限公司', code: '91440300MA5G8KXXXX', riskTypes: ['企业主体信息异常', '被列入经营异常名录', '被列入行政处罚名单'], riskDescs: ['企业名称变更、法人变更（与客户库不一致）', '登记地址异常', '历史行政处罚待核查'], status: '未处理', date: '2026-05-10', processTime: '', processor: '', processMethod: '', ignoreReason: '', processResult: '', changes: [{ type: '企业名称变更', before: '深圳市神州线缆制造有限公司', after: '深圳市神州线缆有限公司' }, { type: '法定代表人变更', before: '李明', after: '王强' }], certs: [
                 { certNo: '00126Q300285R601', field: 'Q', fieldFull: 'Q（质量管理体系）', standard: 'ISO 9001:2015', accBody: 'CNAS', currentAudit: '监督二', nextAudit: '再认证', code: '19.11.02;', scope: '0.02mm-2.05mm电工纯铜线研发生产', issueDate: '2026-01-14', expiryDate: '2029-01-13', status: '有效', processResult: '', processor: '' },
                 { certNo: '00126E300286R601', field: 'E', fieldFull: 'E（环境管理体系）', standard: 'ISO 14001:2015', accBody: 'CNAS', currentAudit: '监督二', nextAudit: '再认证', code: '14.01.01;', scope: '电线电缆的环境管理活动', issueDate: '2026-01-14', expiryDate: '2029-01-13', status: '有效', processResult: '', processor: '' }
             ]},
-            { company: '广东金禾面粉有限公司', code: '91440000MA5G9LXXXX', riskTypes: ['企业主体状态异常'], riskDescs: ['停业'], status: '未处理', date: '2026-05-08', processTime: '', processor: '', certs: [
+            { company: '广东金禾面粉有限公司', code: '91440000MA5G9LXXXX', riskTypes: ['企业主体状态异常'], riskDescs: ['停业'], status: '未处理', date: '2026-05-08', processTime: '', processor: '', processMethod: '', ignoreReason: '', processResult: '', certs: [
                 { certNo: 'CQC26FS0200R3M/4400', field: 'F', fieldFull: 'F（食品安全）', standard: 'FSSC V6.0', accBody: 'CNAS', currentAudit: '初次认证', nextAudit: '监督一', code: '03.01.01;', scope: '小麦粉、专用粉的生产', issueDate: '2026-02-12', expiryDate: '2029-06-24', status: '有效', processResult: '', processor: '' }
             ]},
-            { company: '上海精密机械制造有限公司', code: '91310000MA5G6NXXXX', riskTypes: ['企业主体信息异常'], riskDescs: ['法人变更'], status: '已处理', date: '2026-05-06', processTime: '2026-05-07 10:30:00', processor: '张三', certs: [
+            { company: '上海精密机械制造有限公司', code: '91310000MA5G6NXXXX', riskTypes: ['企业主体信息异常'], riskDescs: ['法人变更'], status: '已忽略', date: '2026-05-06', processTime: '2026-05-07 10:30:00', processor: '张三', processMethod: '忽略', ignoreReason: '企业已完成内部整改，保留证书继续观察', processResult: '已忽略风险', changes: [{ type: '法定代表人变更', before: '陈伟', after: '周宁' }], certs: [
                 { certNo: '00126Q310001R1M', field: 'Q', fieldFull: 'Q（质量管理体系）', standard: 'ISO 9001:2015', accBody: 'CNAS', currentAudit: '再认证', nextAudit: '监督一', code: '17.02;', scope: '精密机械零部件的加工制造', issueDate: '2026-02-20', expiryDate: '2029-02-19', status: '有效', processResult: '已忽略风险', processTime: '2026-05-07 10:30:00', processor: '张三' }
             ]},
-            { company: '杨协成（广东）食品饮料有限公司', code: '91440000MA5G7MXXXX', riskTypes: ['企业主体信息异常'], riskDescs: ['注册地址变更'], status: '已处理', date: '2026-05-07', processTime: '2026-05-08 14:20:00', processor: '张三', certs: [
+            { company: '杨协成（广东）食品饮料有限公司', code: '91440000MA5G7MXXXX', riskTypes: ['企业主体信息异常'], riskDescs: ['注册地址变更'], status: '已处理', date: '2026-05-07', processTime: '2026-05-08 14:20:00', processor: '张三', processMethod: '确认处理', ignoreReason: '已完成注册地址核验', processResult: '已完成注册地址变更核验', changes: [{ type: '注册地址变更', before: '广州市白云区旧址', after: '广州市番禺区新址' }], certs: [
                 { certNo: 'CQC25FS1507R1M/4400', field: 'F', fieldFull: 'F（食品安全）', standard: 'FSSC V6.0', accBody: 'DAKKS', currentAudit: '监督一', nextAudit: '监督二', code: '03.02;', scope: '饮料、食品的生产和销售', issueDate: '2025-12-29', expiryDate: '2029-12-17', status: '暂停', processResult: '已暂停证书', processor: '张三' }
             ]},
-            { company: '江苏恒通电子科技有限公司', code: '91320000MA5G5PXXXX', riskTypes: ['被列入严重违法失信名单'], riskDescs: ['质量事故'], status: '已处理', date: '2026-05-05', processTime: '2026-05-09 09:15:00', processor: '张三', certs: [
+            { company: '江苏恒通电子科技有限公司', code: '91320000MA5G5PXXXX', riskTypes: ['被列入严重违法失信名单'], riskDescs: ['质量事故'], status: '已处理', date: '2026-05-05', processTime: '2026-05-09 09:15:00', processor: '张三', processMethod: '确认处理', ignoreReason: '已完成质量事故整改闭环', processResult: '已暂停相关证书并完成整改跟踪', certs: [
                 { certNo: '00126Q320001R1M', field: 'Q', fieldFull: 'Q（质量管理体系）', standard: 'ISO 9001:2015', accBody: 'CNAS', currentAudit: '监督一', nextAudit: '监督二', code: '19.01;', scope: '电子元器件的生产', issueDate: '2026-01-20', expiryDate: '2029-01-19', status: '暂停', processResult: '已暂停证书', processor: '张三' }
             ]},
-            { company: '浙江绿源环保科技有限公司', code: '91330000MA5G4QXXXX', riskTypes: ['被列入经营异常名录'], riskDescs: ['地址失联'], status: '未处理', date: '2026-05-04', processTime: '', processor: '', certs: [
+            { company: '浙江绿源环保科技有限公司', code: '91330000MA5G4QXXXX', riskTypes: ['被列入经营异常名录'], riskDescs: ['地址失联'], status: '未处理', date: '2026-05-04', processTime: '', processor: '', processMethod: '', ignoreReason: '', processResult: '', certs: [
                 { certNo: '00126Q330001R1M', field: 'Q', fieldFull: 'Q（质量管理体系）', standard: 'ISO 9001:2015', accBody: 'CNAS', currentAudit: '监督二', nextAudit: '再认证', code: '18.01;', scope: '环保设备的研发', issueDate: '2026-03-15', expiryDate: '2029-03-14', status: '有效', processResult: '', processor: '' }
             ]},
-            { company: '北京中科软件有限公司', code: '91110000MA5G3RXXXX', riskTypes: ['企业主体状态异常'], riskDescs: ['清算'], status: '未处理', date: '2026-05-03', processTime: '', processor: '', certs: [
+            { company: '北京中科软件有限公司', code: '91110000MA5G3RXXXX', riskTypes: ['企业主体状态异常'], riskDescs: ['清算'], status: '未处理', date: '2026-05-03', processTime: '', processor: '', processMethod: '', ignoreReason: '', processResult: '', certs: [
                 { certNo: '00126IS340001R1M', field: 'IS', fieldFull: 'IS（信息安全）', standard: 'ISO 27001:2022', accBody: 'CNAS', currentAudit: '初次认证', nextAudit: '监督一', code: '33.01;', scope: '软件开发及信息安全服务', issueDate: '2026-02-28', expiryDate: '2029-02-27', status: '有效', processResult: '', processor: '' }
             ]}
         ];
@@ -439,17 +467,13 @@
             var companyNameInput = document.getElementById('companyName').value.trim();
             var selectedTypes = Array.from(document.querySelectorAll('.parent-cb:checked')).map(function(cb) { return cb.value; });
             var statusFilter = document.querySelector('.status-tab.active').getAttribute('data-status');
-            
             var filteredData = [];
             for (var i = 0; i < companyData.length; i++) {
                 var d = companyData[i];
                 var show = true;
                 if (companyNameInput && d.company.indexOf(companyNameInput) === -1) show = false;
                 if (statusFilter && d.status !== statusFilter) show = false;
-                if (selectedTypes.length > 0) {
-                    var hasMatch = selectedTypes.some(function(type) { return d.riskTypes.indexOf(type) !== -1; });
-                    if (!hasMatch) show = false;
-                }
+                if (selectedTypes.length > 0 && !selectedTypes.some(function(type) { return d.riskTypes.indexOf(type) !== -1; })) show = false;
                 if (show) filteredData.push(d);
             }
             filteredData.sort(function(a, b) {
@@ -458,7 +482,6 @@
                 if (b.status === '未处理') return 1;
                 return 0;
             });
-
             document.getElementById('pageStart').textContent = filteredData.length > 0 ? 1 : 0;
             document.getElementById('pageEnd').textContent = filteredData.length;
             document.getElementById('pageTotal').textContent = filteredData.length;
@@ -466,28 +489,24 @@
             var html = '';
             for (var j = 0; j < filteredData.length; j++) {
                 var d = filteredData[j];
-                var primaryRiskType = getPrimaryRiskType(d);
-                var typeHtml = '<span class="risk-type-tag ' + (riskTypeClassMap[primaryRiskType]||'') + '">' + primaryRiskType + '</span>';
-                var descHtml = '<div class="risk-desc-list">' + d.riskDescs.map(function(desc) { return '<div class="risk-desc-item">' + desc + '</div>'; }).join('') + '</div>';
-                
+                var typeHtml = renderRiskTypeTags(d.riskTypes, true);
+                var descHtml = renderRiskDescTags(d.riskDescs);
                 var actionHtml = '';
                 if (d.status === '未处理') {
                     actionHtml = '<button class="btn btn-primary btn-sm" onclick="openProcessModal(\''+d.company+'\')">处理风险</button>';
-                } else if (d.status === '已处理') {
-                    actionHtml = "<button class=\"btn btn-secondary btn-sm\" onclick=\"openProcessModal('" + d.company + "')\">查看详情</button>";
+                } else if (d.status !== '未处理') {
+                    actionHtml = '<button class="btn btn-secondary btn-sm" onclick="openProcessModal(\'' + d.company + '\')">查看详情</button>';
                 }
-
                 var procTime = d.processTime ? d.processTime.split(' ')[0] + '<br><span style="font-size:11px;color:#94a3b8;">' + d.processTime.split(' ')[1] + '</span>' : '-';
-                var procPerson = d.processor ? '<span style="display:inline-block;background:#f1f5f9;padding:2px 8px;border-radius:4px;border:1px solid #e2e8f0;font-size:12px;color:#475569;line-height:1.4;vertical-align:middle;">' + d.processor + '</span>' : '<span style="color:#94a3b8;font-size:12px;vertical-align:middle;">-</span>';
-
+                var procPerson = d.processor ? '<span style="display:inline-block;background:#f1f5f9;padding:2px 8px;border-radius:4px;border:1px solid #e2e8f0;font-size:12px;color:#475569;line-height:1.4;vertical-align:middle;">' + escapeHtml(d.processor) + '</span>' : '<span style="color:#94a3b8;font-size:12px;vertical-align:middle;">-</span>';
                 html += '<tr>' +
-                    '<td><strong style="color:#1e293b;">' + d.company + '</strong></td>' +
-                    '<td style="font-family:Consolas,monospace;color:#64748b;">' + d.code + '</td>' +
+                    '<td><strong style="color:#1e293b;">' + escapeHtml(d.company) + '</strong></td>' +
+                    '<td style="font-family:Consolas,monospace;color:#64748b;">' + escapeHtml(d.code) + '</td>' +
                     '<td>' + typeHtml + '</td>' +
                     '<td>' + descHtml + '</td>' +
                     '<td style="text-align:center;">' + d.date + '</td>' +
-                    '<td style="text-align:center;"><span class="record-status-tag ' + (statusClassMap[d.status]||'') + '">' + d.status + '</span></td>' +
-                    '<td style="text-align:center; color:#475569;">' + procTime + '</td>' +
+                    '<td style="text-align:center;"><span class="record-status-tag ' + (statusClassMap[d.status] || '') + '">' + d.status + '</span></td>' +
+                    '<td style="text-align:center;color:#475569;">' + procTime + '</td>' +
                     '<td style="text-align:center;">' + procPerson + '</td>' +
                     '<td style="text-align:center;">' + actionHtml + '</td>' +
                     '</tr>';
@@ -500,7 +519,6 @@
             document.getElementById('riskTypeDropdown').classList.toggle('show');
             document.getElementById('riskTypeHeader').classList.toggle('active');
         }
-
         function updateMultiSelect() {
             var checkedParents = document.querySelectorAll('.parent-cb:checked');
             var label = document.getElementById('riskTypeLabel');
@@ -512,7 +530,6 @@
                 label.style.color = '#3b82f6';
             }
         }
-
         document.addEventListener('click', function(e) {
             var container = document.getElementById('riskTypeContainer');
             if (container && !container.contains(e.target)) {
@@ -521,10 +538,9 @@
             }
         });
 
-        // ================= 处理弹窗 & 证书渲染逻辑 =================
         function getCompanyObj(name) {
-            for(var i=0; i<companyData.length; i++) {
-                if(companyData[i].company === name) return companyData[i];
+            for (var i = 0; i < companyData.length; i++) {
+                if (companyData[i].company === name) return companyData[i];
             }
             return null;
         }
@@ -533,42 +549,56 @@
             currentCompany = companyName;
             var data = getCompanyObj(companyName);
             if (!data || data.certs.length === 0) return;
-
-            var isReadonly = data.status === '已处理';
-
+            var isReadonly = data.status !== '未处理';
+            var readonlySummary = document.getElementById('processReadonlySummary');
+            var pageStatus = document.getElementById('processPageStatus');
+            var explanation = document.getElementById('processExplanation');
+            var explanationTitle = document.getElementById('processExplanationTitle');
+            var explanationText = document.getElementById('processExplanationText');
+            pageStatus.textContent = data.status;
+            pageStatus.className = 'record-status-tag ' + (statusClassMap[data.status] || '');
+            explanationTitle.textContent = data.processMethod === '忽略' ? '忽略说明' : '处理说明';
+            explanationText.textContent = data.processMethod === '忽略' ? (data.ignoreReason || data.processResult || '-') : (data.processResult || '-');
+            readonlySummary.classList.toggle('hidden', !isReadonly);
+            explanation.classList.toggle('hidden', !isReadonly);
             document.getElementById('processImgCompanyName').textContent = data.company;
             document.getElementById('processImgCompanyCode').textContent = data.code;
-            var primaryRiskType = getPrimaryRiskType(data);
-            document.getElementById('processImgRiskType').innerHTML = '<span class="risk-type-tag ' + (riskTypeClassMap[primaryRiskType]||'') + '">' + primaryRiskType + '</span>';
-            document.getElementById('processImgRiskDesc').innerHTML = '<div class="risk-desc-list">' + data.riskDescs.map(function(desc) { 
-                return '<div class="risk-desc-item">' + desc + '</div>'; 
-            }).join('') + '</div>';
+            document.getElementById('processImgRiskType').innerHTML = renderRiskTypeTags(data.riskTypes, false);
 
+            var descHtml = '<div class="risk-desc-list">' + data.riskDescs.map(function(desc) {
+                return '<div class="risk-desc-item">' + escapeHtml(desc) + '</div>';
+            }).join('') + '</div>';
+            document.getElementById('processImgRiskDesc').innerHTML = descHtml;
+
+            var changeRow = document.getElementById('subjectChangeRow');
+            var changeBody = document.getElementById('subjectChangeBody');
+            if (data.riskTypes.indexOf('企业主体信息异常') !== -1) {
+                var changes = data.changes && data.changes.length ? data.changes : [{ type: '-', before: '-', after: '-' }];
+                var changeHtml = '';
+                for (var ch = 0; ch < changes.length; ch++) {
+                    changeHtml += '<tr><td>' + escapeHtml(changes[ch].type) + '</td><td>' + escapeHtml(changes[ch].before) + '</td><td>' + escapeHtml(changes[ch].after) + '</td></tr>';
+                }
+                changeBody.innerHTML = changeHtml;
+                changeRow.classList.remove('hidden');
+            } else {
+                changeBody.innerHTML = '';
+                changeRow.classList.add('hidden');
+            }
+
+            document.getElementById('processImgProcessMethod').textContent = data.processMethod || '-';
             document.getElementById('processImgProcessor').textContent = data.processor || '-';
             document.getElementById('processImgProcessTime').textContent = data.processTime || '-';
-
+            document.getElementById('processImgIgnoreReason').textContent = data.ignoreReason || '-';
+            document.getElementById('processIgnoreReasonRow').classList.toggle('hidden', !isReadonly || data.processMethod !== '忽略' || !data.ignoreReason);
             renderProcessCertTable(data, isReadonly);
-            var resultText = document.getElementById('processResultText');
-            var firstResult = '';
-            for (var r = 0; r < data.certs.length; r++) {
-                if (data.certs[r].processResult) {
-                    firstResult = data.certs[r].processResult;
-                    break;
-                }
-            }
-            resultText.value = isReadonly ? firstResult : '';
-            resultText.disabled = isReadonly;
-
-            var footer = document.querySelector('#processModal .modal-footer');
-            var cancelBtn = footer.querySelector('.btn-secondary');
-            var confirmBtn = footer.querySelector('.btn-primary');
-            cancelBtn.textContent = isReadonly ? '关闭' : '取消';
-            confirmBtn.style.display = isReadonly ? 'none' : 'inline-flex';
-
+            document.getElementById('processActionButtons').classList.toggle('hidden', isReadonly);
+            document.querySelectorAll('.page-header, .dashboard-cards, .filter-bar, .status-tabs, .table-container').forEach(function(el) { el.classList.add('hidden'); });
             document.getElementById('processModal').classList.add('show');
+            window.scrollTo(0, 0);
         };
 
-        // 内部实时刷新弹窗的证书列表
+        // 内部实时刷新整页详情中的证书列表
+        // 内部实时刷新整页详情中的证书列表
         function renderProcessCertTable(data, readonly) {
             var tbody = document.getElementById('certListTableBody');
             var html = '';
@@ -589,51 +619,38 @@
         }
 
         // ================= 处理动作落实 =================
-        function confirmProcessRisk() {
+        window.openActionConfirm = function(method) {
+            if (!currentCompany) return;
+            pendingProcessMethod = method;
+            document.getElementById('actionConfirmTitle').textContent = method === '忽略' ? '忽略风险' : '确认处理风险';
+            var isIgnoreAction = method === '忽略';
+            document.getElementById('actionConfirmHint').textContent = isIgnoreAction ? '请填写忽略原因。' : '请填写处理结果。';
+            document.getElementById('actionReasonGroup').classList.toggle('hidden', !isIgnoreAction);
+            document.getElementById('actionResultGroup').classList.toggle('hidden', isIgnoreAction);
+            document.getElementById('actionReasonText').value = '';
+            document.getElementById('actionResultText').value = '';
+            document.getElementById('actionConfirmModal').classList.add('show');
+        };
+        function submitActionConfirm() {
             var data = getCompanyObj(currentCompany);
-            var result = document.getElementById('processResultText').value.trim();
+            var isIgnoreAction = pendingProcessMethod === '忽略';
+            var reason = isIgnoreAction ? document.getElementById('actionReasonText').value.trim() : '';
+            var result = isIgnoreAction ? '已忽略风险' : document.getElementById('actionResultText').value.trim();
             if (!data) return;
-            if (!result) { alert('请输入处理结果！'); return; }
-
+            if (isIgnoreAction && !reason) { alert('请输入忽略原因！'); return; }
+            if (!isIgnoreAction && !result) { alert('请输入处理结果！'); return; }
             var now = getCurrentTimeStr();
-            data.status = '已处理';
-            data.processor = '张三';
-            data.processTime = now;
-            for (var i = 0; i < data.certs.length; i++) {
-                data.certs[i].processResult = result;
-                data.certs[i].processor = '张三';
-                data.certs[i].processTime = now;
-            }
-
-            closeModal('processModal');
+            data.status = isIgnoreAction ? '已忽略' : '已处理'; data.processMethod = pendingProcessMethod; data.ignoreReason = reason; data.processResult = result; data.processor = '张三'; data.processTime = now;
+            for (var i = 0; i < data.certs.length; i++) { data.certs[i].processResult = result; data.certs[i].processor = '张三'; data.certs[i].processTime = now; }
+            closeModal('actionConfirmModal');
+            returnToRiskList();
             renderMainTable();
         }
 
-        window.confirmProcessRisk = confirmProcessRisk;
+        window.submitActionConfirm = submitActionConfirm;
+        window.confirmProcessRisk = function() { openActionConfirm('确认处理'); };
+        window.showProcessedDetailModal = function(companyName) { openProcessModal(companyName); };
 
-        // ================= 已处理详情页面 =================
-        window.showProcessedDetailModal = function(companyName) {
-            var data = getCompanyObj(companyName);
-            if (!data) return;
-
-            document.getElementById('processedCompanyName').textContent = '（' + data.company + '）';
-
-            var tbody = document.getElementById('processedCertTableBody');
-            var html = '';
-            for (var k = 0; k < data.certs.length; k++) {
-                var c = data.certs[k];
-                html += '<tr>' +
-                    '<td style="font-family:Consolas,monospace;font-weight:600;color:#475569;">' + c.certNo + '</td>' +
-                    '<td>' + c.field + '</td>' +
-                    '<td>' + c.standard + '</td>' +
-                    '<td style="color:#475569;">' + (c.processResult || '-') + '</td>' +
-                    '<td style="color:#64748b;">' + (c.processTime || data.processTime) + '</td>' +
-                    '<td><span style="background:#f1f5f9;padding:2px 8px;border-radius:4px;border:1px solid #e2e8f0;font-size:12px;">' + (c.processor || data.processor) + '</span></td>' +
-                    '</tr>';
-            }
-            tbody.innerHTML = html;
-            document.getElementById('processedDetailModal').classList.add('show');
-        };
         function init() {
             // 初始化渲染主表格
             renderMainTable();
@@ -675,10 +692,20 @@
         }
 
         window.closeModal = function(modalId) {
-            document.getElementById(modalId).classList.remove('show');
+            if (modalId === 'processModal') { returnToRiskList(); return; }
+            var modal = document.getElementById(modalId);
+            if (modal) modal.classList.remove('show');
+        };
+        function returnToRiskList() {
+            var processPage = document.getElementById('processModal');
+            var actionModal = document.getElementById('actionConfirmModal');
+            if (actionModal) actionModal.classList.remove('show');
+            if (processPage) processPage.classList.remove('show');
+            document.querySelectorAll('.page-header, .dashboard-cards, .filter-bar, .status-tabs, .table-container').forEach(function(el) { el.classList.remove('hidden'); });
+            window.scrollTo(0, 0);
         }
 
-        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('DOMContentLoaded', init);        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
