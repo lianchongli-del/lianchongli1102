@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>审核绩效核准</title><style>
 :root{--primary:#2563eb;--soft:#eff6ff;--bg:#f4f7fb;--text:#172033;--muted:#64748b;--border:#e2e8f0}
@@ -214,6 +215,38 @@
 
 .filter-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;align-items:end}
 .filter-actions{grid-column:auto;justify-content:flex-end;align-items:center;align-self:end;height:36px;white-space:nowrap}
+
+.ai-trigger{background:#eff6ff!important;border-color:#bfdbfe!important;color:#2563eb!important}
+.ai-trigger:disabled{opacity:.5;cursor:not-allowed}
+.ai-mask{z-index:45}.ai-dialog{width:1180px;height:min(820px,calc(100vh - 64px))}
+.ai-title-wrap{display:flex;align-items:center;gap:10px}.ai-mode-badge{font-size:11px;color:#64748b;background:#f1f5f9;padding:2px 7px;border-radius:4px}
+.ai-context{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:13px 16px;border:1px solid #e2e8f0;background:#f8fafc;border-radius:6px;margin-bottom:12px;font-size:12px;color:#475569}.ai-context label{color:#94a3b8}
+.ai-demo-note{padding:9px 12px;background:#fffbeb;color:#a16207;border:1px solid #fde68a;border-radius:5px;font-size:12px;margin-bottom:12px}
+.ai-process{border:1px solid #e2e8f0;border-radius:6px;padding:12px 15px;margin-bottom:16px}
+.ai-process>summary{display:flex;justify-content:space-between;align-items:center;cursor:pointer;color:#334155;font-size:13px;font-weight:600}
+.ai-process>summary:before{content:"›";margin-right:7px}.ai-process[open]>summary:before{content:"⌄"}.ai-process>summary>span:first-child{flex:1}
+#ai-progress-text{font-size:12px;font-weight:400;color:#64748b}
+.ai-progress-track{height:5px;background:#f1f5f9;border-radius:4px;margin:14px 0;overflow:hidden}#ai-progress-bar{height:100%;width:0;background:#2563eb;transition:width .25s}
+.ai-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
+.ai-step{font-size:12px;display:flex;align-items:center;gap:8px;color:#94a3b8}.ai-step b{width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:#f1f5f9;font-weight:400}
+.ai-step.running{color:#2563eb}.ai-step.running b{background:#dbeafe}.ai-step.done{color:#047857}.ai-step.done b{background:#d1fae5}
+.ai-log{font-size:12px;line-height:1.9;color:#64748b;max-height:160px;overflow:auto;padding:8px 10px;background:#fafcff;border-radius:5px}.ai-log div{display:flex;gap:10px}.ai-log time{color:#94a3b8;white-space:nowrap}
+.ai-task-result{border:1px solid #e2e8f0;border-radius:6px;margin-bottom:14px;overflow:hidden}
+.ai-result-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 15px;background:#f8fafc}.ai-result-header h3{font-size:13px;margin:0;color:#1e293b}.ai-result-header .id{color:#94a3b8;font-size:11px;margin-top:3px}.ai-result-header .amount{color:#475569;font-size:12px;white-space:nowrap}.ai-result-header .amount strong{margin-left:6px;font-size:15px;color:#0f172a}
+.ai-result-table{table-layout:fixed;font-size:12px}.ai-result-table th,.ai-result-table td{padding:11px 8px;text-align:center;border-top:1px solid #f1f5f9}.ai-result-table th{background:#fafafa;font-size:11px;color:#64748b}.ai-result-table td:first-child{text-align:left;padding-left:15px}.ai-result-table .amount-cell{font-weight:600}
+.ai-basis{padding:10px 15px;background:#fafcff;font-size:12px;color:#64748b}.ai-basis summary{cursor:pointer}.ai-person-basis{padding:8px 0;line-height:1.8;border-bottom:1px solid #eef2f7}.ai-person-basis:last-child{border:0}.ai-person-basis strong{color:#334155}.ai-result-heading{font-size:14px;margin:16px 0 10px}
+.ai-error{border:1px solid #fecaca;background:#fef2f2;color:#b91c1c;padding:12px;border-radius:6px;font-size:13px}
+
+.ai-dialog [hidden]{display:none!important}
+
+.ai-trigger .icon{width:16px;height:16px}
+.ai-fee-input{width:86px;max-width:100%;height:32px;padding:0 7px;border:1px solid #cbd5e1;border-radius:5px;outline:none;text-align:center;background:#fff;font:inherit}
+.ai-fee-input:focus{border-color:#2563eb;box-shadow:0 0 0 3px #2563eb1a}
+.ai-fee-input:disabled{background:#f8fafc;color:#94a3b8;border-color:#e2e8f0;cursor:not-allowed}
+.ai-fee-input.invalid{border-color:#dc2626}
+.ai-result-heading-row{display:flex;align-items:center;justify-content:space-between;margin:16px 0 10px;gap:12px}
+.ai-result-heading-row .ai-result-heading{margin:0}.ai-result-heading-row>span{font-size:12px;color:#64748b}
+.ai-row-edited td{background:#fafcff}
 </style></head><body>
 <header class="topbar"><div class="brand"><span class="brand-icon">审</span><h1>审核绩效核准</h1></div></header>
 <main class="page">
@@ -227,7 +260,7 @@
 <button class="status-tab" data-status="" aria-pressed="false">全部 <span id="count-all"></span></button>
 <button class="status-tab active" data-status="待核准" aria-pressed="true">待核准 <span id="count-pending"></span></button>
 <button class="status-tab" data-status="已核准" aria-pressed="false">已核准 <span id="count-approved"></span></button>
-</div><div class="toolbar-right"><span class="selection-summary">已选 <strong id="selected-count">0</strong> 项 <button type="button" class="clear-selection" id="clear-selection" hidden>清空</button></span><button class="btn secondary" id="export" disabled>导出劳务费明细表</button><span>当前列表 <strong id="task-count"></strong> 条</span></div></div>
+</div><div class="toolbar-right"><span class="selection-summary">已选 <strong id="selected-count">0</strong> 项 <button type="button" class="clear-selection" id="clear-selection" hidden>清空</button></span><button class="btn secondary ai-trigger" id="ai-calculate" disabled title="选择同一项目归属机构下的待核准任务"><svg class="icon ai-chip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="3"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/><path d="m8 15 2-6 2 6M8.7 13h2.6M15 9v6"/></svg>AI核算</button><button class="btn secondary" id="export" disabled><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></svg>导出</button><span>当前列表 <strong id="task-count"></strong> 条</span></div></div>
 <div class="table-scroll"><table class="task-table"><colgroup><col style="width:3%"><col style="width:11%"><col style="width:10%"><col style="width:12.5%"><col style="width:8.5%"><col style="width:5%"><col style="width:8%"><col style="width:11.5%"><col style="width:5%"><col style="width:6.5%"><col style="width:6%"><col style="width:6%"><col style="width:7%"></colgroup>
 <thead><tr><th><input type="checkbox" id="check-all" aria-label="全选当前页" title="全选当前页"></th><th>任务书编号</th><th>项目编号</th><th>企业名称</th><th>项目归属机构</th><th>审核组长</th><th>涉及领域</th><th>审核时间</th><th>总人天数</th><th style="text-align:right">合计（元）</th><th>项目状态</th><th>核准状态</th><th class="col-action">操作</th></tr></thead><tbody id="task-body"></tbody></table></div>
 <div class="pagination"><span>共 <strong id="total"></strong> 条</span><button class="btn secondary pager-btn" id="prev-page" aria-label="上一页">‹</button><span id="page-info"></span><button class="btn secondary pager-btn" id="next-page" aria-label="下一页">›</button><select id="page-size" aria-label="每页条数"><option value="10">10 行</option><option value="20">20 行</option></select></div>
@@ -241,6 +274,16 @@
 <header class="dialog-header"><h2 id="plan-title">审核计划预览</h2><button class="close" id="plan-close" aria-label="关闭审核计划预览">×</button></header>
 <iframe id="plan-frame" title="审核计划PDF预览" sandbox=""></iframe>
 <footer class="dialog-footer plan-footer"><button class="btn secondary" id="plan-done">关闭</button><button class="btn primary" id="plan-download">下载审核计划 PDF</button></footer>
+</section></div>
+
+<div class="mask ai-mask" id="ai-modal"><section class="dialog ai-dialog" role="dialog" aria-modal="true" aria-labelledby="ai-title">
+<header class="dialog-header"><div class="ai-title-wrap"><h2 id="ai-title">AI批量核算</h2></div><button class="close" id="ai-close" aria-label="关闭AI核算">×</button></header>
+<div class="dialog-body">
+<div class="ai-context" id="ai-context"></div>
+<div class="ai-demo-note" id="ai-demo-note" hidden>已接入AI能力底座，以下为核算结果，支持手动进行二次核算确认。</div>
+<details class="ai-process" id="ai-process" open><summary><span id="ai-process-title">计算过程</span><span id="ai-progress-text">0%</span></summary><div class="ai-progress-track"><div id="ai-progress-bar"></div></div><div class="ai-steps" id="ai-steps"></div><div class="ai-log" id="ai-log" aria-live="polite"></div></details>
+<div id="ai-results"></div></div>
+<footer class="dialog-footer"><div class="modal-total"><span id="ai-summary">正在准备核算清单</span><strong id="ai-total"></strong></div><div class="footer-actions"><button class="btn secondary" id="ai-cancel">取消</button><button class="btn primary" id="ai-apply" hidden>确认核准</button></div></footer>
 </section></div>
 <div class="toast" id="toast" role="status"></div><div class="project-tooltip" id="project-tooltip" role="tooltip" hidden></div>
 <script>const seed=[
@@ -2369,14 +2412,14 @@ function projectNumbers(t){return Array.isArray(t.projects)?t.projects:Array.isA
 function renderProjectNumbers(t){const numbers=projectNumbers(t);if(!numbers.length)return "";return '<span class="project-preview" tabindex="0" data-projects="'+esc(JSON.stringify(numbers))+'" aria-label="'+esc(numbers.join("；"))+'"><span class="project-number">'+esc(numbers[0])+'</span>'+(numbers.length>1?'<span class="project-count">+'+(numbers.length-1)+'</span>':"")+'</span>'}
 
 function staffNumber(m){return /^CQC\d{4}$/.test(m.id)?m.id:"CQC"+String(1117+Number(m.id.replace(/\D/g,""))).padStart(4,"0")}
-function feeAllowed(m,index){return (index!==1||m.role==="组长")&&(index!==2||Boolean(m.witness))}
+function feeAllowed(m,index){return index!==1||m.role==="组长"}
 
 const selectedTaskIds=new Set();
 function updateSelectionUI(){
  const boxes=[...document.querySelectorAll(".task-check")],checked=boxes.filter(box=>selectedTaskIds.has(box.dataset.id));
  boxes.forEach(box=>{box.checked=selectedTaskIds.has(box.dataset.id);box.closest("tr").classList.toggle("row-selected",box.checked)});
  $("check-all").checked=boxes.length>0&&checked.length===boxes.length;$("check-all").indeterminate=checked.length>0&&checked.length<boxes.length;$("check-all").disabled=!boxes.length;
- $("selected-count").textContent=selectedTaskIds.size;$("export").disabled=selectedTaskIds.size===0;$("clear-selection").hidden=selectedTaskIds.size===0;
+ $("selected-count").textContent=selectedTaskIds.size;$("export").disabled=selectedTaskIds.size===0;const aiSelected=tasks.filter(t=>selectedTaskIds.has(t.id));$("ai-calculate").disabled=!aiSelected.length||aiSelected.some(t=>t.status!=="未完工"||approvedState(t)!=="待核准");$("clear-selection").hidden=selectedTaskIds.size===0;
 }
 $("check-all").onchange=event=>{document.querySelectorAll(".task-check").forEach(box=>{event.target.checked?selectedTaskIds.add(box.dataset.id):selectedTaskIds.delete(box.dataset.id)});updateSelectionUI()};
 $("clear-selection").onclick=()=>{selectedTaskIds.clear();updateSelectionUI()};
@@ -2447,6 +2490,90 @@ $("view-plan").onclick=openPlan;$("plan-close").onclick=closePlan;$("plan-done")
 $("plan-download").onclick=()=>{const bytes=Uint8Array.from(atob(embeddedPlanPdf),c=>c.charCodeAt(0)),url=URL.createObjectURL(new Blob([bytes],{type:"application/pdf"})),a=document.createElement("a");a.href=url;a.download="审核计划.pdf";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)};
 
 
+
+
+let aiRunId=0,aiAbortController=null,aiResults=null,aiChosenTasks=[],aiOpener=null;
+const aiSleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+function aiLog(message){const row=document.createElement("div"),time=document.createElement("time"),text=document.createElement("span");time.textContent=new Intl.DateTimeFormat("zh-CN",{timeZone:"Asia/Shanghai",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(new Date());text.textContent=message;row.append(time,text);$("ai-log").append(row);$("ai-log").scrollTop=$("ai-log").scrollHeight}
+function aiProgress(step,percent){const labels=["整理绩效清单","匹配核算条件","计算人员费用","校验核算结果"];$("ai-steps").innerHTML=labels.map((label,i)=>'<div class="ai-step '+(i<step?"done":i===step?"running":"")+'"><b>'+(i<step?"✓":i+1)+'</b>'+label+'</div>').join("");$("ai-progress-bar").style.width=percent+"%";$("ai-progress-text").textContent=percent+"%"}
+function locationInfo(t){const provinceMap={"北京":"北京市","上海":"上海市","广州":"广东省","深圳":"广东省","佛山":"广东省","东莞":"广东省","杭州":"浙江省","宁波":"浙江省","苏州":"江苏省","南京":"江苏省","无锡":"江苏省","成都":"四川省","武汉":"湖北省","天津":"天津市","青岛":"山东省","济南":"山东省","厦门":"福建省","福州":"福建省","长沙":"湖南省","合肥":"安徽省","郑州":"河南省","重庆":"重庆市","西安":"陕西省","南昌":"江西省","石家庄":"河北省"};
+ const city=Object.keys(provinceMap).find(city=>String(t.operatingAddress||"").startsWith(city))||t.city;
+ const province=t.province||provinceMap[city]||"北京市";
+ const regionMap={"北京市":"华北","天津市":"华北","河北省":"华北","上海市":"华东","浙江省":"华东","江苏省":"华东","山东省":"华东","福建省":"华东","安徽省":"华东","江西省":"华东","广东省":"华南","湖北省":"华中","湖南省":"华中","河南省":"华中","四川省":"西南","重庆市":"西南","陕西省":"西北"};
+ return {province,region:t.region||regionMap[province]||"华北"}
+}
+function buildAiPayload(list){
+ const institution=list[0].projectOrg,home=locationInfo({city:institution==="上海分公司"?"上海":institution==="华南分公司"?"广州":"北京"});
+ return {institution,region:home.region,province:home.province,tasks:list.map(t=>{const area=locationInfo(t);return {taskId:t.id,projectNumbers:projectNumbers(t),company:t.company,operatingAddress:t.operatingAddress,region:area.region,province:area.province,stage:t.stage,performanceList:t.members.map(m=>({memberId:m.id,personNumber:staffNumber(m),name:m.name,role:m.role,domains:m.qualification.split(" / ").map(q=>q.replace(/正式|实习/g,"")),employment:m.employment,stage:t.stage,level:m.level,professional:m.professional||(m.code&&m.code!=="—"?"是":"否"),professionalCode:m.code,personDays:Number(m.days),witness:Boolean(m.witness),personOrg:m.personOrg,baseFees:m.fees.slice()}))}})}
+}
+function simulateAiCalculation(payload){
+ return {tasks:payload.tasks.map(t=>({taskId:t.taskId,members:t.performanceList.map(m=>{const unit=m.personDays>0?Number(m.baseFees[0]||0)/m.personDays:0;
+ const fees=[Math.round(unit*m.personDays*100)/100,m.role==="组长"?Number(m.baseFees[1]||0):0,Number(m.baseFees[2]||0),Number(m.baseFees[3]||0)];
+ return {memberId:m.memberId,fees,explanation:"审核费："+m.personDays+" 人日 × "+money(unit)+" 元/人日 = "+money(fees[0])+" 元；组长补助 "+money(fees[1])+" 元，见证补助 "+money(fees[2])+" 元，其它补助 "+money(fees[3])+" 元。"}})}))}
+}
+function validateAiResult(response,list){
+ if(!response||!Array.isArray(response.tasks)||response.tasks.length!==list.length)throw Error("AI返回的任务数量不完整");
+ const taskIds=new Set();return list.map(t=>{const matches=response.tasks.filter(r=>r.taskId===t.id);if(matches.length!==1||taskIds.has(t.id))throw Error("AI返回任务编号不匹配");taskIds.add(t.id);const result=matches[0];
+ if(!Array.isArray(result.members)||result.members.length!==t.members.length)throw Error("AI返回的人员清单不完整");
+ return {taskId:t.id,members:t.members.map(m=>{const rows=result.members.filter(r=>r.memberId===m.id);if(rows.length!==1)throw Error("AI返回人员编号不匹配");const row=rows[0];if(!Array.isArray(row.fees)||row.fees.length!==4||row.fees.some(v=>typeof v!=="number"||!Number.isFinite(v)||v<0||v>9999999||Math.abs(v*100-Math.round(v*100))>.000001))throw Error("AI返回费用格式不正确");
+ const fees=row.fees.slice();if(m.role!=="组长"&&fees[1]!==0)throw Error("AI返回非组长人员的组长补助，结果不可应用");
+ return {memberId:m.id,fees,explanation:String(row.explanation||"按照已配置的机构核算规则计算。")}})}
+ })
+}
+
+function renderAiResults(results,list){
+ $("ai-results").innerHTML='<div class="ai-result-heading-row"><h3 class="ai-result-heading">按任务查看人员核算结果</h3><span>费用可修改，确认核准后保存</span></div>'+results.map(result=>{const t=list.find(t=>t.id===result.taskId),sum=result.members.reduce((n,m)=>n+m.fees.reduce((a,b)=>a+b,0),0);
+ return '<section class="ai-task-result" data-task="'+esc(t.id)+'"><header class="ai-result-header"><div><h3>'+esc(t.company)+'</h3><div class="id">'+esc(t.id)+' · '+esc(t.projectOrg)+'</div></div><div class="amount">任务合计（元）<strong class="ai-task-total">'+money(sum)+'</strong></div></header><table class="ai-result-table"><thead><tr><th style="width:17%">审核人员</th><th style="width:14%">身份</th><th>人日</th>'+feeNames.map(f=>'<th>'+f+'（元）</th>').join("")+'<th>合计（元）</th></tr></thead><tbody>'+result.members.map(row=>{const m=t.members.find(m=>m.id===row.memberId);return '<tr class="ai-result-row" data-member="'+esc(m.id)+'"><td><strong>'+esc(m.name)+'</strong><span class="staff-number">'+esc(staffNumber(m))+'</span></td><td><span class="leader-tag">'+esc(m.role)+'</span> '+(m.witness?'<span class="witness-tag">见证</span>':"")+'</td><td>'+esc(m.days)+'</td>'+row.fees.map((f,j)=>'<td><input class="ai-fee-input" type="text" inputmode="decimal" autocomplete="off" data-fee="'+j+'" data-original="'+money(f)+'" value="'+money(f)+'" '+(!feeAllowed(m,j)?'disabled':"")+' aria-label="'+esc(m.name)+'的'+feeNames[j]+'"></td>').join("")+'<td class="amount-cell ai-person-total">'+money(row.fees.reduce((a,b)=>a+b,0))+'</td></tr>'}).join("")+'</tbody></table><details class="ai-basis"><summary>核算条件与依据</summary>'+result.members.map(row=>{const m=t.members.find(m=>m.id===row.memberId),area=locationInfo(t);return '<div class="ai-person-basis"><strong>'+esc(m.name)+'</strong> · '+esc(area.region)+' / '+esc(area.province)+' · '+esc(t.domains)+' · '+esc(m.employment)+' · '+esc(t.stage)+' · '+esc(m.level)+' · 专业 '+(m.code&&m.code!=="—"?"是":"否")+' · '+esc(m.code)+'<br>'+esc(row.explanation)+'</div>'}).join("")+'</details></section>'
+ }).join("");
+ document.querySelectorAll(".ai-fee-input").forEach(input=>input.oninput=()=>{input.classList.remove("invalid");updateAiEditedTotals()})
+}
+function updateAiEditedTotals(){
+ let total=0;
+ document.querySelectorAll(".ai-task-result").forEach(section=>{let taskSum=0;section.querySelectorAll(".ai-result-row").forEach(row=>{const inputs=[...row.querySelectorAll(".ai-fee-input")],sum=inputs.reduce((n,input)=>n+(Number(input.value)||0),0);row.querySelector(".ai-person-total").textContent=money(sum);row.classList.toggle("ai-row-edited",inputs.some(input=>input.value.trim()!==input.dataset.original));taskSum+=sum});section.querySelector(".ai-task-total").textContent=money(taskSum);total+=taskSum});
+ $("ai-total").textContent=money(total)
+}
+function collectAiEditedResults(){
+ return [...document.querySelectorAll(".ai-task-result")].map(section=>{const original=aiResults.find(t=>t.taskId===section.dataset.task);return {taskId:section.dataset.task,members:[...section.querySelectorAll(".ai-result-row")].map(row=>{const saved=original.members.find(m=>m.memberId===row.dataset.member),inputs=[...row.querySelectorAll(".ai-fee-input")];const invalid=inputs.find(input=>!input.value.trim()||!Number.isFinite(Number(input.value))||Number(input.value)<0||Number(input.value)>9999999||Math.abs(Number(input.value)*100-Math.round(Number(input.value)*100))>.000001);
+ if(invalid){invalid.classList.add("invalid");invalid.focus();throw Error("费用须为 0 至 9999999 的数字，最多保留两位小数")}
+ return {...saved,fees:inputs.map(input=>Number(input.value))}
+ })}})
+}
+
+async function openAiCalculation(){
+ const list=filteredTasks().filter(t=>selectedTaskIds.has(t.id));if(!list.length){notify("请先勾选待核准任务");return}
+ if(list.some(t=>t.status!=="未完工"||approvedState(t)!=="待核准")){notify("AI核算仅支持未完工且待核准的任务");return}
+ if(new Set(list.map(t=>t.projectOrg)).size!==1){notify("请选择同一项目归属机构下的待核准任务");return}
+ aiOpener=document.activeElement;aiChosenTasks=JSON.parse(JSON.stringify(list));aiResults=null;const run=++aiRunId;aiAbortController=new AbortController();
+ const hasAdapter=typeof window.auditPerformanceAI==="function",hasEndpoint=typeof window.AUDIT_PERFORMANCE_AI_ENDPOINT==="string"&&window.AUDIT_PERFORMANCE_AI_ENDPOINT.trim(),demo=!hasAdapter&&!hasEndpoint,payload=buildAiPayload(aiChosenTasks);
+ $("ai-context").innerHTML='<div><label>项目归属机构：</label>'+esc(payload.institution)+'</div><div><label>区域 / 省份：</label>'+esc(payload.region)+' / '+esc(payload.province)+'</div><div><label>待核准任务：</label>'+list.length+' 个</div><div><label>审核人员：</label>'+list.reduce((n,t)=>n+t.members.length,0)+' 人</div>';
+ $("ai-demo-note").hidden=!demo;$("ai-process").open=true;$("ai-process-title").textContent="计算过程";$("ai-log").innerHTML="";$("ai-results").innerHTML="";$("ai-total").textContent="";$("ai-summary").textContent="正在准备核算清单";$("ai-apply").hidden=true;$("ai-apply").disabled=false;$("ai-cancel").textContent="取消";
+ $("ai-modal").classList.add("show");document.body.style.overflow="hidden";$("ai-close").focus();
+ let timeout=null;
+ try{
+ aiProgress(0,10);aiLog("整理 "+list.length+" 个任务的人员绩效清单：姓名、角色、领域、专兼职、阶段、级别、专业、专业代码、人日。");await aiSleep(900);if(run!==aiRunId)return;
+ aiProgress(1,30);aiLog("同机构校验通过，按各任务区域、省份和场所条件准备核算参数。");await aiSleep(1000);if(run!==aiRunId)return;
+ aiProgress(2,55);aiLog(demo?"启动演示核算，使用页面现有样例单价与补助基准。":"调用 AI 底座接口，传入区域、省份及人员绩效清单。");$("ai-summary").textContent=demo?"正在生成演示结果":"AI正在计算人员绩效费用";
+ let response;
+ if(hasAdapter){timeout=setTimeout(()=>aiAbortController.abort(),45000);response=await window.auditPerformanceAI(payload,{signal:aiAbortController.signal})}
+ else if(hasEndpoint){timeout=setTimeout(()=>aiAbortController.abort(),45000);const r=await fetch(window.AUDIT_PERFORMANCE_AI_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload),signal:aiAbortController.signal});if(!r.ok)throw Error("AI接口返回错误："+r.status);response=await r.json()}
+ else{await aiSleep(1800);response=simulateAiCalculation(payload)}
+ if(run!==aiRunId)return;
+ aiProgress(3,85);aiLog("计算结果已返回，校验任务、人员、费用格式及组长补助规则。");const validated=validateAiResult(response,aiChosenTasks);await aiSleep(800);if(run!==aiRunId)return;
+ aiResults=validated;renderAiResults(validated,aiChosenTasks);aiProgress(4,100);aiLog("校验通过，已按任务维度汇总各人员核算结果。");$("ai-process-title").textContent="计算过程 · 已完成";$("ai-process").open=false;$("ai-summary").textContent="核算合计（元）";$("ai-total").textContent=money(validated.reduce((n,t)=>n+t.members.reduce((x,m)=>x+m.fees.reduce((a,b)=>a+b,0),0),0));$("ai-apply").hidden=false;$("ai-cancel").textContent="关闭";
+ }catch(error){if(run!==aiRunId)return;aiLog("核算失败："+error.message);$("ai-process-title").textContent="计算过程 · 失败";$("ai-summary").textContent="核算未完成";$("ai-cancel").textContent="关闭";$("ai-results").innerHTML='<div class="ai-error">'+esc(error.name==="AbortError"?"AI接口响应超时，请重试。":error.message)+'</div>'}finally{if(timeout)clearTimeout(timeout)}
+}
+function closeAiCalculation(){aiRunId++;aiAbortController?.abort();aiResults=null;$("ai-modal").classList.remove("show");document.body.style.overflow="";if(aiOpener?.isConnected)aiOpener.focus()}
+$("ai-calculate").onclick=openAiCalculation;$("ai-close").onclick=closeAiCalculation;$("ai-cancel").onclick=closeAiCalculation;
+$("ai-apply").onclick=()=>{
+ if(!aiResults)return;
+ try{aiResults=validateAiResult({tasks:collectAiEditedResults()},aiChosenTasks)}catch(error){notify(error.message);return}
+ const stale=aiChosenTasks.some(snapshot=>{const t=tasks.find(t=>t.id===snapshot.id);return !t||t.status!=="未完工"||approvedState(t)!=="待核准"||!isConfirmed(t)});
+ if(stale){notify("任务状态已变化，请关闭并重新核算");return}
+ const nextTasks=tasks.map(t=>{const result=aiResults.find(r=>r.taskId===t.id);if(!result)return t;return {...t,members:t.members.map(m=>{const row=result.members.find(r=>r.memberId===m.id);return {...m,fees:row.fees.slice(),approval:"已核准"}})}});
+ try{localStorage.setItem(storeKey,JSON.stringify(nextTasks))}catch{notify("浏览器无法保存核算结果");return}
+ const count=aiResults.length;tasks=nextTasks;closeAiCalculation();selectedTaskIds.clear();renderTasks();notify("已确认核准 "+count+" 个任务")
+};
+document.addEventListener("keydown",event=>{if(!$("ai-modal").classList.contains("show"))return;if(event.key==="Escape"){closeAiCalculation();return}if(event.key==="Tab"){const items=[...$("ai-modal").querySelectorAll("button,summary,input")].filter(el=>!el.disabled&&el.getClientRects().length),first=items[0],last=items.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}}});
 
 let projectTooltipAnchor=null;
 function showProjectTooltip(anchor){
