@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>审核任务管理</title><style>
 
@@ -99,6 +100,7 @@ body{background:#fff;color:#1e293b}.topbar{height:52px;padding:0 22px;box-shadow
 @media(max-width:560px){.task-confirm-dialog .dialog-header{padding:14px 16px}.task-confirm-dialog .dialog-body{padding:18px 16px}.task-confirm-content{gap:10px}.task-confirm-dialog .dialog-footer{padding:12px 16px}}
 
 .task-table .col-action{width:280px}
+
 </style></head><body>
 <header class="topbar"><div class="brand"><h1>审核任务管理</h1></div><span class="topbar-meta">体系认证 · 审核管理</span></header>
 <main class="page"><section class="panel filter-panel"><form id="filter-form" class="filter-grid">
@@ -128,8 +130,12 @@ const domainSets=[['QMS','EMS'],['QMS','EMS','OHS','HSE'],['FSMS','QMS'],['ITSN'
 const scopeMap={QMS:'智能设备及机械零部件的设计、生产与销售',EMS:'生产经营活动及相关环境管理活动',OHS:'生产经营场所及相关职业健康安全管理活动',ITSN:'信息技术服务及运维管理',BCMS:'信息技术服务的业务连续性管理',HSE:'生产经营活动的健康、安全与环境管理',FSMS:'食品的生产、加工与销售'};
 const allStatuses=Object.values(flow).flat();
 const seed=Array.from({length:24},(_,i)=>{const n=i%8,date='2026-10-'+String(5+i).padStart(2,'0');return {id:'RW/20261001/'+String(i+1).padStart(4,'0')+(i===13||i===20?'(子)':''),company:clients[n],domains:domainSets[n],stage:['二阶段','一阶段','一阶段（无现场）'][i%3],multi:i%3===0?'是':'否',parent:i===13?'RW/20261001/0002':i===20?'RW/20261001/0009':'-',start:date,end:'2026-10-'+String(6+i).padStart(2,'0'),leader:leaders[i%6],status:allStatuses[i%allStatuses.length],report:['上报中','已上报','上报失败'][i%3],scopes:Object.fromEntries(domainSets[n].map(d=>[d,scopeMap[d]]))}});
+const demoVersion='2026-10-15-v2';
+const reportEligibleDemoStates=new Set(['任务已接收','审核计划待确认','审核计划已驳回','审核待开始','审核进行中','审核后活动','任务已完成']);
+let demoSerial=9001;
+for(const status of allStatuses){let count=seed.filter(t=>t.status===status&&!(true&&reportEligibleDemoStates.has(status)&&t.report==='上报失败')).length;while(count<2){const source=seed.find(t=>t.status===status)||seed[0],row=structuredClone(source);row.id='RW/20261015/'+String(demoSerial++);row.parent='-';row.status=status;row.stage=count%2===0?'一阶段':'二阶段';row.report=reportEligibleDemoStates.has(status)?(count%2===0?'上报中':'已上报'):'-';row.start='2026-10-20';row.end='2026-10-21';delete row.managementRequests;seed.push(row);count++}}
 let tasks=structuredClone(seed),activeGroup='',activeStatus='',draftStage='',applied={},page=1,pageSize=10,modalOpener=null,toastTimer;
-try{const saved=JSON.parse(localStorage.getItem('audit-task-list-v1'));if(Array.isArray(saved))saved.forEach(t=>{if(t.status==='审核计划确认')t.status='审核计划待确认';if(t.status==='审核已完成')t.status='审核后活动'});if(Array.isArray(saved))saved.forEach(t=>{if(t.status==='审核计划确认')t.status='审核计划待确认';if(t.status==='审核已完成')t.status='审核后活动'});if(Array.isArray(saved)&&saved.every(t=>t.id&&t.company&&permissions[t.status]&&Array.isArray(t.domains)&&t.scopes))tasks=saved}catch{}
+try{const saved=JSON.parse(localStorage.getItem('audit-task-management-demo-v2'));if(Array.isArray(saved))saved.forEach(t=>{if(t.status==='审核计划确认')t.status='审核计划待确认';if(t.status==='审核已完成')t.status='审核后活动'});if(Array.isArray(saved))saved.forEach(t=>{if(t.status==='审核计划确认')t.status='审核计划待确认';if(t.status==='审核已完成')t.status='审核后活动'});if(Array.isArray(saved)&&saved.every(t=>t.id&&t.company&&permissions[t.status]&&Array.isArray(t.domains)&&t.scopes))tasks=saved}catch{}
 const reportingEnabled=true;
 function hasReceived(t){return !['任务待提交','任务已提交','任务已撤回'].includes(t.status)&&(t.received===true||['任务已接收','审核计划待确认','审核计划已驳回','审核待开始','审核进行中','审核后活动','任务已完成'].includes(t.status))}
 function reportValue(t){return reportingEnabled&&hasReceived(t)?(['上报中','已上报','上报失败'].includes(t.report)?t.report:'上报中'):'-'}
@@ -137,7 +143,7 @@ function reportCell(t){return reportingEnabled?'<td>'+(reportValue(t)==='-'?'<sp
 function actionsFor(t){return activeGroup==='任务上报失败'&&reportingEnabled&&reportValue(t)==='上报失败'?['任务详情','手动处理','重新上报']:[...permissions[t.status]]}
 function matchesTaskGroup(t,g){if(!g)return true;const failed=reportingEnabled&&reportValue(t)==='上报失败';return g==='任务上报失败'?failed:groupOf(t)===g&&!failed}
 tasks.forEach(t=>{if(t.status==='审核计划确认')t.status='审核计划待确认';if(t.status==='审核已完成')t.status='审核后活动';t.received=hasReceived(t);t.report=reportValue(t)});
-function persist(){try{localStorage.setItem('audit-task-list-v1',JSON.stringify(tasks))}catch{}}
+function persist(){try{localStorage.setItem('audit-task-management-demo-v2',JSON.stringify(tasks))}catch{}}
 function notify(message){clearTimeout(toastTimer);$('toast').textContent=message;$('toast').style.display='block';toastTimer=setTimeout(()=>$('toast').style.display='none',3000)}
 function groupOf(t){return Object.keys(flow).find(k=>flow[k].includes(t.status))}
 function baseRows(){return tasks.filter(t=>(!applied.id||t.id.toLowerCase().includes(applied.id.toLowerCase()))&&(!applied.company||t.company.includes(applied.company))&&(!applied.leader||t.leader.includes(applied.leader))&&(!applied.stage||t.stage===applied.stage)&&(!applied.start||t.end>=applied.start)&&(!applied.end||t.start<=applied.end))}
