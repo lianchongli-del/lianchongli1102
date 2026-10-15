@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>我的任务</title><style>
 
@@ -95,6 +96,7 @@ body{background:#fff;color:#1e293b}.topbar{height:52px;padding:0 22px;box-shadow
 @media(max-width:900px){.filter-grid{--filter-control-width:160px;grid-template-columns:repeat(2,minmax(0,1fr))}.filter-bottom{grid-column:1/-1;justify-content:space-between}}
 @media(max-width:640px){.filter-grid{--filter-control-width:min(220px,calc(100vw - 124px));grid-template-columns:1fr}.field label,.stage-filter label{min-width:70px}.filter-bottom{grid-column:1;flex-wrap:wrap;gap:10px}.stage-filter{gap:7px}.filter-actions{margin-left:auto}}
 
+
 </style></head><body>
 <header class="topbar"><div class="brand"><h1>我的任务</h1></div><span class="topbar-meta">体系认证 · 审核管理</span></header>
 <main class="page"><section class="panel filter-panel"><form id="filter-form" class="filter-grid">
@@ -126,17 +128,19 @@ const allStatuses=Object.values(flow).flat();
 const seed=Array.from({length:24},(_,i)=>{const n=i%8,date='2026-10-'+String(5+i).padStart(2,'0');return {id:'RW/20261001/'+String(i+1).padStart(4,'0')+(i===13||i===20?'(子)':''),company:clients[n],domains:domainSets[n],stage:['二阶段','一阶段','一阶段（无现场）'][i%3],multi:i%3===0?'是':'否',parent:i===13?'RW/20261001/0002':i===20?'RW/20261001/0009':'-',start:date,end:'2026-10-'+String(6+i).padStart(2,'0'),leader:leaders[i%6],status:allStatuses[i%allStatuses.length],report:['上报中','已上报','上报失败'][i%3],scopes:Object.fromEntries(domainSets[n].map(d=>[d,scopeMap[d]]))}});
 const additionalAfterAuditSamples=['一阶段','二阶段','一阶段（无现场）','二阶段','一阶段','二阶段'].map((stage,i)=>{const n=i%clients.length,domains=[...domainSets[n]];return{id:'RW/20261015/'+String(101+i).padStart(4,'0'),company:clients[n],domains,stage,multi:i%2===0?'是':'否',parent:'-',start:'2026-10-'+(19+i),end:'2026-10-'+(20+i),leader:leaders[i%leaders.length],status:'审核后活动',report:'-',scopes:Object.fromEntries(domains.map(domain=>[domain,scopeMap[domain]]))}});
 seed.push(...additionalAfterAuditSamples);
+const demoVersion='2026-10-15-v2';
+const reportEligibleDemoStates=new Set(['任务已接收','审核计划待确认','审核计划已驳回','审核待开始','审核进行中','审核后活动','任务已完成']);
+let demoSerial=9001;
+for(const status of allStatuses){let count=seed.filter(t=>t.status===status&&!(false&&reportEligibleDemoStates.has(status)&&t.report==='上报失败')).length;while(count<2){const source=seed.find(t=>t.status===status)||seed[0],row=structuredClone(source);row.id='RW/20261015/'+String(demoSerial++);row.parent='-';row.status=status;row.stage=count%2===0?'一阶段':'二阶段';row.report=reportEligibleDemoStates.has(status)?(count%2===0?'上报中':'已上报'):'-';row.start='2026-10-20';row.end='2026-10-21';delete row.managementRequests;seed.push(row);count++}}
 let tasks=structuredClone(seed),activeGroup='',activeStatus='',draftStage='',applied={},page=1,pageSize=10,modalOpener=null,toastTimer;
-try{const saved=JSON.parse(localStorage.getItem('audit-task-list-2-v1'));if(Array.isArray(saved))saved.forEach(t=>{if(t.status==='审核计划确认')t.status='审核计划待确认';if(t.status==='审核已完成')t.status='审核后活动'});if(Array.isArray(saved))saved.forEach(t=>{if(t.status==='审核计划确认')t.status='审核计划待确认';if(t.status==='审核已完成')t.status='审核后活动'});if(Array.isArray(saved)&&saved.every(t=>t.id&&t.company&&permissions[t.status]&&Array.isArray(t.domains)&&t.scopes))tasks=saved}catch{}
-try{if(!localStorage.getItem('audit-task-list-2-after-samples-v2')){for(const sample of additionalAfterAuditSamples){if(!tasks.some(t=>t.id===sample.id))tasks.push(structuredClone(sample))}localStorage.setItem('audit-task-list-2-v1',JSON.stringify(tasks));localStorage.setItem('audit-task-list-2-after-samples-v2','1')}}catch{}
-try{if(!localStorage.getItem('audit-task-list-2-withdrawn-plan-v1')){if(!tasks.some(t=>t.status==='审核计划已撤回')){const examples=seed.filter(t=>t.status==='审核计划已撤回').slice(0,2).map((t,i)=>({...structuredClone(t),id:'RW/20261015/'+String(201+i).padStart(4,'0'),parent:'-',planContent:'审核计划已撤回，待重新编制'}));tasks.push(...examples)}localStorage.setItem('audit-task-list-2-v1',JSON.stringify(tasks));localStorage.setItem('audit-task-list-2-withdrawn-plan-v1','1')}}catch{}
+try{const saved=JSON.parse(localStorage.getItem('my-audit-tasks-demo-v2'));if(Array.isArray(saved))saved.forEach(t=>{if(t.status==='审核计划确认')t.status='审核计划待确认';if(t.status==='审核已完成')t.status='审核后活动'});if(Array.isArray(saved))saved.forEach(t=>{if(t.status==='审核计划确认')t.status='审核计划待确认';if(t.status==='审核已完成')t.status='审核后活动'});if(Array.isArray(saved)&&saved.every(t=>t.id&&t.company&&permissions[t.status]&&Array.isArray(t.domains)&&t.scopes))tasks=saved}catch{}
 const reportingEnabled=false;
 function hasReceived(t){return !['任务待提交','任务已提交','任务已撤回'].includes(t.status)&&(t.received===true||['任务已接收','审核计划待确认','审核计划已驳回','审核待开始','审核进行中','审核后活动','任务已完成'].includes(t.status))}
 function reportValue(t){return reportingEnabled&&hasReceived(t)?(['上报中','已上报','上报失败'].includes(t.report)?t.report:'上报中'):'-'}
 function reportCell(t){return reportingEnabled?'<td>'+(reportValue(t)==='-'?'<span class="muted">-</span>':badge(reportValue(t)))+'</td>':''}
 function actionsFor(t){return [...permissions[t.status],...(t.status==='审核后活动'?[t.stage==='二阶段'?'不符合项纠正':'问题整改']:[])]}
 tasks.forEach(t=>{if(t.status==='审核计划确认')t.status='审核计划待确认';if(t.status==='审核已完成')t.status='审核后活动';t.received=hasReceived(t);t.report=reportValue(t)});
-function persist(){try{localStorage.setItem('audit-task-list-2-v1',JSON.stringify(tasks))}catch{}}
+function persist(){try{localStorage.setItem('my-audit-tasks-demo-v2',JSON.stringify(tasks))}catch{}}
 function notify(message){clearTimeout(toastTimer);$('toast').textContent=message;$('toast').style.display='block';toastTimer=setTimeout(()=>$('toast').style.display='none',3000)}
 function groupOf(t){return Object.keys(flow).find(k=>flow[k].includes(t.status))}
 function baseRows(){return tasks.filter(t=>(!applied.id||t.id.toLowerCase().includes(applied.id.toLowerCase()))&&(!applied.company||t.company.includes(applied.company))&&(!applied.leader||t.leader.includes(applied.leader))&&(!applied.stage||t.stage===applied.stage)&&(!applied.start||t.end>=applied.start)&&(!applied.end||t.start<=applied.end))}
